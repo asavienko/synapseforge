@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { Bot, Zap, User, ArrowRight, Activity } from "lucide-react";
+import { Bot, Zap, User, ArrowRight, Activity, MessageCircle } from "lucide-react";
 import { PLANS, STATUS_COLORS, formatDate } from "@/lib/utils";
 
 export default async function DashboardPage() {
@@ -63,20 +63,27 @@ export default async function DashboardPage() {
       {/* Manager card */}
       {user.manager ? (
         <div className="glow-border rounded-2xl p-5 bg-white/[0.02] mb-8 flex items-center gap-4">
-          <div className="w-10 h-10 rounded-full bg-violet-600/30 border border-violet-500/30 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-violet-600/30 border border-violet-500/30 flex items-center justify-center shrink-0">
             <User className="w-5 h-5 text-violet-400" />
           </div>
-          <div>
+          <div className="flex-1 min-w-0">
             <div className="text-xs text-zinc-500 mb-0.5">Your dedicated manager</div>
             <div className="font-semibold text-white">{user.manager.name}</div>
             <a href={`mailto:${user.manager.email}`} className="text-sm text-violet-400 hover:text-violet-300 transition-colors">
               {user.manager.email}
             </a>
           </div>
+          <Link
+            href="/dashboard/messages"
+            className="flex items-center gap-2 text-sm text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2.5 rounded-xl transition-colors shrink-0"
+          >
+            <MessageCircle className="w-4 h-4" />
+            Message
+          </Link>
         </div>
       ) : (
         <div className="glow-border rounded-2xl p-5 bg-white/[0.02] mb-8 flex items-center gap-4">
-          <div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center shrink-0">
             <User className="w-5 h-5 text-zinc-500" />
           </div>
           <div>

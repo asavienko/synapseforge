@@ -23,14 +23,29 @@ model User {
   instances     AIInstance[]
   accounts      Account[]
   sessions      Session[]
+  messages      Message[]
 }
 
 model Manager {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   name      String
-  email     String   @unique
-  createdAt DateTime @default(now())
+  email     String    @unique
+  createdAt DateTime  @default(now())
   users     User[]
+  messages  Message[]
+}
+
+model Message {
+  id          String   @id @default(cuid())
+  body        String
+  senderType  String   // "user" | "manager"
+  read        Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  userId      String
+  managerId   String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  manager     Manager  @relation(fields: [managerId], references: [id], onDelete: Cascade)
 }
 
 model AIInstance {

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Zap, LayoutDashboard, Bot, Settings, LogOut, Menu, X } from "lucide-react";
+import { Zap, LayoutDashboard, Bot, Settings, LogOut, Menu, X, MessageCircle } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 
@@ -12,7 +12,7 @@ interface SidebarProps {
   userEmail?: string | null;
 }
 
-function NavItem({ href, icon: Icon, label, onClick }: { href: string; icon: React.ElementType; label: string; onClick?: () => void }) {
+function NavItem({ href, icon: Icon, label, badge, onClick }: { href: string; icon: React.ElementType; label: string; badge?: number; onClick?: () => void }) {
   const pathname = usePathname();
   const isActive = href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(href);
 
@@ -28,12 +28,17 @@ function NavItem({ href, icon: Icon, label, onClick }: { href: string; icon: Rea
       )}
     >
       <Icon className="w-4 h-4" />
-      {label}
+      <span className="flex-1">{label}</span>
+      {badge != null && badge > 0 && (
+        <span className="bg-violet-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+          {badge > 99 ? "99+" : badge}
+        </span>
+      )}
     </Link>
   );
 }
 
-function SidebarContent({ userName, userEmail, onClose }: SidebarProps & { onClose?: () => void }) {
+function SidebarContent({ userName, userEmail, unreadCount, onClose }: SidebarProps & { unreadCount: number; onClose?: () => void }) {
   return (
     <div className="flex flex-col h-full">
       <div className="p-6 border-b border-white/5 flex items-center justify-between">
@@ -51,6 +56,7 @@ function SidebarContent({ userName, userEmail, onClose }: SidebarProps & { onClo
       <nav className="flex-1 p-4 space-y-1">
         <NavItem href="/dashboard" icon={LayoutDashboard} label="Overview" onClick={onClose} />
         <NavItem href="/dashboard/instances" icon={Bot} label="Instances" onClick={onClose} />
+        <NavItem href="/dashboard/messages" icon={MessageCircle} label="Messages" badge={unreadCount} onClick={onClose} />
         <NavItem href="/dashboard/settings" icon={Settings} label="Settings" onClick={onClose} />
       </nav>
 
@@ -78,6 +84,20 @@ function SidebarContent({ userName, userEmail, onClose }: SidebarProps & { onClo
 
 export function DashboardSidebar({ userName, userEmail }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    async function fetchUnread() {
+      const res = await fetch("/api/messages/unread");
+      if (res.ok) {
+        const data = await res.json();
+        setUnreadCount(data.count ?? 0);
+      }
+    }
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 15000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <>
@@ -87,12 +107,19 @@ export function DashboardSidebar({ userName, userEmail }: SidebarProps) {
           <Zap className="w-5 h-5 text-violet-400" />
           <span className="font-bold text-sm tracking-tight text-white">SynapseForge</span>
         </Link>
-        <button
-          onClick={() => setMobileOpen(true)}
-          className="text-zinc-400 hover:text-white transition-colors"
-        >
-          <Menu className="w-5 h-5" />
-        </button>
+        <div className="flex items-center gap-3">
+          {unreadCount > 0 && (
+            <span className="bg-violet-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+              {unreadCount}
+            </span>
+          )}
+          <button
+            onClick={() => setMobileOpen(true)}
+            className="text-zinc-400 hover:text-white transition-colors"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        </div>
       </div>
 
       {/* Mobile overlay */}
@@ -110,12 +137,12 @@ export function DashboardSidebar({ userName, userEmail }: SidebarProps) {
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <SidebarContent userName={userName} userEmail={userEmail} onClose={() => setMobileOpen(false)} />
+        <SidebarContent userName={userName} userEmail={userEmail} unreadCount={unreadCount} onClose={() => setMobileOpen(false)} />
       </div>
 
       {/* Desktop sidebar */}
       <aside className="hidden md:flex w-64 border-r border-white/5 flex-col shrink-0">
-        <SidebarContent userName={userName} userEmail={userEmail} />
+        <SidebarContent userName={userName} userEmail={userEmail} unreadCount={unreadCount} />
       </aside>
     </>
   );
