@@ -25,17 +25,31 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const instance = await prisma.aIInstance.findFirst({
     where: { id, userId: session.user.id },
   });
-
   if (!instance) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  const updated = await prisma.aIInstance.update({
-    where: { id },
-    data: {
-      name: body.name ?? instance.name,
-      status: body.status ?? instance.status,
-      description: body.description ?? instance.description,
-    },
-  });
+  const data: Record<string, unknown> = {};
+  const logEvents: { event: string; details?: string }[] = [];
+
+  if (body.name !== undefined) data.name = body.name;
+  if (body.description !== undefined) data.description = body.description;
+
+  if (body.status !== undefined && body.status !== instance.status) {
+    data.status = body.status;
+    logEvents.push({ event: body.status === "running" ? "started" : "stopped" });
+  }
+
+  if (body.config !== undefined) {
+    data.config = typeof body.config === "string" ? body.config : JSON.stringify(body.config);
+    logEvents.push({ event: "config_changed", details: "Configuration updated" });
+  }
+
+  const updated = await prisma.aIInstance.update({ where: { id }, data });
+
+  if (logEvents.length > 0) {
+    await prisma.activityLog.createMany({
+      data: logEvents.map((e) => ({ ...e, instanceId: id })),
+    });
+  }
 
   return NextResponse.json(updated);
 }
@@ -48,7 +62,6 @@ export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id:
   const instance = await prisma.aIInstance.findFirst({
     where: { id, userId: session.user.id },
   });
-
   if (!instance) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   await prisma.aIInstance.delete({ where: { id } });

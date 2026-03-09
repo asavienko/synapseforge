@@ -45,5 +45,9 @@ export async function POST(req: NextRequest) {
     },
   });
 
+  await prisma.activityLog.create({
+    data: { event: "created", details: `Instance "${name}" created`, instanceId: instance.id },
+  });
+
   return NextResponse.json(instance, { status: 201 });
 }

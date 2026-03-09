@@ -55,12 +55,36 @@ model AIInstance {
   status      String   @default("stopped")  // running | stopped | pending | error
   tier        String   @default("minimal")  // minimal | standard | pro
   description String?
-  config      String?  // JSON blob
+  config      String?  // JSON blob: { model, systemPrompt, temperature, maxTokens }
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  apiKeys     ApiKey[]
+  logs        ActivityLog[]
+}
+
+model ApiKey {
+  id         String    @id @default(cuid())
+  name       String    @default("Default")
+  key        String    @unique
+  preview    String    // e.g. "sf-live-abcd...wxyz"
+  createdAt  DateTime  @default(now())
+  lastUsedAt DateTime?
+
+  instanceId String
+  instance   AIInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+}
+
+model ActivityLog {
+  id         String   @id @default(cuid())
+  event      String   // started | stopped | config_changed | key_generated | key_revoked | created | deleted
+  details    String?
+  createdAt  DateTime @default(now())
+
+  instanceId String
+  instance   AIInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
 }
 
 model Account {
