@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Zap, Bot, BarChart3, Headphones, Shield, ArrowRight, Check } from "lucide-react";
+import { Zap, Bot, BarChart3, Headphones, Shield, ArrowRight, Check, Users } from "lucide-react";
 
 export default function LandingPage() {
   return (
@@ -16,6 +16,7 @@ export default function LandingPage() {
             <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
             <a href="#about" className="hover:text-white transition-colors">About</a>
           </div>
+
           <div className="flex items-center gap-3">
             <Link
               href="/sign-in"
@@ -184,6 +185,52 @@ export default function LandingPage() {
           <h2 className="text-2xl font-bold mb-3">Built for reliability</h2>
           <p className="text-zinc-400 max-w-lg mx-auto">
             Every instance is monitored 24/7. Your dedicated manager proactively handles issues before they affect your business.
+          </p>
+        </div>
+      </section>
+
+      {/* About */}
+      <section id="about" className="max-w-7xl mx-auto px-6 py-20">
+        <div className="text-center mb-14">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Who we are.</h2>
+          <p className="text-zinc-400 max-w-xl mx-auto">
+            A small team obsessed with making AI actually useful for real businesses.
+          </p>
+        </div>
+        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          {[
+            {
+              icon: Users,
+              title: "Dedicated managers",
+              desc: "Every client gets a real human manager — not a chatbot, not a ticketing system. Someone who actually knows your setup.",
+              color: "text-violet-400",
+            },
+            {
+              icon: Zap,
+              title: "Fast deployment",
+              desc: "We've deployed dozens of AI stacks. We skip the discovery theater and get you running in days, not months.",
+              color: "text-emerald-400",
+            },
+            {
+              icon: Shield,
+              title: "No lock-in",
+              desc: "We work with your existing tools and cloud. No proprietary black boxes — everything we build, you own.",
+              color: "text-blue-400",
+            },
+          ].map((item) => (
+            <div key={item.title} className="glow-border rounded-2xl p-6 bg-white/[0.02]">
+              <item.icon className={`w-7 h-7 ${item.color} mb-4`} />
+              <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
+              <p className="text-zinc-400 text-sm leading-relaxed">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+        <div className="text-center mt-12">
+          <p className="text-zinc-400 text-sm">
+            Questions?{" "}
+            <a href="mailto:hello@synapseforge.ai" className="text-violet-400 hover:text-violet-300 transition-colors">
+              hello@synapseforge.ai
+            </a>
           </p>
         </div>
       </section>

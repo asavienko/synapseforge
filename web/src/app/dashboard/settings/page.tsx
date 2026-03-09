@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { User, Shield, Zap } from "lucide-react";
 import { PLANS } from "@/lib/utils";
+import { ProfileForm } from "@/components/ProfileForm";
 
 export default async function SettingsPage() {
   const session = await auth();
@@ -26,10 +27,7 @@ export default async function SettingsPage() {
           <User className="w-5 h-5 text-violet-400" />
           <h2 className="font-semibold text-white">Profile</h2>
         </div>
-        <div className="grid gap-4">
-          <Field label="Name" value={user.name ?? "—"} />
-          <Field label="Email" value={user.email} />
-        </div>
+        <ProfileForm initialName={user.name ?? ""} email={user.email} />
       </section>
 
       {/* Plan */}

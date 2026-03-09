@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Zap, Loader2 } from "lucide-react";
+import { Zap, Loader2, CheckCircle2 } from "lucide-react";
 import { signIn } from "next-auth/react";
 
 export default function SignInPage() {
@@ -12,6 +12,11 @@ export default function SignInPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [registered, setRegistered] = useState(false);
+
+  useEffect(() => {
+    setRegistered(new URLSearchParams(window.location.search).get("registered") === "1");
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -44,6 +49,13 @@ export default function SignInPage() {
           <h1 className="text-2xl font-bold text-white">Welcome back</h1>
           <p className="text-zinc-400 mt-2 text-sm">Sign in to your account</p>
         </div>
+
+        {registered && (
+          <div className="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3 mb-4 text-sm text-emerald-300">
+            <CheckCircle2 className="w-4 h-4 shrink-0" />
+            Account created! Sign in below.
+          </div>
+        )}
 
         <div className="glow-border rounded-2xl p-8 bg-white/[0.02]">
           <form onSubmit={handleSubmit} className="space-y-4">

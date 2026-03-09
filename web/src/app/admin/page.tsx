@@ -1,8 +1,16 @@
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Users, Bot, Activity } from "lucide-react";
 import { STATUS_COLORS, PLANS, formatDate } from "@/lib/utils";
 
 export default async function AdminPage() {
+  const session = await auth();
+  if (!session?.user) redirect("/sign-in");
+
+  const adminEmails = (process.env.ADMIN_EMAILS ?? "").split(",").map((e) => e.trim()).filter(Boolean);
+  if (!adminEmails.includes(session.user.email ?? "")) redirect("/dashboard");
+
   const users = await prisma.user.findMany({
     include: { manager: true, instances: true },
     orderBy: { createdAt: "desc" },

@@ -15,6 +15,18 @@ interface Instance {
   createdAt: string;
 }
 
+function Toast({ text, type }: { text: string; type: "success" | "error" }) {
+  return (
+    <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-xl text-sm font-medium shadow-2xl border flex items-center gap-2 ${
+      type === "success"
+        ? "bg-emerald-600/90 border-emerald-500 text-white"
+        : "bg-red-600/90 border-red-500 text-white"
+    }`}>
+      {text}
+    </div>
+  );
+}
+
 export default function InstancesPage() {
   const [instances, setInstances] = useState<Instance[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,6 +34,12 @@ export default function InstancesPage() {
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState("");
   const [form, setForm] = useState({ name: "", type: "assistant", description: "" });
+  const [toast, setToast] = useState<{ text: string; type: "success" | "error" } | null>(null);
+
+  function showToast(text: string, type: "success" | "error" = "success") {
+    setToast({ text, type });
+    setTimeout(() => setToast(null), 3000);
+  }
 
   async function loadInstances() {
     const res = await fetch("/api/instances");
@@ -52,11 +70,13 @@ export default function InstancesPage() {
       setShowCreate(false);
       setForm({ name: "", type: "assistant", description: "" });
       loadInstances();
+      showToast("Instance created successfully.");
     }
   }
 
   return (
     <div className="p-8">
+      {toast && <Toast text={toast.text} type={toast.type} />}
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-white">AI Instances</h1>
