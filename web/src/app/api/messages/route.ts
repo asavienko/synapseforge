@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
   }
 
   const user = await prisma.user.findUnique({ where: { id: userId } });
-  if (!user?.managerId) return NextResponse.json([]);
+  if (!user?.managerId) return NextResponse.json({ noManager: true }, { status: 200 });
 
   // Mark messages sent by manager as read
   await prisma.message.updateMany({

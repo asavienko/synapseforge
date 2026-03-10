@@ -34,10 +34,11 @@ export default function MessagesPage() {
     const res = await fetch("/api/messages");
     if (res.ok) {
       const data = await res.json();
-      if (Array.isArray(data)) setMessages(data);
-    } else {
-      const data = await res.json();
-      if (data.error === "No manager assigned yet.") setNoManager(true);
+      if (Array.isArray(data)) {
+        setMessages(data);
+      } else if (data?.noManager) {
+        setNoManager(true);
+      }
     }
     setLoading(false);
   }
