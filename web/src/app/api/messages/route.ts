@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { email as emailService } from "@/lib/email";
 
 function isAdmin(email?: string | null) {
   const adminEmails = (process.env.ADMIN_EMAILS ?? "").split(",").map((e) => e.trim()).filter(Boolean);
@@ -68,5 +69,12 @@ export async function POST(req: NextRequest) {
   const msg = await prisma.message.create({
     data: { body: body.trim(), senderType: "user", userId: session.user.id, managerId: user.managerId },
   });
+
+  // Notify manager by email
+  const manager = await prisma.manager.findUnique({ where: { id: user.managerId } });
+  if (manager) {
+    emailService.newMessage(manager.email, manager.name, user.name ?? user.email, body.trim().slice(0, 200)).catch(console.error);
+  }
+
   return NextResponse.json(msg, { status: 201 });
 }

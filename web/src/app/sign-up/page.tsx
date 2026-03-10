@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Zap, Loader2, Check } from "lucide-react";
+import { signIn } from "next-auth/react";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -23,12 +24,27 @@ export default function SignUpPage() {
     });
 
     const data = await res.json();
-    setLoading(false);
 
     if (!res.ok) {
+      setLoading(false);
       setError(data.error || "Something went wrong.");
-    } else {
+      return;
+    }
+
+    // Auto sign-in and go straight to onboarding
+    const result = await signIn("credentials", {
+      email: form.email,
+      password: form.password,
+      redirect: false,
+    });
+
+    setLoading(false);
+
+    if (result?.error) {
+      // Fallback: go to sign-in page
       router.push("/sign-in?registered=1");
+    } else {
+      router.push("/onboarding");
     }
   }
 

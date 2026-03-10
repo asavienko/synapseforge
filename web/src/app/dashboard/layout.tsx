@@ -1,10 +1,14 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { prisma } from "@/lib/prisma";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
   if (!session?.user) redirect("/sign-in");
+
+  const user = await prisma.user.findUnique({ where: { id: session.user.id! } });
+  if (user && !user.onboardingDone) redirect("/onboarding");
 
   return (
     <div className="min-h-screen bg-[#0a0a0f] flex">

@@ -14,6 +14,8 @@ model User {
   image         String?
   password      String?
   plan          String       @default("free") // free | pro | enterprise
+  onboardingDone Boolean     @default(false)
+  onboardingData String?     // JSON: { business, industry, useCase }
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 
@@ -24,6 +26,14 @@ model User {
   accounts      Account[]
   sessions      Session[]
   messages      Message[]
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  email     String
+  expires   DateTime
+  createdAt DateTime @default(now())
 }
 
 model Manager {

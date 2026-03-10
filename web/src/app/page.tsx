@@ -163,16 +163,25 @@ export default function LandingPage() {
                   </li>
                 ))}
               </ul>
-              <Link
-                href="/sign-up"
-                className={`block text-center py-3 rounded-xl font-semibold text-sm transition-colors ${
-                  plan.highlighted
-                    ? "bg-violet-600 hover:bg-violet-500"
-                    : "border border-white/10 hover:border-white/20 text-zinc-300"
-                }`}
-              >
-                {plan.cta}
-              </Link>
+              {plan.name === "Enterprise" ? (
+                <a
+                  href="mailto:hello@synapseforge.ai"
+                  className="block text-center py-3 rounded-xl font-semibold text-sm transition-colors border border-white/10 hover:border-white/20 text-zinc-300"
+                >
+                  {plan.cta}
+                </a>
+              ) : (
+                <Link
+                  href="/sign-up"
+                  className={`block text-center py-3 rounded-xl font-semibold text-sm transition-colors ${
+                    plan.highlighted
+                      ? "bg-violet-600 hover:bg-violet-500"
+                      : "border border-white/10 hover:border-white/20 text-zinc-300"
+                  }`}
+                >
+                  {plan.cta}
+                </Link>
+              )}
             </div>
           ))}
         </div>
@@ -243,8 +252,8 @@ export default function LandingPage() {
             <span>SynapseForge © 2026</span>
           </div>
           <div className="flex gap-6">
-            <a href="#" className="hover:text-white transition-colors">Privacy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms</a>
+            <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
             <a href="mailto:hello@synapseforge.ai" className="hover:text-white transition-colors">Contact</a>
           </div>
         </div>

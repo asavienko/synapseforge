@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { User, Shield, Zap } from "lucide-react";
 import { PLANS } from "@/lib/utils";
 import { ProfileForm } from "@/components/ProfileForm";
+import { DashboardUpgrade } from "@/components/DashboardUpgrade";
 
 export default async function SettingsPage() {
   const session = await auth();
@@ -49,9 +50,19 @@ export default async function SettingsPage() {
             </div>
           )}
         </div>
-        {user.plan === "free" && (
+        {user.plan === "free" && user.manager && (
+          <div className="mt-4 flex items-center gap-3">
+            <DashboardUpgrade currentPlan={user.plan} hasManager={true} />
+            <span className="text-sm text-zinc-500">or email{" "}
+              <a href="mailto:hello@synapseforge.ai" className="text-violet-400 hover:text-violet-300 transition-colors">
+                hello@synapseforge.ai
+              </a>
+            </span>
+          </div>
+        )}
+        {user.plan === "free" && !user.manager && (
           <p className="text-sm text-zinc-500 mt-3">
-            To upgrade your plan, contact your assigned manager or reach out at{" "}
+            A manager will be assigned soon. Once assigned, you can request an upgrade here or email{" "}
             <a href="mailto:hello@synapseforge.ai" className="text-violet-400 hover:text-violet-300 transition-colors">
               hello@synapseforge.ai
             </a>
