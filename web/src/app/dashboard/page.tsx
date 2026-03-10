@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { Bot, Zap, User, ArrowRight, Activity, MessageCircle } from "lucide-react";
+import { Bot, Zap, User, ArrowRight, Activity, MessageCircle, CheckCircle2, Circle } from "lucide-react";
 import { PLANS, STATUS_COLORS, formatDate } from "@/lib/utils";
 import { DashboardUpgrade } from "@/components/DashboardUpgrade";
 
@@ -24,6 +24,24 @@ export default async function DashboardPage() {
   const instanceLimit = plan.instances === -1 ? null : plan.instances;
   const instanceUsage = user.instances.length;
   const usagePct = instanceLimit ? Math.min((instanceUsage / instanceLimit) * 100, 100) : 0;
+
+  // Check "getting started" steps
+  const hasManager = !!user.manager;
+  const hasConfiguredInstance = user.instances.some((i) => i.config);
+  const hasApiKey = hasConfiguredInstance
+    ? await prisma.apiKey.count({ where: { instance: { userId } } }) > 0
+    : false;
+  const hasMessage = hasManager
+    ? await prisma.message.count({ where: { userId, senderType: "user" } }) > 0
+    : false;
+  const gettingStartedSteps = [
+    { label: "Complete onboarding", done: true, href: null },
+    { label: "Manager assigned to your account", done: hasManager, href: null },
+    { label: "Configure your AI instance", done: hasConfiguredInstance, href: user.instances[0] ? `/dashboard/instances/${user.instances[0].id}` : "/dashboard/instances" },
+    { label: "Generate an API key", done: hasApiKey, href: user.instances[0] ? `/dashboard/instances/${user.instances[0].id}?tab=keys` : "/dashboard/instances" },
+    { label: "Message your manager", done: hasMessage, href: "/dashboard/messages" },
+  ];
+  const allDone = gettingStartedSteps.every((s) => s.done);
 
   // Recent activity across all instances
   const recentLogs = await prisma.activityLog.findMany({
@@ -129,6 +147,45 @@ export default async function DashboardPage() {
           <div>
             <div className="text-xs text-zinc-500 mb-0.5">Your dedicated manager</div>
             <div className="text-sm text-zinc-400">A manager will be assigned to your account soon.</div>
+          </div>
+        </div>
+      )}
+
+      {/* Getting started checklist — hide once all done */}
+      {!allDone && (
+        <div className="glow-border rounded-2xl bg-white/[0.02] mb-6 overflow-hidden">
+          <div className="p-5 border-b border-white/5 flex items-center gap-3">
+            <Zap className="w-4 h-4 text-violet-400" />
+            <h2 className="font-semibold text-white text-sm">Getting started</h2>
+            <span className="ml-auto text-xs text-zinc-500">
+              {gettingStartedSteps.filter((s) => s.done).length}/{gettingStartedSteps.length} complete
+            </span>
+          </div>
+          <div className="divide-y divide-white/5">
+            {gettingStartedSteps.map((step) => {
+              const content = (
+                <div className="flex items-center gap-3 px-5 py-3">
+                  {step.done ? (
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  ) : (
+                    <Circle className="w-4 h-4 text-zinc-700 shrink-0" />
+                  )}
+                  <span className={`text-sm ${step.done ? "text-zinc-500 line-through" : "text-zinc-200"}`}>
+                    {step.label}
+                  </span>
+                  {!step.done && step.href && (
+                    <ArrowRight className="w-3.5 h-3.5 text-violet-400 ml-auto shrink-0" />
+                  )}
+                </div>
+              );
+              return step.href && !step.done ? (
+                <Link key={step.label} href={step.href} className="block hover:bg-white/[0.03] transition-colors">
+                  {content}
+                </Link>
+              ) : (
+                <div key={step.label}>{content}</div>
+              );
+            })}
           </div>
         </div>
       )}

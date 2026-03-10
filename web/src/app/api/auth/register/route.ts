@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 import { email as emailService } from "@/lib/email";
+import { rateLimit } from "@/lib/ratelimit";
 
 export async function POST(req: NextRequest) {
+  // Rate limit: 5 registrations per IP per 15 minutes
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  if (!rateLimit(`register:${ip}`, 5, 15 * 60 * 1000)) {
+    return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+  }
+
   const body = await req.json();
   const { name, password } = body;
   const userEmail: string = body.email;
@@ -48,8 +56,19 @@ export async function POST(req: NextRequest) {
     data: { event: "created", details: "Instance created on sign-up", instanceId: instance.id },
   });
 
-  // Send welcome email (non-blocking)
+  // Create email verification token (expires in 24h)
+  const verificationToken = crypto.randomBytes(32).toString("hex");
+  await prisma.verificationToken.create({
+    data: {
+      identifier: userEmail,
+      token: verificationToken,
+      expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    },
+  });
+
+  // Send welcome + verification emails (non-blocking)
   emailService.welcome(userEmail, name).catch(console.error);
+  emailService.verifyEmail(userEmail, name, verificationToken).catch(console.error);
 
   return NextResponse.json({ ok: true });
 }

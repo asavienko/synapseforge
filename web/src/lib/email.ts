@@ -123,6 +123,26 @@ export const email = {
     `);
   },
 
+  async verifyEmail(to: string, name: string, token: string) {
+    const verifyUrl = `${process.env.NEXTAUTH_URL}/verify-email?token=${token}`;
+    await send(to, "Verify your SynapseForge email", `
+      <div style="font-family:sans-serif;max-width:600px;margin:0 auto;background:#0a0a0f;color:#e4e4e7;padding:40px;border-radius:12px">
+        <div style="margin-bottom:32px">
+          <span style="font-size:20px;font-weight:700;color:#fff">⚡ SynapseForge</span>
+        </div>
+        <h1 style="font-size:24px;font-weight:700;color:#fff;margin:0 0 12px">Verify your email, ${name}</h1>
+        <p style="color:#a1a1aa;line-height:1.6;margin:0 0 24px">
+          Click the button below to verify your email address. This link expires in 24 hours.
+        </p>
+        <a href="${verifyUrl}" style="display:inline-block;background:#7c3aed;color:#fff;text-decoration:none;padding:12px 24px;border-radius:8px;font-weight:600;font-size:14px">
+          Verify Email →
+        </a>
+        <p style="color:#a1a1aa;font-size:13px;margin-top:24px">If you didn't create an account, ignore this email.</p>
+        <p style="color:#52525b;font-size:12px;margin-top:40px">SynapseForge · hello@synapseforge.ai</p>
+      </div>
+    `);
+  },
+
   async upgradeRequest(managerEmail: string, managerName: string, userName: string, userEmail: string, currentPlan: string, requestedPlan: string, note: string) {
     await send(managerEmail, `Upgrade request from ${userName}`, `
       <div style="font-family:sans-serif;max-width:600px;margin:0 auto;background:#0a0a0f;color:#e4e4e7;padding:40px;border-radius:12px">
