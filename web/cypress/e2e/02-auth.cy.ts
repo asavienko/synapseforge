@@ -20,7 +20,8 @@ describe("02 · Sign Up", () => {
     cy.clearCookies();
     cy.clearAllSessionStorage();
     cy.visit("/en/sign-up");
-    cy.get('input[type="text"]').type("New User");
+    cy.url({ timeout: 8000 }).should("include", "/sign-up");
+    cy.get('input[type="text"]', { timeout: 8000 }).first().type("New User");
     cy.get('input[type="email"]').type(email);
     cy.get('input[type="password"]').type("Cypress123!");
     cy.get('button[type="submit"]').should("not.be.disabled").click();

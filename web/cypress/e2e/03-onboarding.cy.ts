@@ -5,11 +5,15 @@
 describe("03 · Onboarding", () => {
   function registerFreshUser() {
     const email = `cypress-ob-${Date.now()}@synapseforge.ai`;
-    // Ensure no active session — sign-up page redirects logged-in users to dashboard
+    // Clear everything — sign-up page redirects logged-in users to dashboard
     cy.clearCookies();
     cy.clearAllSessionStorage();
+    // Invalidate any cached cy.session by clearing cookies again after a tick
+    cy.wait(100);
     cy.visit("/en/sign-up");
-    cy.get('input[type="text"]').type("Onboard Tester");
+    // Confirm we're on the sign-up page, not redirected to dashboard
+    cy.url({ timeout: 8000 }).should("include", "/sign-up");
+    cy.get('input[type="text"]', { timeout: 8000 }).first().type("Onboard Tester");
     cy.get('input[type="email"]').type(email);
     cy.get('input[type="password"]').type("Cypress123!");
     cy.get('button[type="submit"]').should("not.be.disabled").click();

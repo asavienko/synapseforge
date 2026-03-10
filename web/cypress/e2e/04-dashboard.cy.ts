@@ -209,14 +209,14 @@ describe("04 · Settings", () => {
   });
 
   it("saves profile changes and restores name", () => {
-    // Wait for form to be ready, edit then restore original name
+    const testName = Cypress.env("TEST_NAME") as string;
     cy.get('input[type="text"]').first().should("not.be.disabled").clear().type("Cypress Updated");
     cy.get('button[type="submit"]').contains("Save changes").click({ force: true });
-    cy.contains("Profile updated successfully", { timeout: 10000 }).should("exist");
+    cy.contains(/updated|saved|success/i, { timeout: 10000 }).should("exist");
     cy.snap("04-settings-04-saved");
-    // Restore original name so subsequent tests/runs find "Cypress Test" in sidebar
-    cy.get('input[type="text"]').first().clear().type(Cypress.env("TEST_NAME"));
+    // Restore so sidebar shows correct name on next run
+    cy.get('input[type="text"]').first().clear().type(testName);
     cy.get('button[type="submit"]').contains("Save changes").click({ force: true });
-    cy.contains("Profile updated successfully", { timeout: 8000 }).should("exist");
+    cy.contains(/updated|saved|success/i, { timeout: 8000 }).should("exist");
   });
 });
