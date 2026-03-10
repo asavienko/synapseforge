@@ -13,8 +13,15 @@ export default defineConfig({
     setupNodeEvents(_on, _config) {},
   },
   env: {
+    // Regular test user
     TEST_EMAIL: "cypress@synapseforge.ai",
     TEST_PASSWORD: "Cypress123!",
     TEST_NAME: "Cypress Test",
+    // Admin user (override if your admin has separate credentials)
+    ADMIN_EMAIL: "cypress@synapseforge.ai",
+    ADMIN_PASSWORD: "Cypress123!",
+    // Manager user (set if you have a dedicated manager account)
+    MANAGER_EMAIL: "manager@synapseforge.ai",
+    MANAGER_PASSWORD: "Cypress123!",
   },
 });
