@@ -111,10 +111,14 @@
 ### What You Need Now (Before Taking Paying Customers)
 
 1. **Instance Runtime** — **OpenClaw** (decided)
-   - Primary runtime for all AI agent instances
-   - Clients bring their own API keys (OpenAI, Anthropic, etc.)
-   - Connected to client's chosen channel (Telegram, WhatsApp, Slack, etc.)
-   - Onboarding = configure instance with client keys + connect channel → they can chat immediately
+   - Each client = their own managed OpenClaw instance
+   - Fully isolated per client — their data, their config, their agents
+   - Clients configure their own API keys in the instance settings web UI (no sharing keys between clients)
+   - Supported providers: **OpenAI, Anthropic, OpenRouter** (and any others OpenClaw supports)
+   - Clients can plug in different providers per use case (e.g. GPT-4o for support bot, Claude for long-form, OpenRouter for cost optimization)
+   - From the web UI they can also integrate external services (CRM, Slack, Telegram, WhatsApp, etc.)
+   - Manager has admin access to client's instance for setup, tuning, and troubleshooting
+   - **Key selling point:** Client owns their keys → no vendor lock-in to SynapseForge; they're paying for expertise and management, not access to a proprietary system
 
 2. **Dashboard** — What you have is fine for MVP
    - Instance list, start/stop, basic config
@@ -242,14 +246,23 @@
 
 **Goal:** Client goes from "signed up" to "talking to their AI" in under 30 minutes.
 
-1. **Collect:** Client's API keys (OpenAI / Anthropic / etc.)
-2. **Configure:** Spin up their OpenClaw instance with their keys
-3. **Connect:** Link their preferred channel (Telegram, WhatsApp, Slack, web widget)
-4. **Test:** Manager sends a test message — confirm it works
-5. **Handoff:** Brief intro call or Loom video explaining how to interact with it
-6. **Done:** Client is live
+1. **Provision:** Spin up a fresh OpenClaw instance for the client
+2. **Keys:** Client opens instance settings web UI → enters their own API keys (OpenAI / Anthropic / OpenRouter / etc.)
+   - Manager can guide them through this or do it on a screenshare
+   - Keys stay on their instance — SynapseForge never stores or sees them
+3. **Configure:** Manager sets up the agent (persona, instructions, tone, tools)
+4. **Integrate:** Connect their chosen channel(s) in the instance settings — Telegram, WhatsApp, Slack, web widget, etc.
+5. **Test:** Manager sends a test message through each connected channel — confirm it works end-to-end
+6. **Handoff:** Brief intro call or Loom video — "here's how to chat with your AI, here's how to reach your manager"
+7. **Done:** Client is live
 
 No friction. No "we'll set this up in a few days." Same session if possible.
+
+**Instance settings the client controls (post-onboarding):**
+- Switch or update API keys anytime (e.g. upgrade from gpt-4o-mini to gpt-4o)
+- Add new integrations (new channels, services)
+- View basic usage / message volume
+- Everything else → managed by their assigned manager
 
 ---
 
