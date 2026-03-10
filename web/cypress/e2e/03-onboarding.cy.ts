@@ -26,9 +26,10 @@ describe("03 · Onboarding", () => {
     cy.snap("03-onboard-01-step1");
   });
 
-  it("step 1 — blocks proceed without business name", () => {
+  it("step 1 — Continue is disabled without business name", () => {
     registerFreshUser();
-    cy.contains("Continue").click();
+    // Button is disabled when no business name is entered — correct validation behavior
+    cy.contains("Continue").should("be.disabled");
     cy.url().should("include", "/onboarding");
     cy.snap("03-onboard-02-step1-validation");
   });

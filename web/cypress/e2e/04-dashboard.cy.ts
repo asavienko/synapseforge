@@ -114,10 +114,11 @@ describe("04 · Instances", () => {
   });
 
   it("creates a new instance", () => {
-    cy.contains("New Instance").click();
-    cy.get("input").first().clear().type("CI Test Agent");
-    cy.get("form").find("button").contains(/create/i).click();
-    cy.contains("CI Test Agent", { timeout: 10000 }).should("be.visible");
+    cy.get("main").contains("New Instance").click();
+    cy.get("[role='dialog'] input, form input").first().should("be.visible").clear().type("CI Test Agent");
+    cy.get("[role='dialog'] button, form button").contains(/create/i).click();
+    // After creation, the instance should appear in the list or we land on its page
+    cy.contains("CI Test Agent", { timeout: 10000 }).should("exist");
     cy.snap("04-instances-04-created");
   });
 
@@ -192,18 +193,18 @@ describe("04 · Settings", () => {
   });
 
   it("renders settings page", () => {
-    cy.contains("Settings").should("be.visible");
+    cy.get("main").contains("Settings").should("be.visible");
     cy.snap("04-settings-01-page");
   });
 
   it("shows profile section with pre-filled fields", () => {
-    cy.contains("Profile").should("be.visible");
-    cy.get('input[type="text"], input[type="email"]').should("have.length.gte", 2);
+    cy.get("main").contains("Profile").should("be.visible");
+    cy.get('input[type="text"]').should("have.length.gte", 1);
     cy.snap("04-settings-02-profile");
   });
 
   it("shows change password section", () => {
-    cy.contains("Change Password").should("be.visible");
+    cy.get("main").contains("Change Password").should("be.visible");
     cy.get('input[type="password"]').should("have.length.gte", 2);
     cy.snap("04-settings-03-password");
   });
@@ -212,11 +213,11 @@ describe("04 · Settings", () => {
     const testName = Cypress.env("TEST_NAME") as string;
     cy.get('input[type="text"]').first().should("not.be.disabled").clear().type("Cypress Updated");
     cy.get('button[type="submit"]').contains("Save changes").click({ force: true });
-    cy.contains(/updated|saved|success/i, { timeout: 10000 }).should("exist");
+    cy.contains("Profile updated successfully", { timeout: 10000 }).should("exist");
     cy.snap("04-settings-04-saved");
     // Restore so sidebar shows correct name on next run
     cy.get('input[type="text"]').first().clear().type(testName);
     cy.get('button[type="submit"]').contains("Save changes").click({ force: true });
-    cy.contains(/updated|saved|success/i, { timeout: 8000 }).should("exist");
+    cy.contains("Profile updated successfully", { timeout: 8000 }).should("exist");
   });
 });

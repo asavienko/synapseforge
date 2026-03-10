@@ -10,28 +10,14 @@ describe("07 · Instance Detail", () => {
   let instanceId: string;
 
   before(() => {
-    // Login + create instance via UI to ensure cookies are sent correctly
+    // Use the seeded Cypress Agent — navigate to it and extract ID from URL
     cy.login(EMAIL(), PASS());
     cy.visit("/en/dashboard/instances");
-    cy.contains("New Instance").click();
-    cy.get("input").first().clear().type("Detail Test Agent");
-    cy.get("form").find("button").contains(/create/i).click();
-    cy.contains("Detail Test Agent", { timeout: 10000 }).should("exist");
-    // Grab the instance id from the URL or the list
-    cy.url().then((url) => {
-      // If we're redirected to instance page, get id from URL
+    // Click the seeded Cypress Agent instance to go to its detail page
+    cy.contains("Cypress Agent", { timeout: 10000 }).click();
+    cy.url({ timeout: 10000 }).should("match", /instances\/[^/?]+/).then((url) => {
       const match = url.match(/instances\/([^/?]+)/);
-      if (match) {
-        instanceId = match[1];
-      }
-    });
-    // If not in URL, get from API after page load
-    cy.request({ url: "/api/instances", failOnStatusCode: false }).then((res) => {
-      if (res.body?.length > 0) {
-        const detail = res.body.find((i: { name: string; id: string }) => i.name === "Detail Test Agent");
-        if (detail) instanceId = detail.id;
-        else instanceId = res.body[0].id;
-      }
+      if (match) instanceId = match[1];
     });
   });
 
@@ -47,7 +33,7 @@ describe("07 · Instance Detail", () => {
   });
 
   it("renders the instance detail page — Overview tab", () => {
-    cy.get("main").contains("Detail Test Agent").should("be.visible");
+    cy.get("main").contains("Cypress Agent").should("be.visible");
     cy.get("main").contains("Overview").should("be.visible");
     cy.snap("07-detail-01-overview");
   });
