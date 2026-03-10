@@ -1,6 +1,6 @@
 import "./commands";
 
-// Suppress Next.js hydration noise in tests
+// Suppress Next.js hydration noise and known benign errors
 Cypress.on("uncaught:exception", (err) => {
   if (
     err.message.includes("Hydration") ||
@@ -12,9 +12,9 @@ Cypress.on("uncaught:exception", (err) => {
   }
 });
 
-// Clear cookies + storage before each test to prevent session bleed
-// cy.session() will restore sessions when cy.login() is called
+// Clear localStorage before each test.
+// NOTE: Do NOT clear cookies globally — it breaks cy.session() session restoration.
+// Tests that need a logged-out state should call cy.clearCookies() explicitly.
 beforeEach(() => {
-  cy.clearCookies();
   cy.clearLocalStorage();
 });

@@ -76,6 +76,7 @@ describe("01 · Landing Page", () => {
 
   it("CTA navigates to sign up (logged out)", () => {
     cy.clearCookies();
+    cy.clearAllSessionStorage();
     cy.visit("/en");
     cy.contains("Get started free").first().click();
     cy.url().should("include", "/sign-up");
@@ -84,6 +85,7 @@ describe("01 · Landing Page", () => {
 
   it("nav sign in navigates to sign in (logged out)", () => {
     cy.clearCookies();
+    cy.clearAllSessionStorage();
     cy.visit("/en");
     cy.get("nav").contains("Sign in").click();
     cy.url().should("include", "/sign-in");

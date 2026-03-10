@@ -17,11 +17,13 @@ describe("02 · Sign Up", () => {
 
   it("registers a new user and lands on onboarding", () => {
     const email = `cypress-reg-${Date.now()}@synapseforge.ai`;
+    cy.clearCookies();
+    cy.clearAllSessionStorage();
     cy.visit("/en/sign-up");
     cy.get('input[type="text"]').type("New User");
     cy.get('input[type="email"]').type(email);
     cy.get('input[type="password"]').type("Cypress123!");
-    cy.get('button[type="submit"]').click();
+    cy.get('button[type="submit"]').should("not.be.disabled").click();
     cy.url({ timeout: 15000 }).should("include", "/onboarding");
     cy.snap("02-signup-03-success");
   });
