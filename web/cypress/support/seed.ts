@@ -14,9 +14,19 @@ async function main() {
   const name = "Cypress Test";
   const password = "Cypress123!";
 
-  const existing = await prisma.user.findUnique({ where: { email } });
+  const existing = await prisma.user.findUnique({
+    where: { email },
+    include: { instances: true },
+  });
   if (existing) {
     console.log(`✅ Test user already exists: ${email}`);
+    // Ensure the seeded instance still exists
+    if (existing.instances.length === 0) {
+      await (prisma as unknown as { aIInstance: { create: (args: unknown) => Promise<unknown> } }).aIInstance.create({
+        data: { name: "Cypress Agent", type: "assistant", status: "running", tier: "minimal", userId: existing.id },
+      });
+      console.log(`✅ Re-created missing Cypress Agent instance`);
+    }
     return;
   }
 

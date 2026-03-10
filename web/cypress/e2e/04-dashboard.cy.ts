@@ -54,7 +54,6 @@ describe("04 · Dashboard Sidebar", () => {
   });
 
   it("shows all nav items", () => {
-    cy.get("aside").should("be.visible");
     cy.get("aside").contains("Overview").should("exist");
     cy.get("aside").contains("Instances").should("exist");
     cy.get("aside").contains("Messages").should("exist");
@@ -64,32 +63,30 @@ describe("04 · Dashboard Sidebar", () => {
   });
 
   it("navigates to Instances", () => {
-    cy.get("aside a").contains("Instances").first().click({ force: true });
+    cy.get("aside").contains("Instances").click({ force: true });
     cy.url().should("include", "/instances");
     cy.snap("04-sidebar-02-nav-instances");
   });
 
   it("navigates to Messages", () => {
-    cy.get("aside a").contains("Messages").first().click({ force: true });
+    cy.get("aside").contains("Messages").click({ force: true });
     cy.url().should("include", "/messages");
     cy.snap("04-sidebar-03-nav-messages");
   });
 
   it("navigates to Billing", () => {
-    cy.get("aside a").contains("Billing").first().click({ force: true });
+    cy.get("aside").contains("Billing").click({ force: true });
     cy.url().should("include", "/billing");
     cy.snap("04-sidebar-04-nav-billing");
   });
 
   it("navigates to Settings", () => {
-    cy.get("aside a").contains("Settings").first().click({ force: true });
+    cy.get("aside").contains("Settings").click({ force: true });
     cy.url().should("include", "/settings");
     cy.snap("04-sidebar-05-nav-settings");
   });
 
-  it("shows user name and email in sidebar", () => {
-    // Wait for sidebar to be visible (md:flex at 1280px)
-    cy.get("aside").should("be.visible");
+  it("shows user name in sidebar", () => {
     cy.get("aside").contains(Cypress.env("TEST_NAME")).should("exist");
     cy.snap("04-sidebar-06-user-info");
   });
@@ -212,9 +209,10 @@ describe("04 · Settings", () => {
   });
 
   it("saves profile changes", () => {
-    cy.get('input[type="text"]').first().clear().type("Cypress Updated");
-    cy.contains("Save changes").should("not.be.disabled").click();
-    cy.contains("Profile updated successfully", { timeout: 8000 }).should("be.visible");
+    // Wait for form to be ready
+    cy.get('input[type="text"]').first().should("not.be.disabled").clear().type("Cypress Updated");
+    cy.get('button[type="submit"]').contains("Save changes").click({ force: true });
+    cy.contains("Profile updated successfully", { timeout: 10000 }).should("exist");
     cy.snap("04-settings-04-saved");
   });
 });

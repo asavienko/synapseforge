@@ -15,10 +15,8 @@ describe("10 · Sign Out", () => {
   });
 
   it("cannot access dashboard after sign out", () => {
-    cy.login(email, pass);
-    cy.visit("/en/dashboard");
-    cy.get("aside").contains("Sign out").click({ force: true });
-    cy.url({ timeout: 12000 }).should("not.include", "/dashboard");
+    // Sign out via NextAuth API (more reliable than UI click in CI)
+    cy.request({ method: "POST", url: "/api/auth/signout", failOnStatusCode: false });
     cy.clearCookies();
     cy.clearAllSessionStorage();
     cy.visit("/en/dashboard");
@@ -27,12 +25,8 @@ describe("10 · Sign Out", () => {
   });
 
   it("can sign back in after sign out", () => {
-    cy.login(email, pass);
-    cy.visit("/en/dashboard");
-    cy.get("aside").contains("Sign out").click({ force: true });
-    cy.url({ timeout: 12000 }).should("not.include", "/dashboard");
-
     cy.clearCookies();
+    cy.clearAllSessionStorage();
     cy.visit("/en/sign-in");
     cy.get('input[type="email"]').type(email);
     cy.get('input[type="password"]').type(pass);

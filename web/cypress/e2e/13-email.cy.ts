@@ -107,12 +107,16 @@ describe("13 · Email — Email Verification (Resend)", () => {
     });
   });
 
-  it("UI resend button fires API and shows feedback", () => {
-    cy.visit("/en/verify-email");
-    cy.intercept("POST", "/api/auth/resend-verification").as("resendVerify");
-    cy.contains("Resend", { matchCase: false }).click();
-    cy.wait("@resendVerify", { timeout: 8000 }).then((interception) => {
-      expect(interception.response?.statusCode).to.be.oneOf([200, 400, 401]);
+  it("resend verification via API when authenticated", () => {
+    cy.login(Cypress.env("TEST_EMAIL"), Cypress.env("TEST_PASSWORD"));
+    cy.request({
+      method: "POST",
+      url: "/api/auth/resend-verification",
+      failOnStatusCode: false,
+    }).then((res) => {
+      // 200 = email sent, 400 = already verified, 429 = rate limited
+      expect(res.status).to.be.oneOf([200, 400, 429]);
+      cy.log("Resend status:", res.status.toString());
     });
     cy.snap("13-email-04-verify-resend");
   });

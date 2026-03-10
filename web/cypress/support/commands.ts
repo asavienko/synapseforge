@@ -2,19 +2,29 @@
 
 /**
  * cy.login(email, password)
- * Fast session-cached login — reuses cookie across tests in same spec.
+ * Session-cached login with validation. If session is invalid, re-runs login flow.
  */
 Cypress.Commands.add("login", (email: string, password: string) => {
   cy.session(
     [email, password],
     () => {
+      cy.clearCookies();
       cy.visit("/en/sign-in");
       cy.get('input[type="email"]').type(email);
       cy.get('input[type="password"]').type(password);
-      cy.get('button[type="submit"]').click();
+      cy.get('button[type="submit"]').should("not.be.disabled").click();
       cy.url({ timeout: 15000 }).should("include", "/dashboard");
     },
-    { cacheAcrossSpecs: true }
+    {
+      cacheAcrossSpecs: true,
+      validate() {
+        // Re-run login if session cookie is missing/expired
+        cy.request({
+          url: "/api/auth/session",
+          failOnStatusCode: false,
+        }).its("body.user").should("exist");
+      },
+    }
   );
 });
 
