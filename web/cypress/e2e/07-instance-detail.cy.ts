@@ -10,15 +10,17 @@ describe("07 · Instance Detail", () => {
   let instanceId: string;
 
   before(() => {
-    // Use the seeded Cypress Agent — navigate to it and extract ID from URL
+    // Navigate to the Cypress Agent instance and extract its ID from the URL
     cy.login(EMAIL(), PASS());
     cy.visit("/en/dashboard/instances");
-    // Click the seeded Cypress Agent instance to go to its detail page
-    cy.contains("Cypress Agent", { timeout: 10000 }).click();
-    cy.url({ timeout: 10000 }).should("match", /instances\/[^/?]+/).then((url) => {
-      const match = url.match(/instances\/([^/?]+)/);
+    // The instance list renders as <Link href="/dashboard/instances/{id}"> cards
+    cy.get("a[href*='/dashboard/instances/']", { timeout: 10000 }).first().then(($link) => {
+      const href = $link.attr("href") ?? "";
+      const match = href.match(/instances\/([^/?]+)/);
       if (match) instanceId = match[1];
+      cy.wrap($link).click();
     });
+    cy.url({ timeout: 10000 }).should("match", /instances\/[^/?]+/);
   });
 
   beforeEach(() => {

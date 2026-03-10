@@ -16,10 +16,22 @@
   "services": {
     "title": "What We Build For You",
     "subtitle": "Every client gets a dedicated manager and a custom AI stack. No DIY, no guesswork.",
-    "agents": { "title": "AI Agents & Assistants", "desc": "Customer support bots, sales assistants, and internal helpdesks — trained on your data, ready to deploy." },
-    "integrations": { "title": "Integrations & Pipelines", "desc": "Connect your CRM, Slack, email, and databases. We build the data pipelines that make your AI actually useful." },
-    "automation": { "title": "Workflow Automation", "desc": "Eliminate repetitive work. We automate your internal processes using AI and connect them to your existing tools." },
-    "consulting": { "title": "AI Strategy & Consulting", "desc": "Not sure where to start? We audit your workflows, identify the highest-ROI opportunities, and build a roadmap." }
+    "agents": {
+      "title": "AI Agents & Assistants",
+      "desc": "Customer support bots, sales assistants, and internal helpdesks — trained on your data, ready to deploy."
+    },
+    "integrations": {
+      "title": "Integrations & Pipelines",
+      "desc": "Connect your CRM, Slack, email, and databases. We build the data pipelines that make your AI actually useful."
+    },
+    "automation": {
+      "title": "Workflow Automation",
+      "desc": "Eliminate repetitive work. We automate your internal processes using AI and connect them to your existing tools."
+    },
+    "consulting": {
+      "title": "AI Strategy & Consulting",
+      "desc": "Not sure where to start? We audit your workflows, identify the highest-ROI opportunities, and build a roadmap."
+    }
   },
   "pricing": {
     "title": "Simple, Transparent Pricing",
@@ -174,12 +186,30 @@
       "Other": "Other"
     },
     "useCases": {
-      "customer-support": { "label": "Customer Support", "desc": "Handle inquiries, FAQs, tickets" },
-      "sales-assistant": { "label": "Sales Assistant", "desc": "Qualify leads, answer product questions" },
-      "data-analyst": { "label": "Data & Analytics", "desc": "Query data, generate reports" },
-      "internal-tools": { "label": "Internal Automation", "desc": "Automate workflows, internal helpdesk" },
-      "content": { "label": "Content Creation", "desc": "Drafts, summaries, translations" },
-      "custom": { "label": "Something else", "desc": "My manager will help me figure it out" }
+      "customer-support": {
+        "label": "Customer Support",
+        "desc": "Handle inquiries, FAQs, tickets"
+      },
+      "sales-assistant": {
+        "label": "Sales Assistant",
+        "desc": "Qualify leads, answer product questions"
+      },
+      "data-analyst": {
+        "label": "Data & Analytics",
+        "desc": "Query data, generate reports"
+      },
+      "internal-tools": {
+        "label": "Internal Automation",
+        "desc": "Automate workflows, internal helpdesk"
+      },
+      "content": {
+        "label": "Content Creation",
+        "desc": "Drafts, summaries, translations"
+      },
+      "custom": {
+        "label": "Something else",
+        "desc": "My manager will help me figure it out"
+      }
     }
   },
   "dashboard": {
@@ -253,5 +283,9 @@
     "upgrade": "Upgrade plan",
     "learnMore": "Learn more",
     "synapseforge": "SynapseForge"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Have a question? Drop us a line."
   }
 }

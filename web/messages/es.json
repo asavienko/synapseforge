@@ -16,17 +16,47 @@
   "services": {
     "title": "Lo Que Construimos Para Ti",
     "subtitle": "Cada cliente recibe un gestor dedicado y un stack de IA personalizado. Sin bricolaje, sin suposiciones.",
-    "agents": { "title": "Agentes y Asistentes de IA", "desc": "Bots de atención al cliente, asistentes de ventas y helpdesks internos — entrenados con tus datos, listos para desplegar." },
-    "integrations": { "title": "Integraciones y Pipelines", "desc": "Conecta tu CRM, Slack, email y bases de datos. Construimos los pipelines de datos que hacen tu IA realmente útil." },
-    "automation": { "title": "Automatización de Flujos de Trabajo", "desc": "Elimina el trabajo repetitivo. Automatizamos tus procesos internos usando IA y los conectamos a tus herramientas existentes." },
-    "consulting": { "title": "Estrategia y Consultoría de IA", "desc": "¿No sabes por dónde empezar? Auditamos tus flujos de trabajo, identificamos las oportunidades de mayor ROI y construimos una hoja de ruta." }
+    "agents": {
+      "title": "Agentes y Asistentes de IA",
+      "desc": "Bots de atención al cliente, asistentes de ventas y helpdesks internos — entrenados con tus datos, listos para desplegar."
+    },
+    "integrations": {
+      "title": "Integraciones y Pipelines",
+      "desc": "Conecta tu CRM, Slack, email y bases de datos. Construimos los pipelines de datos que hacen tu IA realmente útil."
+    },
+    "automation": {
+      "title": "Automatización de Flujos de Trabajo",
+      "desc": "Elimina el trabajo repetitivo. Automatizamos tus procesos internos usando IA y los conectamos a tus herramientas existentes."
+    },
+    "consulting": {
+      "title": "Estrategia y Consultoría de IA",
+      "desc": "¿No sabes por dónde empezar? Auditamos tus flujos de trabajo, identificamos las oportunidades de mayor ROI y construimos una hoja de ruta."
+    }
   },
   "pricing": {
     "title": "Precios Simples y Transparentes",
     "subtitle": "Empieza gratis, actualiza cuando necesites más.",
-    "free": { "name": "Gratis", "price": "$0", "period": "para siempre", "desc": "Perfecto para empezar", "cta": "Empieza gratis" },
-    "pro": { "name": "Pro", "price": "$499", "period": "/ mes", "desc": "Para negocios en crecimiento", "cta": "Comenzar" },
-    "enterprise": { "name": "Enterprise", "price": "Personalizado", "period": "", "desc": "Para grandes organizaciones", "cta": "Contáctanos" },
+    "free": {
+      "name": "Gratis",
+      "price": "$0",
+      "period": "para siempre",
+      "desc": "Perfecto para empezar",
+      "cta": "Empieza gratis"
+    },
+    "pro": {
+      "name": "Pro",
+      "price": "$499",
+      "period": "/ mes",
+      "desc": "Para negocios en crecimiento",
+      "cta": "Comenzar"
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "price": "Personalizado",
+      "period": "",
+      "desc": "Para grandes organizaciones",
+      "cta": "Contáctanos"
+    },
     "features": {
       "freeInstance": "1 instancia de IA",
       "managerAssigned": "Gestor asignado",
@@ -156,12 +186,30 @@
       "Other": "Otro"
     },
     "useCases": {
-      "customer-support": { "label": "Atención al Cliente", "desc": "Gestiona consultas, FAQs, tickets" },
-      "sales-assistant": { "label": "Asistente de Ventas", "desc": "Califica leads, responde preguntas sobre productos" },
-      "data-analyst": { "label": "Datos y Análisis", "desc": "Consulta datos, genera informes" },
-      "internal-tools": { "label": "Automatización Interna", "desc": "Automatiza flujos de trabajo, helpdesk interno" },
-      "content": { "label": "Creación de Contenido", "desc": "Borradores, resúmenes, traducciones" },
-      "custom": { "label": "Otra cosa", "desc": "Mi gestor me ayudará a descubrirlo" }
+      "customer-support": {
+        "label": "Atención al Cliente",
+        "desc": "Gestiona consultas, FAQs, tickets"
+      },
+      "sales-assistant": {
+        "label": "Asistente de Ventas",
+        "desc": "Califica leads, responde preguntas sobre productos"
+      },
+      "data-analyst": {
+        "label": "Datos y Análisis",
+        "desc": "Consulta datos, genera informes"
+      },
+      "internal-tools": {
+        "label": "Automatización Interna",
+        "desc": "Automatiza flujos de trabajo, helpdesk interno"
+      },
+      "content": {
+        "label": "Creación de Contenido",
+        "desc": "Borradores, resúmenes, traducciones"
+      },
+      "custom": {
+        "label": "Otra cosa",
+        "desc": "Mi gestor me ayudará a descubrirlo"
+      }
     }
   },
   "dashboard": {
@@ -235,5 +283,9 @@
     "upgrade": "Mejorar plan",
     "learnMore": "Más información",
     "synapseforge": "SynapseForge"
+  },
+  "contact": {
+    "title": "Contáctanos",
+    "subtitle": "¿Tienes una pregunta? Escríbenos."
   }
 }
