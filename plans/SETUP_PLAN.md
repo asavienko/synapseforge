@@ -140,16 +140,40 @@
    - Subscription management
    - Usage tracking (for overages)
 
-5. **Monitoring** — Per-instance uptime checks
+5. **Monitoring + Health Checks** — Per-instance
    - UptimeRobot or Betterstack (free tier covers many endpoints)
    - Alert to your Slack/Telegram when an instance goes down
+   - Health check: periodic ping to OpenClaw gateway API → verify it responds correctly
+   - If health check fails N times in a row → auto-alert manager + flag for potential rollback
    - SLA promises require you to actually know when things break
+
+6. **Incremental Snapshots + Rollback** — Per-instance resilience
+   - **What to snapshot:** OpenClaw config/data directory (`~/.openclaw/`) — this is where all settings, agent configs, and state live
+   - **Tool:** [Restic](https://restic.net/) — fast, incremental, encrypted backups; works with S3, Backblaze B2, or local storage
+   - **Schedule:** Snapshot every hour (or after any config change), keep last 24h hourly + 7 days daily
+   - **Storage cost:** Backblaze B2 is ~$0.006/GB/mo — negligible per client
+   - **Health check integration:**
+     - Run a health check before and after any settings change
+     - If post-change health check fails → auto-rollback to last known-good snapshot
+     - If OpenClaw gateway crashes or behaves unexpectedly → alert + option to rollback manually
+   - **Rollback process:** `restic restore <snapshot-id> --target ~/.openclaw/` → restart OpenClaw gateway → verify health
+   - **Snapshots are tagged:** `healthy` tag applied to any snapshot where health check passed — rollback always targets latest `healthy` snapshot
+   - **Manager dashboard (future):** List snapshots per client instance + 1-click rollback button
 
 ### What Can Wait
 
 - Fully automated provisioning (do it manually for first 10 clients, then automate)
+- Manager dashboard with 1-click rollback UI (do it via CLI for now)
 - Advanced analytics (start with simple counters)
 - White-label (only when you have 2+ agency clients asking)
+
+### Ship Before First Paying Client
+
+- [ ] Restic installed on each instance + backup repo configured (Backblaze B2)
+- [ ] Hourly snapshot cron job running
+- [ ] Health check script (curl OpenClaw gateway → check response) running every 5 min
+- [ ] Alert on health check failure (Telegram/Slack webhook)
+- [ ] Rollback tested and documented (you need to know it works before you promise it)
 
 ---
 
@@ -242,6 +266,8 @@
 | Geographic focus | US / EU / Global | Start with your timezone (EU) |
 | Referral program | None / Credits / Cash | ✅ **10% of spend for 6mo + 1 free month for invitee** |
 | GDPR/Legal | DIY / Template / Lawyer | ✅ **Proper DPA + ToS required** |
+| Snapshots/backup | VPS snapshots / App-level / None | ✅ **Restic incremental on ~/.openclaw/ → Backblaze B2** |
+| Rollback trigger | Manual / Auto / Both | ✅ **Auto-alert on health fail + manual rollback via CLI** |
 
 ---
 
