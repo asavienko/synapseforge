@@ -67,7 +67,13 @@
 
 **Purpose:** Core revenue tier. This is your bread and butter.
 
-**Break-even math:** If you pay a manager $3k/mo and they handle 10 clients = $300 cost per client. At $499/mo, you make $199/client. Scale to 20 clients/manager = $199 × 20 = $3,980 margin per manager.
+**Break-even math (updated with infra cost):**
+- Manager: $3k/mo ÷ 10 clients = $300/client
+- Infrastructure: ~$8/mo per client (VPS)
+- Total cost per Pro client: ~$308/mo
+- Revenue per Pro client: $499/mo
+- **Margin per Pro client: ~$191/mo**
+- At 20 clients/manager: $191 × 20 = **$3,820/mo profit per manager**
 
 ---
 
@@ -111,8 +117,8 @@
 ### What You Need Now (Before Taking Paying Customers)
 
 1. **Instance Runtime** — **OpenClaw** (decided)
-   - Each client = their own managed OpenClaw instance
-   - Fully isolated per client — their data, their config, their agents
+   - Each client = their own managed OpenClaw instance on **separate infrastructure** (separate VPS/server)
+   - True isolation — no shared resources, no noisy neighbor problems, no cross-client data risk
    - Clients configure their own API keys in the instance settings web UI (no sharing keys between clients)
    - Supported providers: **OpenAI, Anthropic, OpenRouter** (and any others OpenClaw supports)
    - Clients can plug in different providers per use case (e.g. GPT-4o for support bot, Claude for long-form, OpenRouter for cost optimization)
@@ -124,17 +130,24 @@
    - Instance list, start/stop, basic config
    - Manager messaging (Phase 1 ✅)
 
-3. **Billing** — Stripe integration
+3. **Infrastructure per client** — one VPS per OpenClaw instance
+   - Recommended: Hetzner CX22 (~€4–6/mo) or DigitalOcean Basic ($6/mo) per client
+   - At scale: bake this into pricing — it's a small but real cost
+   - Automate provisioning early (Ansible, shell script, or Coolify) — manual setup doesn't scale past 10 clients
+   - Cost model: ~$6–10/mo per client for infra → easily absorbed in Pro/Enterprise margins
+
+4. **Billing** — Stripe integration
    - Subscription management
    - Usage tracking (for overages)
 
-4. **Monitoring** — Simple uptime checks
-   - UptimeRobot or Pingdom free tier
-   - Alert to your email/Slack
+5. **Monitoring** — Per-instance uptime checks
+   - UptimeRobot or Betterstack (free tier covers many endpoints)
+   - Alert to your Slack/Telegram when an instance goes down
+   - SLA promises require you to actually know when things break
 
 ### What Can Wait
 
-- Custom AI hosting (use APIs for now)
+- Fully automated provisioning (do it manually for first 10 clients, then automate)
 - Advanced analytics (start with simple counters)
 - White-label (only when you have 2+ agency clients asking)
 
