@@ -27,6 +27,8 @@ if (typeof setInterval !== "undefined") {
  * @param windowMs Window size in milliseconds
  */
 export function rateLimit(key: string, max: number, windowMs: number): boolean {
+  // Bypass rate limiting in CI/test environment
+  if (process.env.DISABLE_RATE_LIMIT === "true") return true;
   const now = Date.now();
   const entry = store.get(key);
 
