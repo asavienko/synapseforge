@@ -1,0 +1,257 @@
+{
+  "nav": {
+    "services": "Services",
+    "pricing": "Pricing",
+    "about": "About",
+    "signIn": "Sign in",
+    "getStarted": "Get started free"
+  },
+  "hero": {
+    "badge": "Managed AI Services",
+    "title": "Your AI Stack, Fully Managed",
+    "subtitle": "Deploy AI agents, automate workflows, and connect your tools — all managed by a dedicated expert team.",
+    "cta": "Get started free",
+    "ctaSecondary": "See what we build"
+  },
+  "services": {
+    "title": "What We Build For You",
+    "subtitle": "Every client gets a dedicated manager and a custom AI stack. No DIY, no guesswork.",
+    "agents": { "title": "AI Agents & Assistants", "desc": "Customer support bots, sales assistants, and internal helpdesks — trained on your data, ready to deploy." },
+    "integrations": { "title": "Integrations & Pipelines", "desc": "Connect your CRM, Slack, email, and databases. We build the data pipelines that make your AI actually useful." },
+    "automation": { "title": "Workflow Automation", "desc": "Eliminate repetitive work. We automate your internal processes using AI and connect them to your existing tools." },
+    "consulting": { "title": "AI Strategy & Consulting", "desc": "Not sure where to start? We audit your workflows, identify the highest-ROI opportunities, and build a roadmap." }
+  },
+  "pricing": {
+    "title": "Simple, Transparent Pricing",
+    "subtitle": "Start free, upgrade when you need more.",
+    "free": {
+      "name": "Free",
+      "price": "$0",
+      "period": "forever",
+      "desc": "Perfect for getting started",
+      "cta": "Get started free"
+    },
+    "pro": {
+      "name": "Pro",
+      "price": "$499",
+      "period": "/ month",
+      "desc": "For growing businesses",
+      "cta": "Get started"
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "price": "Custom",
+      "period": "",
+      "desc": "For large organizations",
+      "cta": "Contact us"
+    },
+    "features": {
+      "freeInstance": "1 AI instance",
+      "managerAssigned": "Manager assigned",
+      "inAppMsg": "In-app messaging",
+      "communitySupport": "Community support",
+      "proInstances": "Up to 3 AI instances",
+      "humanManager": "Dedicated human manager",
+      "response24h": "24h response time",
+      "customConfig": "Custom configurations",
+      "integrations": "CRM & Slack integrations",
+      "sla99": "99% uptime SLA",
+      "unlimitedInstances": "Unlimited AI instances",
+      "managerTeam": "Dedicated manager team",
+      "sla4h": "4h response SLA",
+      "customIntegrations": "Custom integrations",
+      "teamTraining": "Team training",
+      "whiteLabel": "White-label option"
+    },
+    "popular": "Most popular"
+  },
+  "about": {
+    "title": "We Forge the AI Stack So You Don't Have To",
+    "subtitle": "SynapseForge was built for businesses that want real AI outcomes — not another SaaS tool to figure out. We handle deployment, configuration, and ongoing management so your team can focus on what matters.",
+    "setup": "<30min",
+    "setupLabel": "Time to first AI instance",
+    "response": "24h",
+    "responseLabel": "Manager response time",
+    "uptime": "99%",
+    "uptimeLabel": "Uptime SLA (Pro+)"
+  },
+  "footer": {
+    "tagline": "We forge the AI stack so you don't have to.",
+    "product": "Product",
+    "company": "Company",
+    "features": "Features",
+    "pricing": "Pricing",
+    "dashboard": "Dashboard",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "contact": "Contact",
+    "rights": "All rights reserved."
+  },
+  "auth": {
+    "signIn": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to your SynapseForge account",
+      "email": "Email address",
+      "password": "Password",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign in",
+      "noAccount": "Don't have an account?",
+      "signUpLink": "Sign up",
+      "error": "Invalid email or password."
+    },
+    "signUp": {
+      "title": "Create your account",
+      "subtitle": "Start with one free AI instance",
+      "name": "Full name",
+      "email": "Email address",
+      "password": "Password",
+      "passwordHint": "Min. 8 characters",
+      "submit": "Create account",
+      "hasAccount": "Already have an account?",
+      "signInLink": "Sign in",
+      "terms": "By signing up, you agree to our",
+      "termsLink": "Terms of Service",
+      "and": "and",
+      "privacyLink": "Privacy Policy"
+    },
+    "forgotPassword": {
+      "title": "Forgot your password?",
+      "subtitle": "Enter your email and we'll send a reset link.",
+      "email": "Email address",
+      "submit": "Send reset link",
+      "backToSignIn": "Back to sign in",
+      "successTitle": "Check your inbox",
+      "successDesc": "If an account exists for {email}, you'll receive a password reset link shortly."
+    },
+    "resetPassword": {
+      "title": "Set new password",
+      "subtitle": "Choose a strong password for your account.",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm password",
+      "passwordHint": "Min. 8 characters",
+      "repeatPassword": "Repeat password",
+      "submit": "Update password",
+      "successTitle": "Password updated!",
+      "successDesc": "Redirecting to sign in...",
+      "mismatch": "Passwords do not match.",
+      "invalidLink": "Invalid reset link.",
+      "requestNew": "Request a new one."
+    },
+    "verifyEmail": {
+      "title": "Verify your email",
+      "subtitle": "We sent a verification link to your email.",
+      "resend": "Resend verification email",
+      "backToSignIn": "Back to sign in",
+      "successMsg": "Verification email sent! Check your inbox."
+    }
+  },
+  "onboarding": {
+    "step1Title": "Tell us about your business",
+    "step1Subtitle": "This helps your manager prepare the right setup",
+    "businessName": "Business / company name",
+    "businessPlaceholder": "Acme Inc.",
+    "industry": "Industry",
+    "selectIndustry": "Select your industry",
+    "step2Title": "What do you need AI for?",
+    "step2Subtitle": "Pick your primary use case — you can always add more",
+    "step3Title": "You're all set! ⚡",
+    "step3Desc": "A dedicated manager will review your setup and reach out shortly. They'll help configure your AI instance for {business}.",
+    "businessLabel": "Business",
+    "industryLabel": "Industry",
+    "useCaseLabel": "Use case",
+    "continue": "Continue",
+    "back": "Back",
+    "goToDashboard": "Go to Dashboard →",
+    "industries": {
+      "SaaS / Software": "SaaS / Software",
+      "E-commerce": "E-commerce",
+      "Healthcare": "Healthcare",
+      "Finance": "Finance",
+      "Education": "Education",
+      "Agency": "Agency",
+      "Real Estate": "Real Estate",
+      "Hospitality": "Hospitality",
+      "Other": "Other"
+    },
+    "useCases": {
+      "customer-support": { "label": "Customer Support", "desc": "Handle inquiries, FAQs, tickets" },
+      "sales-assistant": { "label": "Sales Assistant", "desc": "Qualify leads, answer product questions" },
+      "data-analyst": { "label": "Data & Analytics", "desc": "Query data, generate reports" },
+      "internal-tools": { "label": "Internal Automation", "desc": "Automate workflows, internal helpdesk" },
+      "content": { "label": "Content Creation", "desc": "Drafts, summaries, translations" },
+      "custom": { "label": "Something else", "desc": "My manager will help me figure it out" }
+    }
+  },
+  "dashboard": {
+    "greeting": "Good to see you, {name} 👋",
+    "greetingSubtitle": "Here's what's happening with your AI instances.",
+    "instances": "Instances",
+    "running": "Running",
+    "plan": "Plan",
+    "gettingStarted": "Getting Started",
+    "recentActivity": "Recent Activity",
+    "noActivity": "No activity yet.",
+    "yourManager": "Your Manager",
+    "noManager": "No manager assigned yet",
+    "noManagerDesc": "A manager will be assigned to your account shortly.",
+    "messageManager": "Message Manager",
+    "steps": {
+      "onboarding": "Complete onboarding",
+      "managerAssigned": "Manager assigned to your account",
+      "configureInstance": "Configure your AI instance",
+      "generateKey": "Generate an API key",
+      "messageManager": "Message your manager"
+    },
+    "nav": {
+      "overview": "Overview",
+      "instances": "Instances",
+      "messages": "Messages",
+      "billing": "Billing",
+      "settings": "Settings",
+      "signOut": "Sign out"
+    },
+    "billing": {
+      "title": "Billing & Plans",
+      "subtitle": "Manage your subscription and plan.",
+      "currentPlan": "Current Plan",
+      "renews": "Renews",
+      "manageSubscription": "Manage subscription",
+      "mostPopular": "Most popular",
+      "downgradeViaSupport": "Downgrade via support",
+      "annualNote": "Annual plans available — 2 months free. Contact your manager or",
+      "annualNoteEmail": "hello@synapseforge.ai",
+      "annualNoteSetup": "to set up.",
+      "success": "Payment successful! Your plan has been upgraded.",
+      "cancelled": "Checkout was cancelled. No charges were made."
+    },
+    "settings": {
+      "title": "Settings",
+      "profileSection": "Profile",
+      "name": "Name",
+      "email": "Email",
+      "saveProfile": "Save changes",
+      "passwordSection": "Change Password",
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm new password",
+      "updatePassword": "Update password",
+      "saved": "Saved!",
+      "passwordUpdated": "Password updated!"
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong.",
+    "back": "Back",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "close": "Close",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "upgrade": "Upgrade plan",
+    "learnMore": "Learn more",
+    "synapseforge": "SynapseForge"
+  }
+}

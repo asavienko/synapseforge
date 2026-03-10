@@ -1,0 +1,239 @@
+{
+  "nav": {
+    "services": "Servicios",
+    "pricing": "Precios",
+    "about": "Nosotros",
+    "signIn": "Iniciar sesión",
+    "getStarted": "Empieza gratis"
+  },
+  "hero": {
+    "badge": "Servicios de IA Gestionada",
+    "title": "Tu Stack de IA, Completamente Gestionado",
+    "subtitle": "Despliega agentes de IA, automatiza flujos de trabajo y conecta tus herramientas — todo gestionado por un equipo experto dedicado.",
+    "cta": "Empieza gratis",
+    "ctaSecondary": "Ve lo que construimos"
+  },
+  "services": {
+    "title": "Lo Que Construimos Para Ti",
+    "subtitle": "Cada cliente recibe un gestor dedicado y un stack de IA personalizado. Sin bricolaje, sin suposiciones.",
+    "agents": { "title": "Agentes y Asistentes de IA", "desc": "Bots de atención al cliente, asistentes de ventas y helpdesks internos — entrenados con tus datos, listos para desplegar." },
+    "integrations": { "title": "Integraciones y Pipelines", "desc": "Conecta tu CRM, Slack, email y bases de datos. Construimos los pipelines de datos que hacen tu IA realmente útil." },
+    "automation": { "title": "Automatización de Flujos de Trabajo", "desc": "Elimina el trabajo repetitivo. Automatizamos tus procesos internos usando IA y los conectamos a tus herramientas existentes." },
+    "consulting": { "title": "Estrategia y Consultoría de IA", "desc": "¿No sabes por dónde empezar? Auditamos tus flujos de trabajo, identificamos las oportunidades de mayor ROI y construimos una hoja de ruta." }
+  },
+  "pricing": {
+    "title": "Precios Simples y Transparentes",
+    "subtitle": "Empieza gratis, actualiza cuando necesites más.",
+    "free": { "name": "Gratis", "price": "$0", "period": "para siempre", "desc": "Perfecto para empezar", "cta": "Empieza gratis" },
+    "pro": { "name": "Pro", "price": "$499", "period": "/ mes", "desc": "Para negocios en crecimiento", "cta": "Comenzar" },
+    "enterprise": { "name": "Enterprise", "price": "Personalizado", "period": "", "desc": "Para grandes organizaciones", "cta": "Contáctanos" },
+    "features": {
+      "freeInstance": "1 instancia de IA",
+      "managerAssigned": "Gestor asignado",
+      "inAppMsg": "Mensajería integrada",
+      "communitySupport": "Soporte comunitario",
+      "proInstances": "Hasta 3 instancias de IA",
+      "humanManager": "Gestor humano dedicado",
+      "response24h": "Tiempo de respuesta 24h",
+      "customConfig": "Configuraciones personalizadas",
+      "integrations": "Integraciones CRM y Slack",
+      "sla99": "SLA de 99% de disponibilidad",
+      "unlimitedInstances": "Instancias de IA ilimitadas",
+      "managerTeam": "Equipo de gestores dedicado",
+      "sla4h": "SLA de respuesta en 4h",
+      "customIntegrations": "Integraciones personalizadas",
+      "teamTraining": "Formación del equipo",
+      "whiteLabel": "Opción de marca blanca"
+    },
+    "popular": "Más popular"
+  },
+  "about": {
+    "title": "Forjamos el Stack de IA Para Que No Tengas Que Hacerlo",
+    "subtitle": "SynapseForge fue creado para empresas que quieren resultados reales de IA — no otra herramienta SaaS que descifrar. Nos encargamos del despliegue, la configuración y la gestión continua para que tu equipo pueda centrarse en lo que importa.",
+    "setup": "<30min",
+    "setupLabel": "Tiempo hasta la primera instancia de IA",
+    "response": "24h",
+    "responseLabel": "Tiempo de respuesta del gestor",
+    "uptime": "99%",
+    "uptimeLabel": "SLA de disponibilidad (Pro+)"
+  },
+  "footer": {
+    "tagline": "Forjamos el stack de IA para que no tengas que hacerlo.",
+    "product": "Producto",
+    "company": "Empresa",
+    "features": "Características",
+    "pricing": "Precios",
+    "dashboard": "Panel",
+    "privacy": "Política de Privacidad",
+    "terms": "Términos de Servicio",
+    "contact": "Contacto",
+    "rights": "Todos los derechos reservados."
+  },
+  "auth": {
+    "signIn": {
+      "title": "Bienvenido de nuevo",
+      "subtitle": "Inicia sesión en tu cuenta de SynapseForge",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "submit": "Iniciar sesión",
+      "noAccount": "¿No tienes cuenta?",
+      "signUpLink": "Regístrate",
+      "error": "Email o contraseña incorrectos."
+    },
+    "signUp": {
+      "title": "Crea tu cuenta",
+      "subtitle": "Empieza con una instancia de IA gratuita",
+      "name": "Nombre completo",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "passwordHint": "Mín. 8 caracteres",
+      "submit": "Crear cuenta",
+      "hasAccount": "¿Ya tienes cuenta?",
+      "signInLink": "Inicia sesión",
+      "terms": "Al registrarte, aceptas nuestros",
+      "termsLink": "Términos de Servicio",
+      "and": "y",
+      "privacyLink": "Política de Privacidad"
+    },
+    "forgotPassword": {
+      "title": "¿Olvidaste tu contraseña?",
+      "subtitle": "Introduce tu email y te enviaremos un enlace para restablecerla.",
+      "email": "Correo electrónico",
+      "submit": "Enviar enlace",
+      "backToSignIn": "Volver a iniciar sesión",
+      "successTitle": "Revisa tu bandeja de entrada",
+      "successDesc": "Si existe una cuenta para {email}, recibirás un enlace para restablecer tu contraseña en breve."
+    },
+    "resetPassword": {
+      "title": "Establecer nueva contraseña",
+      "subtitle": "Elige una contraseña segura para tu cuenta.",
+      "newPassword": "Nueva contraseña",
+      "confirmPassword": "Confirmar contraseña",
+      "passwordHint": "Mín. 8 caracteres",
+      "repeatPassword": "Repite la contraseña",
+      "submit": "Actualizar contraseña",
+      "successTitle": "¡Contraseña actualizada!",
+      "successDesc": "Redirigiendo al inicio de sesión...",
+      "mismatch": "Las contraseñas no coinciden.",
+      "invalidLink": "Enlace de restablecimiento inválido.",
+      "requestNew": "Solicita uno nuevo."
+    },
+    "verifyEmail": {
+      "title": "Verifica tu correo",
+      "subtitle": "Te hemos enviado un enlace de verificación.",
+      "resend": "Reenviar email de verificación",
+      "backToSignIn": "Volver a iniciar sesión",
+      "successMsg": "¡Email de verificación enviado! Revisa tu bandeja de entrada."
+    }
+  },
+  "onboarding": {
+    "step1Title": "Cuéntanos sobre tu negocio",
+    "step1Subtitle": "Esto ayuda a tu gestor a preparar la configuración adecuada",
+    "businessName": "Nombre del negocio / empresa",
+    "businessPlaceholder": "Acme S.A.",
+    "industry": "Sector",
+    "selectIndustry": "Selecciona tu sector",
+    "step2Title": "¿Para qué necesitas IA?",
+    "step2Subtitle": "Elige tu caso de uso principal — siempre puedes añadir más",
+    "step3Title": "¡Todo listo! ⚡",
+    "step3Desc": "Un gestor dedicado revisará tu configuración y se pondrá en contacto en breve. Te ayudará a configurar tu instancia de IA para {business}.",
+    "businessLabel": "Negocio",
+    "industryLabel": "Sector",
+    "useCaseLabel": "Caso de uso",
+    "continue": "Continuar",
+    "back": "Atrás",
+    "goToDashboard": "Ir al Panel →",
+    "industries": {
+      "SaaS / Software": "SaaS / Software",
+      "E-commerce": "Comercio electrónico",
+      "Healthcare": "Salud",
+      "Finance": "Finanzas",
+      "Education": "Educación",
+      "Agency": "Agencia",
+      "Real Estate": "Inmobiliaria",
+      "Hospitality": "Hostelería",
+      "Other": "Otro"
+    },
+    "useCases": {
+      "customer-support": { "label": "Atención al Cliente", "desc": "Gestiona consultas, FAQs, tickets" },
+      "sales-assistant": { "label": "Asistente de Ventas", "desc": "Califica leads, responde preguntas sobre productos" },
+      "data-analyst": { "label": "Datos y Análisis", "desc": "Consulta datos, genera informes" },
+      "internal-tools": { "label": "Automatización Interna", "desc": "Automatiza flujos de trabajo, helpdesk interno" },
+      "content": { "label": "Creación de Contenido", "desc": "Borradores, resúmenes, traducciones" },
+      "custom": { "label": "Otra cosa", "desc": "Mi gestor me ayudará a descubrirlo" }
+    }
+  },
+  "dashboard": {
+    "greeting": "Qué bueno verte, {name} 👋",
+    "greetingSubtitle": "Aquí está lo que está pasando con tus instancias de IA.",
+    "instances": "Instancias",
+    "running": "En ejecución",
+    "plan": "Plan",
+    "gettingStarted": "Primeros pasos",
+    "recentActivity": "Actividad reciente",
+    "noActivity": "Sin actividad aún.",
+    "yourManager": "Tu Gestor",
+    "noManager": "Gestor no asignado aún",
+    "noManagerDesc": "Se asignará un gestor a tu cuenta en breve.",
+    "messageManager": "Enviar mensaje al gestor",
+    "steps": {
+      "onboarding": "Completar configuración inicial",
+      "managerAssigned": "Gestor asignado a tu cuenta",
+      "configureInstance": "Configurar tu instancia de IA",
+      "generateKey": "Generar una clave API",
+      "messageManager": "Enviar mensaje a tu gestor"
+    },
+    "nav": {
+      "overview": "Resumen",
+      "instances": "Instancias",
+      "messages": "Mensajes",
+      "billing": "Facturación",
+      "settings": "Configuración",
+      "signOut": "Cerrar sesión"
+    },
+    "billing": {
+      "title": "Facturación y Planes",
+      "subtitle": "Gestiona tu suscripción y plan.",
+      "currentPlan": "Plan Actual",
+      "renews": "Se renueva",
+      "manageSubscription": "Gestionar suscripción",
+      "mostPopular": "Más popular",
+      "downgradeViaSupport": "Cambiar a plan inferior via soporte",
+      "annualNote": "Planes anuales disponibles — 2 meses gratis. Contacta a tu gestor o",
+      "annualNoteEmail": "hello@synapseforge.ai",
+      "annualNoteSetup": "para configurarlo.",
+      "success": "¡Pago exitoso! Tu plan ha sido actualizado.",
+      "cancelled": "El pago fue cancelado. No se realizaron cargos."
+    },
+    "settings": {
+      "title": "Configuración",
+      "profileSection": "Perfil",
+      "name": "Nombre",
+      "email": "Correo electrónico",
+      "saveProfile": "Guardar cambios",
+      "passwordSection": "Cambiar contraseña",
+      "currentPassword": "Contraseña actual",
+      "newPassword": "Nueva contraseña",
+      "confirmPassword": "Confirmar nueva contraseña",
+      "updatePassword": "Actualizar contraseña",
+      "saved": "¡Guardado!",
+      "passwordUpdated": "¡Contraseña actualizada!"
+    }
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Algo salió mal.",
+    "back": "Atrás",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "confirm": "Confirmar",
+    "close": "Cerrar",
+    "copy": "Copiar",
+    "copied": "¡Copiado!",
+    "upgrade": "Mejorar plan",
+    "learnMore": "Más información",
+    "synapseforge": "SynapseForge"
+  }
+}
