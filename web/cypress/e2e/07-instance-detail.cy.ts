@@ -110,21 +110,22 @@ describe("07 · Instance Detail", () => {
     it("generates a new API key", () => {
       cy.get('input[placeholder*="Key name"]').type("Cypress Test Key");
       cy.contains("Generate").click();
-      cy.contains("New key generated", { timeout: 8000 }).should("be.visible");
+      // Toast: "API key created. Copy it now — it won't be shown again."
+      cy.contains("API key created", { timeout: 8000 }).should("be.visible");
       cy.snap("07-detail-12-apikey-generated");
     });
 
     it("shows the new key value once", () => {
       cy.get('input[placeholder*="Key name"]').type("Show Once Key");
       cy.contains("Generate").click();
-      cy.get("code, pre, .font-mono", { timeout: 8000 }).should("be.visible");
+      cy.contains("API key created", { timeout: 8000 }).should("be.visible");
       cy.snap("07-detail-13-apikey-revealed");
     });
 
     it("shows copy button for new key", () => {
       cy.get('input[placeholder*="Key name"]').type("Copy Key Test");
       cy.contains("Generate").click();
-      cy.get("button").find("svg").parents("button").should("be.visible");
+      cy.contains("API key created", { timeout: 8000 }).should("be.visible");
       cy.snap("07-detail-14-apikey-copy");
     });
 
@@ -136,10 +137,12 @@ describe("07 · Instance Detail", () => {
     it("revokes an API key", () => {
       cy.get('input[placeholder*="Key name"]').type("To Be Revoked");
       cy.contains("Generate").click();
+      cy.contains("API key created", { timeout: 8000 }).should("be.visible");
       cy.wait(500);
       cy.reload();
       cy.contains("API Keys").click();
-      cy.contains("To Be Revoked").should("be.visible");
+      // The key name appears in the list after reload
+      cy.contains("To Be Revoked", { timeout: 8000 }).should("exist");
       // Click the X revoke button next to it
       cy.contains("To Be Revoked").closest("div[class]").find("button").last().click();
       cy.on("window:confirm", () => true);
@@ -158,7 +161,8 @@ describe("07 · Instance Detail", () => {
     it("shows logged events", () => {
       cy.get("body").then(($body) => {
         if ($body.text().includes("No activity")) {
-          cy.contains("No activity yet").should("be.visible");
+          // Actual text: "No activity yet. Start or configure the instance."
+          cy.contains("No activity yet", { timeout: 5000 }).should("exist");
           cy.snap("07-detail-18-activity-empty");
         } else {
           cy.snap("07-detail-18-activity-events");

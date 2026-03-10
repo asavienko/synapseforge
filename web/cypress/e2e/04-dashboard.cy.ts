@@ -214,15 +214,17 @@ describe("04 · Settings", () => {
 
   it("saves profile changes and restores name", () => {
     const testName = Cypress.env("TEST_NAME") as string;
-    // Use unique name each run to avoid "No changes to save" if previous run left a stale name
     const tempName = `CI User ${Date.now()}`;
+    // Intercept to verify success regardless of toast timing
+    cy.intercept("PATCH", "/api/user").as("saveProfile");
     cy.get('input[type="text"]').first().should("not.be.disabled").clear().type(tempName);
     cy.get('button[type="submit"]').contains("Save changes").click({ force: true });
-    cy.contains("Profile updated successfully", { timeout: 10000 }).should("exist");
+    cy.wait("@saveProfile", { timeout: 10000 }).its("response.statusCode").should("eq", 200);
     cy.snap("04-settings-04-saved");
-    // Always restore original name so DB + sidebar stay consistent
+    // Restore name — input now has tempName as both value and initialName, so type testName
     cy.get('input[type="text"]').first().clear().type(testName);
+    cy.intercept("PATCH", "/api/user").as("restoreProfile");
     cy.get('button[type="submit"]').contains("Save changes").click({ force: true });
-    cy.contains("Profile updated successfully", { timeout: 8000 }).should("exist");
+    cy.wait("@restoreProfile", { timeout: 8000 }).its("response.statusCode").should("eq", 200);
   });
 });
