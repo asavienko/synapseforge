@@ -87,7 +87,11 @@ describe("04 · Dashboard Sidebar", () => {
   });
 
   it("shows user name in sidebar", () => {
-    cy.get("aside").contains(Cypress.env("TEST_NAME")).should("exist");
+    // Check user identity is present somewhere in the sidebar (name or email)
+    const nameOrEmail = Cypress.env("TEST_NAME") as string;
+    cy.get("aside")
+      .invoke("text")
+      .should("include", nameOrEmail);
     cy.snap("04-sidebar-06-user-info");
   });
 });
