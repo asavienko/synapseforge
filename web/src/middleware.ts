@@ -1,9 +1,10 @@
-import createMiddleware from 'next-intl/middleware';
+import createIntlMiddleware from 'next-intl/middleware';
 import { routing } from './i18n/routing';
-import { NextRequest, NextResponse } from 'next/server';
-import { getToken } from 'next-auth/jwt';
+import { auth } from './lib/auth';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-const intlMiddleware = createMiddleware(routing);
+const intlMiddleware = createIntlMiddleware(routing);
 
 const LOCALES = routing.locales as readonly string[];
 const PROTECTED = ['/dashboard', '/onboarding', '/manager'];
@@ -22,30 +23,26 @@ function getLocaleFromPath(pathname: string): string {
   return parts[1] && LOCALES.includes(parts[1]) ? parts[1] : routing.defaultLocale;
 }
 
-export async function middleware(req: NextRequest) {
+// Use NextAuth's auth() wrapper so it reads the session correctly
+export default auth(function middleware(req) {
   const { pathname } = req.nextUrl;
   const bare = stripLocale(pathname);
   const locale = getLocaleFromPath(pathname);
+  // NextAuth v5 attaches auth to the request
+  const session = (req as unknown as { auth: unknown }).auth;
 
   const isProtected = PROTECTED.some(p => bare === p || bare.startsWith(p + '/'));
   const isAuthOnly  = AUTH_ONLY.some(p => bare === p || bare.startsWith(p + '/'));
 
-  if (isProtected || isAuthOnly) {
-    const token = await getToken({
-      req,
-      secret: process.env.AUTH_SECRET,
-    });
-
-    if (isProtected && !token) {
-      return NextResponse.redirect(new URL(`/${locale}/sign-in`, req.url));
-    }
-    if (isAuthOnly && token) {
-      return NextResponse.redirect(new URL(`/${locale}/dashboard`, req.url));
-    }
+  if (isProtected && !session) {
+    return NextResponse.redirect(new URL(`/${locale}/sign-in`, req.url));
+  }
+  if (isAuthOnly && session) {
+    return NextResponse.redirect(new URL(`/${locale}/dashboard`, req.url));
   }
 
-  return intlMiddleware(req);
-}
+  return intlMiddleware(req as unknown as NextRequest);
+});
 
 export const config = {
   matcher: ['/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)'],
