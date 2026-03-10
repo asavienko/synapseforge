@@ -5,11 +5,25 @@
 
 ## 🎯 Core Concept Reframe
 
+> **Key decisions locked (2026-03-10):**
+> - **ICP:** Small & medium business owners
+> - **Tech stack:** OpenClaw (primary runtime)
+> - **Retention hook:** Ongoing support, improvements, and regular problem resolution
+> - **Onboarding:** Setup instance with client's own API keys → connect to their selected channel → they can chat immediately
+> - **Legal:** DPA required (GDPR — EU clients)
+> - **Referral program:** Invited user gets 1 free Pro month; referrer gets 10% of invitee's spending for first 6 months
+
+---
+
 **What you're selling:** Access to AI expertise + hands-on implementation + ongoing support
 
 **What they're buying:** Someone who actually understands AI to set it up and keep it running
 
 **Competitive moat:** The human relationship, not the software
+
+**Target customer (ICP):** Small and medium business owners — people who have a real business problem but no in-house AI expertise. They don't want to learn tools; they want results.
+
+**Retention mechanism:** Ongoing support + continuous improvements + regular problem resolution. Clients stay because something new always needs fixing, tuning, or expanding. The value compounds over time — a bot that's been refined for 6 months is much better than a fresh setup.
 
 ---
 
@@ -96,10 +110,11 @@
 
 ### What You Need Now (Before Taking Paying Customers)
 
-1. **Instance Runtime** — Actual AI that runs
-   - Option A: n8n self-hosted + OpenAI API (fastest to launch)
-   - Option B: LangChain + FastAPI + OpenAI (more control)
-   - Option C: Reuse existing tools (Voiceflow, Stack AI, etc.) via API
+1. **Instance Runtime** — **OpenClaw** (decided)
+   - Primary runtime for all AI agent instances
+   - Clients bring their own API keys (OpenAI, Anthropic, etc.)
+   - Connected to client's chosen channel (Telegram, WhatsApp, Slack, etc.)
+   - Onboarding = configure instance with client keys + connect channel → they can chat immediately
 
 2. **Dashboard** — What you have is fine for MVP
    - Instance list, start/stop, basic config
@@ -201,13 +216,15 @@
 
 ## ⚠️ Critical Decisions to Make
 
-| Decision | Options | My Rec |
+| Decision | Options | Decision |
 |----------|---------|--------|
-| Instance runtime | n8n / LangChain / Voiceflow / Custom | n8n for speed |
-| First manager | Hire now / You do it all / Wait for revenue | You do it for first 5 clients |
-| Free tier | Real free / $99/mo / No free tier | Free with AI manager, $99 for human |
-| Target customer | Agencies / E-commerce / Local business | Start with one vertical |
-| Geographic focus | US / EU / Global | Start with your timezone |
+| Instance runtime | n8n / LangChain / Voiceflow / OpenClaw | ✅ **OpenClaw** |
+| First manager | Hire now / You do it all / Wait for revenue | ✅ **You handle first 5 clients** |
+| Free tier | Real free / $99/mo / No free tier | ✅ **Free with AI bot, $99+ for human** |
+| Target customer | Agencies / E-commerce / SMBs | ✅ **SMB owners** |
+| Geographic focus | US / EU / Global | Start with your timezone (EU) |
+| Referral program | None / Credits / Cash | ✅ **10% of spend for 6mo + 1 free month for invitee** |
+| GDPR/Legal | DIY / Template / Lawyer | ✅ **Proper DPA + ToS required** |
 
 ---
 
@@ -218,6 +235,52 @@
 - [ ] Instance runtime works end-to-end
 - [ ] Manager system documented (even if you're the manager)
 - [ ] First $500 in revenue
+
+---
+
+## 🚀 Client Onboarding Flow
+
+**Goal:** Client goes from "signed up" to "talking to their AI" in under 30 minutes.
+
+1. **Collect:** Client's API keys (OpenAI / Anthropic / etc.)
+2. **Configure:** Spin up their OpenClaw instance with their keys
+3. **Connect:** Link their preferred channel (Telegram, WhatsApp, Slack, web widget)
+4. **Test:** Manager sends a test message — confirm it works
+5. **Handoff:** Brief intro call or Loom video explaining how to interact with it
+6. **Done:** Client is live
+
+No friction. No "we'll set this up in a few days." Same session if possible.
+
+---
+
+## 🔗 Referral Program
+
+**For the person referring (existing client):**
+- Gets **10% of referred client's spending** for the first 6 months
+- Paid as credit toward their own subscription (or cash — decide later)
+
+**For the referred (new client):**
+- Gets **1 free month of Pro** ($499 value) when they sign up
+
+**Why it works:**
+- Existing client has real monetary incentive to sell for you
+- New client has a risk-free entry point
+- No cold outreach needed once flywheel starts
+
+**Tracking:** Simple referral link or code per client. Log manually at first.
+
+---
+
+## ⚖️ Legal & GDPR
+
+**Required before accepting EU clients (which is most of your early network):**
+
+- [ ] **DPA (Data Processing Agreement)** — defines what data you process, how, and for how long
+- [ ] **Privacy Policy** — covers your platform's data handling
+- [ ] **Terms of Service** — scope of service, SLAs, exclusions, liability cap
+- [ ] **Data deletion process** — clients must be able to request their data removed
+
+**Practical approach:** Use a lawyer template service (Iubenda, Termly, or a one-time freelance lawyer). Don't DIY this. ~€300–500 to do it properly once.
 
 ---
 
@@ -235,4 +298,5 @@ Which one?
 ---
 
 *Plan created: 2026-03-09*
-*Status: Draft — review and adjust before execution*
+*Last updated: 2026-03-10 — ICP, tech stack, onboarding, referral program, and legal requirements locked*
+*Status: Active — core decisions made, execution ready*
