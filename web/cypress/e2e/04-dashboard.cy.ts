@@ -143,13 +143,13 @@ describe("04 · Messages", () => {
   });
 
   it("shows manager chat or no-manager state", () => {
-    // Wait for loading spinner to disappear, then check state
-    cy.get("[class*='animate-spin']", { timeout: 10000 }).should("not.exist");
+    // Wait for the page title — guarantees loading is complete (spinner gone)
+    cy.get("h1", { timeout: 12000 }).contains("Messages").should("be.visible");
     cy.get("body").then(($body) => {
       if ($body.text().includes("Manager not assigned")) {
         cy.contains("Manager not assigned yet").should("exist");
       } else {
-        cy.get("input[placeholder], textarea").last().should("exist");
+        cy.get('input[placeholder*="message"], input[placeholder*="mensaje"], input[placeholder*="повідомлення"], input[placeholder*="сообщение"]').should("exist");
       }
     });
     cy.snap("04-messages-02-state");
