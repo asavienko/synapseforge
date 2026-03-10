@@ -74,13 +74,16 @@ describe("01 · Landing Page", () => {
     cy.snap("01-landing-10-locale-ru");
   });
 
-  it("CTA navigates to sign up", () => {
+  it("CTA navigates to sign up (logged out)", () => {
+    cy.clearCookies();
+    cy.visit("/en");
     cy.contains("Get started free").first().click();
     cy.url().should("include", "/sign-up");
     cy.snap("01-landing-11-cta-to-signup");
   });
 
-  it("nav sign in navigates to sign in", () => {
+  it("nav sign in navigates to sign in (logged out)", () => {
+    cy.clearCookies();
     cy.visit("/en");
     cy.get("nav").contains("Sign in").click();
     cy.url().should("include", "/sign-in");

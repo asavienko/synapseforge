@@ -12,6 +12,9 @@ Cypress.on("uncaught:exception", (err) => {
   }
 });
 
+// Clear cookies + storage before each test to prevent session bleed
+// cy.session() will restore sessions when cy.login() is called
 beforeEach(() => {
+  cy.clearCookies();
   cy.clearLocalStorage();
 });
