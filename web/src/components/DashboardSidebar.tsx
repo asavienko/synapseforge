@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
 import { Zap, LayoutDashboard, Bot, Settings, LogOut, Menu, X, MessageCircle, CreditCard } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 interface SidebarProps {
   userName?: string | null;
@@ -39,6 +39,8 @@ function NavItem({ href, icon: Icon, label, badge, onClick }: { href: string; ic
 }
 
 function SidebarContent({ userName, userEmail, unreadCount, onClose }: SidebarProps & { unreadCount: number; onClose?: () => void }) {
+  const t = useTranslations("dashboard.nav");
+
   return (
     <div className="flex flex-col h-full">
       <div className="p-6 border-b border-white/5 flex items-center justify-between">
@@ -54,11 +56,11 @@ function SidebarContent({ userName, userEmail, unreadCount, onClose }: SidebarPr
       </div>
 
       <nav className="flex-1 p-4 space-y-1">
-        <NavItem href="/dashboard" icon={LayoutDashboard} label="Overview" onClick={onClose} />
-        <NavItem href="/dashboard/instances" icon={Bot} label="Instances" onClick={onClose} />
-        <NavItem href="/dashboard/messages" icon={MessageCircle} label="Messages" badge={unreadCount} onClick={onClose} />
-        <NavItem href="/dashboard/billing" icon={CreditCard} label="Billing" onClick={onClose} />
-        <NavItem href="/dashboard/settings" icon={Settings} label="Settings" onClick={onClose} />
+        <NavItem href="/dashboard" icon={LayoutDashboard} label={t("overview")} onClick={onClose} />
+        <NavItem href="/dashboard/instances" icon={Bot} label={t("instances")} onClick={onClose} />
+        <NavItem href="/dashboard/messages" icon={MessageCircle} label={t("messages")} badge={unreadCount} onClick={onClose} />
+        <NavItem href="/dashboard/billing" icon={CreditCard} label={t("billing")} onClick={onClose} />
+        <NavItem href="/dashboard/settings" icon={Settings} label={t("settings")} onClick={onClose} />
       </nav>
 
       <div className="p-4 border-t border-white/5">
@@ -76,7 +78,7 @@ function SidebarContent({ userName, userEmail, unreadCount, onClose }: SidebarPr
           className="flex items-center gap-2 text-xs text-zinc-500 hover:text-white transition-colors py-2 px-3 rounded-lg hover:bg-white/5 w-full"
         >
           <LogOut className="w-3.5 h-3.5" />
-          Sign out
+          {t("signOut")}
         </button>
       </div>
     </div>
@@ -114,10 +116,7 @@ export function DashboardSidebar({ userName, userEmail }: SidebarProps) {
               {unreadCount}
             </span>
           )}
-          <button
-            onClick={() => setMobileOpen(true)}
-            className="text-zinc-400 hover:text-white transition-colors"
-          >
+          <button onClick={() => setMobileOpen(true)} className="text-zinc-400 hover:text-white transition-colors">
             <Menu className="w-5 h-5" />
           </button>
         </div>
@@ -125,19 +124,14 @@ export function DashboardSidebar({ userName, userEmail }: SidebarProps) {
 
       {/* Mobile overlay */}
       {mobileOpen && (
-        <div
-          className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
-          onClick={() => setMobileOpen(false)}
-        />
+        <div className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50" onClick={() => setMobileOpen(false)} />
       )}
 
       {/* Mobile drawer */}
-      <div
-        className={cn(
-          "md:hidden fixed top-0 left-0 bottom-0 w-64 bg-[#0a0a0f] border-r border-white/5 z-50 transition-transform duration-200",
-          mobileOpen ? "translate-x-0" : "-translate-x-full"
-        )}
-      >
+      <div className={cn(
+        "md:hidden fixed top-0 left-0 bottom-0 w-64 bg-[#0a0a0f] border-r border-white/5 z-50 transition-transform duration-200",
+        mobileOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
         <SidebarContent userName={userName} userEmail={userEmail} unreadCount={unreadCount} onClose={() => setMobileOpen(false)} />
       </div>
 

@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Zap, Loader2, CheckCircle2, ArrowLeft } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export default function ForgotPasswordPage() {
+  const t = useTranslations("auth.forgotPassword");
   const [emailVal, setEmailVal] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -41,24 +43,26 @@ export default function ForgotPasswordPage() {
         </div>
 
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-white mb-2">Forgot your password?</h1>
-          <p className="text-zinc-400 text-sm">Enter your email and we'll send a reset link.</p>
+          <h1 className="text-2xl font-bold text-white mb-2">{t("title")}</h1>
+          <p className="text-zinc-400 text-sm">{t("subtitle")}</p>
         </div>
 
         {sent ? (
           <div className="glow-border rounded-2xl p-8 bg-white/[0.02] text-center">
             <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto mb-4" />
-            <h2 className="text-lg font-semibold text-white mb-2">Check your inbox</h2>
-            <p className="text-zinc-400 text-sm mb-6">If an account exists for <strong className="text-zinc-200">{emailVal}</strong>, you'll receive a password reset link shortly.</p>
+            <h2 className="text-lg font-semibold text-white mb-2">{t("successTitle")}</h2>
+            <p className="text-zinc-400 text-sm mb-6">
+              {t("successDesc", { email: emailVal })}
+            </p>
             <Link href="/sign-in" className="text-violet-400 hover:text-violet-300 text-sm transition-colors">
-              ← Back to sign in
+              ← {t("backToSignIn")}
             </Link>
           </div>
         ) : (
           <div className="glow-border rounded-2xl p-8 bg-white/[0.02]">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm text-zinc-400 mb-1.5">Email address</label>
+                <label className="block text-sm text-zinc-400 mb-1.5">{t("email")}</label>
                 <input
                   type="email"
                   value={emailVal}
@@ -75,12 +79,12 @@ export default function ForgotPasswordPage() {
                 className="w-full flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 transition-colors py-3 rounded-xl text-sm font-semibold text-white"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                Send reset link
+                {t("submit")}
               </button>
             </form>
             <div className="text-center mt-6">
               <Link href="/sign-in" className="flex items-center justify-center gap-1 text-sm text-zinc-500 hover:text-zinc-300 transition-colors">
-                <ArrowLeft className="w-3.5 h-3.5" /> Back to sign in
+                <ArrowLeft className="w-3.5 h-3.5" /> {t("backToSignIn")}
               </Link>
             </div>
           </div>

@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { Zap, Loader2, Check } from "lucide-react";
 import { signIn } from "next-auth/react";
+import { useTranslations } from "next-intl";
 
 export default function SignUpPage() {
+  const t = useTranslations("auth.signUp");
   const router = useRouter();
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
@@ -31,7 +32,6 @@ export default function SignUpPage() {
       return;
     }
 
-    // Auto sign-in and go straight to onboarding
     const result = await signIn("credentials", {
       email: form.email,
       password: form.password,
@@ -41,7 +41,6 @@ export default function SignUpPage() {
     setLoading(false);
 
     if (result?.error) {
-      // Fallback: go to sign-in page
       router.push("/sign-in?registered=1");
     } else {
       router.push("/onboarding");
@@ -56,12 +55,11 @@ export default function SignUpPage() {
             <Zap className="w-6 h-6 text-violet-400" />
             <span className="font-bold text-lg tracking-tight text-white">SynapseForge</span>
           </Link>
-          <h1 className="text-2xl font-bold text-white">Create your account</h1>
-          <p className="text-zinc-400 mt-2 text-sm">Free plan · No credit card required</p>
+          <h1 className="text-2xl font-bold text-white">{t("title")}</h1>
+          <p className="text-zinc-400 mt-2 text-sm">{t("subtitle")}</p>
         </div>
 
         <div className="glow-border rounded-2xl p-8 bg-white/[0.02]">
-          {/* Free plan note */}
           <div className="flex items-start gap-3 bg-violet-500/10 border border-violet-500/20 rounded-xl p-4 mb-6">
             <Zap className="w-4 h-4 text-violet-400 mt-0.5 shrink-0" />
             <div className="text-sm">
@@ -79,7 +77,7 @@ export default function SignUpPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-1.5">Full name</label>
+              <label className="block text-sm font-medium text-zinc-300 mb-1.5">{t("name")}</label>
               <input
                 type="text"
                 value={form.name}
@@ -90,7 +88,7 @@ export default function SignUpPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-1.5">Email</label>
+              <label className="block text-sm font-medium text-zinc-300 mb-1.5">{t("email")}</label>
               <input
                 type="email"
                 value={form.email}
@@ -101,39 +99,37 @@ export default function SignUpPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-1.5">Password</label>
+              <label className="block text-sm font-medium text-zinc-300 mb-1.5">{t("password")}</label>
               <input
                 type="password"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                 required
                 minLength={8}
-                placeholder="Min. 8 characters"
+                placeholder={t("passwordHint")}
                 className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
               />
             </div>
-
             {error && (
               <div className="text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-4 py-3">
                 {error}
               </div>
             )}
-
             <button
               type="submit"
               disabled={loading}
               className="w-full flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors py-3 rounded-lg font-semibold text-white"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-              Create account
+              {t("submit")}
             </button>
           </form>
         </div>
 
         <p className="text-center text-sm text-zinc-500 mt-6">
-          Already have an account?{" "}
+          {t("hasAccount")}{" "}
           <Link href="/sign-in" className="text-violet-400 hover:text-violet-300 transition-colors">
-            Sign in
+            {t("signInLink")}
           </Link>
         </p>
       </div>
