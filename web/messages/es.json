@@ -215,7 +215,26 @@
   "dashboard": {
     "greeting": "Qué bueno verte, {name} 👋",
     "greetingSubtitle": "Aquí está lo que está pasando con tus instancias de IA.",
-    "instances": "Instancias",
+    "instances": {
+      "title": "Instancias de IA",
+      "subtitle": "Gestiona tus agentes de IA desplegados.",
+      "newInstance": "Nueva instancia",
+      "emptyTitle": "Aún no hay instancias",
+      "emptyDesc": "Crea tu primera instancia de IA para comenzar.",
+      "createInstance": "Crear instancia",
+      "createdSuccess": "Instancia creada con éxito.",
+      "modal": {
+        "title": "Nueva instancia de IA",
+        "nameLabel": "Nombre",
+        "namePlaceholder": "Mi agente de ventas",
+        "typeLabel": "Tipo",
+        "descLabel": "Descripción (opcional)",
+        "descPlaceholder": "¿Qué hace este agente?",
+        "cancelBtn": "Cancelar",
+        "createBtn": "Crear",
+        "failedError": "Error al crear la instancia."
+      }
+    },
     "running": "En ejecución",
     "plan": "Plan",
     "gettingStarted": "Primeros pasos",
@@ -267,6 +286,59 @@
       "updatePassword": "Actualizar contraseña",
       "saved": "¡Guardado!",
       "passwordUpdated": "¡Contraseña actualizada!"
+    },
+    "overview": {
+      "greeting": "Qué bueno verte, {name} 👋",
+      "subtitle": "Esto es lo que está pasando con tus instancias de IA.",
+      "instancesLabel": "Instancias",
+      "runningLabel": "Ejecutando",
+      "activeNow": "Activas ahora mismo",
+      "planLabel": "Plan",
+      "usedSlots": "{used}/{limit} usadas",
+      "unlimited": "Ilimitadas",
+      "managerBeingAssigned": "Asignando manager…",
+      "activeSubscription": "Suscripción activa",
+      "dedicatedManager": "Tu manager dedicado",
+      "managerSoon": "Pronto se asignará un manager a tu cuenta.",
+      "messageBtn": "Mensaje",
+      "gettingStarted": "Primeros pasos",
+      "complete": "{done}/{total} completados",
+      "aiInstances": "Instancias de IA",
+      "viewAll": "Ver todo",
+      "noInstancesYet": "Aún no hay instancias.",
+      "createOne": "Crear una →",
+      "recentActivity": "Actividad reciente",
+      "noActivityYet": "Sin actividad aún.",
+      "steps": {
+        "onboarding": "Completar incorporación",
+        "managerAssigned": "Manager asignado a tu cuenta",
+        "configureInstance": "Configurar tu instancia de IA",
+        "generateKey": "Generar una clave API",
+        "messageManager": "Enviar mensaje a tu manager"
+      }
+    },
+    "messages": {
+      "title": "Mensajes",
+      "subtitle": "Chatea con tu manager dedicado.",
+      "noManagerTitle": "Manager aún no asignado",
+      "noManagerDesc": "Pronto se te asignará un manager dedicado. Una vez asignado, podrás enviarle mensajes aquí.",
+      "noMessagesYet": "Aún no hay mensajes. ¡Saluda a tu manager!",
+      "messagePlaceholder": "Escribe un mensaje...",
+      "failedSend": "Error al enviar el mensaje."
+    },
+    "settingsPage": {
+      "title": "Configuración",
+      "profileSection": "Perfil",
+      "planSection": "Plan",
+      "managerSection": "Tu manager",
+      "managerSoon": "Pronto se asignará un manager dedicado a tu cuenta. Se pondrá en contacto contigo para ayudarte.",
+      "upgradeByRequest": "Actualizar por solicitud",
+      "unlimitedInstances": "Instancias ilimitadas",
+      "upToInstances": "Hasta {n} instancia(s)",
+      "tierLabel": "nivel {tier}",
+      "managerWillBeAssigned": "Se asignará un manager pronto. Una vez asignado, puedes solicitar una actualización aquí o por correo",
+      "nameFieldLabel": "Nombre",
+      "emailFieldLabel": "Correo electrónico"
     }
   },
   "common": {
@@ -287,5 +359,95 @@
   "contact": {
     "title": "Contáctanos",
     "subtitle": "¿Tienes una pregunta? Escríbenos."
+  },
+  "verifyEmail": {
+    "loading": "Cargando…",
+    "verifying": "Verificando…",
+    "verifyingDesc": "Espera mientras verificamos tu correo electrónico.",
+    "goDashboard": "Ir al panel →",
+    "errors": {
+      "missing": {
+        "title": "Enlace inválido",
+        "body": "Al enlace de verificación le falta un token. Usa el enlace de tu correo electrónico."
+      },
+      "invalid": {
+        "title": "Enlace no encontrado",
+        "body": "Este enlace de verificación es inválido o ya fue utilizado."
+      },
+      "expired": {
+        "title": "Enlace expirado",
+        "body": "Este enlace de verificación ha expirado. Solicita uno nuevo desde tu panel."
+      },
+      "default": {
+        "title": "Algo salió mal",
+        "body": "No se pudo verificar tu correo electrónico."
+      }
+    }
+  },
+  "privacy": {
+    "title": "Política de Privacidad",
+    "lastUpdated": "Última actualización: marzo 2025",
+    "intro": "SynapseForge ('nosotros') se compromete a proteger tu privacidad. Esta política explica qué datos recopilamos, por qué y cómo los utilizamos.",
+    "sections": {
+      "collect": {
+        "title": "Información que recopilamos",
+        "body": "Recopilamos información que proporcionas (nombre, correo, datos de empresa), datos de uso y datos técnicos para operar y mejorar nuestro servicio."
+      },
+      "use": {
+        "title": "Cómo usamos tu información",
+        "body": "Usamos tus datos para proporcionar el servicio SynapseForge, comunicarnos sobre tu cuenta, mejorar la plataforma y enviar notificaciones relacionadas con el servicio."
+      },
+      "share": {
+        "title": "Compartición de datos",
+        "body": "No vendemos tus datos personales. Podemos compartirlos con proveedores de confianza bajo estrictos acuerdos de procesamiento de datos."
+      },
+      "security": {
+        "title": "Seguridad de datos",
+        "body": "Usamos cifrado y prácticas de seguridad estándar del sector."
+      },
+      "rights": {
+        "title": "Tus derechos",
+        "body": "Tienes derecho a acceder, corregir o eliminar tus datos personales. Contáctanos en hello@synapseforge.ai."
+      },
+      "contact": {
+        "title": "Contacto",
+        "body": "Para preguntas sobre privacidad, contáctanos en hello@synapseforge.ai."
+      }
+    }
+  },
+  "terms": {
+    "title": "Términos de Servicio",
+    "lastUpdated": "Última actualización: marzo 2025",
+    "intro": "Al usar SynapseForge ('Servicio'), aceptas estos Términos de Servicio. Por favor léelos detenidamente.",
+    "sections": {
+      "service": {
+        "title": "Uso del servicio",
+        "body": "SynapseForge proporciona servicios de infraestructura de IA gestionada. Puedes usar el Servicio solo en cumplimiento con estos términos y las leyes aplicables."
+      },
+      "account": {
+        "title": "Responsabilidad de la cuenta",
+        "body": "Eres responsable de mantener la confidencialidad de tus credenciales y de todas las actividades en tu cuenta."
+      },
+      "payment": {
+        "title": "Pago",
+        "body": "Los planes de pago se facturan mensual o anualmente. Los reembolsos se gestionan caso por caso."
+      },
+      "ip": {
+        "title": "Propiedad intelectual",
+        "body": "El Servicio y su contenido son propiedad de SynapseForge. Tú conservas la propiedad de los datos que proporcionas."
+      },
+      "termination": {
+        "title": "Rescisión",
+        "body": "Nos reservamos el derecho de suspender o cancelar cuentas que violen estos términos."
+      },
+      "liability": {
+        "title": "Limitación de responsabilidad",
+        "body": "SynapseForge no es responsable de daños indirectos o consecuentes. Nuestra responsabilidad está limitada al importe pagado en los últimos 12 meses."
+      },
+      "contact": {
+        "title": "Contacto",
+        "body": "Para preguntas sobre estos Términos, contáctanos en hello@synapseforge.ai."
+      }
+    }
   }
 }

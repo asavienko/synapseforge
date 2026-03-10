@@ -4,10 +4,12 @@ import Link from "next/link";
 import { Bot, Zap, User, ArrowRight, Activity, MessageCircle, CheckCircle2, Circle } from "lucide-react";
 import { PLANS, STATUS_COLORS, formatDate } from "@/lib/utils";
 import { DashboardUpgrade } from "@/components/DashboardUpgrade";
+import { getTranslations } from "next-intl/server";
 
 export default async function DashboardPage() {
   const session = await auth();
   const userId = session!.user!.id!;
+  const t = await getTranslations("dashboard.overview");
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -25,7 +27,6 @@ export default async function DashboardPage() {
   const instanceUsage = user.instances.length;
   const usagePct = instanceLimit ? Math.min((instanceUsage / instanceLimit) * 100, 100) : 0;
 
-  // Check "getting started" steps
   const hasManager = !!user.manager;
   const hasConfiguredInstance = user.instances.some((i) => i.config);
   const hasApiKey = hasConfiguredInstance
@@ -34,16 +35,16 @@ export default async function DashboardPage() {
   const hasMessage = hasManager
     ? await prisma.message.count({ where: { userId, senderType: "user" } }) > 0
     : false;
+
   const gettingStartedSteps = [
-    { label: "Complete onboarding", done: true, href: null },
-    { label: "Manager assigned to your account", done: hasManager, href: null },
-    { label: "Configure your AI instance", done: hasConfiguredInstance, href: user.instances[0] ? `/dashboard/instances/${user.instances[0].id}` : "/dashboard/instances" },
-    { label: "Generate an API key", done: hasApiKey, href: user.instances[0] ? `/dashboard/instances/${user.instances[0].id}?tab=keys` : "/dashboard/instances" },
-    { label: "Message your manager", done: hasMessage, href: "/dashboard/messages" },
+    { key: "onboarding", done: true, href: null },
+    { key: "managerAssigned", done: hasManager, href: null },
+    { key: "configureInstance", done: hasConfiguredInstance, href: user.instances[0] ? `/dashboard/instances/${user.instances[0].id}` : "/dashboard/instances" },
+    { key: "generateKey", done: hasApiKey, href: user.instances[0] ? `/dashboard/instances/${user.instances[0].id}?tab=keys` : "/dashboard/instances" },
+    { key: "messageManager", done: hasMessage, href: "/dashboard/messages" },
   ];
   const allDone = gettingStartedSteps.every((s) => s.done);
 
-  // Recent activity across all instances
   const recentLogs = await prisma.activityLog.findMany({
     where: { instance: { userId } },
     orderBy: { createdAt: "desc" },
@@ -62,19 +63,16 @@ export default async function DashboardPage() {
 
   return (
     <div className="p-6 md:p-8">
-      {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white">Good to see you, {user.name?.split(" ")[0]} 👋</h1>
-        <p className="text-zinc-400 mt-1">Here&apos;s what&apos;s happening with your AI instances.</p>
+        <h1 className="text-2xl font-bold text-white">{t("greeting", { name: user.name?.split(" ")[0] ?? "" })}</h1>
+        <p className="text-zinc-400 mt-1">{t("subtitle")}</p>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        {/* Instances with progress bar */}
         <div className="glow-border rounded-2xl p-5 bg-white/[0.02]">
           <div className="flex items-center gap-3 mb-3">
             <Bot className="w-5 h-5 text-violet-400" />
-            <span className="text-xs text-zinc-500 uppercase tracking-wider">Instances</span>
+            <span className="text-xs text-zinc-500 uppercase tracking-wider">{t("instancesLabel")}</span>
           </div>
           <div className="text-2xl font-bold text-white mb-2">{instanceUsage}</div>
           {instanceLimit ? (
@@ -85,47 +83,45 @@ export default async function DashboardPage() {
                   style={{ width: `${usagePct}%` }}
                 />
               </div>
-              <div className="text-xs text-zinc-500">{instanceUsage}/{instanceLimit} used</div>
+              <div className="text-xs text-zinc-500">{t("usedSlots", { used: instanceUsage, limit: instanceLimit })}</div>
             </>
           ) : (
-            <div className="text-xs text-zinc-500">Unlimited</div>
+            <div className="text-xs text-zinc-500">{t("unlimited")}</div>
           )}
         </div>
 
         <div className="glow-border rounded-2xl p-5 bg-white/[0.02]">
           <div className="flex items-center gap-3 mb-3">
             <Activity className="w-5 h-5 text-emerald-400" />
-            <span className="text-xs text-zinc-500 uppercase tracking-wider">Running</span>
+            <span className="text-xs text-zinc-500 uppercase tracking-wider">{t("runningLabel")}</span>
           </div>
           <div className="text-2xl font-bold text-white mb-1">{runningCount}</div>
-          <div className="text-xs text-zinc-500">Active right now</div>
+          <div className="text-xs text-zinc-500">{t("activeNow")}</div>
         </div>
 
-        {/* Plan card with upgrade CTA */}
         <div className="glow-border rounded-2xl p-5 bg-white/[0.02]">
           <div className="flex items-center gap-3 mb-3">
             <Zap className="w-5 h-5 text-blue-400" />
-            <span className="text-xs text-zinc-500 uppercase tracking-wider">Plan</span>
+            <span className="text-xs text-zinc-500 uppercase tracking-wider">{t("planLabel")}</span>
           </div>
           <div className="text-2xl font-bold text-white mb-1">{plan.label}</div>
           {user.plan === "free" && user.manager ? (
             <DashboardUpgrade currentPlan={user.plan} hasManager={true} />
           ) : (
             <div className="text-xs text-zinc-500">
-              {user.plan === "free" ? "Manager being assigned…" : "Active subscription"}
+              {user.plan === "free" ? t("managerBeingAssigned") : t("activeSubscription")}
             </div>
           )}
         </div>
       </div>
 
-      {/* Manager card */}
       {user.manager ? (
         <div className="glow-border rounded-2xl p-5 bg-white/[0.02] mb-6 flex items-center gap-4">
           <div className="w-10 h-10 rounded-full bg-violet-600/30 border border-violet-500/30 flex items-center justify-center shrink-0">
             <User className="w-5 h-5 text-violet-400" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-xs text-zinc-500 mb-0.5">Your dedicated manager</div>
+            <div className="text-xs text-zinc-500 mb-0.5">{t("dedicatedManager")}</div>
             <div className="font-semibold text-white">{user.manager.name}</div>
             <a href={`mailto:${user.manager.email}`} className="text-sm text-violet-400 hover:text-violet-300 transition-colors">
               {user.manager.email}
@@ -136,7 +132,7 @@ export default async function DashboardPage() {
             className="flex items-center gap-2 text-sm text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2.5 rounded-xl transition-colors shrink-0"
           >
             <MessageCircle className="w-4 h-4" />
-            Message
+            {t("messageBtn")}
           </Link>
         </div>
       ) : (
@@ -145,24 +141,24 @@ export default async function DashboardPage() {
             <User className="w-5 h-5 text-zinc-500" />
           </div>
           <div>
-            <div className="text-xs text-zinc-500 mb-0.5">Your dedicated manager</div>
-            <div className="text-sm text-zinc-400">A manager will be assigned to your account soon.</div>
+            <div className="text-xs text-zinc-500 mb-0.5">{t("dedicatedManager")}</div>
+            <div className="text-sm text-zinc-400">{t("managerSoon")}</div>
           </div>
         </div>
       )}
 
-      {/* Getting started checklist — hide once all done */}
       {!allDone && (
         <div className="glow-border rounded-2xl bg-white/[0.02] mb-6 overflow-hidden">
           <div className="p-5 border-b border-white/5 flex items-center gap-3">
             <Zap className="w-4 h-4 text-violet-400" />
-            <h2 className="font-semibold text-white text-sm">Getting started</h2>
+            <h2 className="font-semibold text-white text-sm">{t("gettingStarted")}</h2>
             <span className="ml-auto text-xs text-zinc-500">
-              {gettingStartedSteps.filter((s) => s.done).length}/{gettingStartedSteps.length} complete
+              {t("complete", { done: gettingStartedSteps.filter((s) => s.done).length, total: gettingStartedSteps.length })}
             </span>
           </div>
           <div className="divide-y divide-white/5">
             {gettingStartedSteps.map((step) => {
+              const label = t(`steps.${step.key}` as Parameters<typeof t>[0]);
               const content = (
                 <div className="flex items-center gap-3 px-5 py-3">
                   {step.done ? (
@@ -171,7 +167,7 @@ export default async function DashboardPage() {
                     <Circle className="w-4 h-4 text-zinc-700 shrink-0" />
                   )}
                   <span className={`text-sm ${step.done ? "text-zinc-500 line-through" : "text-zinc-200"}`}>
-                    {step.label}
+                    {label}
                   </span>
                   {!step.done && step.href && (
                     <ArrowRight className="w-3.5 h-3.5 text-violet-400 ml-auto shrink-0" />
@@ -179,11 +175,11 @@ export default async function DashboardPage() {
                 </div>
               );
               return step.href && !step.done ? (
-                <Link key={step.label} href={step.href} className="block hover:bg-white/[0.03] transition-colors">
+                <Link key={step.key} href={step.href} className="block hover:bg-white/[0.03] transition-colors">
                   {content}
                 </Link>
               ) : (
-                <div key={step.label}>{content}</div>
+                <div key={step.key}>{content}</div>
               );
             })}
           </div>
@@ -191,19 +187,18 @@ export default async function DashboardPage() {
       )}
 
       <div className="grid md:grid-cols-2 gap-4">
-        {/* Recent instances */}
         <div className="glow-border rounded-2xl bg-white/[0.02]">
           <div className="flex items-center justify-between p-5 border-b border-white/5">
-            <h2 className="font-semibold text-white text-sm">AI Instances</h2>
+            <h2 className="font-semibold text-white text-sm">{t("aiInstances")}</h2>
             <Link href="/dashboard/instances" className="text-xs text-violet-400 hover:text-violet-300 flex items-center gap-1 transition-colors">
-              View all <ArrowRight className="w-3 h-3" />
+              {t("viewAll")} <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
           {user.instances.length === 0 ? (
             <div className="p-8 text-center">
               <Bot className="w-8 h-8 text-zinc-700 mx-auto mb-2" />
-              <p className="text-zinc-500 text-sm">No instances yet.</p>
-              <Link href="/dashboard/instances" className="text-violet-400 text-xs hover:text-violet-300 mt-1 inline-block">Create one →</Link>
+              <p className="text-zinc-500 text-sm">{t("noInstancesYet")}</p>
+              <Link href="/dashboard/instances" className="text-violet-400 text-xs hover:text-violet-300 mt-1 inline-block">{t("createOne")}</Link>
             </div>
           ) : (
             <div className="divide-y divide-white/5">
@@ -222,15 +217,14 @@ export default async function DashboardPage() {
           )}
         </div>
 
-        {/* Recent activity */}
         <div className="glow-border rounded-2xl bg-white/[0.02]">
           <div className="p-5 border-b border-white/5">
-            <h2 className="font-semibold text-white text-sm">Recent Activity</h2>
+            <h2 className="font-semibold text-white text-sm">{t("recentActivity")}</h2>
           </div>
           {recentLogs.length === 0 ? (
             <div className="p-8 text-center">
               <Activity className="w-8 h-8 text-zinc-700 mx-auto mb-2" />
-              <p className="text-zinc-500 text-sm">No activity yet.</p>
+              <p className="text-zinc-500 text-sm">{t("noActivityYet")}</p>
             </div>
           ) : (
             <div className="divide-y divide-white/5">

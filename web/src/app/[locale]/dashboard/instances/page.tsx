@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Bot, Plus, Loader2, X } from "lucide-react";
 import { STATUS_COLORS, INSTANCE_TYPES } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 interface Instance {
   id: string;
@@ -28,6 +29,7 @@ function Toast({ text, type }: { text: string; type: "success" | "error" }) {
 }
 
 export default function InstancesPage() {
+  const t = useTranslations("dashboard.instances");
   const [instances, setInstances] = useState<Instance[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
@@ -65,12 +67,12 @@ export default function InstancesPage() {
     setCreating(false);
 
     if (!res.ok) {
-      setError(data.error || "Failed to create instance.");
+      setError(data.error || t("modal.failedError"));
     } else {
       setShowCreate(false);
       setForm({ name: "", type: "assistant", description: "" });
       loadInstances();
-      showToast("Instance created successfully.");
+      showToast(t("createdSuccess"));
     }
   }
 
@@ -79,15 +81,15 @@ export default function InstancesPage() {
       {toast && <Toast text={toast.text} type={toast.type} />}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-white">AI Instances</h1>
-          <p className="text-zinc-400 mt-1">Manage your deployed AI agents.</p>
+          <h1 className="text-2xl font-bold text-white">{t("title")}</h1>
+          <p className="text-zinc-400 mt-1">{t("subtitle")}</p>
         </div>
         <button
           onClick={() => setShowCreate(true)}
           className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2.5 rounded-lg text-sm font-semibold text-white"
         >
           <Plus className="w-4 h-4" />
-          New Instance
+          {t("newInstance")}
         </button>
       </div>
 
@@ -98,14 +100,14 @@ export default function InstancesPage() {
       ) : instances.length === 0 ? (
         <div className="glow-border rounded-2xl p-16 bg-white/[0.02] text-center">
           <Bot className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-white mb-2">No instances yet</h3>
-          <p className="text-zinc-400 text-sm mb-6">Create your first AI instance to get started.</p>
+          <h3 className="text-lg font-semibold text-white mb-2">{t("emptyTitle")}</h3>
+          <p className="text-zinc-400 text-sm mb-6">{t("emptyDesc")}</p>
           <button
             onClick={() => setShowCreate(true)}
             className="inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-6 py-3 rounded-lg text-sm font-semibold text-white"
           >
             <Plus className="w-4 h-4" />
-            Create Instance
+            {t("createInstance")}
           </button>
         </div>
       ) : (
@@ -134,12 +136,11 @@ export default function InstancesPage() {
         </div>
       )}
 
-      {/* Create modal */}
       {showCreate && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 px-4">
           <div className="bg-[#111118] border border-white/10 rounded-2xl p-6 w-full max-w-md shadow-2xl">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-bold text-white">New AI Instance</h2>
+              <h2 className="text-lg font-bold text-white">{t("modal.title")}</h2>
               <button onClick={() => setShowCreate(false)} className="text-zinc-500 hover:text-white transition-colors">
                 <X className="w-5 h-5" />
               </button>
@@ -147,37 +148,37 @@ export default function InstancesPage() {
 
             <form onSubmit={handleCreate} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-1.5">Name</label>
+                <label className="block text-sm font-medium text-zinc-300 mb-1.5">{t("modal.nameLabel")}</label>
                 <input
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   required
-                  placeholder="My Sales Agent"
+                  placeholder={t("modal.namePlaceholder")}
                   className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-1.5">Type</label>
+                <label className="block text-sm font-medium text-zinc-300 mb-1.5">{t("modal.typeLabel")}</label>
                 <select
                   value={form.type}
                   onChange={(e) => setForm({ ...form, type: e.target.value })}
                   className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
                 >
-                  {INSTANCE_TYPES.map((t) => (
-                    <option key={t.value} value={t.value} className="bg-zinc-900">
-                      {t.label}
+                  {INSTANCE_TYPES.map((tp) => (
+                    <option key={tp.value} value={tp.value} className="bg-zinc-900">
+                      {tp.label}
                     </option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-1.5">Description (optional)</label>
+                <label className="block text-sm font-medium text-zinc-300 mb-1.5">{t("modal.descLabel")}</label>
                 <textarea
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
                   rows={3}
-                  placeholder="What does this agent do?"
+                  placeholder={t("modal.descPlaceholder")}
                   className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors resize-none"
                 />
               </div>
@@ -194,7 +195,7 @@ export default function InstancesPage() {
                   onClick={() => setShowCreate(false)}
                   className="flex-1 py-3 border border-white/10 hover:border-white/20 text-zinc-300 rounded-lg text-sm font-semibold transition-colors"
                 >
-                  Cancel
+                  {t("modal.cancelBtn")}
                 </button>
                 <button
                   type="submit"
@@ -202,7 +203,7 @@ export default function InstancesPage() {
                   className="flex-1 flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 transition-colors py-3 rounded-lg text-sm font-semibold text-white"
                 >
                   {creating ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                  Create
+                  {t("modal.createBtn")}
                 </button>
               </div>
             </form>

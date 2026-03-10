@@ -215,7 +215,26 @@
   "dashboard": {
     "greeting": "Good to see you, {name} 👋",
     "greetingSubtitle": "Here's what's happening with your AI instances.",
-    "instances": "Instances",
+    "instances": {
+      "title": "AI Instances",
+      "subtitle": "Manage your deployed AI agents.",
+      "newInstance": "New Instance",
+      "emptyTitle": "No instances yet",
+      "emptyDesc": "Create your first AI instance to get started.",
+      "createInstance": "Create Instance",
+      "createdSuccess": "Instance created successfully.",
+      "modal": {
+        "title": "New AI Instance",
+        "nameLabel": "Name",
+        "namePlaceholder": "My Sales Agent",
+        "typeLabel": "Type",
+        "descLabel": "Description (optional)",
+        "descPlaceholder": "What does this agent do?",
+        "cancelBtn": "Cancel",
+        "createBtn": "Create",
+        "failedError": "Failed to create instance."
+      }
+    },
     "running": "Running",
     "plan": "Plan",
     "gettingStarted": "Getting Started",
@@ -267,6 +286,59 @@
       "updatePassword": "Update password",
       "saved": "Saved!",
       "passwordUpdated": "Password updated!"
+    },
+    "overview": {
+      "greeting": "Good to see you, {name} 👋",
+      "subtitle": "Here's what's happening with your AI instances.",
+      "instancesLabel": "Instances",
+      "runningLabel": "Running",
+      "activeNow": "Active right now",
+      "planLabel": "Plan",
+      "usedSlots": "{used}/{limit} used",
+      "unlimited": "Unlimited",
+      "managerBeingAssigned": "Manager being assigned…",
+      "activeSubscription": "Active subscription",
+      "dedicatedManager": "Your dedicated manager",
+      "managerSoon": "A manager will be assigned to your account soon.",
+      "messageBtn": "Message",
+      "gettingStarted": "Getting started",
+      "complete": "{done}/{total} complete",
+      "aiInstances": "AI Instances",
+      "viewAll": "View all",
+      "noInstancesYet": "No instances yet.",
+      "createOne": "Create one →",
+      "recentActivity": "Recent Activity",
+      "noActivityYet": "No activity yet.",
+      "steps": {
+        "onboarding": "Complete onboarding",
+        "managerAssigned": "Manager assigned to your account",
+        "configureInstance": "Configure your AI instance",
+        "generateKey": "Generate an API key",
+        "messageManager": "Message your manager"
+      }
+    },
+    "messages": {
+      "title": "Messages",
+      "subtitle": "Chat with your dedicated manager.",
+      "noManagerTitle": "Manager not assigned yet",
+      "noManagerDesc": "A dedicated manager will be assigned to your account shortly. Once assigned, you can message them directly here.",
+      "noMessagesYet": "No messages yet. Say hi to your manager!",
+      "messagePlaceholder": "Type a message...",
+      "failedSend": "Failed to send message."
+    },
+    "settingsPage": {
+      "title": "Settings",
+      "profileSection": "Profile",
+      "planSection": "Plan",
+      "managerSection": "Your Manager",
+      "managerSoon": "A dedicated manager will be assigned to your account shortly. They'll reach out to help you get started.",
+      "upgradeByRequest": "Upgrade by request",
+      "unlimitedInstances": "Unlimited instances",
+      "upToInstances": "Up to {n} instance(s)",
+      "tierLabel": "{tier} tier",
+      "managerWillBeAssigned": "A manager will be assigned soon. Once assigned, you can request an upgrade here or email",
+      "nameFieldLabel": "Name",
+      "emailFieldLabel": "Email"
     }
   },
   "common": {
@@ -287,5 +359,95 @@
   "contact": {
     "title": "Contact Us",
     "subtitle": "Have a question? Drop us a line."
+  },
+  "verifyEmail": {
+    "loading": "Loading…",
+    "verifying": "Verifying…",
+    "verifyingDesc": "Please wait while we verify your email.",
+    "goDashboard": "Go to dashboard →",
+    "errors": {
+      "missing": {
+        "title": "Invalid link",
+        "body": "The verification link is missing a token. Please use the link from your email."
+      },
+      "invalid": {
+        "title": "Link not found",
+        "body": "This verification link is invalid or has already been used."
+      },
+      "expired": {
+        "title": "Link expired",
+        "body": "This verification link has expired. Request a new one from your dashboard."
+      },
+      "default": {
+        "title": "Something went wrong",
+        "body": "Unable to verify your email."
+      }
+    }
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: March 2025",
+    "intro": "SynapseForge ('we', 'us', 'our') is committed to protecting your privacy. This policy explains what data we collect, why we collect it, and how we use it.",
+    "sections": {
+      "collect": {
+        "title": "Information We Collect",
+        "body": "We collect information you provide (name, email, company details), usage data (pages visited, features used), and technical data (IP address, browser type) to operate and improve our service."
+      },
+      "use": {
+        "title": "How We Use Your Information",
+        "body": "We use your data to provide the SynapseForge service, communicate with you about your account, improve our platform, and send service-related notifications."
+      },
+      "share": {
+        "title": "Data Sharing",
+        "body": "We do not sell your personal data. We may share data with trusted service providers who help us operate the platform (e.g., cloud hosting, payment processing) under strict data processing agreements."
+      },
+      "security": {
+        "title": "Data Security",
+        "body": "We use industry-standard encryption and security practices. However, no method of transmission over the Internet is 100% secure."
+      },
+      "rights": {
+        "title": "Your Rights",
+        "body": "You have the right to access, correct, or delete your personal data. Contact us at hello@synapseforge.ai to exercise these rights."
+      },
+      "contact": {
+        "title": "Contact",
+        "body": "For privacy questions, contact us at hello@synapseforge.ai."
+      }
+    }
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "lastUpdated": "Last updated: March 2025",
+    "intro": "By using SynapseForge ('Service'), you agree to these Terms of Service. Please read them carefully.",
+    "sections": {
+      "service": {
+        "title": "Use of Service",
+        "body": "SynapseForge provides managed AI infrastructure services. You may use the Service only in compliance with these terms and applicable laws."
+      },
+      "account": {
+        "title": "Account Responsibility",
+        "body": "You are responsible for maintaining the confidentiality of your account credentials and for all activities under your account."
+      },
+      "payment": {
+        "title": "Payment",
+        "body": "Paid plans are billed monthly or annually. Refunds are handled on a case-by-case basis. Contact support for billing disputes."
+      },
+      "ip": {
+        "title": "Intellectual Property",
+        "body": "The Service and its content are owned by SynapseForge. You retain ownership of any data you provide."
+      },
+      "termination": {
+        "title": "Termination",
+        "body": "We reserve the right to suspend or terminate accounts that violate these terms or engage in harmful activities."
+      },
+      "liability": {
+        "title": "Limitation of Liability",
+        "body": "SynapseForge is not liable for indirect, incidental, or consequential damages. Our liability is limited to the amount paid for the Service in the past 12 months."
+      },
+      "contact": {
+        "title": "Contact",
+        "body": "For questions about these Terms, contact us at hello@synapseforge.ai."
+      }
+    }
   }
 }
