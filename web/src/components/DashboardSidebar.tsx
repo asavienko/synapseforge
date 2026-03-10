@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Zap, LayoutDashboard, Bot, Settings, LogOut, Menu, X, MessageCircle } from "lucide-react";
+import { Zap, LayoutDashboard, Bot, Settings, LogOut, Menu, X, MessageCircle, CreditCard } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 
@@ -57,6 +57,7 @@ function SidebarContent({ userName, userEmail, unreadCount, onClose }: SidebarPr
         <NavItem href="/dashboard" icon={LayoutDashboard} label="Overview" onClick={onClose} />
         <NavItem href="/dashboard/instances" icon={Bot} label="Instances" onClick={onClose} />
         <NavItem href="/dashboard/messages" icon={MessageCircle} label="Messages" badge={unreadCount} onClick={onClose} />
+        <NavItem href="/dashboard/billing" icon={CreditCard} label="Billing" onClick={onClose} />
         <NavItem href="/dashboard/settings" icon={Settings} label="Settings" onClick={onClose} />
       </nav>
 

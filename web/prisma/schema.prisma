@@ -18,6 +18,10 @@ model User {
   plan          String       @default("free") // free | pro | enterprise
   onboardingDone Boolean     @default(false)
   onboardingData String?     // JSON: { business, industry, useCase }
+  stripeCustomerId     String?  @unique
+  stripeSubscriptionId String?  @unique
+  stripePriceId        String?
+  stripeCurrentPeriodEnd DateTime?
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 
