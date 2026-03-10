@@ -146,8 +146,9 @@ describe("07 · Instance Detail", () => {
       cy.contains("API Keys").click();
       // The key name appears in the list after reload
       cy.contains("To Be Revoked", { timeout: 8000 }).should("exist");
-      // Click the revoke button (last button in the row)
-      cy.contains("To Be Revoked").parents("div").first().find("button").last().click();
+      // Row is: <div class="flex items-center gap-4 p-4"> → sibling button is the revoke X
+      // Use parent with flex class to scope to the key row
+      cy.contains("To Be Revoked").closest(".flex.items-center").find("button").click();
       cy.snap("07-detail-16-apikey-revoked");
     });
   });
