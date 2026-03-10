@@ -17,8 +17,8 @@ describe("04 · Dashboard Overview", () => {
   });
 
   it("shows stat cards — instances and plan", () => {
-    cy.contains("Instances").should("be.visible");
-    cy.contains("Plan").should("be.visible");
+    cy.get("main").contains("Instances").should("be.visible");
+    cy.get("main").contains("Plan").should("be.visible");
     cy.snap("04-overview-02-stats");
   });
 
@@ -103,7 +103,7 @@ describe("04 · Instances", () => {
   });
 
   it("shows New Instance button", () => {
-    cy.contains("New Instance").should("be.visible");
+    cy.get("main").contains("New Instance").should("be.visible");
     cy.snap("04-instances-02-create-btn");
   });
 
@@ -208,11 +208,15 @@ describe("04 · Settings", () => {
     cy.snap("04-settings-03-password");
   });
 
-  it("saves profile changes", () => {
-    // Wait for form to be ready
+  it("saves profile changes and restores name", () => {
+    // Wait for form to be ready, edit then restore original name
     cy.get('input[type="text"]').first().should("not.be.disabled").clear().type("Cypress Updated");
     cy.get('button[type="submit"]').contains("Save changes").click({ force: true });
     cy.contains("Profile updated successfully", { timeout: 10000 }).should("exist");
     cy.snap("04-settings-04-saved");
+    // Restore original name so subsequent tests/runs find "Cypress Test" in sidebar
+    cy.get('input[type="text"]').first().clear().type(Cypress.env("TEST_NAME"));
+    cy.get('button[type="submit"]').contains("Save changes").click({ force: true });
+    cy.contains("Profile updated successfully", { timeout: 8000 }).should("exist");
   });
 });

@@ -2,13 +2,14 @@
 
 /**
  * cy.login(email, password)
- * Session-cached login with validation. If session is invalid, re-runs login flow.
+ * Session-cached login with cacheAcrossSpecs.
+ * The validate function re-establishes sessions that have been cleared.
  */
 Cypress.Commands.add("login", (email: string, password: string) => {
   cy.session(
     [email, password],
     () => {
-      cy.clearCookies();
+      // Setup: perform UI login
       cy.visit("/en/sign-in");
       cy.get('input[type="email"]').type(email);
       cy.get('input[type="password"]').type(password);
@@ -18,11 +19,12 @@ Cypress.Commands.add("login", (email: string, password: string) => {
     {
       cacheAcrossSpecs: true,
       validate() {
-        // Re-run login if session cookie is missing/expired
-        cy.request({
-          url: "/api/auth/session",
-          failOnStatusCode: false,
-        }).its("body.user").should("exist");
+        cy.request({ url: "/api/auth/session", failOnStatusCode: false })
+          .then((res) => {
+            if (!res.body?.user?.id) {
+              throw new Error("Session invalid — will re-login");
+            }
+          });
       },
     }
   );

@@ -43,15 +43,15 @@ describe("07 · Instance Detail", () => {
   });
 
   it("renders the instance detail page — Overview tab", () => {
-    cy.contains("Detail Test Agent").should("be.visible");
-    cy.contains("Overview").should("be.visible");
+    cy.get("main").contains("Detail Test Agent").should("be.visible");
+    cy.get("main").contains("Overview").should("be.visible");
     cy.snap("07-detail-01-overview");
   });
 
   it("shows instance metadata — type, tier, created date", () => {
-    cy.contains("Type").should("be.visible");
-    cy.contains("Tier").should("be.visible");
-    cy.contains("Created").should("be.visible");
+    cy.get("main").contains("Type").should("be.visible");
+    cy.get("main").contains("Tier").should("be.visible");
+    cy.get("main").contains("Created").should("be.visible");
     cy.snap("07-detail-02-metadata");
   });
 
