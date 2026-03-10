@@ -1,17 +1,28 @@
 import { Resend } from "resend";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
-const FROM = "SynapseForge <hello@synapseforge.ai>";
 
-async function send(to: string, subject: string, html: string) {
+// Use verified domain when available, otherwise fall back to Resend's pre-verified domain.
+// To use a custom domain: verify synapseforge.ai at https://resend.com/domains
+// then set RESEND_FROM env var to "SynapseForge <hello@synapseforge.ai>"
+const FROM = process.env.RESEND_FROM ?? "SynapseForge <onboarding@resend.dev>";
+
+async function send(to: string, subject: string, html: string): Promise<boolean> {
   if (!resend) {
     console.log(`[Email - no RESEND_API_KEY] To: ${to} | Subject: ${subject}`);
-    return;
+    return false;
   }
   try {
-    await resend.emails.send({ from: FROM, to, subject, html });
+    const { data, error } = await resend.emails.send({ from: FROM, to, subject, html });
+    if (error) {
+      console.error("[Email send error]", error);
+      return false;
+    }
+    console.log(`[Email sent] id=${data?.id} To: ${to} | Subject: ${subject}`);
+    return true;
   } catch (e) {
-    console.error("[Email send error]", e);
+    console.error("[Email send exception]", e);
+    return false;
   }
 }
 
