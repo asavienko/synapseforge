@@ -1,0 +1,91 @@
+name: CI — Test
+
+on:
+  push:
+    branches: [develop]
+    paths:
+      - "web/**"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    branches: [develop, main]
+    paths:
+      - "web/**"
+
+defaults:
+  run:
+    working-directory: web
+
+jobs:
+  test:
+    name: Cypress E2E Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      DATABASE_URL:       ${{ secrets.DATABASE_URL }}
+      DIRECT_URL:         ${{ secrets.DIRECT_URL }}
+      AUTH_SECRET:        ${{ secrets.AUTH_SECRET }}
+      NEXTAUTH_URL:       http://localhost:3000
+      RESEND_API_KEY:     ${{ secrets.RESEND_API_KEY }}
+      ADMIN_EMAILS:       ${{ secrets.ADMIN_EMAILS }}
+      STRIPE_SECRET_KEY:  ${{ secrets.STRIPE_SECRET_KEY }}
+      STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+      STRIPE_PRO_PRICE_ID: ${{ secrets.STRIPE_PRO_PRICE_ID }}
+      STRIPE_ENTERPRISE_PRICE_ID: ${{ secrets.STRIPE_ENTERPRISE_PRICE_ID }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma client
+        run: npx prisma generate
+
+      - name: Seed test user
+        run: npx tsx cypress/support/seed.ts
+
+      - name: Build app
+        run: npm run build
+
+      - name: Run Cypress tests
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: web
+          start: npm run start
+          wait-on: http://localhost:3000
+          wait-on-timeout: 60
+          browser: chrome
+          record: false
+        env:
+          # Pass all env vars to Cypress as well
+          DATABASE_URL:       ${{ secrets.DATABASE_URL }}
+          DIRECT_URL:         ${{ secrets.DIRECT_URL }}
+          AUTH_SECRET:        ${{ secrets.AUTH_SECRET }}
+          NEXTAUTH_URL:       http://localhost:3000
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cypress-screenshots
+          path: web/cypress/screenshots
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Upload test results summary
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cypress-results
+          path: web/cypress/results
+          if-no-files-found: ignore
+          retention-days: 14

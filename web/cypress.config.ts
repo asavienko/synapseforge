@@ -11,6 +11,14 @@ export default defineConfig({
     video: false,
     defaultCommandTimeout: 10000,
     setupNodeEvents(_on, _config) {},
+    reporter: "cypress-multi-reporters",
+    reporterOptions: {
+      reporterEnabled: "spec, mocha-junit-reporter",
+      mochaJunitReporterReporterOptions: {
+        mochaFile: "cypress/results/junit-[hash].xml",
+        toConsole: false,
+      },
+    },
   },
   env: {
     // Regular test user

@@ -50,3 +50,5 @@ prisma/dev.db
 cypress/screenshots
 cypress/videos
 cypress/downloads
+
+cypress/results
