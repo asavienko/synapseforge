@@ -212,19 +212,14 @@ describe("04 · Settings", () => {
     cy.snap("04-settings-03-password");
   });
 
-  it("saves profile changes and restores name", () => {
-    const testName = Cypress.env("TEST_NAME") as string;
+  it("saves profile changes", () => {
+    // Use a unique name to guarantee it differs from whatever is cached in the session JWT
     const tempName = `CI User ${Date.now()}`;
-    // Intercept to verify success regardless of toast timing
     cy.intercept("PATCH", "/api/user").as("saveProfile");
     cy.get('input[type="text"]').first().should("not.be.disabled").clear().type(tempName);
     cy.get('button[type="submit"]').contains("Save changes").click({ force: true });
     cy.wait("@saveProfile", { timeout: 10000 }).its("response.statusCode").should("eq", 200);
     cy.snap("04-settings-04-saved");
-    // Restore name — input now has tempName as both value and initialName, so type testName
-    cy.get('input[type="text"]').first().clear().type(testName);
-    cy.intercept("PATCH", "/api/user").as("restoreProfile");
-    cy.get('button[type="submit"]').contains("Save changes").click({ force: true });
-    cy.wait("@restoreProfile", { timeout: 8000 }).its("response.statusCode").should("eq", 200);
+    // Note: seed resets name to "Cypress Test" on next run — no need to restore here
   });
 });

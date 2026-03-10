@@ -109,23 +109,26 @@ describe("07 · Instance Detail", () => {
 
     it("generates a new API key", () => {
       cy.get('input[placeholder*="Key name"]').type("Cypress Test Key");
-      cy.contains("Generate").click();
-      // Toast: "API key created. Copy it now — it won't be shown again."
-      cy.contains("API key created", { timeout: 8000 }).should("be.visible");
+      // Use cy.contains("button", "Generate") to target the button, not the h3 heading
+      cy.contains("button", "Generate").click();
+      // In-page reveal banner stays visible (unlike 3-sec toast)
+      cy.contains("New key generated", { timeout: 8000 }).should("be.visible");
       cy.snap("07-detail-12-apikey-generated");
     });
 
     it("shows the new key value once", () => {
       cy.get('input[placeholder*="Key name"]').type("Show Once Key");
-      cy.contains("Generate").click();
-      cy.contains("API key created", { timeout: 8000 }).should("be.visible");
+      cy.contains("button", "Generate").click();
+      cy.contains("New key generated", { timeout: 8000 }).should("be.visible");
+      // The full key should be visible in the reveal banner
+      cy.get(".font-mono, code").should("exist");
       cy.snap("07-detail-13-apikey-revealed");
     });
 
     it("shows copy button for new key", () => {
       cy.get('input[placeholder*="Key name"]').type("Copy Key Test");
-      cy.contains("Generate").click();
-      cy.contains("API key created", { timeout: 8000 }).should("be.visible");
+      cy.contains("button", "Generate").click();
+      cy.contains("New key generated", { timeout: 8000 }).should("be.visible");
       cy.snap("07-detail-14-apikey-copy");
     });
 
@@ -136,16 +139,15 @@ describe("07 · Instance Detail", () => {
 
     it("revokes an API key", () => {
       cy.get('input[placeholder*="Key name"]').type("To Be Revoked");
-      cy.contains("Generate").click();
-      cy.contains("API key created", { timeout: 8000 }).should("be.visible");
-      cy.wait(500);
+      cy.contains("button", "Generate").click();
+      cy.contains("New key generated", { timeout: 8000 }).should("be.visible");
+      cy.wait(300);
       cy.reload();
       cy.contains("API Keys").click();
       // The key name appears in the list after reload
       cy.contains("To Be Revoked", { timeout: 8000 }).should("exist");
-      // Click the X revoke button next to it
-      cy.contains("To Be Revoked").closest("div[class]").find("button").last().click();
-      cy.on("window:confirm", () => true);
+      // Click the revoke button (last button in the row)
+      cy.contains("To Be Revoked").parents("div").first().find("button").last().click();
       cy.snap("07-detail-16-apikey-revoked");
     });
   });
@@ -159,10 +161,10 @@ describe("07 · Instance Detail", () => {
     });
 
     it("shows logged events", () => {
+      // After start/stop tests, there will be activity entries; just assert the tab rendered
+      cy.contains("Event history").should("be.visible");
       cy.get("body").then(($body) => {
-        if ($body.text().includes("No activity")) {
-          // Actual text: "No activity yet. Start or configure the instance."
-          cy.contains("No activity yet", { timeout: 5000 }).should("exist");
+        if ($body.text().includes("No activity yet")) {
           cy.snap("07-detail-18-activity-empty");
         } else {
           cy.snap("07-detail-18-activity-events");
