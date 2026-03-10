@@ -449,5 +449,55 @@
         "body": "З питань щодо Умов звертайтеся за адресою hello@synapseforge.ai."
       }
     }
+  },
+  "instanceDetail": {
+    "title": "Деталі інстанції",
+    "tabs": {
+      "overview": "Огляд",
+      "configuration": "Конфігурація",
+      "apiKeys": "API-ключі",
+      "activityLog": "Журнал активності"
+    },
+    "start": "Запустити",
+    "stop": "Зупинити",
+    "statusRunning": "запущено",
+    "statusStopped": "зупинено",
+    "overview": {
+      "type": "Тип",
+      "tier": "Рівень",
+      "status": "Статус",
+      "created": "Створено",
+      "lastUpdated": "Останнє оновлення"
+    },
+    "config": {
+      "aiModel": "Модель AI",
+      "systemPrompt": "Системний промпт",
+      "temperature": "Температура",
+      "saving": "Збереження...",
+      "save": "Зберегти конфігурацію",
+      "saved": "Збережено",
+      "systemPromptPlaceholder": "Ви корисний AI-асистент..."
+    },
+    "apiKeys": {
+      "generateTitle": "Згенерувати новий API-ключ",
+      "generateDesc": "Ключі показуються лише один раз. Зберігайте їх у безпечному місці.",
+      "keyNamePlaceholder": "Назва ключа (напр. Production, Dev)",
+      "generateBtn": "Згенерувати",
+      "newKeyTitle": "Новий ключ згенеровано — скопіюйте зараз",
+      "newKeyDesc": "Це єдиний раз, коли буде показано повний ключ.",
+      "noKeysYet": "API-ключів ще немає.",
+      "usageTitle": "Приклад використання",
+      "revokeConfirm": "Відкликати цей API-ключ? Цю дію не можна скасувати.",
+      "createdAt": "Створено",
+      "lastUsed": "Останнє використання"
+    },
+    "activity": {
+      "title": "Журнал подій",
+      "noActivity": "Активності ще немає. Запустіть або налаштуйте інстанцію.",
+      "configSaved": "Конфігурацію збережено.",
+      "configFailed": "Не вдалося зберегти конфігурацію.",
+      "keyCreated": "API-ключ створено. Скопіюйте зараз — він не буде показаний знову.",
+      "keyRevoked": "API-ключ відкликано."
+    }
   }
 }

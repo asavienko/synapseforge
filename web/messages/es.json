@@ -449,5 +449,55 @@
         "body": "Para preguntas sobre estos Términos, contáctanos en hello@synapseforge.ai."
       }
     }
+  },
+  "instanceDetail": {
+    "title": "Detalle de instancia",
+    "tabs": {
+      "overview": "Resumen",
+      "configuration": "Configuración",
+      "apiKeys": "Claves API",
+      "activityLog": "Registro de actividad"
+    },
+    "start": "Iniciar",
+    "stop": "Detener",
+    "statusRunning": "ejecutando",
+    "statusStopped": "detenida",
+    "overview": {
+      "type": "Tipo",
+      "tier": "Nivel",
+      "status": "Estado",
+      "created": "Creado",
+      "lastUpdated": "Última actualización"
+    },
+    "config": {
+      "aiModel": "Modelo de IA",
+      "systemPrompt": "Prompt del sistema",
+      "temperature": "Temperatura",
+      "saving": "Guardando...",
+      "save": "Guardar configuración",
+      "saved": "Guardado",
+      "systemPromptPlaceholder": "Eres un asistente de IA útil..."
+    },
+    "apiKeys": {
+      "generateTitle": "Generar nueva clave API",
+      "generateDesc": "Las claves se muestran solo una vez. Guárdalas de forma segura.",
+      "keyNamePlaceholder": "Nombre de clave (ej. Producción, Dev)",
+      "generateBtn": "Generar",
+      "newKeyTitle": "Nueva clave generada — cópiala ahora",
+      "newKeyDesc": "Esta es la única vez que se mostrará la clave completa.",
+      "noKeysYet": "Aún no hay claves API.",
+      "usageTitle": "Ejemplo de uso",
+      "revokeConfirm": "¿Revocar esta clave API? Esta acción no se puede deshacer.",
+      "createdAt": "Creado",
+      "lastUsed": "Último uso"
+    },
+    "activity": {
+      "title": "Historial de eventos",
+      "noActivity": "Sin actividad aún. Inicia o configura la instancia.",
+      "configSaved": "Configuración guardada.",
+      "configFailed": "Error al guardar la configuración.",
+      "keyCreated": "Clave API creada. Cópiala ahora — no se volverá a mostrar.",
+      "keyRevoked": "Clave API revocada."
+    }
   }
 }

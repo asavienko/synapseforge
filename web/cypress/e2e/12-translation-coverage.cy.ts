@@ -236,3 +236,116 @@ describe("12 · Translations — English (en) — Baseline", () => {
     cy.snap("12-en-baseline-forgot");
   });
 });
+
+// ─── Dashboard Page Translations ─────────────────────────────────────────────
+
+const DASHBOARD_LOCALES = [
+  {
+    code: "es",
+    instances: { title: "Instancias de IA", newBtn: "Nueva instancia", emptyTitle: "Aún no hay instancias" },
+    messages: { title: "Mensajes", placeholder: "Escribe un mensaje..." },
+    settings: { title: "Configuración", profileSection: "Perfil" },
+    privacy: { title: "Política de Privacidad" },
+    terms: { title: "Términos de Servicio" },
+  },
+  {
+    code: "uk",
+    instances: { title: "AI-інстанції", newBtn: "Нова інстанція", emptyTitle: "Інстанцій ще немає" },
+    messages: { title: "Повідомлення", placeholder: "Введіть повідомлення..." },
+    settings: { title: "Налаштування", profileSection: "Профіль" },
+    privacy: { title: "Політика конфіденційності" },
+    terms: { title: "Умови використання" },
+  },
+  {
+    code: "ru",
+    instances: { title: "AI-инстанции", newBtn: "Новая инстанция", emptyTitle: "Инстанций пока нет" },
+    messages: { title: "Сообщения", placeholder: "Введите сообщение..." },
+    settings: { title: "Настройки", profileSection: "Профиль" },
+    privacy: { title: "Политика конфиденциальности" },
+    terms: { title: "Условия использования" },
+  },
+] as const;
+
+const EMAIL = () => Cypress.env("TEST_EMAIL") as string;
+const PASS = () => Cypress.env("TEST_PASSWORD") as string;
+
+DASHBOARD_LOCALES.forEach((locale) => {
+  describe(`12 · Translations — Dashboard — ${locale.code.toUpperCase()}`, () => {
+    beforeEach(() => cy.login(EMAIL(), PASS()));
+
+    it(`instances page title is translated (${locale.code})`, () => {
+      cy.visit(`/${locale.code}/dashboard/instances`);
+      cy.get("main").contains(locale.instances.title).should("be.visible");
+      cy.snap(`12-${locale.code}-dashboard-instances`);
+    });
+
+    it(`instances New Instance button is translated (${locale.code})`, () => {
+      cy.visit(`/${locale.code}/dashboard/instances`);
+      cy.get("main").contains(locale.instances.newBtn).should("exist");
+    });
+
+    it(`messages page title is translated (${locale.code})`, () => {
+      cy.visit(`/${locale.code}/dashboard/messages`);
+      cy.get("main, h1").contains(locale.messages.title).should("be.visible");
+      cy.snap(`12-${locale.code}-dashboard-messages`);
+    });
+
+    it(`settings page title is translated (${locale.code})`, () => {
+      cy.visit(`/${locale.code}/dashboard/settings`);
+      cy.get("main").contains(locale.settings.title).should("be.visible");
+      cy.get("main").contains(locale.settings.profileSection).should("be.visible");
+      cy.snap(`12-${locale.code}-dashboard-settings`);
+    });
+  });
+
+  describe(`12 · Translations — Public pages — ${locale.code.toUpperCase()}`, () => {
+    it(`privacy page is translated (${locale.code})`, () => {
+      cy.visit(`/${locale.code}/privacy`);
+      cy.contains(locale.privacy.title).should("be.visible");
+      cy.snap(`12-${locale.code}-privacy`);
+    });
+
+    it(`terms page is translated (${locale.code})`, () => {
+      cy.visit(`/${locale.code}/terms`);
+      cy.contains(locale.terms.title).should("be.visible");
+      cy.snap(`12-${locale.code}-terms`);
+    });
+  });
+});
+
+// ─── English Dashboard Baseline ───────────────────────────────────────────────
+
+describe("12 · Translations — English Dashboard Baseline", () => {
+  beforeEach(() => cy.login(EMAIL(), PASS()));
+
+  it("instances page is English", () => {
+    cy.visit("/en/dashboard/instances");
+    cy.get("main").contains("AI Instances").should("be.visible");
+    cy.snap("12-en-dashboard-instances");
+  });
+
+  it("messages page is English", () => {
+    cy.visit("/en/dashboard/messages");
+    cy.get("main, h1").contains("Messages").should("be.visible");
+    cy.snap("12-en-dashboard-messages");
+  });
+
+  it("settings page is English", () => {
+    cy.visit("/en/dashboard/settings");
+    cy.get("main").contains("Settings").should("be.visible");
+    cy.get("main").contains("Profile").should("be.visible");
+    cy.snap("12-en-dashboard-settings");
+  });
+
+  it("privacy page is English", () => {
+    cy.visit("/en/privacy");
+    cy.contains("Privacy Policy").should("be.visible");
+    cy.snap("12-en-privacy");
+  });
+
+  it("terms page is English", () => {
+    cy.visit("/en/terms");
+    cy.contains("Terms of Service").should("be.visible");
+    cy.snap("12-en-terms");
+  });
+});

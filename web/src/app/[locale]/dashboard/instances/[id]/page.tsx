@@ -10,6 +10,7 @@ import {
 import Link from "next/link";
 import { STATUS_COLORS, INSTANCE_TYPES, formatDate } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -81,6 +82,7 @@ type Tab = (typeof TABS)[number];
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function InstanceDetailPage() {
+  const t = useTranslations("instanceDetail");
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
 
@@ -177,10 +179,10 @@ export default function InstanceDetailPage() {
     if (res.ok) {
       setInstance(await res.json());
       setConfigDirty(false);
-      showToast("Configuration saved.");
+      showToast(t("activity.configSaved"));
       if (tab === "Activity Log") loadLogs();
     } else {
-      showToast("Failed to save config.", "error");
+      showToast(t("activity.configFailed"), "error");
     }
     setSavingConfig(false);
   }
@@ -198,13 +200,13 @@ export default function InstanceDetailPage() {
       setKeys((prev) => [{ ...newKey, key: newKey.key }, ...prev]);
       setRevealedKey(newKey.key); // show once
       setNewKeyName("");
-      showToast("API key created. Copy it now — it won't be shown again.", "success");
+      showToast(t("activity.keyCreated"), "success");
     }
     setCreatingKey(false);
   }
 
   async function revokeKey(keyId: string) {
-    if (!confirm("Revoke this API key? It will stop working immediately.")) return;
+    if (!confirm(t("apiKeys.revokeConfirm"))) return;
     const res = await fetch(`/api/instances/${id}/keys`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
@@ -213,7 +215,7 @@ export default function InstanceDetailPage() {
     if (res.ok) {
       setKeys((prev) => prev.filter((k) => k.id !== keyId));
       if (revealedKey) setRevealedKey(null);
-      showToast("API key revoked.");
+      showToast(t("activity.keyRevoked"));
       loadLogs();
     }
   }
@@ -269,7 +271,7 @@ export default function InstanceDetailPage() {
               instance.status === "running" ? "bg-zinc-700 hover:bg-zinc-600 text-white" : "bg-emerald-600 hover:bg-emerald-500 text-white"
             }`}>
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : instance.status === "running" ? <Square className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-            {instance.status === "running" ? "Stop" : "Start"}
+            {instance.status === "running" ? t("stop") : t("start")}
           </button>
           <button onClick={deleteInstance} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-red-600/10 hover:bg-red-600/20 text-red-400 border border-red-500/20 transition-colors">
             <Trash2 className="w-4 h-4" />
@@ -279,14 +281,22 @@ export default function InstanceDetailPage() {
 
       {/* Tabs */}
       <div className="flex gap-1 border-b border-white/5 mb-6">
-        {TABS.map((t) => (
-          <button key={t} onClick={() => setTab(t)}
-            className={cn("px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px",
-              tab === t ? "border-violet-500 text-white" : "border-transparent text-zinc-500 hover:text-zinc-300"
-            )}>
-            {t}
-          </button>
-        ))}
+        {TABS.map((tabKey) => {
+          const tabLabels: Record<string, string> = {
+            "Overview": t("tabs.overview"),
+            "Configuration": t("tabs.configuration"),
+            "API Keys": t("tabs.apiKeys"),
+            "Activity Log": t("tabs.activityLog"),
+          };
+          return (
+            <button key={tabKey} onClick={() => setTab(tabKey)}
+              className={cn("px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px",
+                tab === tabKey ? "border-violet-500 text-white" : "border-transparent text-zinc-500 hover:text-zinc-300"
+              )}>
+              {tabLabels[tabKey]}
+            </button>
+          );
+        })}
       </div>
 
       {/* ── Overview ── */}
@@ -301,10 +311,10 @@ export default function InstanceDetailPage() {
             )}
             <div className="p-5 grid grid-cols-2 gap-5">
               {[
-                { label: "Created", value: formatDate(instance.createdAt) },
-                { label: "Last updated", value: formatDate(instance.updatedAt) },
-                { label: "Type", value: typeLabel },
-                { label: "Tier", value: instance.tier.charAt(0).toUpperCase() + instance.tier.slice(1) },
+                { label: t("overview.created"), value: formatDate(instance.createdAt) },
+                { label: t("overview.lastUpdated"), value: formatDate(instance.updatedAt) },
+                { label: t("overview.type"), value: typeLabel },
+                { label: t("overview.tier"), value: instance.tier.charAt(0).toUpperCase() + instance.tier.slice(1) },
               ].map((f) => (
                 <div key={f.label}>
                   <div className="text-xs text-zinc-500 uppercase tracking-wider mb-1">{f.label}</div>
@@ -354,7 +364,7 @@ export default function InstanceDetailPage() {
               <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-2">System Prompt</label>
               <textarea value={config.systemPrompt} rows={5}
                 onChange={(e) => { setConfig((p) => ({ ...p, systemPrompt: e.target.value })); setConfigDirty(true); }}
-                placeholder="You are a helpful AI assistant..."
+                placeholder={t("config.systemPromptPlaceholder")}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors resize-none" />
             </div>
 
@@ -385,7 +395,7 @@ export default function InstanceDetailPage() {
           <button onClick={saveConfig} disabled={!configDirty || savingConfig}
             className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 transition-colors px-5 py-3 rounded-xl text-sm font-semibold text-white">
             {savingConfig ? <Loader2 className="w-4 h-4 animate-spin" /> : <Settings2 className="w-4 h-4" />}
-            {savingConfig ? "Saving..." : configDirty ? "Save Configuration" : "Saved"}
+            {savingConfig ? t("config.saving") : configDirty ? t("config.save") : t("config.saved")}
           </button>
         </div>
       )}
@@ -395,17 +405,17 @@ export default function InstanceDetailPage() {
         <div className="space-y-5">
           {/* Create key */}
           <div className="glow-border rounded-2xl bg-white/[0.02] p-5">
-            <h3 className="text-sm font-semibold text-white mb-1">Generate new API key</h3>
-            <p className="text-xs text-zinc-500 mb-4">Keys are shown only once. Store them securely.</p>
+            <h3 className="text-sm font-semibold text-white mb-1">{t("apiKeys.generateTitle")}</h3>
+            <p className="text-xs text-zinc-500 mb-4">{t("apiKeys.generateDesc")}</p>
             <div className="flex gap-3">
               <input type="text" value={newKeyName} onChange={(e) => setNewKeyName(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter") createKey(); }}
-                placeholder="Key name (e.g. Production, Dev)"
+                placeholder={t("apiKeys.keyNamePlaceholder")}
                 className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors" />
               <button onClick={createKey} disabled={creatingKey || !newKeyName.trim()}
                 className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 transition-colors px-4 py-3 rounded-xl text-sm font-semibold text-white">
                 {creatingKey ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-                Generate
+                {t("apiKeys.generateBtn")}
               </button>
             </div>
           </div>
@@ -415,9 +425,9 @@ export default function InstanceDetailPage() {
             <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-5">
               <div className="flex items-center gap-2 mb-2">
                 <Zap className="w-4 h-4 text-emerald-400" />
-                <span className="text-sm font-semibold text-emerald-300">New key generated — copy it now</span>
+                <span className="text-sm font-semibold text-emerald-300">{t("apiKeys.newKeyTitle")}</span>
               </div>
-              <p className="text-xs text-emerald-500/80 mb-3">This is the only time the full key will be shown.</p>
+              <p className="text-xs text-emerald-500/80 mb-3">{t("apiKeys.newKeyDesc")}</p>
               <div className="flex items-center gap-3 bg-black/30 rounded-xl px-4 py-3 font-mono text-sm text-emerald-200 border border-emerald-500/20">
                 <span className="flex-1 break-all">{revealedKey}</span>
                 <button onClick={() => copyToClipboard(revealedKey, "new")} className="text-emerald-400 hover:text-white transition-colors shrink-0">
@@ -437,7 +447,7 @@ export default function InstanceDetailPage() {
             ) : keys.length === 0 ? (
               <div className="p-8 text-center">
                 <Key className="w-8 h-8 text-zinc-700 mx-auto mb-2" />
-                <p className="text-zinc-500 text-sm">No API keys yet.</p>
+                <p className="text-zinc-500 text-sm">{t("apiKeys.noKeysYet")}</p>
               </div>
             ) : (
               <div className="divide-y divide-white/5">
@@ -479,7 +489,7 @@ export default function InstanceDetailPage() {
       {tab === "Activity Log" && (
         <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
           <div className="p-5 border-b border-white/5 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-white">Event history</h3>
+            <h3 className="text-sm font-semibold text-white">{t("activity.title")}</h3>
             <button onClick={loadLogs} className="text-xs text-zinc-500 hover:text-white transition-colors">Refresh</button>
           </div>
           {logsLoading ? (
@@ -487,7 +497,7 @@ export default function InstanceDetailPage() {
           ) : logs.length === 0 ? (
             <div className="p-8 text-center">
               <Activity className="w-8 h-8 text-zinc-700 mx-auto mb-2" />
-              <p className="text-zinc-500 text-sm">No activity yet. Start or configure the instance.</p>
+              <p className="text-zinc-500 text-sm">{t("activity.noActivity")}</p>
             </div>
           ) : (
             <div className="divide-y divide-white/5">

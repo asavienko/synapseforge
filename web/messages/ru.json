@@ -449,5 +449,55 @@
         "body": "По вопросам об Условиях пишите на hello@synapseforge.ai."
       }
     }
+  },
+  "instanceDetail": {
+    "title": "Детали инстанции",
+    "tabs": {
+      "overview": "Обзор",
+      "configuration": "Конфигурация",
+      "apiKeys": "API-ключи",
+      "activityLog": "Журнал активности"
+    },
+    "start": "Запустить",
+    "stop": "Остановить",
+    "statusRunning": "запущена",
+    "statusStopped": "остановлена",
+    "overview": {
+      "type": "Тип",
+      "tier": "Уровень",
+      "status": "Статус",
+      "created": "Создано",
+      "lastUpdated": "Последнее обновление"
+    },
+    "config": {
+      "aiModel": "Модель AI",
+      "systemPrompt": "Системный промпт",
+      "temperature": "Температура",
+      "saving": "Сохранение...",
+      "save": "Сохранить конфигурацию",
+      "saved": "Сохранено",
+      "systemPromptPlaceholder": "Вы полезный AI-ассистент..."
+    },
+    "apiKeys": {
+      "generateTitle": "Сгенерировать новый API-ключ",
+      "generateDesc": "Ключи показываются только один раз. Храните их в безопасном месте.",
+      "keyNamePlaceholder": "Название ключа (напр. Production, Dev)",
+      "generateBtn": "Сгенерировать",
+      "newKeyTitle": "Новый ключ сгенерирован — скопируйте сейчас",
+      "newKeyDesc": "Это единственный раз, когда будет показан полный ключ.",
+      "noKeysYet": "API-ключей пока нет.",
+      "usageTitle": "Пример использования",
+      "revokeConfirm": "Отозвать этот API-ключ? Это действие нельзя отменить.",
+      "createdAt": "Создано",
+      "lastUsed": "Последнее использование"
+    },
+    "activity": {
+      "title": "Журнал событий",
+      "noActivity": "Активности пока нет. Запустите или настройте инстанцию.",
+      "configSaved": "Конфигурация сохранена.",
+      "configFailed": "Не удалось сохранить конфигурацию.",
+      "keyCreated": "API-ключ создан. Скопируйте сейчас — он не будет показан снова.",
+      "keyRevoked": "API-ключ отозван."
+    }
   }
 }

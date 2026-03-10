@@ -449,5 +449,55 @@
         "body": "For questions about these Terms, contact us at hello@synapseforge.ai."
       }
     }
+  },
+  "instanceDetail": {
+    "title": "Instance Detail",
+    "tabs": {
+      "overview": "Overview",
+      "configuration": "Configuration",
+      "apiKeys": "API Keys",
+      "activityLog": "Activity Log"
+    },
+    "start": "Start",
+    "stop": "Stop",
+    "statusRunning": "running",
+    "statusStopped": "stopped",
+    "overview": {
+      "type": "Type",
+      "tier": "Tier",
+      "status": "Status",
+      "created": "Created",
+      "lastUpdated": "Last updated"
+    },
+    "config": {
+      "aiModel": "AI Model",
+      "systemPrompt": "System Prompt",
+      "temperature": "Temperature",
+      "saving": "Saving...",
+      "save": "Save Configuration",
+      "saved": "Saved",
+      "systemPromptPlaceholder": "You are a helpful AI assistant..."
+    },
+    "apiKeys": {
+      "generateTitle": "Generate new API key",
+      "generateDesc": "Keys are shown only once. Store them securely.",
+      "keyNamePlaceholder": "Key name (e.g. Production, Dev)",
+      "generateBtn": "Generate",
+      "newKeyTitle": "New key generated — copy it now",
+      "newKeyDesc": "This is the only time the full key will be shown.",
+      "noKeysYet": "No API keys yet.",
+      "usageTitle": "Usage example",
+      "revokeConfirm": "Revoke this API key? This cannot be undone.",
+      "createdAt": "Created",
+      "lastUsed": "Last used"
+    },
+    "activity": {
+      "title": "Event history",
+      "noActivity": "No activity yet. Start or configure the instance.",
+      "configSaved": "Configuration saved.",
+      "configFailed": "Failed to save config.",
+      "keyCreated": "API key created. Copy it now — it won't be shown again.",
+      "keyRevoked": "API key revoked."
+    }
   }
 }
