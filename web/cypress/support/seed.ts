@@ -16,7 +16,7 @@ async function main() {
 
   const hashed = await bcrypt.hash(password, 12);
 
-  // Always upsert — resets name/plan even if user exists (CI runs may mutate data)
+  // Always upsert — resets name/plan/emailVerified even if user exists (CI runs may mutate data)
   const user = await prisma.user.upsert({
     where: { email },
     update: {
@@ -24,6 +24,7 @@ async function main() {
       plan: "free",
       onboardingDone: true,
       password: hashed,
+      emailVerified: new Date(), // Ensure email is verified — avoids banner blocking tests
     },
     create: {
       email,
@@ -31,6 +32,7 @@ async function main() {
       password: hashed,
       plan: "free",
       onboardingDone: true,
+      emailVerified: new Date(),
       onboardingData: JSON.stringify({
         business: "Cypress Corp",
         industry: "SaaS / Software",
@@ -60,6 +62,21 @@ async function main() {
       },
     });
     console.log(`✅ Created Cypress Agent instance`);
+  } else {
+    // Reset instance to a known state so tests that mutate status/provisionStatus don't bleed
+    await (prisma as unknown as {
+      aIInstance: { update: (args: unknown) => Promise<unknown> };
+    }).aIInstance.update({
+      where: { id: existing.id },
+      data: {
+        status: "running",
+        provisionStatus: null,
+        vpsUrl: null,
+        vpsServerId: null,
+        configSynced: true,
+      },
+    });
+    console.log(`✅ Reset Cypress Agent instance to known state (running, no VPS)`);
   }
 
   console.log(`✅ Upserted test user: ${email} / ${password} (name reset to "${name}")`);

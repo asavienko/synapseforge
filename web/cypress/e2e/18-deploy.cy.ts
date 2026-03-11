@@ -323,4 +323,20 @@ describe("18 · Deploy Tab", () => {
     cy.wait("@restartReq");
     cy.snap("18-deploy-11-sync-triggered");
   });
+
+  // Cleanup: restore instance to known state so later specs aren't affected
+  after(() => {
+    cy.login(EMAIL(), PASS());
+    cy.wrap(null).then(() => {
+      if (instanceId) {
+        cy.request({
+          method: "PATCH",
+          url: `/api/instances/${instanceId}`,
+          body: { status: "running" },
+          headers: { "Content-Type": "application/json" },
+          failOnStatusCode: false,
+        });
+      }
+    });
+  });
 });

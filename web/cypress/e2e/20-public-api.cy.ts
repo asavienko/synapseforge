@@ -39,6 +39,18 @@ function getApiKey(): Cypress.Chainable<string> {
 describe("20 · Public API", () => {
   before(() => {
     cy.login(EMAIL(), PASS());
+    // Ensure instance is in running state for API tests
+    cy.request("/api/instances").then((res) => {
+      if (res.body[0]?.id) {
+        cy.request({
+          method: "PATCH",
+          url: `/api/instances/${res.body[0].id}`,
+          body: { status: "running" },
+          headers: { "Content-Type": "application/json" },
+          failOnStatusCode: false,
+        });
+      }
+    });
   });
 
   // ── 01. API docs endpoint ──────────────────────────────────────────────────

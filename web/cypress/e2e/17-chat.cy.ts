@@ -346,4 +346,20 @@ describe("17 · Chat Tab", () => {
     cy.get("main").contains(/gpt-4o|claude|gemini/i).should("be.visible");
     cy.snap("17-chat-11-model-badge");
   });
+
+  // Cleanup: restore instance to running state so later specs aren't affected
+  after(() => {
+    cy.login(EMAIL(), PASS());
+    cy.wrap(null).then(() => {
+      if (instanceId) {
+        cy.request({
+          method: "PATCH",
+          url: `/api/instances/${instanceId}`,
+          body: { status: "running" },
+          headers: { "Content-Type": "application/json" },
+          failOnStatusCode: false,
+        });
+      }
+    });
+  });
 });
