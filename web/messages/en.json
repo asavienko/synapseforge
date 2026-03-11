@@ -306,7 +306,9 @@
         "deployInstance": "Deploy your agent to the cloud",
         "connectChannel": "Connect a channel (Telegram, Discord, or Slack)",
         "managerAssigned": "Manager assigned — your personal guide"
-      }
+      },
+      "messagesLabel": "Messages",
+      "allTimeMessages": "chat messages sent"
     },
     "messages": {
       "title": "Messages",
@@ -611,6 +613,17 @@
       "channelDiscord": "Discord",
       "channelSlack": "Slack",
       "chatAvailable": "Chat available in the Chat tab"
+    },
+    "usage": {
+      "title": "Usage Analytics",
+      "allTime": "All Time",
+      "thisMonth": "This Month",
+      "today": "Today",
+      "messages": "messages",
+      "topModel": "Top Model",
+      "avgLatency": "Avg Latency",
+      "last14Days": "Last 14 Days",
+      "noMessages": "No messages yet — send your first chat message to see stats here."
     }
   },
   "admin": {

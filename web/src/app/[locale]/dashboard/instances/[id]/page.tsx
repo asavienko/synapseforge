@@ -506,6 +506,19 @@ export default function InstanceDetailPage() {
   const [logs, setLogs] = useState<LogRow[]>([]);
   const [logsLoading, setLogsLoading] = useState(false);
 
+  // Usage stats state
+  type UsageData = {
+    totalMessages: number;
+    messagesThisMonth: number;
+    todayMessages: number;
+    avgLatencyMs: number | null;
+    topModel: string | null;
+    modelCounts: Record<string, number>;
+    daily: { date: string; count: number }[];
+  };
+  const [usageData, setUsageData] = useState<UsageData | null>(null);
+  const [usageLoading, setUsageLoading] = useState(false);
+
   // Infrastructure state
   const [healthData, setHealthData] = useState<HealthData | null>(null);
   const [snapshotsData, setSnapshotsData] = useState<SnapshotsData | null>(null);
@@ -576,6 +589,17 @@ export default function InstanceDetailPage() {
     setLogsLoading(false);
   }, [id]);
 
+  const loadUsage = useCallback(async () => {
+    if (!id) return;
+    setUsageLoading(true);
+    try {
+      const res = await fetch(`/api/instances/${id}/usage`);
+      if (res.ok) setUsageData(await res.json());
+    } finally {
+      setUsageLoading(false);
+    }
+  }, [id]);
+
   const loadInfra = useCallback(async () => {
     setInfraLoading(true);
     const [healthRes, snapshotsRes] = await Promise.all([
@@ -606,6 +630,7 @@ export default function InstanceDetailPage() {
   useEffect(() => {
     if (tab === "API Keys" && keys.length === 0) loadKeys();
     if (tab === "Activity Log") loadLogs();
+    if (tab === "Overview") loadUsage();
     if (tab === "Infrastructure") loadInfra();
     if (tab === "Credentials") loadCredentials();
     if (tab === "Deploy" && credentials.length === 0) loadCredentials();
@@ -971,6 +996,92 @@ export default function InstanceDetailPage() {
               } catch { return null; }
             })()}
           </div>
+          {/* Usage Stats Panel */}
+          <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden" data-testid="usage-panel">
+            <div className="p-5 border-b border-white/5 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Activity className="w-4 h-4 text-zinc-500" />
+                <h3 className="text-sm font-semibold text-white">{t("usage.title")}</h3>
+              </div>
+              {usageLoading && <Loader2 className="w-3.5 h-3.5 text-zinc-600 animate-spin" />}
+            </div>
+            <div className="p-5 space-y-5">
+              {/* Stat row */}
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <div className="text-xs text-zinc-500 uppercase tracking-wider mb-1">{t("usage.allTime")}</div>
+                  <div className="text-2xl font-bold text-white">{usageData?.totalMessages ?? "—"}</div>
+                  <div className="text-xs text-zinc-600">{t("usage.messages")}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-zinc-500 uppercase tracking-wider mb-1">{t("usage.thisMonth")}</div>
+                  <div className="text-2xl font-bold text-violet-400">{usageData?.messagesThisMonth ?? "—"}</div>
+                  <div className="text-xs text-zinc-600">{t("usage.messages")}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-zinc-500 uppercase tracking-wider mb-1">{t("usage.today")}</div>
+                  <div className="text-2xl font-bold text-emerald-400">{usageData?.todayMessages ?? "—"}</div>
+                  <div className="text-xs text-zinc-600">{t("usage.messages")}</div>
+                </div>
+              </div>
+
+              {/* Model + latency row */}
+              {usageData && (usageData.topModel || usageData.avgLatencyMs !== null) && (
+                <div className="flex gap-5 pt-1 border-t border-white/5">
+                  {usageData.topModel && (
+                    <div>
+                      <div className="text-xs text-zinc-500 uppercase tracking-wider mb-1">{t("usage.topModel")}</div>
+                      <div className="text-sm font-mono text-zinc-200">{usageData.topModel}</div>
+                    </div>
+                  )}
+                  {usageData.avgLatencyMs !== null && (
+                    <div>
+                      <div className="text-xs text-zinc-500 uppercase tracking-wider mb-1">{t("usage.avgLatency")}</div>
+                      <div className="text-sm font-mono text-zinc-200">{usageData.avgLatencyMs}ms</div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* 14-day bar chart */}
+              {usageData && usageData.daily.length > 0 && (
+                <div>
+                  <div className="text-xs text-zinc-500 uppercase tracking-wider mb-3">{t("usage.last14Days")}</div>
+                  {(() => {
+                    const maxCount = Math.max(...usageData.daily.map((d) => d.count), 1);
+                    return (
+                      <div className="flex items-end gap-1 h-16">
+                        {usageData.daily.map(({ date, count }) => {
+                          const pct = Math.round((count / maxCount) * 100);
+                          const isToday = date === new Date().toISOString().slice(0, 10);
+                          return (
+                            <div
+                              key={date}
+                              className="flex-1 flex flex-col items-center justify-end gap-0.5 group"
+                              title={`${date}: ${count} messages`}
+                            >
+                              <div
+                                className={`w-full rounded-sm transition-all ${
+                                  isToday ? "bg-violet-500" : count > 0 ? "bg-zinc-600 group-hover:bg-zinc-500" : "bg-zinc-800"
+                                }`}
+                                style={{ height: `${Math.max(pct, count > 0 ? 10 : 2)}%` }}
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()}
+                </div>
+              )}
+
+              {/* Empty state */}
+              {!usageLoading && usageData?.totalMessages === 0 && (
+                <p className="text-xs text-zinc-600 text-center py-2">{t("usage.noMessages")}</p>
+              )}
+            </div>
+          </div>
+
           <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-sm text-amber-300 flex gap-3">
             <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
             <span>Need a tier upgrade or custom integration? Contact your manager — they handle it for you.</span>

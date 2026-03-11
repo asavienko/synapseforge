@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { Bot, Zap, User, ArrowRight, Activity, MessageCircle, CheckCircle2, Circle } from "lucide-react";
+import { Bot, Zap, User, ArrowRight, Activity, MessageCircle, MessageSquare, CheckCircle2, Circle } from "lucide-react";
 import { PLANS, STATUS_COLORS, formatDate } from "@/lib/utils";
 import { DashboardUpgrade } from "@/components/DashboardUpgrade";
 import { getTranslations } from "next-intl/server";
@@ -47,6 +47,14 @@ export default async function DashboardPage() {
   const deployedInstance = user.instances.find(
     (i) => i.provisionStatus === "ready" || i.provisionStatus === "provisioning"
   );
+
+  // Aggregate chat message count across all user instances
+  const totalChatMessages = await prisma.activityLog.count({
+    where: {
+      instanceId: { in: user.instances.map((i) => i.id) },
+      event: "chat_message",
+    },
+  });
 
   // Check: has a channel integration
   const hasChannel = firstInstance
@@ -112,7 +120,7 @@ export default async function DashboardPage() {
         <p className="text-zinc-400 mt-1">{t("subtitle")}</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
         <div className="glow-border rounded-2xl p-5 bg-white/[0.02]">
           <div className="flex items-center gap-3 mb-3">
             <Bot className="w-5 h-5 text-violet-400" />
@@ -141,6 +149,15 @@ export default async function DashboardPage() {
           </div>
           <div className="text-2xl font-bold text-white mb-1">{runningCount}</div>
           <div className="text-xs text-zinc-500">{t("activeNow")}</div>
+        </div>
+
+        <div className="glow-border rounded-2xl p-5 bg-white/[0.02]" data-testid="messages-stat">
+          <div className="flex items-center gap-3 mb-3">
+            <MessageSquare className="w-5 h-5 text-pink-400" />
+            <span className="text-xs text-zinc-500 uppercase tracking-wider">{t("messagesLabel")}</span>
+          </div>
+          <div className="text-2xl font-bold text-white mb-1">{totalChatMessages}</div>
+          <div className="text-xs text-zinc-500">{t("allTimeMessages")}</div>
         </div>
 
         <div className="glow-border rounded-2xl p-5 bg-white/[0.02]">

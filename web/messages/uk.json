@@ -306,7 +306,9 @@
         "deployInstance": "Розгорніть агента в хмарі",
         "connectChannel": "Підключіть канал (Telegram, Discord або Slack)",
         "managerAssigned": "Менеджер призначений — ваш особистий гід"
-      }
+      },
+      "messagesLabel": "Повідомлення",
+      "allTimeMessages": "чат-повідомлень надіслано"
     },
     "messages": {
       "title": "Повідомлення",
@@ -611,6 +613,17 @@
       "channelDiscord": "Discord",
       "channelSlack": "Slack",
       "chatAvailable": "Чат доступний на вкладці Чат"
+    },
+    "usage": {
+      "title": "Аналітика Використання",
+      "allTime": "За Весь Час",
+      "thisMonth": "Цього Місяця",
+      "today": "Сьогодні",
+      "messages": "повідомлень",
+      "topModel": "Топ Модель",
+      "avgLatency": "Сер. Затримка",
+      "last14Days": "Останні 14 Днів",
+      "noMessages": "Повідомлень ще немає — надішліть перше повідомлення, щоб побачити статистику."
     }
   },
   "admin": {

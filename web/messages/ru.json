@@ -306,7 +306,9 @@
         "deployInstance": "Разверните агента в облаке",
         "connectChannel": "Подключите канал (Telegram, Discord или Slack)",
         "managerAssigned": "Менеджер назначен — ваш личный гид"
-      }
+      },
+      "messagesLabel": "Сообщения",
+      "allTimeMessages": "чат-сообщений отправлено"
     },
     "messages": {
       "title": "Сообщения",
@@ -611,6 +613,17 @@
       "channelDiscord": "Discord",
       "channelSlack": "Slack",
       "chatAvailable": "Чат доступен на вкладке Чат"
+    },
+    "usage": {
+      "title": "Аналитика Использования",
+      "allTime": "За Всё Время",
+      "thisMonth": "В Этом Месяце",
+      "today": "Сегодня",
+      "messages": "сообщений",
+      "topModel": "Топ Модель",
+      "avgLatency": "Ср. Задержка",
+      "last14Days": "Последние 14 Дней",
+      "noMessages": "Сообщений пока нет — отправьте первое сообщение, чтобы увидеть статистику."
     }
   },
   "admin": {
