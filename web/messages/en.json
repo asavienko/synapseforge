@@ -574,6 +574,21 @@
         "slack_bot_token": "Slack Bot Token",
         "gateway_token": "Gateway Token"
       }
+    },
+    "chat": {
+      "tab": "Chat",
+      "placeholder": "Type a message...",
+      "send": "Send",
+      "sending": "...",
+      "clearChat": "Clear",
+      "stoppedTitle": "Instance is stopped",
+      "stoppedDesc": "Start the instance to begin chatting with your AI.",
+      "noCredsTitle": "No AI credentials configured",
+      "noCredsDesc": "Go to the Credentials tab to add your API key.",
+      "goToCredentials": "Configure credentials",
+      "you": "You",
+      "assistant": "Assistant",
+      "errorPrefix": "Error"
     }
   },
   "admin": {

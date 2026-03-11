@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
   Bot, ArrowLeft, Play, Square, Trash2, Loader2,
@@ -126,10 +126,18 @@ const LOG_ICONS: Record<string, { icon: string; color: string }> = {
   key_revoked:    { icon: "✕", color: "text-red-400" },
   created:        { icon: "✦", color: "text-violet-400" },
   deleted:        { icon: "✕", color: "text-red-400" },
+  chat_message:   { icon: "💬", color: "text-sky-400" },
 };
 
-const TABS = ["Overview", "Configuration", "API Keys", "Activity Log", "Infrastructure", "Credentials"] as const;
+const TABS = ["Overview", "Chat", "Configuration", "API Keys", "Activity Log", "Infrastructure", "Credentials"] as const;
 type Tab = (typeof TABS)[number];
+
+interface ChatMsg {
+  role: "user" | "assistant";
+  content: string;
+  latencyMs?: number;
+  isError?: boolean;
+}
 
 const CREDENTIAL_KEY_LABELS: Record<string, string> = {
   openai_api_key: "OpenAI API Key",
@@ -192,11 +200,19 @@ export default function InstanceDetailPage() {
   const [gatewayStatus, setGatewayStatus] = useState<GatewayStatus | null>(null);
   const [checkingGateway, setCheckingGateway] = useState(false);
 
-  // Test chat
+  // Test chat (legacy — infrastructure tab)
   const [chatMessage, setChatMessage] = useState("");
   const [chatSending, setChatSending] = useState(false);
   const [chatResponse, setChatResponse] = useState<{ text: string; latencyMs?: number } | null>(null);
   const [chatError, setChatError] = useState<string | null>(null);
+
+  // Full chat tab state
+  const [chatMessages, setChatMessages] = useState<ChatMsg[]>([]);
+  const [chatInput, setChatInput] = useState("");
+  const [chatLoading, setChatLoading] = useState(false);
+  const [chatNoCredentials, setChatNoCredentials] = useState(false);
+  const [chatProvider, setChatProvider] = useState<string | null>(null);
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
   // Credentials state
   const [credentials, setCredentials] = useState<CredentialRow[]>([]);
@@ -428,6 +444,49 @@ export default function InstanceDetailPage() {
     setChatSending(false);
   }
 
+  // Auto-scroll chat to bottom
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatMessages, chatLoading]);
+
+  async function sendChat() {
+    if (!chatInput.trim() || chatLoading) return;
+    const userMsg: ChatMsg = { role: "user", content: chatInput.trim() };
+    const updatedMessages = [...chatMessages, userMsg];
+    setChatMessages(updatedMessages);
+    setChatInput("");
+    setChatLoading(true);
+    setChatNoCredentials(false);
+
+    const res = await fetch(`/api/instances/${id}/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        messages: updatedMessages.map((m) => ({ role: m.role, content: m.content })),
+      }),
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      if (data.missingCredential) {
+        setChatNoCredentials(true);
+        setChatMessages((prev) => prev.slice(0, -1)); // remove user msg — can't process
+      } else {
+        setChatMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: data.error ?? "Something went wrong", isError: true },
+        ]);
+      }
+    } else {
+      setChatProvider(data.provider ?? null);
+      setChatMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: data.response, latencyMs: data.latencyMs },
+      ]);
+    }
+    setChatLoading(false);
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full py-20">
@@ -499,6 +558,7 @@ export default function InstanceDetailPage() {
         {TABS.map((tabKey) => {
           const tabLabels: Record<string, string> = {
             "Overview": t("tabs.overview"),
+            "Chat": t("chat.tab"),
             "Configuration": t("tabs.configuration"),
             "API Keys": t("tabs.apiKeys"),
             "Activity Log": t("tabs.activityLog"),
@@ -559,6 +619,160 @@ export default function InstanceDetailPage() {
             <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
             <span>Need a tier upgrade or custom integration? Contact your manager — they handle it for you.</span>
           </div>
+        </div>
+      )}
+
+      {/* ── Chat ── */}
+      {tab === "Chat" && (
+        <div className="flex flex-col" style={{ minHeight: 520 }}>
+          {/* Header bar */}
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2 text-sm text-zinc-500">
+              <Bot className="w-4 h-4" />
+              <span>
+                {chatProvider
+                  ? `${config.model} via ${chatProvider}`
+                  : config.model}
+              </span>
+            </div>
+            {chatMessages.length > 0 && (
+              <button
+                onClick={() => { setChatMessages([]); setChatNoCredentials(false); setChatProvider(null); }}
+                className="text-xs text-zinc-600 hover:text-zinc-300 transition-colors px-2 py-1 rounded-lg border border-white/5 hover:border-white/10"
+              >
+                {t("chat.clearChat")}
+              </button>
+            )}
+          </div>
+
+          {/* Instance stopped state */}
+          {instance.status !== "running" && (
+            <div className="flex-1 flex items-center justify-center">
+              <div className="text-center max-w-sm">
+                <div className="w-14 h-14 rounded-2xl bg-zinc-800 border border-white/5 flex items-center justify-center mx-auto mb-4">
+                  <Bot className="w-7 h-7 text-zinc-600" />
+                </div>
+                <h3 className="text-white font-semibold mb-2">{t("chat.stoppedTitle")}</h3>
+                <p className="text-zinc-500 text-sm mb-4">{t("chat.stoppedDesc")}</p>
+                <button
+                  onClick={toggleStatus}
+                  disabled={saving}
+                  className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 transition-colors px-4 py-2.5 rounded-xl text-sm font-semibold text-white mx-auto"
+                >
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
+                  {t("start")}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* No credentials state */}
+          {instance.status === "running" && chatNoCredentials && chatMessages.length === 0 && (
+            <div className="flex-1 flex items-center justify-center">
+              <div className="text-center max-w-sm">
+                <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-4">
+                  <AlertCircle className="w-7 h-7 text-amber-400" />
+                </div>
+                <h3 className="text-white font-semibold mb-2">{t("chat.noCredsTitle")}</h3>
+                <p className="text-zinc-500 text-sm mb-4">{t("chat.noCredsDesc")}</p>
+                <button
+                  onClick={() => setTab("Credentials")}
+                  className="text-sm text-violet-400 hover:text-violet-300 bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/20 px-4 py-2 rounded-xl transition-colors"
+                >
+                  {t("chat.goToCredentials")}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Chat messages */}
+          {instance.status === "running" && (!chatNoCredentials || chatMessages.length > 0) && (
+            <>
+              <div className="flex-1 overflow-y-auto space-y-4 mb-4 pr-1" style={{ maxHeight: 400 }}>
+                {chatMessages.length === 0 && !chatLoading && (
+                  <div className="flex items-center justify-center h-40">
+                    <p className="text-zinc-600 text-sm">Send a message to start the conversation.</p>
+                  </div>
+                )}
+                {chatMessages.map((msg, i) => (
+                  <div key={i} className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
+                    <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
+                      msg.role === "user" ? "bg-violet-600" : "bg-zinc-700"
+                    }`}>
+                      {msg.role === "user"
+                        ? <span className="text-xs font-bold text-white">U</span>
+                        : <Bot className="w-3.5 h-3.5 text-zinc-300" />}
+                    </div>
+                    <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm ${
+                      msg.role === "user"
+                        ? "bg-violet-600/30 border border-violet-500/30 text-white"
+                        : msg.isError
+                          ? "bg-red-500/10 border border-red-500/20 text-red-300"
+                          : "bg-white/[0.04] border border-white/10 text-zinc-200"
+                    }`}>
+                      <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                      {msg.latencyMs != null && (
+                        <p className="text-xs text-zinc-600 mt-1">{msg.latencyMs}ms</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+                {chatLoading && (
+                  <div className="flex gap-3">
+                    <div className="w-7 h-7 rounded-full bg-zinc-700 flex items-center justify-center shrink-0 mt-0.5">
+                      <Bot className="w-3.5 h-3.5 text-zinc-300" />
+                    </div>
+                    <div className="bg-white/[0.04] border border-white/10 rounded-2xl px-4 py-3">
+                      <div className="flex gap-1 items-center h-4">
+                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-bounce" style={{ animationDelay: "0ms" }} />
+                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-bounce" style={{ animationDelay: "150ms" }} />
+                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-bounce" style={{ animationDelay: "300ms" }} />
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <div ref={chatEndRef} />
+              </div>
+
+              {/* No creds banner (inline, after first failed attempt) */}
+              {chatNoCredentials && chatMessages.length > 0 && (
+                <div className="mb-3 flex items-center gap-3 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3">
+                  <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span className="text-sm text-amber-300 flex-1">{t("chat.noCredsDesc")}</span>
+                  <button onClick={() => setTab("Credentials")} className="text-xs text-violet-400 hover:text-violet-300 shrink-0">
+                    {t("chat.goToCredentials")}
+                  </button>
+                </div>
+              )}
+
+              {/* Input */}
+              <div className="flex gap-3">
+                <textarea
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      sendChat();
+                    }
+                  }}
+                  placeholder={t("chat.placeholder")}
+                  rows={2}
+                  disabled={chatLoading}
+                  className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors resize-none disabled:opacity-50"
+                />
+                <button
+                  onClick={sendChat}
+                  disabled={chatLoading || !chatInput.trim()}
+                  data-testid="chat-send-btn"
+                  className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 transition-colors px-4 py-3 rounded-xl text-sm font-semibold text-white self-end"
+                >
+                  {chatLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                  {chatLoading ? t("chat.sending") : t("chat.send")}
+                </button>
+              </div>
+            </>
+          )}
         </div>
       )}
 

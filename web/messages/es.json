@@ -574,6 +574,21 @@
         "slack_bot_token": "Token de Bot de Slack",
         "gateway_token": "Token de Gateway"
       }
+    },
+    "chat": {
+      "tab": "Chat",
+      "placeholder": "Escribe un mensaje...",
+      "send": "Enviar",
+      "sending": "...",
+      "clearChat": "Limpiar",
+      "stoppedTitle": "La instancia está detenida",
+      "stoppedDesc": "Inicia la instancia para comenzar a chatear con tu IA.",
+      "noCredsTitle": "No hay credenciales de IA configuradas",
+      "noCredsDesc": "Ve a la pestaña Credenciales para añadir tu clave API.",
+      "goToCredentials": "Configurar credenciales",
+      "you": "Tú",
+      "assistant": "Asistente",
+      "errorPrefix": "Error"
     }
   },
   "admin": {
