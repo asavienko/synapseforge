@@ -12,7 +12,7 @@ const prisma = new PrismaClient();
 async function main() {
   const email = "cypress@synapseforge.ai";
   const name = "Cypress Test";
-  const password = "Cypress123!";
+  const password = "cypress123"; // Must match cypress.config.ts TEST_PASSWORD
 
   const hashed = await bcrypt.hash(password, 12);
 

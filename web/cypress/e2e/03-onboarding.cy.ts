@@ -20,7 +20,7 @@ describe("03 · Onboarding", () => {
     cy.url({ timeout: 8000 }).should("include", "/sign-up");
     cy.get('input[type="text"]', { timeout: 8000 }).first().type("Onboard Tester");
     cy.get('input[type="email"]').type(email);
-    cy.get('input[type="password"]').type("Cypress123!");
+    cy.get('input[type="password"]').type("cypress123");
     cy.get('button[type="submit"]').should("not.be.disabled").click();
     cy.url({ timeout: 15000 }).should("include", "/onboarding");
   }
