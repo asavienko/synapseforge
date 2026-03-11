@@ -15,7 +15,7 @@ export function formatDate(date: Date | string) {
 
 export const PLANS = {
   free: { label: "Free", instances: 1, tier: "minimal" },
-  pro: { label: "Pro", instances: 5, tier: "standard" },
+  pro: { label: "Pro", instances: 3, tier: "standard" },
   enterprise: { label: "Enterprise", instances: -1, tier: "pro" },
 } as const;
 
