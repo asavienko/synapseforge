@@ -1,17 +1,18 @@
 {
   "nav": {
-    "services": "Servicios",
+    "services": "Funciones",
     "pricing": "Precios",
-    "about": "Nosotros",
+    "about": "Acerca de",
     "signIn": "Iniciar sesión",
-    "getStarted": "Empieza gratis"
+    "getStarted": "Empezar"
   },
   "hero": {
-    "badge": "Servicios de IA Gestionada",
-    "title": "Tu Stack de IA, Completamente Gestionado",
-    "subtitle": "Despliega agentes de IA, automatiza flujos de trabajo y conecta tus herramientas — todo gestionado por un equipo experto dedicado.",
-    "cta": "Empieza gratis",
-    "ctaSecondary": "Ve lo que construimos"
+    "badge": "Ahora en acceso anticipado",
+    "title": "Tu agente de IA.\nActivo en 3 minutos.",
+    "subtitle": "Añade tu clave de OpenAI. Un clic despliega un agente de IA 24/7 en tu propio servidor — listo para chatear en Telegram, Discord o Slack.",
+    "cta": "Desplegar gratis →",
+    "ctaSecondary": "Ver cómo funciona",
+    "footnote": "Plan gratuito · Sin tarjeta de crédito · Tus claves, tus datos"
   },
   "services": {
     "title": "Lo Que Construimos Para Ti",
@@ -88,16 +89,9 @@
     "uptimeLabel": "SLA de disponibilidad (Pro+)"
   },
   "footer": {
-    "tagline": "Forjamos el stack de IA para que no tengas que hacerlo.",
-    "product": "Producto",
-    "company": "Empresa",
-    "features": "Características",
-    "pricing": "Precios",
-    "dashboard": "Panel",
-    "privacy": "Política de Privacidad",
-    "terms": "Términos de Servicio",
-    "contact": "Contacto",
-    "rights": "Todos los derechos reservados."
+    "privacy": "Privacidad",
+    "terms": "Términos",
+    "contact": "Contacto"
   },
   "auth": {
     "signIn": {
@@ -697,5 +691,43 @@
       "success": "¡Instancia creada!",
       "provisioningNote": "El aprovisionamiento del VPS tarda 2-3 minutos. Verifica el estado en tu panel."
     }
+  },
+  "how": {
+    "title": "En funcionamiento en minutos",
+    "subtitle": "Tres pasos desde el registro hasta el agente activo.",
+    "step1title": "Añade tu clave de IA",
+    "step1desc": "Pega tu clave de OpenAI, Anthropic o OpenRouter. Almacenada cifrada, usada solo para tu agente.",
+    "step2title": "Despliega en la nube",
+    "step2desc": "Un clic aprovisiona un servidor dedicado e instala OpenClaw con tu configuración. Listo en ~2 minutos.",
+    "step3title": "Activa tus canales",
+    "step3desc": "Tu agente empieza a responder en Telegram, Discord o Slack, además de una interfaz web y una API REST."
+  },
+  "features": {
+    "title": "Todo lo que necesitas para escalar la IA",
+    "subtitle": "Construido para equipos que quieren resultados, no complejidad.",
+    "f1title": "Multicanal por defecto",
+    "f1desc": "Telegram, Discord, Slack y chat web — todo desde el mismo agente y configuración.",
+    "f2title": "API compatible con OpenAI",
+    "f2desc": "Apunta cualquier SDK de OpenAI a tu endpoint de SynapseForge. Reemplazo directo.",
+    "f3title": "Sincronización automática",
+    "f3desc": "Actualiza credenciales o modelo en el dashboard — tu agente se sincroniza en 5 minutos.",
+    "f4title": "Manager dedicado",
+    "f4desc": "Cada cuenta tiene un manager humano que te ayuda a configurar y optimizar tu IA.",
+    "f5title": "Tus claves, tus datos",
+    "f5desc": "Nunca almacenamos tus claves en texto plano. Todo cifrado con AES-256-GCM.",
+    "f6title": "Registro de actividad",
+    "f6desc": "Cada mensaje y cambio de configuración queda registrado. Sabe exactamente qué hace tu agente."
+  },
+  "demo": {
+    "title": "Vélo en acción",
+    "subtitle": "Así es tu dashboard tras desplegar tu primer agente.",
+    "badge": "Demo en vivo",
+    "terminalTitle": "Desplegando tu agente...",
+    "line1": "✓ Aprovisionando servidor (Hetzner cx22)",
+    "line2": "✓ Instalando OpenClaw",
+    "line3": "✓ Cargando configuración (gpt-4o)",
+    "line4": "✓ Conectando Telegram",
+    "line5": "✓ Agente activo en Telegram",
+    "done": "🚀 Despliegue completado en 1m 47s"
   }
 }

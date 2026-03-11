@@ -1,103 +1,94 @@
 {
   "nav": {
-    "services": "Services",
+    "services": "Features",
     "pricing": "Pricing",
     "about": "About",
     "signIn": "Sign in",
-    "getStarted": "Get started free"
+    "getStarted": "Get started"
   },
   "hero": {
-    "badge": "Managed AI Services",
-    "title": "Your AI Stack, Fully Managed",
-    "subtitle": "Deploy AI agents, automate workflows, and connect your tools — all managed by a dedicated expert team.",
-    "cta": "Get started free",
-    "ctaSecondary": "See what we build"
+    "badge": "Now in early access",
+    "title": "Your AI Agent.\nLive in 3 Minutes.",
+    "subtitle": "Add your OpenAI key. One click deploys a 24/7 AI agent to your own cloud server — ready to chat on Telegram, Discord, or Slack.",
+    "cta": "Deploy free →",
+    "ctaSecondary": "See how it works",
+    "footnote": "Free plan · No credit card required · Your keys, your data"
   },
   "services": {
     "title": "What We Build For You",
     "subtitle": "Every client gets a dedicated manager and a custom AI stack. No DIY, no guesswork.",
     "agents": {
-      "title": "AI Agents & Assistants",
-      "desc": "Customer support bots, sales assistants, and internal helpdesks — trained on your data, ready to deploy."
+      "title": "AI Agents",
+      "desc": "Custom-configured AI assistants deployed to your channels. From customer support to internal automation."
     },
     "integrations": {
-      "title": "Integrations & Pipelines",
-      "desc": "Connect your CRM, Slack, email, and databases. We build the data pipelines that make your AI actually useful."
+      "title": "Integrations",
+      "desc": "Connect your AI agent to Telegram, Discord, Slack, your CRM, or any tool via our OpenAI-compatible API."
     },
     "automation": {
-      "title": "Workflow Automation",
-      "desc": "Eliminate repetitive work. We automate your internal processes using AI and connect them to your existing tools."
+      "title": "Automation",
+      "desc": "Automate repetitive tasks, workflows, and responses. Your agent handles it 24/7 without human intervention."
     },
     "consulting": {
-      "title": "AI Strategy & Consulting",
-      "desc": "Not sure where to start? We audit your workflows, identify the highest-ROI opportunities, and build a roadmap."
+      "title": "Expert Setup",
+      "desc": "Your dedicated manager helps configure prompts, models, and integrations optimized for your use case."
     }
   },
   "pricing": {
-    "title": "Simple, Transparent Pricing",
-    "subtitle": "Start free, upgrade when you need more.",
+    "title": "Simple, transparent pricing",
+    "subtitle": "Start free. Upgrade when you need more.",
+    "popular": "Most popular",
     "free": {
       "name": "Free",
       "price": "$0",
-      "period": "forever",
-      "desc": "Perfect for getting started",
-      "cta": "Get started free"
+      "desc": "per month",
+      "cta": "Start free →"
     },
     "pro": {
       "name": "Pro",
       "price": "$499",
-      "period": "/ month",
-      "desc": "For growing businesses",
-      "cta": "Get started"
+      "desc": "per month",
+      "cta": "Get Pro →"
     },
     "enterprise": {
       "name": "Enterprise",
       "price": "Custom",
-      "period": "",
-      "desc": "For large organizations",
-      "cta": "Contact us"
+      "desc": "for large teams",
+      "cta": "Contact us →"
     },
     "features": {
-      "freeInstance": "1 AI instance",
-      "managerAssigned": "Manager assigned",
-      "inAppMsg": "In-app messaging",
+      "freeInstance": "1 AI agent instance",
+      "managerAssigned": "Dedicated manager assigned",
+      "inAppMsg": "In-app messaging with manager",
       "communitySupport": "Community support",
-      "proInstances": "Up to 3 AI instances",
+      "proInstances": "Up to 3 AI agent instances",
       "humanManager": "Dedicated human manager",
-      "response24h": "24h response time",
-      "customConfig": "Custom configurations",
-      "integrations": "CRM & Slack integrations",
+      "response24h": "24h manager response time",
+      "customConfig": "Custom model configuration",
+      "integrations": "Telegram, Discord, Slack integrations",
       "sla99": "99% uptime SLA",
       "unlimitedInstances": "Unlimited AI instances",
       "managerTeam": "Dedicated manager team",
       "sla4h": "4h response SLA",
-      "customIntegrations": "Custom integrations",
-      "teamTraining": "Team training",
+      "customIntegrations": "Custom integrations & webhooks",
+      "teamTraining": "Team onboarding & training",
       "whiteLabel": "White-label option"
-    },
-    "popular": "Most popular"
+    }
   },
   "about": {
-    "title": "We Forge the AI Stack So You Don't Have To",
-    "subtitle": "SynapseForge was built for businesses that want real AI outcomes — not another SaaS tool to figure out. We handle deployment, configuration, and ongoing management so your team can focus on what matters.",
-    "setup": "<30min",
-    "setupLabel": "Time to first AI instance",
+    "title": "Built different",
+    "subtitle": "SynapseForge is not a wrapper around the OpenAI API. It is a full deployment platform — your agent runs on dedicated infrastructure, syncs config automatically, and connects to the channels your users are already on.",
+    "setup": "<3 min",
+    "setupLabel": "Time to first live agent",
     "response": "24h",
     "responseLabel": "Manager response time",
     "uptime": "99%",
     "uptimeLabel": "Uptime SLA (Pro+)"
   },
   "footer": {
-    "tagline": "We forge the AI stack so you don't have to.",
-    "product": "Product",
-    "company": "Company",
-    "features": "Features",
-    "pricing": "Pricing",
-    "dashboard": "Dashboard",
-    "privacy": "Privacy Policy",
-    "terms": "Terms of Service",
-    "contact": "Contact",
-    "rights": "All rights reserved."
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "contact": "Contact"
   },
   "auth": {
     "signIn": {
@@ -697,5 +688,43 @@
       "success": "Instance created!",
       "provisioningNote": "VPS provisioning takes 2-3 minutes. Check status on your dashboard."
     }
+  },
+  "how": {
+    "title": "Up and running in minutes",
+    "subtitle": "Three steps from signup to live agent.",
+    "step1title": "Add your AI provider key",
+    "step1desc": "Paste your OpenAI, Anthropic, or OpenRouter API key. Stored encrypted, used only for your agent.",
+    "step2title": "Deploy to the cloud",
+    "step2desc": "One click provisions a dedicated server and installs OpenClaw with your configuration. Ready in ~2 minutes.",
+    "step3title": "Go live on your channels",
+    "step3desc": "Your AI agent starts responding on Telegram, Discord, or Slack — plus a web chat interface and a REST API."
+  },
+  "features": {
+    "title": "Everything you need to run AI at scale",
+    "subtitle": "Built for teams that want results, not complexity.",
+    "f1title": "Multi-channel by default",
+    "f1desc": "Telegram, Discord, Slack, and a web chat — all powered by the same agent, same config.",
+    "f2title": "OpenAI-compatible API",
+    "f2desc": "Point any OpenAI SDK at your SynapseForge endpoint. Drop-in replacement for your existing integrations.",
+    "f3title": "Auto config sync",
+    "f3desc": "Update your credentials or model in the dashboard — your deployed agent syncs automatically within 5 minutes.",
+    "f4title": "Dedicated manager",
+    "f4desc": "Every account gets a human manager who helps you configure, optimize, and get the most from your AI.",
+    "f5title": "Your keys, your data",
+    "f5desc": "We never store your raw API keys in plaintext. Everything is AES-256-GCM encrypted at rest.",
+    "f6title": "Full activity log",
+    "f6desc": "Every message, config change, and deployment event is logged. Know exactly what your agent is doing."
+  },
+  "demo": {
+    "title": "See it in action",
+    "subtitle": "This is what your dashboard looks like after deploying your first agent.",
+    "badge": "Live demo",
+    "terminalTitle": "Deploying your agent...",
+    "line1": "✓ Provisioning cloud server (Hetzner cx22)",
+    "line2": "✓ Installing OpenClaw runtime",
+    "line3": "✓ Loading your config (gpt-4o, custom system prompt)",
+    "line4": "✓ Connecting Telegram integration",
+    "line5": "✓ Agent is live — responding on Telegram",
+    "done": "🚀 Deployment complete in 1m 47s"
   }
 }
