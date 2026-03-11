@@ -268,10 +268,20 @@ describe("19 · Dashboard — Getting Started checklist", () => {
   });
 
   it("Add AI provider key step links to instance when not done", () => {
+    // Clear LLM credentials first so hasLLMKey=false (spec 16 may have added them)
+    cy.request({ url: "/api/instances", failOnStatusCode: false }).then((r) => {
+      if (r.status === 200 && Array.isArray(r.body) && r.body.length > 0) {
+        const id = r.body[0].id;
+        ["openai_api_key", "anthropic_api_key", "openrouter_api_key"].forEach((key) => {
+          cy.request({ method: "DELETE", url: `/api/instances/${id}/credentials/${key}`, failOnStatusCode: false });
+        });
+      }
+    });
+
     cy.visit("/en/dashboard");
     cy.get("main").then(($main) => {
       if ($main.text().includes("AI provider key")) {
-        // The link might be the element itself (<a>) or a parent — use closest() to handle both
+        // The step should be undone (no LLM key) → renders as <a> link
         cy.get("main").contains(/AI provider key/i)
           .closest("a, [href]")
           .should("have.attr", "href")

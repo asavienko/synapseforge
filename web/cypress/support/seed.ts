@@ -102,7 +102,16 @@ async function main() {
         configSynced: true,
       },
     });
-    console.log(`✅ Reset Cypress Agent instance to known state (running, no VPS)`);
+
+    // Clear all credentials so spec 16 (adds openai_api_key) doesn't bleed into
+    // spec 19 (expects hasLLMKey=false so the dashboard checklist step has a link)
+    await (prisma as unknown as {
+      instanceCredential: { deleteMany: (args: unknown) => Promise<unknown> };
+    }).instanceCredential.deleteMany({
+      where: { instanceId: existing.id },
+    });
+
+    console.log(`✅ Reset Cypress Agent instance to known state (running, no VPS, no credentials)`);
   }
 
   console.log(`✅ Upserted test user: ${email} / ${password} (name reset to "${name}")`);
