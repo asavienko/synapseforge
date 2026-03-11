@@ -241,16 +241,14 @@ describe("16 · Credentials API — validation", () => {
   });
 
   it("credentials API returns 401 without session", () => {
-    // Must be logged in to get instanceId first, then test unauthenticated access
+    // Login to get instanceId, then clear cookies so request is truly unauthenticated
     cy.login(EMAIL(), PASS());
     getFirstInstanceId().then((id) => {
-      // Use cy.request with a fresh context (no session cookies)
+      cy.clearCookies();
       cy.request({
         url: `/api/instances/${id}/credentials`,
         failOnStatusCode: false,
-        headers: { Cookie: "" },
       }).then((r) => {
-        // Server returns 401 for unauthenticated requests
         expect(r.status).to.be.oneOf([401, 403]);
       });
     });
