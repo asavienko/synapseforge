@@ -16,6 +16,15 @@ async function main() {
 
   const hashed = await bcrypt.hash(password, 12);
 
+  // Remove any stale auto-created instances for the seed user (not named "Cypress Agent")
+  const seedUser = await prisma.user.findUnique({ where: { email }, select: { id: true } });
+  if (seedUser) {
+    const staleInstances = await prisma.aIInstance.deleteMany({
+      where: { userId: seedUser.id, name: { not: "Cypress Agent" } },
+    });
+    if (staleInstances.count > 0) console.log(`🧹 Removed ${staleInstances.count} stale instance(s)`);
+  }
+
   // Purge all ephemeral test users created by registerFreshUser() across specs
   const purged = await prisma.user.deleteMany({
     where: {
