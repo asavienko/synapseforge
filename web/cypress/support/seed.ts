@@ -16,6 +16,23 @@ async function main() {
 
   const hashed = await bcrypt.hash(password, 12);
 
+  // Purge all ephemeral test users created by registerFreshUser() across specs
+  const purged = await prisma.user.deleteMany({
+    where: {
+      email: { not: email },
+      OR: [
+        { email: { contains: "cypress-ob-" } },
+        { email: { contains: "cypress-reg-" } },
+        { email: { contains: "cypress-email-" } },
+        { email: { contains: "cypress-settings-" } },
+        { email: { contains: "cypress-pw-" } },
+        { email: { contains: "cypress-msg-" } },
+        { email: { contains: "cypress-admin-" } },
+      ],
+    },
+  });
+  if (purged.count > 0) console.log(`🧹 Purged ${purged.count} ephemeral test users`);
+
   // Always upsert — resets name/plan/emailVerified even if user exists (CI runs may mutate data)
   const user = await prisma.user.upsert({
     where: { email },
