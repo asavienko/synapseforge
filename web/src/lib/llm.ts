@@ -1,0 +1,243 @@
+/**
+ * Shared LLM routing logic.
+ * Used by both the internal /api/instances/[id]/chat route
+ * and the public /api/v1/chat endpoint.
+ */
+
+import { prisma } from "@/lib/prisma";
+import { decrypt } from "@/lib/crypto";
+
+export interface ChatMessage {
+  role: "user" | "assistant" | "system";
+  content: string;
+}
+
+export interface InstanceConfig {
+  model: string;
+  systemPrompt: string;
+  temperature: number;
+  maxTokens: number;
+}
+
+export const DEFAULT_CONFIG: InstanceConfig = {
+  model: "gpt-4o",
+  systemPrompt: "You are a helpful AI assistant.",
+  temperature: 0.7,
+  maxTokens: 1024,
+};
+
+// Map our short model names to provider + canonical model ID
+const MODEL_MAP: Record<string, { provider: "openai" | "anthropic" | "openrouter"; modelId: string }> = {
+  "gpt-4o":            { provider: "openai",    modelId: "gpt-4o" },
+  "gpt-4-turbo":       { provider: "openai",    modelId: "gpt-4-turbo" },
+  "gpt-3.5-turbo":     { provider: "openai",    modelId: "gpt-3.5-turbo" },
+  "gpt-4o-mini":       { provider: "openai",    modelId: "gpt-4o-mini" },
+  "claude-3-5-sonnet": { provider: "anthropic", modelId: "claude-3-5-sonnet-20241022" },
+  "claude-3-haiku":    { provider: "anthropic", modelId: "claude-3-haiku-20240307" },
+  "claude-3-opus":     { provider: "anthropic", modelId: "claude-3-opus-20240229" },
+  "gemini-1.5-pro":    { provider: "openrouter", modelId: "google/gemini-1.5-pro" },
+  "llama-3-70b":       { provider: "openrouter", modelId: "meta-llama/llama-3-70b-instruct" },
+  // Handle prefixed model names from openclaw-config.ts MODEL_OPTIONS
+  "openai/gpt-4o":                 { provider: "openai",    modelId: "gpt-4o" },
+  "openai/gpt-4o-mini":            { provider: "openai",    modelId: "gpt-4o-mini" },
+  "openai/gpt-4-turbo":            { provider: "openai",    modelId: "gpt-4-turbo" },
+  "anthropic/claude-sonnet-4-6":   { provider: "anthropic", modelId: "claude-sonnet-4-6" },
+  "anthropic/claude-haiku-4-5":    { provider: "anthropic", modelId: "claude-haiku-4-5" },
+  "anthropic/claude-opus-4-6":     { provider: "anthropic", modelId: "claude-opus-4-6" },
+  "openrouter/anthropic/claude-sonnet-4-5": { provider: "openrouter", modelId: "anthropic/claude-sonnet-4-5" },
+  "openrouter/openai/gpt-4o":      { provider: "openrouter", modelId: "openai/gpt-4o" },
+  "openrouter/meta-llama/llama-3.3-70b-instruct": { provider: "openrouter", modelId: "meta-llama/llama-3.3-70b-instruct" },
+};
+
+const CRED_KEY_FOR_PROVIDER: Record<string, string> = {
+  openai:     "openai_api_key",
+  anthropic:  "anthropic_api_key",
+  openrouter: "openrouter_api_key",
+};
+
+export interface LLMResult {
+  response: string;
+  latencyMs: number;
+  model: string;
+  provider: string;
+  inputTokens?: number;
+  outputTokens?: number;
+}
+
+export interface LLMError {
+  error: string;
+  missingCredential?: boolean;
+  requiredKey?: string;
+}
+
+// ─── Provider call helpers ────────────────────────────────────────────────────
+
+async function callOpenAI(
+  apiKey: string,
+  modelId: string,
+  messages: ChatMessage[],
+  config: InstanceConfig,
+  baseUrl = "https://api.openai.com/v1"
+): Promise<{ text: string; inputTokens?: number; outputTokens?: number }> {
+  const res = await fetch(`${baseUrl}/chat/completions`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: modelId,
+      messages,
+      temperature: config.temperature,
+      max_tokens: config.maxTokens,
+    }),
+    signal: AbortSignal.timeout(60000),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`OpenAI error ${res.status}: ${err.slice(0, 300)}`);
+  }
+
+  const data = await res.json();
+  return {
+    text: data.choices?.[0]?.message?.content ?? "",
+    inputTokens: data.usage?.prompt_tokens,
+    outputTokens: data.usage?.completion_tokens,
+  };
+}
+
+async function callAnthropic(
+  apiKey: string,
+  modelId: string,
+  messages: ChatMessage[],
+  config: InstanceConfig
+): Promise<{ text: string; inputTokens?: number; outputTokens?: number }> {
+  const userMessages = messages.filter((m) => m.role !== "system");
+
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: modelId,
+      max_tokens: config.maxTokens,
+      system: config.systemPrompt,
+      messages: userMessages.map((m) => ({ role: m.role, content: m.content })),
+    }),
+    signal: AbortSignal.timeout(60000),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Anthropic error ${res.status}: ${err.slice(0, 300)}`);
+  }
+
+  const data = await res.json();
+  return {
+    text: data.content?.[0]?.text ?? "",
+    inputTokens: data.usage?.input_tokens,
+    outputTokens: data.usage?.output_tokens,
+  };
+}
+
+// ─── Main call function ───────────────────────────────────────────────────────
+
+export async function callLLM(
+  instanceId: string,
+  messages: ChatMessage[],
+  configOverride?: Partial<InstanceConfig>
+): Promise<LLMResult | LLMError> {
+  // Load instance credentials
+  const credRows = await prisma.instanceCredential.findMany({ where: { instanceId } });
+  const credMap: Record<string, string> = {};
+  for (const row of credRows) {
+    try { credMap[row.key] = decrypt(row.value); } catch { /* skip */ }
+  }
+
+  // Load instance config
+  const instance = await prisma.aIInstance.findUnique({
+    where: { id: instanceId },
+    select: { config: true },
+  });
+
+  let config: InstanceConfig = { ...DEFAULT_CONFIG };
+  if (instance?.config) {
+    try { config = { ...DEFAULT_CONFIG, ...JSON.parse(instance.config) }; } catch { /* defaults */ }
+  }
+  if (configOverride) config = { ...config, ...configOverride };
+
+  // Resolve provider + model
+  const modelKey = config.model;
+  const modelInfo = MODEL_MAP[modelKey] ?? { provider: "openrouter" as const, modelId: modelKey };
+  const { provider, modelId } = modelInfo;
+
+  // Try primary provider first, then fallbacks
+  const providerOrder: Array<"openai" | "anthropic" | "openrouter"> = [
+    provider as "openai" | "anthropic" | "openrouter",
+    ...["openai", "anthropic", "openrouter"].filter((p) => p !== provider) as Array<"openai" | "anthropic" | "openrouter">,
+  ];
+
+  let resolvedProvider: string | null = null;
+  let resolvedApiKey: string | null = null;
+  let resolvedModelId = modelId;
+
+  for (const p of providerOrder) {
+    const credKey = CRED_KEY_FOR_PROVIDER[p];
+    if (credMap[credKey]) {
+      resolvedProvider = p;
+      resolvedApiKey = credMap[credKey];
+      if (p !== provider) {
+        if (p === "openai") resolvedModelId = "gpt-4o";
+        else if (p === "anthropic") resolvedModelId = "claude-3-haiku-20240307";
+        else resolvedModelId = modelKey;
+      }
+      break;
+    }
+  }
+
+  if (!resolvedProvider || !resolvedApiKey) {
+    return {
+      error: "No API key configured for this instance.",
+      missingCredential: true,
+      requiredKey: CRED_KEY_FOR_PROVIDER[provider],
+    };
+  }
+
+  // Build messages with system prompt
+  const fullMessages: ChatMessage[] = [
+    { role: "system", content: config.systemPrompt },
+    ...messages,
+  ];
+
+  const startMs = Date.now();
+  let result: { text: string; inputTokens?: number; outputTokens?: number };
+
+  try {
+    if (resolvedProvider === "anthropic") {
+      result = await callAnthropic(resolvedApiKey, resolvedModelId, fullMessages, config);
+    } else if (resolvedProvider === "openrouter") {
+      result = await callOpenAI(resolvedApiKey, resolvedModelId, fullMessages, config, "https://openrouter.ai/api/v1");
+    } else {
+      result = await callOpenAI(resolvedApiKey, resolvedModelId, fullMessages, config);
+    }
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : String(err) };
+  }
+
+  return {
+    response: result.text,
+    latencyMs: Date.now() - startMs,
+    model: resolvedModelId,
+    provider: resolvedProvider,
+    inputTokens: result.inputTokens,
+    outputTokens: result.outputTokens,
+  };
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+export function parseInstanceConfig(configJson: string | null | undefined): InstanceConfig {
+  if (!configJson) return { ...DEFAULT_CONFIG };
+  try { return { ...DEFAULT_CONFIG, ...JSON.parse(configJson) }; } catch { return { ...DEFAULT_CONFIG }; }
+}

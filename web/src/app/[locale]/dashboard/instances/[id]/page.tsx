@@ -1277,14 +1277,48 @@ export default function InstanceDetailPage() {
 
           {/* Usage example */}
           <div className="glow-border rounded-2xl bg-white/[0.02] p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <Terminal className="w-4 h-4 text-zinc-500" />
-              <span className="text-xs text-zinc-500 uppercase tracking-wider">Usage example</span>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Terminal className="w-4 h-4 text-zinc-500" />
+                <span className="text-xs text-zinc-500 uppercase tracking-wider">Usage examples</span>
+              </div>
+              <a
+                href="/api/v1"
+                target="_blank"
+                className="text-xs text-violet-400 hover:text-violet-300 transition-colors"
+              >
+                API docs ↗
+              </a>
             </div>
-            <pre className="text-xs font-mono text-zinc-400 overflow-x-auto leading-relaxed">{`curl -X POST https://api.synapseforge.ai/v1/chat \\
+
+            {/* Simple chat endpoint */}
+            <p className="text-xs text-zinc-600 mb-1.5 font-medium">Simple chat (SynapseForge API)</p>
+            <pre className="text-xs font-mono text-zinc-400 overflow-x-auto leading-relaxed bg-black/30 rounded-lg px-4 py-3 mb-4">{`curl -X POST ${typeof window !== "undefined" ? window.location.origin : ""}/api/v1/chat \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
-  -d '{"message": "Hello!", "instanceId": "${id}"}'`}</pre>
+  -d '{"message": "Hello!"}'`}</pre>
+
+            {/* OpenAI-compatible endpoint */}
+            <p className="text-xs text-zinc-600 mb-1.5 font-medium">OpenAI-compatible (drop-in replacement)</p>
+            <pre className="text-xs font-mono text-zinc-400 overflow-x-auto leading-relaxed bg-black/30 rounded-lg px-4 py-3 mb-4">{`curl -X POST ${typeof window !== "undefined" ? window.location.origin : ""}/api/v1/chat/completions \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"messages": [{"role": "user", "content": "Hello!"}]}'`}</pre>
+
+            {/* Python SDK example */}
+            <p className="text-xs text-zinc-600 mb-1.5 font-medium">Python (OpenAI SDK)</p>
+            <pre className="text-xs font-mono text-zinc-400 overflow-x-auto leading-relaxed bg-black/30 rounded-lg px-4 py-3">{`from openai import OpenAI
+
+client = OpenAI(
+    api_key="YOUR_API_KEY",
+    base_url="${typeof window !== "undefined" ? window.location.origin : ""}/api/v1",
+)
+
+resp = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[{"role": "user", "content": "Hello!"}],
+)
+print(resp.choices[0].message.content)`}</pre>
           </div>
         </div>
       )}
