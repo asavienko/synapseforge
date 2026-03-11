@@ -159,7 +159,7 @@ describe("16 · Config preview", () => {
       cy.contains(/view config/i).click();
 
       // Config block should appear
-      cy.get("pre").should("be.visible").and("contain", "agents:");
+      cy.get("pre").should("be.visible").and("contain", "agents");
 
       // Real key must NOT appear
       cy.get("pre").invoke("text").should("not.match", /sk-realKeyThatShouldBeMasked/);
@@ -168,7 +168,7 @@ describe("16 · Config preview", () => {
     });
   });
 
-  it("config-preview API returns masked openclaw.json5 structure", () => {
+  it("config-preview API returns masked openclaw.json structure", () => {
     getFirstInstanceId().then((id) => {
       cy.request({ url: `/api/instances/${id}/config-preview`, failOnStatusCode: false }).then((r) => {
         expect(r.status).to.be.oneOf([200, 204]);

@@ -64,7 +64,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     : null;
 
   const syncCommand = vpsIp
-    ? `curl -sf -H "Authorization: Bearer ${adminApiKey}" ${appUrl}/api/admin/instances/${id}/config-file | ssh root@${vpsIp} "cat > /opt/openclaw/openclaw.json5 && docker compose -f /opt/openclaw/docker-compose.yml restart"`
+    ? `curl -sf -H "Authorization: Bearer ${adminApiKey}" ${appUrl}/api/admin/instances/${id}/config-file | ssh root@${vpsIp} "cat > /opt/openclaw/openclaw.json && docker compose -f /opt/openclaw/docker-compose.yml restart"`
     : null;
 
   // Mark as synced

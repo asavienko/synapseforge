@@ -161,7 +161,7 @@ if [ "$NEW_HASH" = "$OLD_HASH" ] && [ -n "$OLD_HASH" ]; then
 fi
 
 echo "[sync] Config changed ($OLD_HASH -> $NEW_HASH). Applying..."
-chmod 600 /tmp/openclaw-new.json5
+chmod 600 /tmp/openclaw-new.json
 cp /tmp/openclaw-new.json /opt/openclaw/openclaw.json
 [ -n "$NEW_HASH" ] && echo "$NEW_HASH" > "$HASH_FILE"
 

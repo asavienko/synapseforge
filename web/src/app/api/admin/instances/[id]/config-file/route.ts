@@ -76,7 +76,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     status: 200,
     headers: {
       "Content-Type": "text/plain; charset=utf-8",
-      "Content-Disposition": `attachment; filename="openclaw.json5"`,
+      "Content-Disposition": `attachment; filename="openclaw.json"`,
     },
   });
 }
