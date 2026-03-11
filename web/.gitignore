@@ -52,3 +52,5 @@ cypress/videos
 cypress/downloads
 
 cypress/results
+test-results/
+smoke.test.ts
