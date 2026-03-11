@@ -96,8 +96,40 @@ echo "[$TIMESTAMP] Health: $STATUS (\${RESPONSE_MS}ms)"
 HEALTH
 chmod +x /opt/synapseforge/scripts/health-check.sh
 
-# 9. Install cron
+# 9. Write config sync script
+cat > /opt/synapseforge/scripts/sync-config.sh << 'SYNC'
+#!/bin/bash
+set -euo pipefail
+source /etc/synapseforge.env
+HASH_FILE=/opt/openclaw/.config-hash
+
+# Fetch latest config with hash header
+RESPONSE=$(curl -sf -D - \
+  -H "Authorization: Bearer $OPENCLAW_GATEWAY_TOKEN" \
+  "$SF_API_URL/api/internal/instance-config/$SF_INSTANCE_ID" \
+  -o /tmp/openclaw-new.json5 2>/dev/null) || { echo "[sync] Failed to fetch config"; exit 0; }
+
+NEW_HASH=$(echo "$RESPONSE" | grep -i "^x-config-hash:" | tr -d '[:space:]' | cut -d: -f2)
+OLD_HASH=$(cat "$HASH_FILE" 2>/dev/null || echo "")
+
+if [ "$NEW_HASH" = "$OLD_HASH" ] && [ -n "$OLD_HASH" ]; then
+  echo "[sync] Config unchanged (hash: $NEW_HASH)"
+  exit 0
+fi
+
+echo "[sync] Config changed ($OLD_HASH -> $NEW_HASH). Applying..."
+cp /tmp/openclaw-new.json5 /opt/openclaw/openclaw.json5
+echo "$NEW_HASH" > "$HASH_FILE"
+
+# Restart OpenClaw Docker container
+docker compose -f /opt/openclaw/docker-compose.yml restart openclaw
+echo "[sync] Restarted. New hash: $NEW_HASH"
+SYNC
+chmod +x /opt/synapseforge/scripts/sync-config.sh
+
+# 9b. Install cron (health check + config sync)
 (crontab -l 2>/dev/null || true; echo "*/5 * * * * /opt/synapseforge/scripts/health-check.sh >> /var/log/sf-health.log 2>&1") | crontab -
+(crontab -l 2>/dev/null || true; echo "*/5 * * * * /opt/synapseforge/scripts/sync-config.sh >> /var/log/sf-sync.log 2>&1") | crontab -
 
 # 10. Wait for gateway to start (up to 3 minutes)
 echo "[$(date)] Waiting for gateway to start..."

@@ -129,7 +129,7 @@ const LOG_ICONS: Record<string, { icon: string; color: string }> = {
   chat_message:   { icon: "💬", color: "text-sky-400" },
 };
 
-const TABS = ["Overview", "Chat", "Configuration", "API Keys", "Activity Log", "Infrastructure", "Credentials"] as const;
+const TABS = ["Overview", "Chat", "Deploy", "Configuration", "API Keys", "Activity Log", "Infrastructure", "Credentials"] as const;
 type Tab = (typeof TABS)[number];
 
 interface ChatMsg {
@@ -159,6 +159,321 @@ const ALLOWED_CREDENTIAL_KEYS = [
   "slack_app_token",
   "slack_bot_token",
 ] as const;
+
+// ─── Deploy Tab Component ─────────────────────────────────────────────────────
+
+interface DeployTabProps {
+  instance: Instance;
+  credentials: CredentialRow[];
+  credsLoading: boolean;
+  deploying: boolean;
+  deployError: string | null;
+  syncing: boolean;
+  syncDone: boolean;
+  onDeploy: () => void;
+  onSync: () => void;
+  onGoToCredentials: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  t: (key: string) => string;
+}
+
+function DeployTab({
+  instance,
+  credentials,
+  credsLoading,
+  deploying,
+  deployError,
+  syncing,
+  syncDone,
+  onDeploy,
+  onSync,
+  onGoToCredentials,
+  t,
+}: DeployTabProps) {
+  const credKeys = credentials.map((c) => c.key);
+  const hasLLM = credKeys.some((k) => ["openai_api_key", "anthropic_api_key", "openrouter_api_key"].includes(k));
+  const hasTelegram = credKeys.includes("telegram_bot_token");
+  const hasDiscord = credKeys.includes("discord_bot_token");
+  const hasSlack = credKeys.includes("slack_app_token") || credKeys.includes("slack_bot_token");
+  const hasChannel = hasTelegram || hasDiscord || hasSlack;
+
+  const isProvisioning = instance.provisionStatus === "provisioning";
+  const isReady = instance.hasGateway && (instance.provisionStatus === "ready" || (instance.hasGateway && !isProvisioning));
+  const isFailed = instance.provisionStatus === "failed";
+  const isNotDeployed = !instance.hasGateway && !isProvisioning;
+
+  const activeChannels = [
+    hasTelegram && t("deploy.channelTelegram"),
+    hasDiscord && t("deploy.channelDiscord"),
+    hasSlack && t("deploy.channelSlack"),
+  ].filter(Boolean) as string[];
+
+  return (
+    <div className="space-y-5">
+      {/* ── Not yet deployed ── */}
+      {(isNotDeployed || isFailed) && (
+        <>
+          {/* Hero card */}
+          <div className="glow-border rounded-2xl bg-white/[0.02] p-6">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="w-12 h-12 rounded-xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center shrink-0">
+                <Server className="w-6 h-6 text-violet-400" />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-white mb-1">{t("deploy.sectionTitle")}</h2>
+                <p className="text-sm text-zinc-400">{t("deploy.sectionDesc")}</p>
+              </div>
+            </div>
+
+            {/* Readiness checklist */}
+            <div className="space-y-3 mb-6">
+              {/* LLM check */}
+              <div className={`flex items-center gap-3 p-3 rounded-xl border ${
+                hasLLM ? "bg-emerald-500/5 border-emerald-500/20" : "bg-red-500/5 border-red-500/20"
+              }`}>
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                  hasLLM ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"
+                }`}>
+                  {hasLLM ? "✓" : "!"}
+                </div>
+                <div className="flex-1">
+                  <div className={`text-sm font-medium ${hasLLM ? "text-emerald-300" : "text-red-300"}`}>
+                    {t("deploy.checkLLM")}
+                  </div>
+                  {!hasLLM && (
+                    <div className="text-xs text-zinc-500 mt-0.5">OpenAI, Anthropic or OpenRouter key required</div>
+                  )}
+                </div>
+                {!hasLLM && (
+                  <button
+                    onClick={onGoToCredentials}
+                    className="text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 px-2 py-1 rounded-lg transition-colors shrink-0"
+                  >
+                    Add key
+                  </button>
+                )}
+              </div>
+
+              {/* Channel check */}
+              <div className={`flex items-center gap-3 p-3 rounded-xl border ${
+                hasChannel ? "bg-emerald-500/5 border-emerald-500/20" : "bg-zinc-800/50 border-white/5"
+              }`}>
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                  hasChannel ? "bg-emerald-500/20 text-emerald-400" : "bg-zinc-700 text-zinc-500"
+                }`}>
+                  {hasChannel ? "✓" : "○"}
+                </div>
+                <div className="flex-1">
+                  <div className={`text-sm font-medium ${hasChannel ? "text-emerald-300" : "text-zinc-400"}`}>
+                    {t("deploy.checkChannel")}
+                  </div>
+                  {hasChannel ? (
+                    <div className="text-xs text-zinc-500 mt-0.5">
+                      {activeChannels.join(", ")}
+                    </div>
+                  ) : (
+                    <div className="text-xs text-zinc-600 mt-0.5">
+                      Add Telegram, Discord or Slack tokens to reach users on those platforms
+                    </div>
+                  )}
+                </div>
+                {!hasChannel && (
+                  <button
+                    onClick={onGoToCredentials}
+                    className="text-xs text-zinc-500 hover:text-white bg-white/5 px-2 py-1 rounded-lg transition-colors shrink-0"
+                  >
+                    Add channel
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Deploy error */}
+            {(deployError || isFailed) && (
+              <div className="flex items-start gap-3 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 mb-4">
+                <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-red-300">
+                    {isFailed && !deployError ? t("deploy.failedTitle") : t("deploy.failedTitle")}
+                  </div>
+                  <div className="text-xs text-red-400/80 mt-0.5">{deployError ?? t("deploy.failedDesc")}</div>
+                </div>
+              </div>
+            )}
+
+            {/* Deploy button */}
+            <button
+              onClick={onDeploy}
+              disabled={!hasLLM || deploying || credsLoading}
+              data-testid="deploy-btn"
+              className="w-full flex items-center justify-center gap-3 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors px-6 py-4 rounded-xl text-base font-semibold text-white"
+            >
+              {deploying ? (
+                <><Loader2 className="w-5 h-5 animate-spin" /> {t("deploy.deploying")}</>
+              ) : (
+                <><Zap className="w-5 h-5" /> {isFailed ? t("deploy.retryBtn") : t("deploy.deployBtn")}</>
+              )}
+            </button>
+
+            {!hasLLM && (
+              <p className="text-xs text-zinc-600 text-center mt-3">
+                {t("deploy.notReadyDesc")}
+              </p>
+            )}
+          </div>
+
+          {/* What happens next */}
+          <div className="glow-border rounded-2xl bg-white/[0.02] p-5">
+            <h3 className="text-xs text-zinc-500 uppercase tracking-wider mb-4">What happens when you deploy</h3>
+            <div className="space-y-3">
+              {[
+                { icon: "1", text: "A dedicated cloud server is provisioned in under 3 minutes" },
+                { icon: "2", text: "OpenClaw is installed and configured with your credentials" },
+                { icon: "3", text: "Your AI agent goes live on all configured channels (Telegram, Discord, Slack)" },
+                { icon: "4", text: "When you update credentials, config syncs automatically within 5 minutes" },
+              ].map((step) => (
+                <div key={step.icon} className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-violet-600/20 border border-violet-500/20 flex items-center justify-center text-xs font-bold text-violet-400 shrink-0 mt-0.5">
+                    {step.icon}
+                  </div>
+                  <p className="text-sm text-zinc-400">{step.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* ── Provisioning in progress ── */}
+      {isProvisioning && (
+        <div className="glow-border rounded-2xl bg-white/[0.02] p-8 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center mx-auto mb-5">
+            <Loader2 className="w-8 h-8 text-violet-400 animate-spin" />
+          </div>
+          <h2 className="text-lg font-semibold text-white mb-2">{t("deploy.provisioningTitle")}</h2>
+          <p className="text-zinc-400 text-sm mb-4">{t("deploy.provisioningDesc")}</p>
+          <div className="flex items-center gap-2 bg-violet-500/5 border border-violet-500/10 rounded-xl px-4 py-3 text-xs text-zinc-500 justify-center">
+            <Loader2 className="w-3 h-3 animate-spin" />
+            {t("deploy.provisioningNote")}
+          </div>
+          <p className="text-xs text-zinc-600 mt-4">This page will update automatically when your agent is ready.</p>
+        </div>
+      )}
+
+      {/* ── Live & running ── */}
+      {isReady && (
+        <div className="space-y-4">
+          {/* Status card */}
+          <div className="glow-border rounded-2xl bg-white/[0.02] p-6">
+            <div className="flex items-start gap-4 mb-5">
+              <div className="w-12 h-12 rounded-xl bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                <Zap className="w-6 h-6 text-emerald-400" />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-white mb-1">{t("deploy.runningTitle")}</h2>
+                <p className="text-sm text-zinc-400">{t("deploy.runningDesc")}</p>
+              </div>
+              <span className="ml-auto text-xs px-3 py-1.5 rounded-full font-medium bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                Live
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 text-sm mb-5">
+              <div>
+                <div className="text-xs text-zinc-500 uppercase tracking-wider mb-1">{t("deploy.serverLabel")}</div>
+                <div className="text-zinc-300 font-mono text-xs">
+                  {instance.hasGateway ? "Connected" : "—"}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-zinc-500 uppercase tracking-wider mb-1">{t("deploy.channelsLabel")}</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {activeChannels.length > 0
+                    ? activeChannels.map((ch) => (
+                        <span key={ch} className="text-xs px-2 py-0.5 rounded-full bg-violet-500/15 text-violet-300 border border-violet-500/20">
+                          {ch}
+                        </span>
+                      ))
+                    : <span className="text-xs text-zinc-600">None configured</span>
+                  }
+                </div>
+              </div>
+            </div>
+
+            {/* Config out of sync banner */}
+            {instance.configSynced === false && (
+              <div className="flex items-center gap-3 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3 mb-4">
+                <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                <span className="text-sm text-amber-300 flex-1">{t("deploy.syncOutOfDate")}</span>
+                <button
+                  onClick={onSync}
+                  disabled={syncing}
+                  className="flex items-center gap-1.5 text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 px-3 py-1.5 rounded-lg transition-colors shrink-0 disabled:opacity-50"
+                >
+                  {syncing ? <Loader2 className="w-3 h-3 animate-spin" /> : <Wifi className="w-3 h-3" />}
+                  {syncing ? t("deploy.syncing") : t("deploy.syncNow")}
+                </button>
+              </div>
+            )}
+
+            {syncDone && (
+              <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3 mb-4 text-sm text-emerald-300">
+                <Check className="w-4 h-4" /> {t("deploy.syncDone")}
+              </div>
+            )}
+
+            {/* Chat hint */}
+            <div className="flex items-center gap-2 text-xs text-zinc-500">
+              <MessageSquare className="w-3.5 h-3.5" />
+              {t("deploy.chatAvailable")}
+            </div>
+          </div>
+
+          {/* Channel integrations detail */}
+          <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+            <div className="p-5 border-b border-white/5">
+              <h3 className="text-sm font-semibold text-white">Connected integrations</h3>
+            </div>
+            <div className="divide-y divide-white/5">
+              {[
+                { key: "telegram_bot_token", label: "Telegram", icon: "✈", desc: "Users can message your bot on Telegram" },
+                { key: "discord_bot_token", label: "Discord", icon: "🎮", desc: "Bot joins your Discord server" },
+                { key: "slack_app_token", label: "Slack", icon: "💬", desc: "Bot connects to your Slack workspace" },
+              ].map(({ key, label, icon, desc }) => {
+                const active = credKeys.includes(key);
+                return (
+                  <div key={key} className="flex items-center gap-4 p-4">
+                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-lg ${
+                      active ? "bg-violet-600/15 border border-violet-500/20" : "bg-zinc-800/50 border border-white/5"
+                    }`}>
+                      {icon}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className={`text-sm font-medium ${active ? "text-white" : "text-zinc-500"}`}>{label}</div>
+                      <div className="text-xs text-zinc-600">{desc}</div>
+                    </div>
+                    {active ? (
+                      <span className="text-xs px-2 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
+                        Active
+                      </span>
+                    ) : (
+                      <button
+                        onClick={onGoToCredentials}
+                        className="text-xs text-zinc-600 hover:text-white bg-white/5 px-2 py-1 rounded-lg transition-colors"
+                      >
+                        Connect
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
@@ -205,6 +520,12 @@ export default function InstanceDetailPage() {
   const [chatSending, setChatSending] = useState(false);
   const [chatResponse, setChatResponse] = useState<{ text: string; latencyMs?: number } | null>(null);
   const [chatError, setChatError] = useState<string | null>(null);
+
+  // Deploy tab state
+  const [deploying, setDeploying] = useState(false);
+  const [deployError, setDeployError] = useState<string | null>(null);
+  const [syncing, setSyncing] = useState(false);
+  const [syncDone, setSyncDone] = useState(false);
 
   // Full chat tab state
   const [chatMessages, setChatMessages] = useState<ChatMsg[]>([]);
@@ -275,11 +596,19 @@ export default function InstanceDetailPage() {
 
   useEffect(() => { loadInstance(); }, [loadInstance]);
 
+  // Auto-poll while provisioning
+  useEffect(() => {
+    if (instance?.provisionStatus !== "provisioning") return;
+    const interval = setInterval(() => { loadInstance(); }, 10000);
+    return () => clearInterval(interval);
+  }, [instance?.provisionStatus, loadInstance]);
+
   useEffect(() => {
     if (tab === "API Keys" && keys.length === 0) loadKeys();
     if (tab === "Activity Log") loadLogs();
     if (tab === "Infrastructure") loadInfra();
     if (tab === "Credentials") loadCredentials();
+    if (tab === "Deploy" && credentials.length === 0) loadCredentials();
   }, [tab]);
 
   async function toggleStatus() {
@@ -487,6 +816,32 @@ export default function InstanceDetailPage() {
     setChatLoading(false);
   }
 
+  async function deployInstance() {
+    setDeploying(true);
+    setDeployError(null);
+    const res = await fetch(`/api/instances/${id}/deploy`, { method: "POST" });
+    const data = await res.json();
+    if (!res.ok) {
+      setDeployError(data.error ?? "Deployment failed");
+    } else {
+      // Reload instance to reflect provisioning status
+      await loadInstance();
+    }
+    setDeploying(false);
+  }
+
+  async function syncConfig() {
+    setSyncing(true);
+    setSyncDone(false);
+    const res = await fetch(`/api/instances/${id}/restart`, { method: "POST" });
+    if (res.ok) {
+      setSyncDone(true);
+      await loadInstance();
+      setTimeout(() => setSyncDone(false), 3000);
+    }
+    setSyncing(false);
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full py-20">
@@ -559,6 +914,7 @@ export default function InstanceDetailPage() {
           const tabLabels: Record<string, string> = {
             "Overview": t("tabs.overview"),
             "Chat": t("chat.tab"),
+            "Deploy": t("deploy.tab"),
             "Configuration": t("tabs.configuration"),
             "API Keys": t("tabs.apiKeys"),
             "Activity Log": t("tabs.activityLog"),
@@ -774,6 +1130,23 @@ export default function InstanceDetailPage() {
             </>
           )}
         </div>
+      )}
+
+      {/* ── Deploy ── */}
+      {tab === "Deploy" && (
+        <DeployTab
+          instance={instance}
+          credentials={credentials}
+          credsLoading={credsLoading}
+          deploying={deploying}
+          deployError={deployError}
+          syncing={syncing}
+          syncDone={syncDone}
+          onDeploy={deployInstance}
+          onSync={syncConfig}
+          onGoToCredentials={() => { setTab("Credentials"); loadCredentials(); }}
+          t={t}
+        />
       )}
 
       {/* ── Configuration ── */}

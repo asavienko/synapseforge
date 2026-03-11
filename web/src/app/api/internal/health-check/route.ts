@@ -33,14 +33,24 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  // Update AIInstance healthStatus and lastCheckedAt
-  await prisma.aIInstance.update({
+  // Update AIInstance healthStatus, lastCheckedAt, and promote provisionStatus→ready
+  const instance = await prisma.aIInstance.findUnique({
     where: { id: instanceId },
-    data: {
-      healthStatus: status,
-      lastCheckedAt: new Date(),
-    },
+    select: { provisionStatus: true, status: true },
   });
+
+  const updates: Record<string, unknown> = {
+    healthStatus: status,
+    lastCheckedAt: new Date(),
+  };
+
+  // First health check after provisioning: promote to ready + set status running
+  if (instance?.provisionStatus === "provisioning" && status === "healthy") {
+    updates.provisionStatus = "ready";
+    updates.status = "running";
+  }
+
+  await prisma.aIInstance.update({ where: { id: instanceId }, data: updates });
 
   // Keep only last 100 health checks per instance
   const checks = await prisma.healthCheck.findMany({
