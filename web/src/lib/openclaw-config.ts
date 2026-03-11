@@ -8,8 +8,7 @@ export type ChannelType = "telegram" | "discord" | "slack";
 export type InstanceTemplate = "general" | "customer_support" | "faq_bot" | "lead_qualification";
 
 export interface InstanceConfig {
-  // From AIInstance.config JSON
-  model: string;           // e.g. "openai/gpt-4o"
+  model: string;
   systemPrompt: string;
   temperature: number;
   maxTokens: number;
@@ -17,124 +16,101 @@ export interface InstanceConfig {
 }
 
 export interface CredentialMap {
-  // LLM
   openai_api_key?: string;
   anthropic_api_key?: string;
   openrouter_api_key?: string;
-  // Channels
   telegram_bot_token?: string;
   discord_bot_token?: string;
   slack_app_token?: string;
   slack_bot_token?: string;
-  // Gateway
-  gateway_token: string;  // Always set
+  gateway_token: string;
 }
 
 /**
- * Generates openclaw.json5 config for a deployed VPS instance.
+ * Generates openclaw.json config (valid JSON, not JSON5) for a deployed VPS.
  *
  * Key design decisions:
- * - LLM API keys go in `env:` so OpenAI/Anthropic SDKs pick them up automatically
- * - Channel tokens (Telegram, Discord, Slack) are set directly in the channel config
- * - Gateway token is set directly in gateway.auth.token (not via env)
- * - dmPolicy is "open" for all channels — business bots must be reachable by customers
- *   without requiring QR code pairing (pairing is for personal use only)
+ * - Uses JSON.stringify for safe serialization — no injection via special chars in tokens
+ * - LLM API keys go in `env` section so OpenAI/Anthropic SDKs pick them up via process.env
+ * - Channel tokens go directly in channel config
+ * - dmPolicy: "open" — business bots must be reachable without QR code pairing
+ * - gateway.auth.token set directly (OPENCLAW_GATEWAY_TOKEN env var is also set in
+ *   docker-compose as a backup/override)
  */
 export function generateOpenClawConfig(
   config: InstanceConfig,
   creds: CredentialMap
 ): string {
-  // Build env section (LLM API keys only — SDKs read these from env)
-  const envLines: string[] = [];
-  if (creds.openai_api_key) envLines.push(`    OPENAI_API_KEY: "${esc(creds.openai_api_key)}"`);
-  if (creds.anthropic_api_key) envLines.push(`    ANTHROPIC_API_KEY: "${esc(creds.anthropic_api_key)}"`);
-  if (creds.openrouter_api_key) envLines.push(`    OPENROUTER_API_KEY: "${esc(creds.openrouter_api_key)}"`);
+  // Build env section for LLM keys
+  const env: Record<string, string> = {};
+  if (creds.openai_api_key) env.OPENAI_API_KEY = creds.openai_api_key;
+  if (creds.anthropic_api_key) env.ANTHROPIC_API_KEY = creds.anthropic_api_key;
+  if (creds.openrouter_api_key) env.OPENROUTER_API_KEY = creds.openrouter_api_key;
 
-  // Build channels section — use direct token values, not env var references
-  const channelParts: string[] = [];
+  // Build channels section
+  const channels: Record<string, unknown> = {};
 
   if (creds.telegram_bot_token) {
-    channelParts.push(`    telegram: {
+    channels.telegram = {
       enabled: true,
-      botToken: "${esc(creds.telegram_bot_token)}",
-      // open: anyone can message the bot (required for deployed business bots)
+      botToken: creds.telegram_bot_token,
+      // "open" = anyone can message the bot without QR code pairing
+      // Required for deployed business bots (pairing is for personal use only)
       dmPolicy: "open",
       groups: {
         // Allow all groups the bot is added to
         "*": { requireMention: false, groupPolicy: "open" },
       },
-    }`);
+    };
   }
 
   if (creds.discord_bot_token) {
-    channelParts.push(`    discord: {
+    channels.discord = {
       enabled: true,
-      token: "${esc(creds.discord_bot_token)}",
-    }`);
+      token: creds.discord_bot_token,
+    };
   }
 
-  if (creds.slack_app_token && creds.slack_bot_token) {
-    channelParts.push(`    slack: {
+  if (creds.slack_app_token) {
+    channels.slack = {
       enabled: true,
       mode: "socket",
-      appToken: "${esc(creds.slack_app_token)}",
-      botToken: "${esc(creds.slack_bot_token)}",
-    }`);
-  } else if (creds.slack_app_token) {
-    // OAuth / Web API flow with just app token
-    channelParts.push(`    slack: {
-      enabled: true,
-      mode: "socket",
-      appToken: "${esc(creds.slack_app_token)}",
-    }`);
+      appToken: creds.slack_app_token,
+      ...(creds.slack_bot_token ? { botToken: creds.slack_bot_token } : {}),
+    };
   }
 
-  // Escape special chars in systemPrompt for JSON5 string
-  const escapedPrompt = config.systemPrompt
-    .replace(/\\/g, "\\\\")
-    .replace(/"/g, '\\"')
-    .replace(/\n/g, "\\n")
-    .replace(/\r/g, "");
+  const configObj = {
+    ...(Object.keys(env).length > 0 ? { env } : {}),
 
-  const envSection = envLines.length > 0
-    ? `  env: {\n${envLines.join(",\n")},\n  },\n\n`
-    : "";
-
-  const channelsSection = channelParts.length > 0
-    ? `  channels: {\n${channelParts.join(",\n")},\n  },\n\n`
-    : "";
-
-  return `{
-${envSection}  agents: {
-    defaults: {
-      model: { primary: "${esc(config.model)}" },
-      systemPrompt: "${escapedPrompt}",
-      temperature: ${config.temperature},
-      maxTokens: ${config.maxTokens},
-      thinking: "adaptive",
-    },
-  },
-
-${channelsSection}  gateway: {
-    bind: "lan",
-    port: 18789,
-    auth: {
-      mode: "token",
-      token: "${esc(creds.gateway_token)}",
-    },
-    http: {
-      endpoints: {
-        chatCompletions: { enabled: true },
+    agents: {
+      defaults: {
+        model: { primary: config.model },
+        systemPrompt: config.systemPrompt,
+        temperature: config.temperature,
+        maxTokens: config.maxTokens,
+        thinking: "adaptive",
       },
     },
-  },
-}
-`;
-}
 
-/** Escape a string value for embedding in a JSON5 quoted string */
-function esc(s: string): string {
-  return s.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+    ...(Object.keys(channels).length > 0 ? { channels } : {}),
+
+    gateway: {
+      bind: "lan",
+      port: 18789,
+      auth: {
+        mode: "token",
+        token: creds.gateway_token,
+      },
+      http: {
+        endpoints: {
+          chatCompletions: { enabled: true },
+        },
+      },
+    },
+  };
+
+  return JSON.stringify(configObj, null, 2);
 }
 
 export const TEMPLATE_PROMPTS: Record<InstanceTemplate, string> = {

@@ -6,7 +6,7 @@ export function generateCloudInit(params: {
   instanceId: string;
   gatewayToken: string;
   appUrl: string;         // e.g. "https://synapseforge.ai"
-  bootstrapToken: string; // one-time token to fetch openclaw.json5
+  bootstrapToken: string; // one-time token to fetch openclaw.json
   sfApiKey: string;       // INTERNAL_API_KEY for health check reporting
 }): string {
   const { instanceId, gatewayToken, appUrl, bootstrapToken, sfApiKey } = params;
@@ -38,11 +38,11 @@ echo "[$(date)] Fetching OpenClaw config..."
 curl -sf \\
   -H "Authorization: Bearer ${bootstrapToken}" \\
   "${appUrl}/api/internal/bootstrap/${instanceId}" \\
-  -o /opt/openclaw/openclaw.json5 || {
+  -o /opt/openclaw/openclaw.json || {
   echo "ERROR: Failed to fetch config from bootstrap endpoint"
   exit 1
 }
-chmod 600 /opt/openclaw/openclaw.json5
+chmod 600 /opt/openclaw/openclaw.json
 echo "[$(date)] Config fetched successfully."
 
 # ── 5. Write Docker Compose file ──────────────────────────────────────────────
@@ -59,7 +59,9 @@ services:
       - NODE_ENV=production
       - HOME=/home/node
       - TERM=xterm-256color
-      # Gateway token and port via env — OpenClaw reads these to override config defaults
+      # XDG_CONFIG_HOME tells OpenClaw where to find openclaw.json
+      - XDG_CONFIG_HOME=/home/node/.openclaw
+      # Gateway token via env — also set in openclaw.json for reliability
       - OPENCLAW_GATEWAY_TOKEN=${gatewayToken}
       - OPENCLAW_GATEWAY_PORT=18789
       - OPENCLAW_GATEWAY_BIND=lan
@@ -67,10 +69,11 @@ services:
     volumes:
       - openclaw_data:/home/node/.openclaw
       # Config file bind-mount (writable — config-sync updates this file and restarts)
-      - /opt/openclaw/openclaw.json5:/home/node/.openclaw/openclaw.json5
+      - /opt/openclaw/openclaw.json:/home/node/.openclaw/openclaw.json
     command:
       [
-        "openclaw", "gateway",
+        "node", "dist/index.js",
+        "gateway",
         "--bind", "lan",
         "--port", "18789",
         "--allow-unconfigured",
@@ -140,7 +143,7 @@ HASH_FILE=/opt/openclaw/.config-hash
 HTTP_STATUS=$(curl -sf -D /tmp/sync-headers.txt \
   -H "Authorization: Bearer $OPENCLAW_GATEWAY_TOKEN" \
   "$SF_API_URL/api/internal/instance-config/$SF_INSTANCE_ID" \
-  -o /tmp/openclaw-new.json5 \
+  -o /tmp/openclaw-new.json \
   -w "%{http_code}" 2>/dev/null || echo "000")
 
 if [ "$HTTP_STATUS" != "200" ]; then
@@ -159,7 +162,7 @@ fi
 
 echo "[sync] Config changed ($OLD_HASH -> $NEW_HASH). Applying..."
 chmod 600 /tmp/openclaw-new.json5
-cp /tmp/openclaw-new.json5 /opt/openclaw/openclaw.json5
+cp /tmp/openclaw-new.json /opt/openclaw/openclaw.json
 [ -n "$NEW_HASH" ] && echo "$NEW_HASH" > "$HASH_FILE"
 
 # Restart OpenClaw to pick up new config
