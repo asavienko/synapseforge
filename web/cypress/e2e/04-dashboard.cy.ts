@@ -184,14 +184,18 @@ describe("04 · Billing", () => {
     cy.snap("04-billing-03-all-plans");
   });
 
-  it("shows Upgrade to Pro button", () => {
-    cy.contains("Upgrade to Pro").should("be.visible");
+  it("shows Pro upgrade button", () => {
+    // Pro CTA uses pricing.pro.cta translation = "Get started"
+    cy.contains("button", "Get started").should("be.visible");
     cy.snap("04-billing-04-upgrade-btn");
   });
 
-  it("shows Upgrade to Enterprise button", () => {
-    cy.contains("Upgrade to Enterprise").should("be.visible");
-    cy.snap("04-billing-05-enterprise-btn");
+  it("shows Enterprise contact link (not a Stripe checkout button)", () => {
+    // Enterprise uses mailto link — "Contact us"
+    cy.contains("a", "Contact us")
+      .should("be.visible")
+      .and("have.attr", "href", "mailto:hello@synapseforge.ai");
+    cy.snap("04-billing-05-enterprise-contact");
   });
 });
 
