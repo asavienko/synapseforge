@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { callLLM, ChatMessage } from "@/lib/llm";
 import { validateApiKey, CORS_HEADERS } from "@/lib/api-auth";
 import { randomBytes } from "crypto";
+import { publicChatLimiter, rateLimitHeaders, getRateLimitKey } from "@/lib/rate-limit";
 
 // Handle CORS preflight
 export async function OPTIONS() {
@@ -45,6 +46,17 @@ export async function POST(req: NextRequest) {
         },
       },
       { status: 401, headers: CORS_HEADERS }
+    );
+  }
+
+  // Rate limit: 60 req/min per API key (shared with /api/v1/chat)
+  const rlKey = getRateLimitKey(req, "v1-chat", ctx.keyId);
+  const rl = publicChatLimiter.check(rlKey);
+  const rlHeaders = { ...CORS_HEADERS, ...rateLimitHeaders(rl) };
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: { message: "Rate limit exceeded. Try again later.", type: "rate_limit_error", code: "rate_limit_exceeded" } },
+      { status: 429, headers: rlHeaders }
     );
   }
 

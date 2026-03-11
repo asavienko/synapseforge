@@ -546,6 +546,7 @@ export default function InstanceDetailPage() {
   const [chatLoading, setChatLoading] = useState(false);
   const [chatNoCredentials, setChatNoCredentials] = useState(false);
   const [chatProvider, setChatProvider] = useState<string | null>(null);
+  const [chatHistoryLoaded, setChatHistoryLoaded] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   // Credentials state
@@ -627,6 +628,29 @@ export default function InstanceDetailPage() {
     return () => clearInterval(interval);
   }, [instance?.provisionStatus, loadInstance]);
 
+  const loadChatHistory = useCallback(async () => {
+    if (chatHistoryLoaded) return;
+    try {
+      const res = await fetch(`/api/instances/${id}/chat`);
+      if (res.ok) {
+        const history = await res.json();
+        if (Array.isArray(history) && history.length > 0) {
+          setChatMessages(history.map((m: { role: string; content: string; isError?: boolean; latencyMs?: number; provider?: string }) => ({
+            role: m.role as "user" | "assistant",
+            content: m.content,
+            isError: m.isError ?? false,
+            latencyMs: m.latencyMs,
+            provider: m.provider,
+          })));
+          if (history[history.length - 1]?.provider) {
+            setChatProvider(history[history.length - 1].provider);
+          }
+        }
+      }
+    } catch { /* ignore */ }
+    setChatHistoryLoaded(true);
+  }, [id, chatHistoryLoaded]);
+
   useEffect(() => {
     if (tab === "API Keys" && keys.length === 0) loadKeys();
     if (tab === "Activity Log") loadLogs();
@@ -634,6 +658,7 @@ export default function InstanceDetailPage() {
     if (tab === "Infrastructure") loadInfra();
     if (tab === "Credentials") loadCredentials();
     if (tab === "Deploy" && credentials.length === 0) loadCredentials();
+    if (tab === "Chat") loadChatHistory();
   }, [tab]);
 
   async function toggleStatus() {
@@ -1104,7 +1129,13 @@ export default function InstanceDetailPage() {
             </div>
             {chatMessages.length > 0 && (
               <button
-                onClick={() => { setChatMessages([]); setChatNoCredentials(false); setChatProvider(null); }}
+                onClick={async () => {
+                  setChatMessages([]);
+                  setChatNoCredentials(false);
+                  setChatProvider(null);
+                  // Also clear from DB
+                  fetch(`/api/instances/${id}/chat`, { method: "DELETE" }).catch(() => {});
+                }}
                 className="text-xs text-zinc-600 hover:text-zinc-300 transition-colors px-2 py-1 rounded-lg border border-white/5 hover:border-white/10"
               >
                 {t("chat.clearChat")}
