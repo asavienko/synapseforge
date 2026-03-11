@@ -23,6 +23,8 @@ echo "[$(date)] Starting SynapseForge provisioning for instance ${instanceId}...
 # ── 1. System setup ────────────────────────────────────────────────────────────
 apt-get update -qq
 DEBIAN_FRONTEND=noninteractive apt-get install -y curl ca-certificates gnupg cron
+systemctl enable cron || true
+systemctl start cron || true
 
 # ── 2. Install Docker ─────────────────────────────────────────────────────────
 curl -fsSL https://get.docker.com | sh
@@ -178,16 +180,22 @@ chmod +x /opt/synapseforge/scripts/sync-config.sh
  echo "*/5 * * * * /opt/synapseforge/scripts/sync-config.sh >> /var/log/sf-sync.log 2>&1"
 ) | crontab -
 
-# ── 11. Wait for gateway to become available (up to 3 minutes) ────────────────
+# ── 11. Wait for gateway to become available (up to 8 minutes) ────────────────
+# Docker image pull can take 2-3 min on a fresh VPS; allow extra headroom.
 echo "[$(date)] Waiting for OpenClaw gateway on port 18789..."
-for i in $(seq 1 18); do
+for i in $(seq 1 48); do
   HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 \
     "http://localhost:18789" 2>/dev/null || echo "000")
   if [ "$HTTP_CODE" != "000" ]; then
-    echo "[$(date)] Gateway is up! (HTTP $HTTP_CODE after \${i}x10s)"
+    echo "[$(date)] Gateway is up! (HTTP $HTTP_CODE after $((i * 10))s)"
     break
   fi
-  echo "[$(date)] Attempt $i/18: not ready yet, waiting 10s..."
+  if [ "$i" = "48" ]; then
+    echo "[$(date)] WARNING: Gateway not responding after 480s — provisioning may have failed"
+    echo "[$(date)] Container logs:"
+    docker compose -f /opt/openclaw/docker-compose.yml logs --tail=50 || true
+  fi
+  echo "[$(date)] Attempt $i/48: not ready yet, waiting 10s..."
   sleep 10
 done
 
