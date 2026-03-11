@@ -196,3 +196,43 @@ describe("15 · Infrastructure — Health Checks & Backups", () => {
     });
   });
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 15 · Gateway Connectivity
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe("15 · Gateway Connectivity", () => {
+  it("instance detail shows VPS Gateway section in Infrastructure tab", () => {
+    cy.login(EMAIL(), PASS());
+    cy.visit("/en/dashboard");
+    // Navigate to instance detail
+    cy.get("a[href*='/dashboard/instances/']").first().click();
+    cy.url().should("include", "/instances/");
+    // Click Infrastructure tab
+    cy.contains("Infrastructure").click();
+    // Should show VPS Gateway section
+    cy.contains("VPS Gateway").should("be.visible");
+    cy.snap("15-gateway-01-infrastructure-tab");
+  });
+
+  it("gateway-status API returns not_configured when no vpsUrl", () => {
+    cy.login(EMAIL(), PASS());
+    // Get instance id from the page
+    cy.visit("/en/dashboard/instances");
+    cy.get("a[href*='/dashboard/instances/']").first().invoke("attr", "href").then((href) => {
+      const id = href!.split("/instances/")[1].split("/")[0];
+      cy.request(`/api/instances/${id}/gateway-status`).then((res) => {
+        expect(res.status).to.eq(200);
+        expect(res.body.connected).to.be.false;
+        expect(res.body.reason).to.eq("not_configured");
+      });
+    });
+  });
+
+  it("admin can see Connect VPS button for instances without vpsUrl", () => {
+    cy.login(Cypress.env("ADMIN_EMAIL") || "admin@synapseforge.ai", Cypress.env("ADMIN_PASS") || "adminpass123");
+    cy.visit("/en/admin");
+    cy.contains("Connect VPS").should("be.visible");
+    cy.snap("15-gateway-02-admin-connect-btn");
+  });
+});

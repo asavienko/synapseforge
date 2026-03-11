@@ -527,6 +527,26 @@
         "snapshotId": "Snapshot ID",
         "size": "Size",
         "note": "Backups are managed automatically. Contact your manager to restore a snapshot."
+      },
+      "gateway": {
+        "title": "VPS Gateway",
+        "connected": "Connected",
+        "notConfigured": "Not configured",
+        "vpsUrl": "VPS URL",
+        "checkNow": "Check Now",
+        "checking": "Checking...",
+        "latency": "Latency",
+        "ms": "ms",
+        "gatewayError": "Gateway error",
+        "dismiss": "Dismiss"
+      },
+      "testChat": {
+        "title": "Test Chat",
+        "placeholder": "Send a test message to your AI...",
+        "send": "Send",
+        "sending": "Sending...",
+        "responseLabel": "Response",
+        "note": "This sends a test message directly to your AI gateway."
       }
     }
   },
@@ -539,6 +559,14 @@
       "down": "Down",
       "unknown": "Unknown",
       "issues": "Instances needing attention"
-    }
+    },
+    "connectVps": "Connect VPS",
+    "connected": "Connected",
+    "disconnect": "Disconnect",
+    "vpsGatewayUrl": "VPS Gateway URL",
+    "gatewayToken": "Gateway Token",
+    "testAndSave": "Test & Save",
+    "connectionSuccess": "Connected successfully",
+    "connectionFailed": "Connection failed"
   }
 }

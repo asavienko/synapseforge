@@ -75,6 +75,7 @@ model AIInstance {
   lastCheckedAt DateTime?
   lastBackupAt  DateTime?
   vpsUrl        String?   // e.g. "http://1.2.3.4:3000" — OpenClaw gateway URL on the client VPS
+  gatewayToken  String?   // Bearer token for OpenClaw gateway auth
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

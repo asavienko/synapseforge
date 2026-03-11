@@ -527,6 +527,26 @@
         "snapshotId": "ID de instantánea",
         "size": "Tamaño",
         "note": "Las copias de seguridad se gestionan automáticamente. Contacta a tu gestor para restaurar una instantánea."
+      },
+      "gateway": {
+        "title": "VPS Gateway",
+        "connected": "Conectado",
+        "notConfigured": "No configurado",
+        "vpsUrl": "URL del VPS",
+        "checkNow": "Verificar ahora",
+        "checking": "Verificando...",
+        "latency": "Latencia",
+        "ms": "ms",
+        "gatewayError": "Error de gateway",
+        "dismiss": "Cerrar"
+      },
+      "testChat": {
+        "title": "Chat de prueba",
+        "placeholder": "Envía un mensaje de prueba a tu IA...",
+        "send": "Enviar",
+        "sending": "Enviando...",
+        "responseLabel": "Respuesta",
+        "note": "Esto envía un mensaje de prueba directamente a tu gateway de IA."
       }
     }
   },
@@ -539,6 +559,14 @@
       "down": "Caído",
       "unknown": "Desconocido",
       "issues": "Instancias que necesitan atención"
-    }
+    },
+    "connectVps": "Conectar VPS",
+    "connected": "Conectado",
+    "disconnect": "Desconectar",
+    "vpsGatewayUrl": "URL del Gateway VPS",
+    "gatewayToken": "Token del Gateway",
+    "testAndSave": "Probar y guardar",
+    "connectionSuccess": "Conectado correctamente",
+    "connectionFailed": "Error de conexión"
   }
 }

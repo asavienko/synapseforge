@@ -6,6 +6,7 @@ import {
   Bot, ArrowLeft, Play, Square, Trash2, Loader2,
   Settings2, Key, Activity, Copy, Check, Eye, EyeOff,
   Plus, X, Zap, AlertCircle, Terminal, Server, Database,
+  Wifi, WifiOff, MessageSquare, Send,
 } from "lucide-react";
 import Link from "next/link";
 import { STATUS_COLORS, INSTANCE_TYPES, formatDate, formatRelativeTime } from "@/lib/utils";
@@ -27,7 +28,7 @@ interface Instance {
   healthStatus?: string | null;
   lastCheckedAt?: string | null;
   lastBackupAt?: string | null;
-  vpsUrl?: string | null;
+  hasGateway?: boolean;
 }
 
 interface HealthCheckRow {
@@ -81,6 +82,15 @@ interface LogRow {
   createdAt: string;
 }
 
+interface GatewayStatus {
+  connected: boolean;
+  latencyMs?: number;
+  httpStatus?: number;
+  error?: string;
+  vpsUrl?: string;
+  reason?: string;
+}
+
 const MODELS = [
   { value: "gpt-4o", label: "GPT-4o" },
   { value: "gpt-4-turbo", label: "GPT-4 Turbo" },
@@ -123,6 +133,7 @@ export default function InstanceDetailPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{ text: string; type?: "success" | "error" } | null>(null);
+  const [gatewayError, setGatewayError] = useState<string | null>(null);
 
   // Config state
   const [config, setConfig] = useState<Config>(DEFAULT_CONFIG);
@@ -145,6 +156,16 @@ export default function InstanceDetailPage() {
   const [healthData, setHealthData] = useState<HealthData | null>(null);
   const [snapshotsData, setSnapshotsData] = useState<SnapshotsData | null>(null);
   const [infraLoading, setInfraLoading] = useState(false);
+
+  // Gateway status
+  const [gatewayStatus, setGatewayStatus] = useState<GatewayStatus | null>(null);
+  const [checkingGateway, setCheckingGateway] = useState(false);
+
+  // Test chat
+  const [chatMessage, setChatMessage] = useState("");
+  const [chatSending, setChatSending] = useState(false);
+  const [chatResponse, setChatResponse] = useState<{ text: string; latencyMs?: number } | null>(null);
+  const [chatError, setChatError] = useState<string | null>(null);
 
   function showToast(text: string, type: "success" | "error" = "success") {
     setToast({ text, type });
@@ -198,17 +219,26 @@ export default function InstanceDetailPage() {
   async function toggleStatus() {
     if (!instance) return;
     setSaving(true);
+    setGatewayError(null);
     const newStatus = instance.status === "running" ? "stopped" : "running";
     const res = await fetch(`/api/instances/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status: newStatus }),
     });
-    if (res.ok) {
-      setInstance(await res.json());
-      showToast(`Instance ${newStatus === "running" ? "started" : "stopped"}.`);
-      if (tab === "Activity Log") loadLogs();
+    const data = await res.json();
+    if (!res.ok) {
+      if (data.gatewayError) {
+        setGatewayError(data.error);
+      } else {
+        showToast(data.error ?? "Failed to update status", "error");
+      }
+      setSaving(false);
+      return;
     }
+    setInstance(data);
+    showToast(`Instance ${newStatus === "running" ? "started" : "stopped"}.`);
+    if (tab === "Activity Log") loadLogs();
     setSaving(false);
   }
 
@@ -275,6 +305,35 @@ export default function InstanceDetailPage() {
     setTimeout(() => setCopiedId(null), 2000);
   }
 
+  async function checkGatewayNow() {
+    setCheckingGateway(true);
+    const res = await fetch(`/api/instances/${id}/gateway-status`);
+    if (res.ok) setGatewayStatus(await res.json());
+    setCheckingGateway(false);
+  }
+
+  async function sendChatMessage() {
+    if (!chatMessage.trim()) return;
+    setChatSending(true);
+    setChatResponse(null);
+    setChatError(null);
+
+    const res = await fetch(`/api/instances/${id}/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: chatMessage.trim() }),
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      setChatError(data.error ?? "Gateway error");
+    } else {
+      const text = data.response ?? data.text ?? data.message ?? data.content ?? JSON.stringify(data);
+      setChatResponse({ text, latencyMs: data.latencyMs });
+    }
+    setChatSending(false);
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full py-20">
@@ -301,7 +360,7 @@ export default function InstanceDetailPage() {
       </Link>
 
       {/* Header */}
-      <div className="flex items-start gap-4 mb-6">
+      <div className="flex items-start gap-4 mb-4">
         <div className="w-14 h-14 rounded-2xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center shrink-0">
           <Bot className="w-7 h-7 text-violet-400" />
         </div>
@@ -327,6 +386,19 @@ export default function InstanceDetailPage() {
           </button>
         </div>
       </div>
+
+      {/* Gateway error banner */}
+      {gatewayError && (
+        <div className="mb-4 flex items-start gap-3 bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3">
+          <AlertCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+          <div className="flex-1 text-sm text-amber-300">
+            <span className="font-semibold">{t("infrastructure.gateway.gatewayError")}:</span> {gatewayError}
+          </div>
+          <button onClick={() => setGatewayError(null)} className="text-amber-500 hover:text-amber-300 transition-colors">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="flex gap-1 border-b border-white/5 mb-6">
@@ -578,6 +650,72 @@ export default function InstanceDetailPage() {
             </div>
           ) : (
             <>
+              {/* VPS Gateway Status */}
+              <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+                <div className="p-5 border-b border-white/5 flex items-center gap-2">
+                  <Wifi className="w-4 h-4 text-zinc-500" />
+                  <h3 className="text-sm font-semibold text-white">{t("infrastructure.gateway.title")}</h3>
+                </div>
+                <div className="p-5 space-y-4">
+                  <div className="flex items-center gap-4">
+                    <div className="text-xs text-zinc-500 uppercase tracking-wider w-28">Status</div>
+                    {instance.hasGateway ? (
+                      <span className="text-sm px-3 py-1 rounded-full border font-medium bg-emerald-500/20 text-emerald-300 border-emerald-500/30">
+                        {t("infrastructure.gateway.connected")}
+                      </span>
+                    ) : (
+                      <span className="text-sm px-3 py-1 rounded-full border font-medium bg-zinc-700/30 text-zinc-400 border-zinc-600/30">
+                        {t("infrastructure.gateway.notConfigured")}
+                      </span>
+                    )}
+                  </div>
+
+                  {instance.hasGateway && (
+                    <>
+                      {/* Live check result */}
+                      {gatewayStatus && (
+                        <div className="flex items-center gap-4">
+                          <div className="text-xs text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.gateway.latency")}</div>
+                          <div className="flex items-center gap-2">
+                            {gatewayStatus.connected ? (
+                              <>
+                                <Wifi className="w-3.5 h-3.5 text-emerald-400" />
+                                <span className="text-sm text-emerald-300">
+                                  {gatewayStatus.latencyMs}{t("infrastructure.gateway.ms")}
+                                </span>
+                              </>
+                            ) : (
+                              <>
+                                <WifiOff className="w-3.5 h-3.5 text-red-400" />
+                                <span className="text-sm text-red-400">{gatewayStatus.error ?? "Unreachable"}</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      <div>
+                        <button
+                          onClick={checkGatewayNow}
+                          disabled={checkingGateway}
+                          className="flex items-center gap-2 text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/20 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                        >
+                          {checkingGateway ? (
+                            <><Loader2 className="w-3 h-3 animate-spin" /> {t("infrastructure.gateway.checking")}</>
+                          ) : (
+                            <><Wifi className="w-3 h-3" /> {t("infrastructure.gateway.checkNow")}</>
+                          )}
+                        </button>
+                      </div>
+                    </>
+                  )}
+
+                  {!instance.hasGateway && (
+                    <p className="text-xs text-zinc-600">Contact your manager to connect a VPS gateway to this instance.</p>
+                  )}
+                </div>
+              </div>
+
               {/* Health Status */}
               <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
                 <div className="p-5 border-b border-white/5 flex items-center gap-2">
@@ -712,6 +850,54 @@ export default function InstanceDetailPage() {
                   <p className="text-xs text-zinc-600">{t("infrastructure.backups.note")}</p>
                 </div>
               </div>
+
+              {/* Test Chat */}
+              {instance.hasGateway && instance.status === "running" && (
+                <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+                  <div className="p-5 border-b border-white/5 flex items-center gap-2">
+                    <MessageSquare className="w-4 h-4 text-zinc-500" />
+                    <h3 className="text-sm font-semibold text-white">{t("infrastructure.testChat.title")}</h3>
+                  </div>
+                  <div className="p-5 space-y-4">
+                    <p className="text-xs text-zinc-500">{t("infrastructure.testChat.note")}</p>
+                    <div className="flex gap-3">
+                      <textarea
+                        value={chatMessage}
+                        onChange={(e) => setChatMessage(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendChatMessage(); } }}
+                        placeholder={t("infrastructure.testChat.placeholder")}
+                        rows={2}
+                        className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors resize-none"
+                      />
+                      <button
+                        onClick={sendChatMessage}
+                        disabled={chatSending || !chatMessage.trim()}
+                        className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 transition-colors px-4 py-3 rounded-xl text-sm font-semibold text-white self-end"
+                      >
+                        {chatSending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                        {chatSending ? t("infrastructure.testChat.sending") : t("infrastructure.testChat.send")}
+                      </button>
+                    </div>
+                    {chatError && (
+                      <div className="flex items-start gap-2 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
+                        <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                        <span className="text-sm text-red-300">{chatError}</span>
+                      </div>
+                    )}
+                    {chatResponse && (
+                      <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-xs text-zinc-500 uppercase tracking-wider">{t("infrastructure.testChat.responseLabel")}</span>
+                          {chatResponse.latencyMs != null && (
+                            <span className="text-xs text-zinc-600">{chatResponse.latencyMs}{t("infrastructure.gateway.ms")}</span>
+                          )}
+                        </div>
+                        <p className="text-sm text-zinc-200 whitespace-pre-wrap">{chatResponse.text}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </>
           )}
         </div>

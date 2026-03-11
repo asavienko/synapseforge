@@ -12,7 +12,11 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
   });
 
   if (!instance) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  return NextResponse.json(instance);
+
+  // Return instance but never expose gatewayToken; expose hasGateway flag
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { gatewayToken: _token, vpsUrl: _vps, ...safeInstance } = instance;
+  return NextResponse.json({ ...safeInstance, hasGateway: !!instance.vpsUrl });
 }
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -34,8 +38,48 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (body.description !== undefined) data.description = body.description;
 
   if (body.status !== undefined && body.status !== instance.status) {
-    data.status = body.status;
-    logEvents.push({ event: body.status === "running" ? "started" : "stopped" });
+    const newStatus = body.status as string;
+
+    // If starting, optionally probe the gateway
+    if (newStatus === "running" && instance.vpsUrl && instance.gatewayToken) {
+      const startMs = Date.now();
+      try {
+        const res = await fetch(`${instance.vpsUrl}/hooks/wake`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${instance.gatewayToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ text: "ping", mode: "next-heartbeat" }),
+          signal: AbortSignal.timeout(8000),
+        });
+
+        if (res.status === 401) {
+          return NextResponse.json(
+            { error: "Invalid gateway token. Contact your manager.", gatewayError: true },
+            { status: 503 }
+          );
+        }
+
+        // Success — record health check
+        const responseMs = Date.now() - startMs;
+        await prisma.healthCheck.create({
+          data: { instanceId: id, status: "healthy", responseMs, error: null },
+        });
+        await prisma.aIInstance.update({
+          where: { id },
+          data: { healthStatus: "healthy", lastCheckedAt: new Date() },
+        });
+      } catch {
+        return NextResponse.json(
+          { error: "Gateway unreachable. Check VPS is running.", gatewayError: true },
+          { status: 503 }
+        );
+      }
+    }
+
+    data.status = newStatus;
+    logEvents.push({ event: newStatus === "running" ? "started" : "stopped" });
   }
 
   if (body.config !== undefined) {
@@ -51,7 +95,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     });
   }
 
-  return NextResponse.json(updated);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { gatewayToken: _token, vpsUrl: _vps, ...safeUpdated } = updated;
+  return NextResponse.json({ ...safeUpdated, hasGateway: !!updated.vpsUrl });
 }
 
 export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Users, Bot, Activity, AlertCircle, Plus, X, Shield, ChevronDown, MessageCircle, Send, Loader2, Server } from "lucide-react";
+import { Users, Bot, Activity, AlertCircle, Plus, X, Shield, ChevronDown, MessageCircle, Send, Loader2, Server, Link, Unlink, CheckCircle2 } from "lucide-react";
 import { STATUS_COLORS, PLANS, formatDate, formatRelativeTime } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
@@ -13,7 +13,15 @@ interface UserRow {
   createdAt: string;
   managerId: string | null;
   managerName: string | null;
-  instances: { id: string; name: string; type: string; status: string; healthStatus?: string | null }[];
+  instances: {
+    id: string;
+    name: string;
+    type: string;
+    status: string;
+    healthStatus?: string | null;
+    vpsUrl: string | null;
+    hasGateway: boolean;
+  }[];
   unreadMessages: number;
 }
 
@@ -62,6 +70,15 @@ interface Message {
   createdAt: string;
 }
 
+// Per-instance gateway modal state
+interface GatewayModal {
+  instanceId: string;
+  vpsUrl: string;
+  gatewayToken: string;
+  saving: boolean;
+  result: { ok: boolean; message: string } | null;
+}
+
 export function AdminClient({ users: initialUsers, managers: initialManagers, stats, healthSummary }: {
   users: UserRow[];
   managers: ManagerRow[];
@@ -83,6 +100,9 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
   const [threadLoading, setThreadLoading] = useState(false);
   const [replyBody, setReplyBody] = useState("");
   const [replying, setReplying] = useState(false);
+
+  // Gateway modal
+  const [gatewayModal, setGatewayModal] = useState<GatewayModal | null>(null);
 
   async function createManager() {
     setCreatingManager(true);
@@ -142,10 +162,53 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
       const msg = await res.json();
       setThreadMessages((prev) => [...prev, msg]);
       setReplyBody("");
-      // Clear unread badge for this user
       setUsers((prev) => prev.map((u) => u.id === activeThread.id ? { ...u, unreadMessages: 0 } : u));
     }
     setReplying(false);
+  }
+
+  function openGatewayModal(instanceId: string) {
+    setGatewayModal({ instanceId, vpsUrl: "", gatewayToken: "", saving: false, result: null });
+  }
+
+  async function saveGateway() {
+    if (!gatewayModal) return;
+    setGatewayModal((m) => m ? { ...m, saving: true, result: null } : m);
+
+    const res = await fetch(`/api/admin/instances/${gatewayModal.instanceId}/gateway`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ vpsUrl: gatewayModal.vpsUrl, gatewayToken: gatewayModal.gatewayToken }),
+    });
+    const data = await res.json();
+
+    if (data.connected) {
+      // Update the instance in state
+      setUsers((prev) => prev.map((u) => ({
+        ...u,
+        instances: u.instances.map((i) =>
+          i.id === gatewayModal.instanceId
+            ? { ...i, vpsUrl: gatewayModal.vpsUrl, hasGateway: true }
+            : i
+        ),
+      })));
+      setGatewayModal(null);
+    } else {
+      setGatewayModal((m) => m ? { ...m, saving: false, result: { ok: false, message: data.error ?? "Connection failed" } } : m);
+    }
+  }
+
+  async function disconnectGateway(instanceId: string) {
+    if (!confirm("Disconnect this VPS? The gateway config will be cleared.")) return;
+    const res = await fetch(`/api/admin/instances/${instanceId}/gateway`, { method: "DELETE" });
+    if (res.ok) {
+      setUsers((prev) => prev.map((u) => ({
+        ...u,
+        instances: u.instances.map((i) =>
+          i.id === instanceId ? { ...i, vpsUrl: null, hasGateway: false } : i
+        ),
+      })));
+    }
   }
 
   return (
@@ -313,16 +376,43 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                     </select>
                   </div>
 
-                  {/* Instances */}
+                  {/* Instances with VPS connect */}
                   {user.instances.length > 0 && (
-                    <div className="ml-0 space-y-1">
+                    <div className="ml-0 space-y-2">
                       {user.instances.map((inst) => (
-                        <div key={inst.id} className="flex items-center gap-2 text-xs text-zinc-500">
-                          <Bot className="w-3 h-3 text-zinc-700" />
-                          <span className="truncate">{inst.name}</span>
-                          <span className="text-zinc-700 capitalize">{inst.type}</span>
-                          <span className={`px-1.5 py-0.5 rounded-full ${STATUS_COLORS[inst.status]}`}>{inst.status}</span>
-                          <HealthDot healthStatus={inst.healthStatus} />
+                        <div key={inst.id} className="rounded-xl border border-white/5 bg-white/[0.02] px-3 py-2">
+                          <div className="flex items-center gap-2 text-xs text-zinc-500">
+                            <Bot className="w-3 h-3 text-zinc-700" />
+                            <span className="truncate text-zinc-300 font-medium">{inst.name}</span>
+                            <span className="text-zinc-600 capitalize">{inst.type}</span>
+                            <span className={`px-1.5 py-0.5 rounded-full ${STATUS_COLORS[inst.status]}`}>{inst.status}</span>
+                            <HealthDot healthStatus={inst.healthStatus} />
+                            <div className="ml-auto flex items-center gap-1.5">
+                              {inst.hasGateway ? (
+                                <>
+                                  <span className="flex items-center gap-1 text-emerald-400 font-medium">
+                                    <CheckCircle2 className="w-3 h-3" /> Connected
+                                  </span>
+                                  <span className="text-zinc-700">·</span>
+                                  <span className="text-zinc-500 font-mono truncate max-w-[120px]">{inst.vpsUrl}</span>
+                                  <button
+                                    onClick={() => disconnectGateway(inst.id)}
+                                    className="ml-1 text-zinc-600 hover:text-red-400 transition-colors"
+                                    title="Disconnect VPS"
+                                  >
+                                    <Unlink className="w-3 h-3" />
+                                  </button>
+                                </>
+                              ) : (
+                                <button
+                                  onClick={() => openGatewayModal(inst.id)}
+                                  className="flex items-center gap-1 text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/20 px-2 py-0.5 rounded-lg transition-colors"
+                                >
+                                  <Link className="w-3 h-3" /> Connect VPS
+                                </button>
+                              )}
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -367,6 +457,66 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                   className="flex-1 flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 transition-colors px-4 py-3 rounded-xl text-sm font-semibold">
                   {creatingManager ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                   Create
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Connect VPS Modal */}
+      {gatewayModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#111118] border border-white/10 rounded-2xl p-6 w-full max-w-md">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <Server className="w-4 h-4 text-violet-400" />
+                <h2 className="text-lg font-semibold">Connect VPS</h2>
+              </div>
+              <button onClick={() => setGatewayModal(null)} className="text-zinc-500 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-1">VPS Gateway URL</label>
+                <input
+                  type="text"
+                  value={gatewayModal.vpsUrl}
+                  onChange={(e) => setGatewayModal((m) => m ? { ...m, vpsUrl: e.target.value } : m)}
+                  placeholder="https://1.2.3.4:18789"
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors font-mono"
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-1">Gateway Token</label>
+                <input
+                  type="password"
+                  value={gatewayModal.gatewayToken}
+                  onChange={(e) => setGatewayModal((m) => m ? { ...m, gatewayToken: e.target.value } : m)}
+                  placeholder="sk-gw-..."
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors font-mono"
+                />
+              </div>
+              {gatewayModal.result && !gatewayModal.result.ok && (
+                <p className="text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-4 py-3">
+                  ✗ Connection failed: {gatewayModal.result.message}
+                </p>
+              )}
+              <div className="flex gap-3 pt-2">
+                <button
+                  onClick={() => setGatewayModal(null)}
+                  className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors px-4 py-3 rounded-xl text-sm font-semibold"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={saveGateway}
+                  disabled={gatewayModal.saving || !gatewayModal.vpsUrl || !gatewayModal.gatewayToken}
+                  className="flex-1 flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 transition-colors px-4 py-3 rounded-xl text-sm font-semibold"
+                >
+                  {gatewayModal.saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Link className="w-4 h-4" />}
+                  {gatewayModal.saving ? "Testing..." : "Test & Save"}
                 </button>
               </div>
             </div>

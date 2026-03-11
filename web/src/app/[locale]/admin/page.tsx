@@ -78,6 +78,8 @@ export default async function AdminPage() {
           type: i.type,
           status: i.status,
           healthStatus: i.healthStatus ?? null,
+          vpsUrl: i.vpsUrl ?? null,
+          hasGateway: !!i.vpsUrl,
         })),
         unreadMessages: unreadMap[u.id] ?? 0,
       }))}
