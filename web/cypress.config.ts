@@ -23,7 +23,7 @@ export default defineConfig({
   env: {
     // Regular test user
     TEST_EMAIL: "cypress@synapseforge.ai",
-    TEST_PASSWORD: "Cypress123!",
+    TEST_PASSWORD: "cypress123",
     TEST_NAME: "Cypress Test",
     // Admin user (override if your admin has separate credentials)
     ADMIN_EMAIL: "cypress@synapseforge.ai",

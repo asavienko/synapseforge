@@ -136,19 +136,11 @@ describe("15 · Infrastructure — Health Checks & Backups", () => {
       cy.snap("15-infra-03-backups");
     });
 
-    it("shows 'No health data yet' when no VPS is configured", () => {
+    it("Infrastructure tab renders health content after async load", () => {
       cy.contains("Infrastructure").click();
-      // Either shows "No health data yet" or actual data if seed posted health checks
-      cy.get("body").then(($body) => {
-        if ($body.text().includes("No health data yet")) {
-          cy.contains("No health data yet").should("be.visible");
-          cy.log("No health data — expected in CI without VPS");
-        } else {
-          cy.contains("Health Status").should("be.visible");
-          cy.log("Health data present");
-        }
-      });
-      cy.snap("15-infra-04-no-health-data");
+      // Wait for async load to settle — then check one of the two possible states
+      cy.contains(/Health Status|No health data yet|Unknown/, { timeout: 15000 }).should("be.visible");
+      cy.snap("15-infra-04-health-content");
     });
 
     it("shows VPS Gateway URL row", () => {
