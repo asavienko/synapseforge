@@ -76,6 +76,14 @@ model AIInstance {
   lastBackupAt  DateTime?
   vpsUrl        String?   // e.g. "http://1.2.3.4:3000" — OpenClaw gateway URL on the client VPS
   gatewayToken  String?   // Bearer token for OpenClaw gateway auth
+  // Provisioning
+  provisionStatus  String?   // "pending" | "provisioning" | "ready" | "failed"
+  vpsProvider      String?   // "hetzner" (only supported for now)
+  vpsServerId      String?   // Hetzner server numeric ID
+  bootstrapToken   String?   // One-time token for config delivery to VPS
+  bootstrapUsed    Boolean   @default(false)
+  configSynced     Boolean   @default(true)  // false when credentials changed but not pushed to VPS
+  sshPrivateKey    String?   // Encrypted ED25519 private key for config updates
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -85,6 +93,20 @@ model AIInstance {
   logs          ActivityLog[]
   healthChecks  HealthCheck[]
   snapshots     Snapshot[]
+  credentials   InstanceCredential[]
+}
+
+model InstanceCredential {
+  id         String   @id @default(cuid())
+  instanceId String
+  key        String   // e.g. "openai_api_key", "telegram_bot_token"
+  value      String   // AES-256-GCM encrypted
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  instance   AIInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+
+  @@unique([instanceId, key])
 }
 
 model HealthCheck {

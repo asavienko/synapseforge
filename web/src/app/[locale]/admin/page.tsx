@@ -80,6 +80,8 @@ export default async function AdminPage() {
           healthStatus: i.healthStatus ?? null,
           vpsUrl: i.vpsUrl ?? null,
           hasGateway: !!i.vpsUrl,
+          configSynced: i.configSynced,
+          provisionStatus: i.provisionStatus ?? null,
         })),
         unreadMessages: unreadMap[u.id] ?? 0,
       }))}

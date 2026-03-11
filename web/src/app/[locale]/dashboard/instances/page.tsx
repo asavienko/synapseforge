@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Bot, Plus, Loader2, X } from "lucide-react";
 import { STATUS_COLORS, INSTANCE_TYPES } from "@/lib/utils";
 import { useTranslations } from "next-intl";
+import { InstanceSetupWizard } from "@/components/InstanceSetupWizard";
 
 interface Instance {
   id: string;
@@ -63,6 +64,7 @@ export default function InstancesPage() {
   const [instances, setInstances] = useState<Instance[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
+  const [showWizard, setShowWizard] = useState(false);
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState("");
   const [form, setForm] = useState({ name: "", type: "assistant", description: "" });
@@ -114,13 +116,15 @@ export default function InstancesPage() {
           <h1 className="text-2xl font-bold text-white">{t("title")}</h1>
           <p className="text-zinc-400 mt-1">{t("subtitle")}</p>
         </div>
-        <button
-          onClick={() => setShowCreate(true)}
-          className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2.5 rounded-lg text-sm font-semibold text-white"
-        >
-          <Plus className="w-4 h-4" />
-          {t("newInstance")}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowWizard(true)}
+            className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2.5 rounded-lg text-sm font-semibold text-white"
+          >
+            <Plus className="w-4 h-4" />
+            {t("newInstance")}
+          </button>
+        </div>
       </div>
 
       {loading ? (
@@ -133,7 +137,7 @@ export default function InstancesPage() {
           <h3 className="text-lg font-semibold text-white mb-2">{t("emptyTitle")}</h3>
           <p className="text-zinc-400 text-sm mb-6">{t("emptyDesc")}</p>
           <button
-            onClick={() => setShowCreate(true)}
+            onClick={() => setShowWizard(true)}
             className="inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-6 py-3 rounded-lg text-sm font-semibold text-white"
           >
             <Plus className="w-4 h-4" />
@@ -242,6 +246,17 @@ export default function InstancesPage() {
             </form>
           </div>
         </div>
+      )}
+
+      {showWizard && (
+        <InstanceSetupWizard
+          onClose={() => setShowWizard(false)}
+          onCreated={() => {
+            setShowWizard(false);
+            loadInstances();
+            showToast(t("createdSuccess"));
+          }}
+        />
       )}
     </div>
   );

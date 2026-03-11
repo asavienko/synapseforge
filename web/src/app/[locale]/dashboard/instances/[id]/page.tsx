@@ -6,7 +6,8 @@ import {
   Bot, ArrowLeft, Play, Square, Trash2, Loader2,
   Settings2, Key, Activity, Copy, Check, Eye, EyeOff,
   Plus, X, Zap, AlertCircle, Terminal, Server, Database,
-  Wifi, WifiOff, MessageSquare, Send,
+  Wifi, WifiOff, MessageSquare, Send, ShieldCheck, Download,
+  Pencil, Trash,
 } from "lucide-react";
 import Link from "next/link";
 import { STATUS_COLORS, INSTANCE_TYPES, formatDate, formatRelativeTime } from "@/lib/utils";
@@ -29,6 +30,15 @@ interface Instance {
   lastCheckedAt?: string | null;
   lastBackupAt?: string | null;
   hasGateway?: boolean;
+  configSynced?: boolean;
+  provisionStatus?: string | null;
+  vpsProvider?: string | null;
+}
+
+interface CredentialRow {
+  key: string;
+  maskedValue: string;
+  updatedAt: string;
 }
 
 interface HealthCheckRow {
@@ -118,8 +128,29 @@ const LOG_ICONS: Record<string, { icon: string; color: string }> = {
   deleted:        { icon: "✕", color: "text-red-400" },
 };
 
-const TABS = ["Overview", "Configuration", "API Keys", "Activity Log", "Infrastructure"] as const;
+const TABS = ["Overview", "Configuration", "API Keys", "Activity Log", "Infrastructure", "Credentials"] as const;
 type Tab = (typeof TABS)[number];
+
+const CREDENTIAL_KEY_LABELS: Record<string, string> = {
+  openai_api_key: "OpenAI API Key",
+  anthropic_api_key: "Anthropic API Key",
+  openrouter_api_key: "OpenRouter API Key",
+  telegram_bot_token: "Telegram Bot Token",
+  discord_bot_token: "Discord Bot Token",
+  slack_app_token: "Slack App Token",
+  slack_bot_token: "Slack Bot Token",
+  gateway_token: "Gateway Token",
+};
+
+const ALLOWED_CREDENTIAL_KEYS = [
+  "openai_api_key",
+  "anthropic_api_key",
+  "openrouter_api_key",
+  "telegram_bot_token",
+  "discord_bot_token",
+  "slack_app_token",
+  "slack_bot_token",
+] as const;
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
@@ -167,6 +198,17 @@ export default function InstanceDetailPage() {
   const [chatResponse, setChatResponse] = useState<{ text: string; latencyMs?: number } | null>(null);
   const [chatError, setChatError] = useState<string | null>(null);
 
+  // Credentials state
+  const [credentials, setCredentials] = useState<CredentialRow[]>([]);
+  const [credsLoading, setCredsLoading] = useState(false);
+  const [editingKey, setEditingKey] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState("");
+  const [savingCred, setSavingCred] = useState(false);
+  const [addingKey, setAddingKey] = useState<string | null>(null);
+  const [addValue, setAddValue] = useState("");
+  const [configPreviewText, setConfigPreviewText] = useState<string | null>(null);
+  const [configPreviewLoading, setConfigPreviewLoading] = useState(false);
+
   function showToast(text: string, type: "success" | "error" = "success") {
     setToast({ text, type });
     setTimeout(() => setToast(null), 3000);
@@ -208,12 +250,20 @@ export default function InstanceDetailPage() {
     setInfraLoading(false);
   }, [id]);
 
+  const loadCredentials = useCallback(async () => {
+    setCredsLoading(true);
+    const res = await fetch(`/api/instances/${id}/credentials`);
+    if (res.ok) setCredentials(await res.json());
+    setCredsLoading(false);
+  }, [id]);
+
   useEffect(() => { loadInstance(); }, [loadInstance]);
 
   useEffect(() => {
     if (tab === "API Keys" && keys.length === 0) loadKeys();
     if (tab === "Activity Log") loadLogs();
     if (tab === "Infrastructure") loadInfra();
+    if (tab === "Credentials") loadCredentials();
   }, [tab]);
 
   async function toggleStatus() {
@@ -310,6 +360,50 @@ export default function InstanceDetailPage() {
     const res = await fetch(`/api/instances/${id}/gateway-status`);
     if (res.ok) setGatewayStatus(await res.json());
     setCheckingGateway(false);
+  }
+
+  async function saveCredential(key: string, value: string) {
+    setSavingCred(true);
+    const res = await fetch(`/api/instances/${id}/credentials`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key, value }),
+    });
+    if (res.ok) {
+      setEditingKey(null);
+      setEditValue("");
+      setAddingKey(null);
+      setAddValue("");
+      await loadCredentials();
+      // Reload instance to get updated configSynced
+      await loadInstance();
+      showToast("Credential saved.");
+    } else {
+      const data = await res.json();
+      showToast(data.error ?? "Failed to save credential", "error");
+    }
+    setSavingCred(false);
+  }
+
+  async function deleteCredential(key: string) {
+    if (!confirm(`Remove ${CREDENTIAL_KEY_LABELS[key] ?? key}? This cannot be undone.`)) return;
+    const res = await fetch(`/api/instances/${id}/credentials/${key}`, { method: "DELETE" });
+    if (res.ok) {
+      await loadCredentials();
+      await loadInstance();
+      showToast("Credential removed.");
+    }
+  }
+
+  async function loadConfigPreview() {
+    setConfigPreviewLoading(true);
+    const res = await fetch(`/api/instances/${id}/config-preview`);
+    if (res.ok) {
+      setConfigPreviewText(await res.text());
+    } else {
+      setConfigPreviewText("// Failed to load config preview");
+    }
+    setConfigPreviewLoading(false);
   }
 
   async function sendChatMessage() {
@@ -409,6 +503,7 @@ export default function InstanceDetailPage() {
             "API Keys": t("tabs.apiKeys"),
             "Activity Log": t("tabs.activityLog"),
             "Infrastructure": t("infrastructure.tab"),
+            "Credentials": t("credentials.tab"),
           };
           return (
             <button key={tabKey} onClick={() => setTab(tabKey)}
@@ -900,6 +995,202 @@ export default function InstanceDetailPage() {
               )}
             </>
           )}
+        </div>
+      )}
+
+      {/* ── Credentials ── */}
+      {tab === "Credentials" && (
+        <div className="space-y-5">
+          {/* Out of sync banner */}
+          {instance.configSynced === false && (
+            <div className="flex items-start gap-3 bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3">
+              <AlertCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+              <span className="text-sm text-amber-300">{t("credentials.configOutOfSync")}</span>
+            </div>
+          )}
+
+          {/* Config preview / download */}
+          <div className="glow-border rounded-2xl bg-white/[0.02] p-5">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-zinc-500" />
+                <span className="text-sm font-semibold text-white">OpenClaw Config</span>
+              </div>
+              <button
+                onClick={() => { if (!configPreviewText) loadConfigPreview(); else setConfigPreviewText(null); }}
+                disabled={configPreviewLoading}
+                className="flex items-center gap-1.5 text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 px-3 py-1.5 rounded-lg transition-colors"
+              >
+                {configPreviewLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Eye className="w-3 h-3" />}
+                {configPreviewText ? "Hide" : t("credentials.viewConfig")}
+              </button>
+            </div>
+            {configPreviewText && (
+              <pre className="bg-black/40 border border-white/10 rounded-xl p-4 text-xs text-zinc-300 overflow-x-auto max-h-64 font-mono">
+                {configPreviewText}
+              </pre>
+            )}
+          </div>
+
+          {/* LLM Provider section */}
+          <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+            <div className="p-4 border-b border-white/5">
+              <h3 className="text-xs text-zinc-500 uppercase tracking-wider">{t("credentials.llmProvider")}</h3>
+            </div>
+            {credsLoading ? (
+              <div className="p-8 flex justify-center"><Loader2 className="w-5 h-5 text-zinc-500 animate-spin" /></div>
+            ) : (
+              <div className="divide-y divide-white/5">
+                {["openai_api_key", "anthropic_api_key", "openrouter_api_key"].map((key) => {
+                  const existing = credentials.find((c) => c.key === key);
+                  const isEditing = editingKey === key;
+                  const isAdding = addingKey === key;
+                  return (
+                    <div key={key} className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="text-sm font-medium text-white">{CREDENTIAL_KEY_LABELS[key]}</div>
+                          {existing && !isEditing && (
+                            <div className="text-xs font-mono text-zinc-500 mt-0.5">{existing.maskedValue}</div>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {existing && !isEditing && (
+                            <>
+                              <button
+                                onClick={() => { setEditingKey(key); setEditValue(""); }}
+                                className="text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 px-2 py-1 rounded-lg transition-colors"
+                              >
+                                {t("credentials.editCredential")}
+                              </button>
+                              <button
+                                onClick={() => deleteCredential(key)}
+                                className="text-zinc-600 hover:text-red-400 transition-colors"
+                              >
+                                <Trash className="w-3.5 h-3.5" />
+                              </button>
+                            </>
+                          )}
+                          {!existing && !isAdding && (
+                            <button
+                              onClick={() => { setAddingKey(key); setAddValue(""); }}
+                              className="text-xs text-zinc-500 hover:text-white bg-white/5 px-2 py-1 rounded-lg transition-colors"
+                            >
+                              {t("credentials.addCredential")}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                      {(isEditing || isAdding) && (
+                        <div className="mt-3 flex gap-2">
+                          <input
+                            type="password"
+                            value={isEditing ? editValue : addValue}
+                            onChange={(e) => isEditing ? setEditValue(e.target.value) : setAddValue(e.target.value)}
+                            placeholder="Enter value..."
+                            autoFocus
+                            className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors font-mono"
+                          />
+                          <button
+                            onClick={() => saveCredential(key, isEditing ? editValue : addValue)}
+                            disabled={savingCred || (isEditing ? !editValue : !addValue)}
+                            className="flex items-center gap-1 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 px-3 py-2 rounded-lg text-xs font-semibold text-white transition-colors"
+                          >
+                            {savingCred ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}
+                            {t("credentials.saveCredential")}
+                          </button>
+                          <button
+                            onClick={() => { setEditingKey(null); setAddingKey(null); }}
+                            className="text-zinc-500 hover:text-white px-2 py-2 rounded-lg border border-white/10 transition-colors"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Channels section */}
+          <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+            <div className="p-4 border-b border-white/5">
+              <h3 className="text-xs text-zinc-500 uppercase tracking-wider">{t("credentials.channels")}</h3>
+            </div>
+            <div className="divide-y divide-white/5">
+              {["telegram_bot_token", "discord_bot_token", "slack_app_token", "slack_bot_token"].map((key) => {
+                const existing = credentials.find((c) => c.key === key);
+                const isEditing = editingKey === key;
+                const isAdding = addingKey === key;
+                return (
+                  <div key={key} className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-sm font-medium text-white">{CREDENTIAL_KEY_LABELS[key]}</div>
+                        {existing && !isEditing && (
+                          <div className="text-xs font-mono text-zinc-500 mt-0.5">{existing.maskedValue}</div>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {existing && !isEditing && (
+                          <>
+                            <button
+                              onClick={() => { setEditingKey(key); setEditValue(""); }}
+                              className="text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 px-2 py-1 rounded-lg transition-colors"
+                            >
+                              {t("credentials.editCredential")}
+                            </button>
+                            <button
+                              onClick={() => deleteCredential(key)}
+                              className="text-zinc-600 hover:text-red-400 transition-colors"
+                            >
+                              <Trash className="w-3.5 h-3.5" />
+                            </button>
+                          </>
+                        )}
+                        {!existing && !isAdding && (
+                          <button
+                            onClick={() => { setAddingKey(key); setAddValue(""); }}
+                            className="text-xs text-zinc-500 hover:text-white bg-white/5 px-2 py-1 rounded-lg transition-colors"
+                          >
+                            {t("credentials.addCredential")}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                    {(isEditing || isAdding) && (
+                      <div className="mt-3 flex gap-2">
+                        <input
+                          type="password"
+                          value={isEditing ? editValue : addValue}
+                          onChange={(e) => isEditing ? setEditValue(e.target.value) : setAddValue(e.target.value)}
+                          placeholder="Enter value..."
+                          autoFocus
+                          className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors font-mono"
+                        />
+                        <button
+                          onClick={() => saveCredential(key, isEditing ? editValue : addValue)}
+                          disabled={savingCred || (isEditing ? !editValue : !addValue)}
+                          className="flex items-center gap-1 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 px-3 py-2 rounded-lg text-xs font-semibold text-white transition-colors"
+                        >
+                          {savingCred ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}
+                          {t("credentials.saveCredential")}
+                        </button>
+                        <button
+                          onClick={() => { setEditingKey(null); setAddingKey(null); }}
+                          className="text-zinc-500 hover:text-white px-2 py-2 rounded-lg border border-white/10 transition-colors"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       )}
     </div>

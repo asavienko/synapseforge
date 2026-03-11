@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Users, Bot, Activity, AlertCircle, Plus, X, Shield, ChevronDown, MessageCircle, Send, Loader2, Server, Link, Unlink, CheckCircle2 } from "lucide-react";
+import { Users, Bot, Activity, AlertCircle, Plus, X, Shield, ChevronDown, MessageCircle, Send, Loader2, Server, Link, Unlink, CheckCircle2, Rocket, RefreshCw, Copy, Check } from "lucide-react";
 import { STATUS_COLORS, PLANS, formatDate, formatRelativeTime } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
@@ -21,8 +21,17 @@ interface UserRow {
     healthStatus?: string | null;
     vpsUrl: string | null;
     hasGateway: boolean;
+    configSynced?: boolean;
+    provisionStatus?: string | null;
   }[];
   unreadMessages: number;
+}
+
+interface SyncResult {
+  config: string;
+  syncCommand: string | null;
+  instanceId: string;
+  vpsUrl: string | null;
 }
 
 interface HealthIssue {
@@ -104,6 +113,13 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
   // Gateway modal
   const [gatewayModal, setGatewayModal] = useState<GatewayModal | null>(null);
 
+  // Provision & sync state
+  const [provisioningId, setProvisioningId] = useState<string | null>(null);
+  const [provisionResult, setProvisionResult] = useState<{ instanceId: string; message: string; ok: boolean } | null>(null);
+  const [syncingId, setSyncingId] = useState<string | null>(null);
+  const [syncResult, setSyncResult] = useState<SyncResult | null>(null);
+  const [copiedSync, setCopiedSync] = useState(false);
+
   async function createManager() {
     setCreatingManager(true);
     setManagerError("");
@@ -169,6 +185,43 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
 
   function openGatewayModal(instanceId: string) {
     setGatewayModal({ instanceId, vpsUrl: "", gatewayToken: "", saving: false, result: null });
+  }
+
+  async function provisionVps(instanceId: string) {
+    if (!confirm("This will create a Hetzner VPS (~€5/mo). Proceed?")) return;
+    setProvisioningId(instanceId);
+    setProvisionResult(null);
+    const res = await fetch(`/api/admin/instances/${instanceId}/provision`, { method: "POST" });
+    const data = await res.json();
+    setProvisioningId(null);
+    if (res.ok) {
+      setProvisionResult({ instanceId, message: `✓ Provisioning started. Server ${data.serverId} at ${data.ip}. Check status in a few minutes.`, ok: true });
+      setUsers((prev) => prev.map((u) => ({
+        ...u,
+        instances: u.instances.map((i) =>
+          i.id === instanceId ? { ...i, provisionStatus: "provisioning" } : i
+        ),
+      })));
+    } else {
+      setProvisionResult({ instanceId, message: `✗ ${data.error}`, ok: false });
+    }
+  }
+
+  async function syncConfig(instanceId: string) {
+    setSyncingId(instanceId);
+    setSyncResult(null);
+    const res = await fetch(`/api/admin/instances/${instanceId}/sync-config`, { method: "POST" });
+    const data = await res.json();
+    setSyncingId(null);
+    if (res.ok) {
+      setSyncResult(data);
+      setUsers((prev) => prev.map((u) => ({
+        ...u,
+        instances: u.instances.map((i) =>
+          i.id === instanceId ? { ...i, configSynced: true } : i
+        ),
+      })));
+    }
   }
 
   async function saveGateway() {
@@ -387,7 +440,7 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                             <span className="text-zinc-600 capitalize">{inst.type}</span>
                             <span className={`px-1.5 py-0.5 rounded-full ${STATUS_COLORS[inst.status]}`}>{inst.status}</span>
                             <HealthDot healthStatus={inst.healthStatus} />
-                            <div className="ml-auto flex items-center gap-1.5">
+                            <div className="ml-auto flex items-center gap-1.5 flex-wrap justify-end">
                               {inst.hasGateway ? (
                                 <>
                                   <span className="flex items-center gap-1 text-emerald-400 font-medium">
@@ -402,14 +455,41 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                                   >
                                     <Unlink className="w-3 h-3" />
                                   </button>
+                                  {inst.configSynced === false && (
+                                    <button
+                                      onClick={() => syncConfig(inst.id)}
+                                      disabled={syncingId === inst.id}
+                                      className="flex items-center gap-1 text-xs text-amber-400 hover:text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 px-2 py-0.5 rounded-lg transition-colors"
+                                      title="Sync config to VPS"
+                                    >
+                                      {syncingId === inst.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
+                                      Sync Config
+                                    </button>
+                                  )}
                                 </>
                               ) : (
-                                <button
-                                  onClick={() => openGatewayModal(inst.id)}
-                                  className="flex items-center gap-1 text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/20 px-2 py-0.5 rounded-lg transition-colors"
-                                >
-                                  <Link className="w-3 h-3" /> Connect VPS
-                                </button>
+                                <>
+                                  <button
+                                    onClick={() => openGatewayModal(inst.id)}
+                                    className="flex items-center gap-1 text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/20 px-2 py-0.5 rounded-lg transition-colors"
+                                  >
+                                    <Link className="w-3 h-3" /> Connect VPS
+                                  </button>
+                                  {!inst.provisionStatus && (
+                                    <button
+                                      onClick={() => provisionVps(inst.id)}
+                                      disabled={provisioningId === inst.id}
+                                      className="flex items-center gap-1 text-xs text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 px-2 py-0.5 rounded-lg transition-colors"
+                                      title="Auto-provision Hetzner VPS"
+                                    >
+                                      {provisioningId === inst.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Rocket className="w-3 h-3" />}
+                                      Provision VPS
+                                    </button>
+                                  )}
+                                  {inst.provisionStatus && (
+                                    <span className="text-xs text-zinc-500 italic">{inst.provisionStatus}</span>
+                                  )}
+                                </>
                               )}
                             </div>
                           </div>
@@ -424,6 +504,56 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
           </div>
         </div>
       </div>
+
+      {/* Provision result toast */}
+      {provisionResult && (
+        <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-xl text-sm font-medium shadow-2xl border max-w-sm flex items-start gap-3 ${
+          provisionResult.ok ? "bg-emerald-600/90 border-emerald-500 text-white" : "bg-red-600/90 border-red-500 text-white"
+        }`}>
+          <span className="flex-1">{provisionResult.message}</span>
+          <button onClick={() => setProvisionResult(null)} className="shrink-0 opacity-70 hover:opacity-100">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      {/* Sync config modal */}
+      {syncResult && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#111118] border border-white/10 rounded-2xl p-6 w-full max-w-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold flex items-center gap-2">
+                <RefreshCw className="w-4 h-4 text-violet-400" /> Config Sync
+              </h2>
+              <button onClick={() => setSyncResult(null)} className="text-zinc-500 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            {syncResult.syncCommand && (
+              <div className="mb-4">
+                <div className="text-xs text-zinc-500 uppercase tracking-wider mb-2">Sync command (run on your machine)</div>
+                <div className="flex items-start gap-2">
+                  <pre className="flex-1 bg-black/40 border border-white/10 rounded-xl p-3 text-xs text-zinc-300 overflow-x-auto font-mono break-all whitespace-pre-wrap">
+                    {syncResult.syncCommand}
+                  </pre>
+                  <button
+                    onClick={() => { navigator.clipboard.writeText(syncResult.syncCommand!); setCopiedSync(true); setTimeout(() => setCopiedSync(false), 2000); }}
+                    className="shrink-0 text-violet-400 hover:text-violet-300 bg-violet-500/10 p-2 rounded-lg transition-colors"
+                  >
+                    {copiedSync ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+            )}
+            <div>
+              <div className="text-xs text-zinc-500 uppercase tracking-wider mb-2">Generated Config</div>
+              <pre className="bg-black/40 border border-white/10 rounded-xl p-4 text-xs text-zinc-300 overflow-x-auto max-h-64 font-mono">
+                {syncResult.config}
+              </pre>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Create Manager Modal */}
       {showCreateManager && (

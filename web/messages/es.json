@@ -548,6 +548,32 @@
         "responseLabel": "Respuesta",
         "note": "Esto envía un mensaje de prueba directamente a tu gateway de IA."
       }
+    },
+    "credentials": {
+      "tab": "Credenciales",
+      "llmProvider": "Proveedor de IA",
+      "channels": "Canales",
+      "noCredentials": "No hay credenciales configuradas",
+      "addCredential": "Añadir",
+      "editCredential": "Editar",
+      "saveCredential": "Guardar",
+      "cancelEdit": "Cancelar",
+      "deleteCredential": "Eliminar",
+      "configOutOfSync": "Configuración desincronizada — las credenciales se actualizaron pero aún no se enviaron al VPS.",
+      "downloadConfig": "Descargar configuración",
+      "viewConfig": "Ver configuración",
+      "credentialSaved": "Guardado exitosamente.",
+      "credentialDeleted": "Eliminado.",
+      "keys": {
+        "openai_api_key": "Clave API de OpenAI",
+        "anthropic_api_key": "Clave API de Anthropic",
+        "openrouter_api_key": "Clave API de OpenRouter",
+        "telegram_bot_token": "Token de Bot de Telegram",
+        "discord_bot_token": "Token de Bot de Discord",
+        "slack_app_token": "Token de App de Slack",
+        "slack_bot_token": "Token de Bot de Slack",
+        "gateway_token": "Token de Gateway"
+      }
     }
   },
   "admin": {
@@ -568,5 +594,62 @@
     "testAndSave": "Probar y guardar",
     "connectionSuccess": "Conectado correctamente",
     "connectionFailed": "Error de conexión"
+  },
+  "instanceSetup": {
+    "title": "Configura tu Instancia de IA",
+    "steps": {
+      "template": "Plantilla",
+      "provider": "Proveedor de IA",
+      "channels": "Canales",
+      "persona": "Personalidad",
+      "deploy": "Desplegar"
+    },
+    "templates": {
+      "general": "Asistente General",
+      "customer_support": "Soporte al Cliente",
+      "faq_bot": "Bot de FAQ",
+      "lead_qualification": "Calificación de Leads"
+    },
+    "provider": {
+      "title": "Elige tu Proveedor de IA",
+      "apiKey": "Clave API",
+      "model": "Modelo",
+      "secureNote": "Tu clave API se cifra y almacena de forma segura.",
+      "billedDirectly": "Se te facturará directamente por el proveedor."
+    },
+    "channels": {
+      "title": "Conectar Canales",
+      "subtitle": "Elige dónde responderá tu IA.",
+      "telegram": "Telegram",
+      "discord": "Discord",
+      "slack": "Slack",
+      "botToken": "Token del Bot",
+      "telegramHelp": "Crea un bot con @BotFather en Telegram.",
+      "discordHelp": "Obtén el token en Discord Developer Portal → Bot.",
+      "slackAppToken": "Token de App (xapp-...)",
+      "slackBotToken": "Token de Bot (xoxb-...)",
+      "slackHelp": "Activa el modo Socket en la configuración de tu app Slack."
+    },
+    "persona": {
+      "title": "Define tu IA",
+      "systemPrompt": "Prompt del Sistema",
+      "temperature": "Temperatura",
+      "maxTokens": "Tokens Máximos",
+      "temperatureHelp": "Menor = más enfocado, Mayor = más creativo"
+    },
+    "deploy": {
+      "title": "Revisar y Desplegar",
+      "summary": "Resumen de la Instancia",
+      "configPreview": "Vista previa de la configuración generada",
+      "copyConfig": "Copiar configuración",
+      "copied": "¡Copiado!",
+      "deployHetzner": "Desplegar en VPS de Hetzner automáticamente",
+      "deployManual": "Descargar configuración y desplegar manualmente",
+      "manualInstructions": "Ejecuta esto en tu VPS:",
+      "createInstance": "Crear Instancia",
+      "deploying": "Desplegando...",
+      "success": "¡Instancia creada!",
+      "provisioningNote": "El aprovisionamiento del VPS tarda 2-3 minutos. Verifica el estado en tu panel."
+    }
   }
 }

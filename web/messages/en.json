@@ -548,6 +548,32 @@
         "responseLabel": "Response",
         "note": "This sends a test message directly to your AI gateway."
       }
+    },
+    "credentials": {
+      "tab": "Credentials",
+      "llmProvider": "AI Provider",
+      "channels": "Channels",
+      "noCredentials": "No credentials configured",
+      "addCredential": "Add",
+      "editCredential": "Edit",
+      "saveCredential": "Save",
+      "cancelEdit": "Cancel",
+      "deleteCredential": "Remove",
+      "configOutOfSync": "Config out of sync — credentials updated but not yet pushed to VPS.",
+      "downloadConfig": "Download Config",
+      "viewConfig": "View Config",
+      "credentialSaved": "Saved successfully.",
+      "credentialDeleted": "Removed.",
+      "keys": {
+        "openai_api_key": "OpenAI API Key",
+        "anthropic_api_key": "Anthropic API Key",
+        "openrouter_api_key": "OpenRouter API Key",
+        "telegram_bot_token": "Telegram Bot Token",
+        "discord_bot_token": "Discord Bot Token",
+        "slack_app_token": "Slack App Token",
+        "slack_bot_token": "Slack Bot Token",
+        "gateway_token": "Gateway Token"
+      }
     }
   },
   "admin": {
@@ -568,5 +594,62 @@
     "testAndSave": "Test & Save",
     "connectionSuccess": "Connected successfully",
     "connectionFailed": "Connection failed"
+  },
+  "instanceSetup": {
+    "title": "Set Up Your AI Instance",
+    "steps": {
+      "template": "Template",
+      "provider": "AI Provider",
+      "channels": "Channels",
+      "persona": "Persona",
+      "deploy": "Deploy"
+    },
+    "templates": {
+      "general": "General Assistant",
+      "customer_support": "Customer Support",
+      "faq_bot": "FAQ Bot",
+      "lead_qualification": "Lead Qualification"
+    },
+    "provider": {
+      "title": "Choose AI Provider",
+      "apiKey": "API Key",
+      "model": "Model",
+      "secureNote": "Your API key is encrypted and stored securely.",
+      "billedDirectly": "You will be billed directly by the provider."
+    },
+    "channels": {
+      "title": "Connect Channels",
+      "subtitle": "Choose where your AI will respond.",
+      "telegram": "Telegram",
+      "discord": "Discord",
+      "slack": "Slack",
+      "botToken": "Bot Token",
+      "telegramHelp": "Create a bot via @BotFather in Telegram.",
+      "discordHelp": "Get token from Discord Developer Portal → Bot.",
+      "slackAppToken": "App Token (xapp-...)",
+      "slackBotToken": "Bot Token (xoxb-...)",
+      "slackHelp": "Enable Socket Mode in your Slack app settings."
+    },
+    "persona": {
+      "title": "Define Your AI",
+      "systemPrompt": "System Prompt",
+      "temperature": "Temperature",
+      "maxTokens": "Max Tokens",
+      "temperatureHelp": "Lower = more focused, Higher = more creative"
+    },
+    "deploy": {
+      "title": "Review & Deploy",
+      "summary": "Instance Summary",
+      "configPreview": "Generated Config Preview",
+      "copyConfig": "Copy Config",
+      "copied": "Copied!",
+      "deployHetzner": "Deploy to Hetzner VPS automatically",
+      "deployManual": "Download config & deploy manually",
+      "manualInstructions": "Run this on your VPS:",
+      "createInstance": "Create Instance",
+      "deploying": "Deploying...",
+      "success": "Instance created!",
+      "provisioningNote": "VPS provisioning takes 2-3 minutes. Check status on your dashboard."
+    }
   }
 }

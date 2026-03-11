@@ -35,6 +35,7 @@ jobs:
       STRIPE_PRO_PRICE_ID: ${{ secrets.STRIPE_PRO_PRICE_ID }}
       STRIPE_ENTERPRISE_PRICE_ID: ${{ secrets.STRIPE_ENTERPRISE_PRICE_ID }}
       INTERNAL_API_KEY:         test-internal-key
+      ENCRYPTION_KEY:           test-encryption-key-32-chars-ok!
 
     steps:
       - name: Checkout

@@ -548,6 +548,32 @@
         "responseLabel": "Відповідь",
         "note": "Це надсилає тестове повідомлення безпосередньо до вашого ІІ шлюзу."
       }
+    },
+    "credentials": {
+      "tab": "Облікові дані",
+      "llmProvider": "Провайдер ШІ",
+      "channels": "Канали",
+      "noCredentials": "Облікові дані не налаштовані",
+      "addCredential": "Додати",
+      "editCredential": "Редагувати",
+      "saveCredential": "Зберегти",
+      "cancelEdit": "Скасувати",
+      "deleteCredential": "Видалити",
+      "configOutOfSync": "Конфігурація не синхронізована — облікові дані оновлено, але ще не надіслано на VPS.",
+      "downloadConfig": "Завантажити конфігурацію",
+      "viewConfig": "Переглянути конфігурацію",
+      "credentialSaved": "Успішно збережено.",
+      "credentialDeleted": "Видалено.",
+      "keys": {
+        "openai_api_key": "API ключ OpenAI",
+        "anthropic_api_key": "API ключ Anthropic",
+        "openrouter_api_key": "API ключ OpenRouter",
+        "telegram_bot_token": "Токен бота Telegram",
+        "discord_bot_token": "Токен бота Discord",
+        "slack_app_token": "Токен додатку Slack",
+        "slack_bot_token": "Токен бота Slack",
+        "gateway_token": "Токен шлюзу"
+      }
     }
   },
   "admin": {
@@ -568,5 +594,62 @@
     "testAndSave": "Тест і зберегти",
     "connectionSuccess": "Успішно підключено",
     "connectionFailed": "Помилка підключення"
+  },
+  "instanceSetup": {
+    "title": "Налаштування екземпляра ШІ",
+    "steps": {
+      "template": "Шаблон",
+      "provider": "Провайдер ШІ",
+      "channels": "Канали",
+      "persona": "Персонаж",
+      "deploy": "Розгортання"
+    },
+    "templates": {
+      "general": "Загальний помічник",
+      "customer_support": "Підтримка клієнтів",
+      "faq_bot": "FAQ бот",
+      "lead_qualification": "Кваліфікація лідів"
+    },
+    "provider": {
+      "title": "Оберіть провайдера ШІ",
+      "apiKey": "API ключ",
+      "model": "Модель",
+      "secureNote": "Ваш API ключ зашифрований і зберігається безпечно.",
+      "billedDirectly": "Вам буде виставлено рахунок безпосередньо від провайдера."
+    },
+    "channels": {
+      "title": "Підключити канали",
+      "subtitle": "Оберіть, де відповідатиме ваш ШІ.",
+      "telegram": "Telegram",
+      "discord": "Discord",
+      "slack": "Slack",
+      "botToken": "Токен бота",
+      "telegramHelp": "Створіть бота через @BotFather в Telegram.",
+      "discordHelp": "Отримайте токен в Discord Developer Portal → Bot.",
+      "slackAppToken": "Токен додатку (xapp-...)",
+      "slackBotToken": "Токен бота (xoxb-...)",
+      "slackHelp": "Увімкніть режим Socket у налаштуваннях вашого додатку Slack."
+    },
+    "persona": {
+      "title": "Визначте вашого ШІ",
+      "systemPrompt": "Системний промпт",
+      "temperature": "Температура",
+      "maxTokens": "Максимум токенів",
+      "temperatureHelp": "Менше = точніше, Більше = креативніше"
+    },
+    "deploy": {
+      "title": "Перегляд та розгортання",
+      "summary": "Зведення екземпляра",
+      "configPreview": "Попередній перегляд згенерованої конфігурації",
+      "copyConfig": "Копіювати конфігурацію",
+      "copied": "Скопійовано!",
+      "deployHetzner": "Розгорнути на VPS Hetzner автоматично",
+      "deployManual": "Завантажити конфігурацію та розгорнути вручну",
+      "manualInstructions": "Запустіть це на вашому VPS:",
+      "createInstance": "Створити екземпляр",
+      "deploying": "Розгортання...",
+      "success": "Екземпляр створено!",
+      "provisioningNote": "Підготовка VPS займає 2-3 хвилини. Перевірте статус на панелі керування."
+    }
   }
 }

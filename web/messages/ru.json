@@ -548,6 +548,32 @@
         "responseLabel": "Ответ",
         "note": "Это отправляет тестовое сообщение напрямую на ваш ИИ шлюз."
       }
+    },
+    "credentials": {
+      "tab": "Учётные данные",
+      "llmProvider": "Провайдер ИИ",
+      "channels": "Каналы",
+      "noCredentials": "Учётные данные не настроены",
+      "addCredential": "Добавить",
+      "editCredential": "Изменить",
+      "saveCredential": "Сохранить",
+      "cancelEdit": "Отмена",
+      "deleteCredential": "Удалить",
+      "configOutOfSync": "Конфигурация не синхронизирована — учётные данные обновлены, но ещё не отправлены на VPS.",
+      "downloadConfig": "Скачать конфигурацию",
+      "viewConfig": "Просмотреть конфигурацию",
+      "credentialSaved": "Успешно сохранено.",
+      "credentialDeleted": "Удалено.",
+      "keys": {
+        "openai_api_key": "API ключ OpenAI",
+        "anthropic_api_key": "API ключ Anthropic",
+        "openrouter_api_key": "API ключ OpenRouter",
+        "telegram_bot_token": "Токен бота Telegram",
+        "discord_bot_token": "Токен бота Discord",
+        "slack_app_token": "Токен приложения Slack",
+        "slack_bot_token": "Токен бота Slack",
+        "gateway_token": "Токен шлюза"
+      }
     }
   },
   "admin": {
@@ -568,5 +594,62 @@
     "testAndSave": "Тест и сохранить",
     "connectionSuccess": "Успешно подключено",
     "connectionFailed": "Ошибка подключения"
+  },
+  "instanceSetup": {
+    "title": "Настройка экземпляра ИИ",
+    "steps": {
+      "template": "Шаблон",
+      "provider": "Провайдер ИИ",
+      "channels": "Каналы",
+      "persona": "Персонаж",
+      "deploy": "Развёртывание"
+    },
+    "templates": {
+      "general": "Общий помощник",
+      "customer_support": "Поддержка клиентов",
+      "faq_bot": "FAQ бот",
+      "lead_qualification": "Квалификация лидов"
+    },
+    "provider": {
+      "title": "Выберите провайдера ИИ",
+      "apiKey": "API ключ",
+      "model": "Модель",
+      "secureNote": "Ваш API ключ зашифрован и хранится безопасно.",
+      "billedDirectly": "Вам будет выставлен счёт непосредственно от провайдера."
+    },
+    "channels": {
+      "title": "Подключить каналы",
+      "subtitle": "Выберите, где будет отвечать ваш ИИ.",
+      "telegram": "Telegram",
+      "discord": "Discord",
+      "slack": "Slack",
+      "botToken": "Токен бота",
+      "telegramHelp": "Создайте бота через @BotFather в Telegram.",
+      "discordHelp": "Получите токен в Discord Developer Portal → Bot.",
+      "slackAppToken": "Токен приложения (xapp-...)",
+      "slackBotToken": "Токен бота (xoxb-...)",
+      "slackHelp": "Включите режим Socket в настройках вашего приложения Slack."
+    },
+    "persona": {
+      "title": "Определите вашего ИИ",
+      "systemPrompt": "Системный промпт",
+      "temperature": "Температура",
+      "maxTokens": "Максимум токенов",
+      "temperatureHelp": "Меньше = точнее, Больше = креативнее"
+    },
+    "deploy": {
+      "title": "Обзор и развёртывание",
+      "summary": "Сводка экземпляра",
+      "configPreview": "Предпросмотр сгенерированной конфигурации",
+      "copyConfig": "Скопировать конфигурацию",
+      "copied": "Скопировано!",
+      "deployHetzner": "Развернуть на VPS Hetzner автоматически",
+      "deployManual": "Скачать конфигурацию и развернуть вручную",
+      "manualInstructions": "Выполните на вашем VPS:",
+      "createInstance": "Создать экземпляр",
+      "deploying": "Развёртывание...",
+      "success": "Экземпляр создан!",
+      "provisioningNote": "Подготовка VPS занимает 2-3 минуты. Проверьте статус на панели управления."
+    }
   }
 }
