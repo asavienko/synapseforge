@@ -160,7 +160,7 @@ describe("19 · Onboarding — 5-step flow", () => {
     cy.get("button").contains("Continue").click();
     cy.contains("Skip for now").click();
 
-    cy.contains("Telegram").click();
+    cy.get("button").contains("Telegram").first().click();
     cy.get("input").should("have.attr", "placeholder").and("include", "1234567890");
     cy.snap("19-onboarding-10-step4-telegram");
   });
@@ -207,7 +207,7 @@ describe("19 · Onboarding — 5-step flow", () => {
     cy.get("input[placeholder='sk-...']").type("sk-test-key");
     cy.get("button").contains("Continue").click();
 
-    cy.contains("Telegram").click();
+    cy.get("button").contains("Telegram").first().click();
     cy.get("input").filter("[placeholder*='1234567890']").type("123456:testtoken");
     cy.contains("button", "Finish setup").click();
 
@@ -271,8 +271,9 @@ describe("19 · Dashboard — Getting Started checklist", () => {
     cy.visit("/en/dashboard");
     cy.get("main").then(($main) => {
       if ($main.text().includes("AI provider key")) {
+        // The link might be the element itself (<a>) or a parent — use closest() to handle both
         cy.get("main").contains(/AI provider key/i)
-          .parents("a")
+          .closest("a, [href]")
           .should("have.attr", "href")
           .and("include", "/instances/");
       }

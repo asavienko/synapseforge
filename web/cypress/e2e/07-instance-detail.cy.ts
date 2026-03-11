@@ -53,19 +53,46 @@ describe("07 · Instance Detail", () => {
   });
 
   it("starts the instance", () => {
-    cy.get("button").contains(/start/i).click();
+    // Seed sets instance to "running", so stop it first then start it
+    cy.wrap(null).then(() => {
+      if (instanceId) {
+        cy.request({
+          method: "PATCH",
+          url: `/api/instances/${instanceId}`,
+          body: { status: "stopped" },
+          headers: { "Content-Type": "application/json" },
+          failOnStatusCode: false,
+        });
+      }
+    });
+    cy.reload();
+    cy.get("button").contains(/start/i, { timeout: 8000 }).click();
     cy.contains("running", { timeout: 10000 }).should("be.visible");
     cy.snap("07-detail-04-started");
   });
 
   it("stops the instance", () => {
-    cy.get("button").contains(/stop/i).click();
+    // Ensure instance is running before stopping
+    cy.wrap(null).then(() => {
+      if (instanceId) {
+        cy.request({
+          method: "PATCH",
+          url: `/api/instances/${instanceId}`,
+          body: { status: "running" },
+          headers: { "Content-Type": "application/json" },
+          failOnStatusCode: false,
+        });
+      }
+    });
+    cy.reload();
+    cy.get("button").contains(/stop/i, { timeout: 8000 }).click();
     cy.contains("stopped", { timeout: 10000 }).should("be.visible");
     cy.snap("07-detail-05-stopped");
   });
 
   it("shows delete button", () => {
-    cy.get("button").find("svg").parents("button").last().should("be.visible");
+    // Delete button has text-red-400 class and is distinct from other buttons
+    cy.get("button.text-red-400, button[class*='red']").first().should("be.visible");
     cy.snap("07-detail-06-delete-btn");
   });
 

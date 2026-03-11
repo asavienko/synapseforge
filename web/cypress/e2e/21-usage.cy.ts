@@ -86,7 +86,8 @@ describe("21 · Usage — Instance detail Overview tab", () => {
 });
 
 describe("21 · Usage — API endpoint", () => {
-  before(() => cy.login(EMAIL(), PASS()));
+  // beforeEach (not before) so session is restored for every test in this block
+  beforeEach(() => cy.login(EMAIL(), PASS()));
 
   it("GET /api/instances/:id/usage returns expected shape", () => {
     getInstanceId().then((instanceId) => {
@@ -115,18 +116,19 @@ describe("21 · Usage — API endpoint", () => {
   });
 
   it("unauthenticated request returns 401", () => {
-    getInstanceId().then((instanceId) => {
-      cy.request({
-        url: `/api/instances/${instanceId}/usage`,
-        failOnStatusCode: false,
-        headers: { Cookie: "" },
-      }).then((res) => {
-        expect(res.status).to.be.oneOf([401, 403]);
-      });
+    // Use a fake instance ID — the auth check fires before instance lookup
+    // cy.clearCookies() clears the session so the request is truly unauthenticated
+    cy.clearCookies();
+    cy.request({
+      url: "/api/instances/fake-id-for-auth-test/usage",
+      failOnStatusCode: false,
+    }).then((res) => {
+      expect(res.status).to.be.oneOf([401, 403]);
     });
   });
 
   it("wrong instance id returns 404", () => {
+    // Must be authenticated — session restored by beforeEach above
     cy.request({
       url: "/api/instances/nonexistent-id-xyz/usage",
       failOnStatusCode: false,

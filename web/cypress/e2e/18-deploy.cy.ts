@@ -99,9 +99,9 @@ describe("18 · Deploy Tab", () => {
     });
     cy.contains("button", "Deploy").click();
 
-    // LLM check should show ✓
+    // LLM check should show ✓ — go up to the row container, not just immediate parent
     cy.get("main").contains(/AI provider key/i)
-      .parents("div").first().contains("✓").should("exist");
+      .closest("[class*='rounded-xl']").contains("✓").should("exist");
 
     // Button should be enabled (unless already deployed)
     cy.get("[data-testid='deploy-btn']").should("not.be.disabled");
@@ -138,7 +138,13 @@ describe("18 · Deploy Tab", () => {
       body: { ok: true, status: "provisioning", serverId: "12345", ip: "1.2.3.4" },
     }).as("deployReq");
 
-    // Intercept instance GET to return provisioning state
+    // Visit the page FIRST (no GET intercept yet — instance loads normally with no provisionStatus)
+    cy.wrap(null).then(() => {
+      if (instanceId) cy.visit(`/en/dashboard/instances/${instanceId}`);
+    });
+    cy.contains("button", "Deploy").click();
+
+    // NOW intercept the subsequent GET poll to return provisioning state
     cy.intercept("GET", `/api/instances/${instanceId}`, {
       statusCode: 200,
       body: {
@@ -155,13 +161,8 @@ describe("18 · Deploy Tab", () => {
       },
     }).as("instanceGet");
 
-    cy.wrap(null).then(() => {
-      if (instanceId) cy.visit(`/en/dashboard/instances/${instanceId}`);
-    });
-    cy.contains("button", "Deploy").click();
-
     // Only click deploy if button is visible and enabled
-    cy.get("[data-testid='deploy-btn']").then(($btn) => {
+    cy.get("[data-testid='deploy-btn']", { timeout: 8000 }).then(($btn) => {
       if (!$btn.is(":disabled")) {
         cy.wrap($btn).click();
         cy.wait("@deployReq");
