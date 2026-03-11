@@ -31,5 +31,7 @@ export default defineConfig({
     // Manager user (set if you have a dedicated manager account)
     MANAGER_EMAIL: "manager@synapseforge.ai",
     MANAGER_PASSWORD: "Cypress123!",
+    // Internal API key for VPS-to-app communication
+    INTERNAL_API_KEY: "test-internal-key",
   },
 });

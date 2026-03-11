@@ -14,6 +14,36 @@ interface Instance {
   tier: string;
   description?: string;
   createdAt: string;
+  healthStatus?: string | null;
+}
+
+function HealthDot({ healthStatus }: { healthStatus?: string | null }) {
+  if (healthStatus === "healthy") {
+    return (
+      <span className="inline-flex items-center gap-1 text-xs text-zinc-500">
+        <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
+      </span>
+    );
+  }
+  if (healthStatus === "degraded") {
+    return (
+      <span className="inline-flex items-center gap-1 text-xs text-zinc-500">
+        <span className="w-2 h-2 rounded-full bg-yellow-400 inline-block" />
+      </span>
+    );
+  }
+  if (healthStatus === "down") {
+    return (
+      <span className="inline-flex items-center gap-1 text-xs text-zinc-500">
+        <span className="w-2 h-2 rounded-full bg-red-500 inline-block animate-pulse" />
+      </span>
+    );
+  }
+  return (
+    <span title="No health data yet" className="inline-flex items-center gap-1 text-xs text-zinc-500">
+      <span className="w-2 h-2 rounded-full bg-zinc-600 inline-block" />
+    </span>
+  );
 }
 
 function Toast({ text, type }: { text: string; type: "success" | "error" }) {
@@ -122,9 +152,12 @@ export default function InstancesPage() {
                 <div className="w-10 h-10 rounded-xl bg-violet-600/20 border border-violet-500/20 flex items-center justify-center">
                   <Bot className="w-5 h-5 text-violet-400" />
                 </div>
-                <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${STATUS_COLORS[instance.status]}`}>
-                  {instance.status}
-                </span>
+                <div className="flex items-center gap-2">
+                  <HealthDot healthStatus={instance.healthStatus} />
+                  <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${STATUS_COLORS[instance.status]}`}>
+                    {instance.status}
+                  </span>
+                </div>
               </div>
               <h3 className="font-semibold text-white mb-1 truncate">{instance.name}</h3>
               <p className="text-xs text-zinc-500 mb-3 capitalize">{instance.type} · {instance.tier}</p>

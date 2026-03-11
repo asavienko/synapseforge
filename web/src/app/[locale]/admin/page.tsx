@@ -11,13 +11,40 @@ export default async function AdminPage() {
   const adminEmails = (process.env.ADMIN_EMAILS ?? "").split(",").map((e) => e.trim()).filter(Boolean);
   if (!adminEmails.includes(session.user.email ?? "")) redirect("/dashboard");
 
-  const [users, managers] = await Promise.all([
+  const [users, managers, allInstancesForHealth] = await Promise.all([
     prisma.user.findMany({
       include: { manager: true, instances: true },
       orderBy: { createdAt: "desc" },
     }),
     prisma.manager.findMany({ orderBy: { createdAt: "asc" } }),
+    prisma.aIInstance.findMany({
+      select: {
+        id: true,
+        name: true,
+        healthStatus: true,
+        lastCheckedAt: true,
+        vpsUrl: true,
+        user: { select: { email: true } },
+      },
+    }),
   ]);
+
+  const healthSummary = {
+    monitored: allInstancesForHealth.filter((i) => i.vpsUrl).length,
+    healthy: allInstancesForHealth.filter((i) => i.healthStatus === "healthy").length,
+    degraded: allInstancesForHealth.filter((i) => i.healthStatus === "degraded").length,
+    down: allInstancesForHealth.filter((i) => i.healthStatus === "down").length,
+    unknown: allInstancesForHealth.filter((i) => !i.healthStatus).length,
+    issues: allInstancesForHealth
+      .filter((i) => i.healthStatus === "down" || i.healthStatus === "degraded")
+      .map((i) => ({
+        id: i.id,
+        name: i.name,
+        healthStatus: i.healthStatus!,
+        lastCheckedAt: i.lastCheckedAt?.toISOString() ?? null,
+        userEmail: i.user.email,
+      })),
+  };
 
   // Fetch unread message counts per user (messages sent by users, not yet read by manager)
   const unreadCounts = await prisma.message.groupBy({
@@ -50,6 +77,7 @@ export default async function AdminPage() {
           name: i.name,
           type: i.type,
           status: i.status,
+          healthStatus: i.healthStatus ?? null,
         })),
         unreadMessages: unreadMap[u.id] ?? 0,
       }))}
@@ -60,6 +88,7 @@ export default async function AdminPage() {
         userCount: users.filter((u) => u.managerId === m.id).length,
       }))}
       stats={{ totalUsers: users.length, totalInstances, runningInstances, unassigned }}
+      healthSummary={healthSummary}
     />
   );
 }

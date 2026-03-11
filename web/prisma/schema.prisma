@@ -3,9 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -65,20 +64,46 @@ model Message {
 }
 
 model AIInstance {
-  id          String   @id @default(cuid())
-  name        String
-  type        String   @default("assistant") // assistant | analyst | support | custom
-  status      String   @default("stopped")  // running | stopped | pending | error
-  tier        String   @default("minimal")  // minimal | standard | pro
-  description String?
-  config      String?  // JSON blob: { model, systemPrompt, temperature, maxTokens }
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            String    @id @default(cuid())
+  name          String
+  type          String    @default("assistant") // assistant | analyst | support | custom
+  status        String    @default("stopped")  // running | stopped | pending | error
+  tier          String    @default("minimal")  // minimal | standard | pro
+  description   String?
+  config        String?   // JSON blob: { model, systemPrompt, temperature, maxTokens }
+  healthStatus  String?   // "healthy" | "degraded" | "down" | null (unknown)
+  lastCheckedAt DateTime?
+  lastBackupAt  DateTime?
+  vpsUrl        String?   // e.g. "http://1.2.3.4:3000" — OpenClaw gateway URL on the client VPS
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  userId      String
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  apiKeys     ApiKey[]
-  logs        ActivityLog[]
+  userId        String
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  apiKeys       ApiKey[]
+  logs          ActivityLog[]
+  healthChecks  HealthCheck[]
+  snapshots     Snapshot[]
+}
+
+model HealthCheck {
+  id         String     @id @default(cuid())
+  instanceId String
+  status     String     // "healthy" | "degraded" | "down"
+  responseMs Int?       // response time in milliseconds
+  error      String?    // error message if down/degraded
+  checkedAt  DateTime   @default(now())
+  instance   AIInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+}
+
+model Snapshot {
+  id         String     @id @default(cuid())
+  instanceId String
+  snapshotId String     // Restic snapshot short ID
+  sizeBytes  Int?       // size in bytes
+  healthy    Boolean    @default(true) // was the instance healthy at snapshot time?
+  createdAt  DateTime   @default(now())
+  instance   AIInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
 }
 
 model ApiKey {

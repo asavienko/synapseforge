@@ -498,6 +498,47 @@
       "configFailed": "Error al guardar la configuración.",
       "keyCreated": "Clave API creada. Cópiala ahora — no se volverá a mostrar.",
       "keyRevoked": "Clave API revocada."
+    },
+    "infrastructure": {
+      "tab": "Infraestructura",
+      "health": {
+        "title": "Estado de salud",
+        "status": "Estado",
+        "lastChecked": "Última revisión",
+        "responseTime": "Tiempo de respuesta",
+        "vpsUrl": "URL del gateway VPS",
+        "notConfigured": "No configurado",
+        "noData": "Sin datos de salud aún",
+        "noDataDesc": "Las comprobaciones de salud se ejecutan automáticamente desde el VPS cada 5 minutos.",
+        "history": "Historial de salud",
+        "time": "Hora",
+        "error": "Error",
+        "healthy": "Saludable",
+        "degraded": "Degradado",
+        "down": "Caído",
+        "unknown": "Desconocido"
+      },
+      "backups": {
+        "title": "Copias de seguridad",
+        "lastBackup": "Última copia",
+        "never": "Nunca",
+        "noSnapshots": "Sin instantáneas aún",
+        "noSnapshotsDesc": "Las copias de seguridad se ejecutan automáticamente cada hora vía Restic.",
+        "snapshotId": "ID de instantánea",
+        "size": "Tamaño",
+        "note": "Las copias de seguridad se gestionan automáticamente. Contacta a tu gestor para restaurar una instantánea."
+      }
+    }
+  },
+  "admin": {
+    "health": {
+      "title": "Salud de infraestructura",
+      "monitored": "Instancias monitorizadas",
+      "healthy": "Saludable",
+      "degraded": "Degradado",
+      "down": "Caído",
+      "unknown": "Desconocido",
+      "issues": "Instancias que necesitan atención"
     }
   }
 }

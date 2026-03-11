@@ -34,6 +34,7 @@ jobs:
       STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
       STRIPE_PRO_PRICE_ID: ${{ secrets.STRIPE_PRO_PRICE_ID }}
       STRIPE_ENTERPRISE_PRICE_ID: ${{ secrets.STRIPE_ENTERPRISE_PRICE_ID }}
+      INTERNAL_API_KEY:         test-internal-key
 
     steps:
       - name: Checkout
@@ -75,6 +76,7 @@ jobs:
           NEXTAUTH_URL:       http://localhost:3000
           AUTH_TRUST_HOST:    true
           DISABLE_RATE_LIMIT: true
+          INTERNAL_API_KEY: test-internal-key
 
       - name: Upload screenshots
         uses: actions/upload-artifact@v4

@@ -5,10 +5,10 @@ import { useParams, useRouter } from "next/navigation";
 import {
   Bot, ArrowLeft, Play, Square, Trash2, Loader2,
   Settings2, Key, Activity, Copy, Check, Eye, EyeOff,
-  Plus, X, Zap, AlertCircle, Terminal,
+  Plus, X, Zap, AlertCircle, Terminal, Server, Database,
 } from "lucide-react";
 import Link from "next/link";
-import { STATUS_COLORS, INSTANCE_TYPES, formatDate } from "@/lib/utils";
+import { STATUS_COLORS, INSTANCE_TYPES, formatDate, formatRelativeTime } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 
@@ -24,6 +24,38 @@ interface Instance {
   config?: string;
   createdAt: string;
   updatedAt: string;
+  healthStatus?: string | null;
+  lastCheckedAt?: string | null;
+  lastBackupAt?: string | null;
+  vpsUrl?: string | null;
+}
+
+interface HealthCheckRow {
+  id: string;
+  status: string;
+  responseMs?: number | null;
+  error?: string | null;
+  checkedAt: string;
+}
+
+interface SnapshotRow {
+  id: string;
+  snapshotId: string;
+  sizeBytes?: number | null;
+  healthy: boolean;
+  createdAt: string;
+}
+
+interface HealthData {
+  healthStatus: string | null;
+  lastCheckedAt: string | null;
+  vpsUrl: string | null;
+  checks: HealthCheckRow[];
+}
+
+interface SnapshotsData {
+  lastBackupAt: string | null;
+  snapshots: SnapshotRow[];
 }
 
 interface Config {
@@ -76,7 +108,7 @@ const LOG_ICONS: Record<string, { icon: string; color: string }> = {
   deleted:        { icon: "✕", color: "text-red-400" },
 };
 
-const TABS = ["Overview", "Configuration", "API Keys", "Activity Log"] as const;
+const TABS = ["Overview", "Configuration", "API Keys", "Activity Log", "Infrastructure"] as const;
 type Tab = (typeof TABS)[number];
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -109,6 +141,11 @@ export default function InstanceDetailPage() {
   const [logs, setLogs] = useState<LogRow[]>([]);
   const [logsLoading, setLogsLoading] = useState(false);
 
+  // Infrastructure state
+  const [healthData, setHealthData] = useState<HealthData | null>(null);
+  const [snapshotsData, setSnapshotsData] = useState<SnapshotsData | null>(null);
+  const [infraLoading, setInfraLoading] = useState(false);
+
   function showToast(text: string, type: "success" | "error" = "success") {
     setToast({ text, type });
     setTimeout(() => setToast(null), 3000);
@@ -139,11 +176,23 @@ export default function InstanceDetailPage() {
     setLogsLoading(false);
   }, [id]);
 
+  const loadInfra = useCallback(async () => {
+    setInfraLoading(true);
+    const [healthRes, snapshotsRes] = await Promise.all([
+      fetch(`/api/instances/${id}/health`),
+      fetch(`/api/instances/${id}/snapshots`),
+    ]);
+    if (healthRes.ok) setHealthData(await healthRes.json());
+    if (snapshotsRes.ok) setSnapshotsData(await snapshotsRes.json());
+    setInfraLoading(false);
+  }, [id]);
+
   useEffect(() => { loadInstance(); }, [loadInstance]);
 
   useEffect(() => {
     if (tab === "API Keys" && keys.length === 0) loadKeys();
     if (tab === "Activity Log") loadLogs();
+    if (tab === "Infrastructure") loadInfra();
   }, [tab]);
 
   async function toggleStatus() {
@@ -287,6 +336,7 @@ export default function InstanceDetailPage() {
             "Configuration": t("tabs.configuration"),
             "API Keys": t("tabs.apiKeys"),
             "Activity Log": t("tabs.activityLog"),
+            "Infrastructure": t("infrastructure.tab"),
           };
           return (
             <button key={tabKey} onClick={() => setTab(tabKey)}
@@ -515,6 +565,154 @@ export default function InstanceDetailPage() {
                 );
               })}
             </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Infrastructure ── */}
+      {tab === "Infrastructure" && (
+        <div className="space-y-6">
+          {infraLoading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-6 h-6 text-zinc-500 animate-spin" />
+            </div>
+          ) : (
+            <>
+              {/* Health Status */}
+              <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+                <div className="p-5 border-b border-white/5 flex items-center gap-2">
+                  <Server className="w-4 h-4 text-zinc-500" />
+                  <h3 className="text-sm font-semibold text-white">{t("infrastructure.health.title")}</h3>
+                </div>
+                <div className="p-5 space-y-4">
+                  {/* Status badge */}
+                  <div className="flex items-center gap-4">
+                    <div className="text-xs text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.health.status")}</div>
+                    {(() => {
+                      const hs = healthData?.healthStatus ?? null;
+                      const colorMap: Record<string, string> = {
+                        healthy: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+                        degraded: "bg-yellow-500/20 text-yellow-300 border-yellow-500/30",
+                        down: "bg-red-500/20 text-red-300 border-red-500/30",
+                      };
+                      const labelMap: Record<string, string> = {
+                        healthy: t("infrastructure.health.healthy"),
+                        degraded: t("infrastructure.health.degraded"),
+                        down: t("infrastructure.health.down"),
+                      };
+                      return (
+                        <span className={`text-sm px-3 py-1 rounded-full border font-medium ${hs ? colorMap[hs] : "bg-zinc-700/30 text-zinc-400 border-zinc-600/30"}`}>
+                          {hs ? labelMap[hs] ?? hs : t("infrastructure.health.unknown")}
+                        </span>
+                      );
+                    })()}
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="text-xs text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.health.lastChecked")}</div>
+                    <span className="text-sm text-zinc-300">{healthData?.lastCheckedAt ? formatRelativeTime(healthData.lastCheckedAt) : t("infrastructure.health.noData")}</span>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="text-xs text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.health.vpsUrl")}</div>
+                    <span className="text-sm text-zinc-300 font-mono">{healthData?.vpsUrl ?? t("infrastructure.health.notConfigured")}</span>
+                  </div>
+                </div>
+                {/* Health history */}
+                <div className="border-t border-white/5">
+                  <div className="p-5 pb-3">
+                    <h4 className="text-xs text-zinc-500 uppercase tracking-wider">{t("infrastructure.health.history")}</h4>
+                  </div>
+                  {!healthData || healthData.checks.length === 0 ? (
+                    <div className="px-5 pb-8 text-center">
+                      <p className="text-zinc-500 text-sm">{t("infrastructure.health.noData")}</p>
+                      <p className="text-zinc-600 text-xs mt-1">{t("infrastructure.health.noDataDesc")}</p>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="text-xs text-zinc-500 border-b border-white/5">
+                            <th className="text-left px-5 py-2">{t("infrastructure.health.time")}</th>
+                            <th className="text-left px-5 py-2">{t("infrastructure.health.status")}</th>
+                            <th className="text-left px-5 py-2">{t("infrastructure.health.responseTime")}</th>
+                            <th className="text-left px-5 py-2">{t("infrastructure.health.error")}</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/5">
+                          {healthData.checks.map((c) => (
+                            <tr key={c.id} className="hover:bg-white/[0.02]">
+                              <td className="px-5 py-2.5 text-zinc-400 text-xs">{formatRelativeTime(c.checkedAt)}</td>
+                              <td className="px-5 py-2.5">
+                                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                                  c.status === "healthy" ? "bg-emerald-500/20 text-emerald-300" :
+                                  c.status === "degraded" ? "bg-yellow-500/20 text-yellow-300" :
+                                  "bg-red-500/20 text-red-300"
+                                }`}>{c.status}</span>
+                              </td>
+                              <td className="px-5 py-2.5 text-zinc-400 text-xs">{c.responseMs != null ? `${c.responseMs}ms` : "—"}</td>
+                              <td className="px-5 py-2.5 text-zinc-500 text-xs">{c.error ?? "—"}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Backups */}
+              <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+                <div className="p-5 border-b border-white/5 flex items-center gap-2">
+                  <Database className="w-4 h-4 text-zinc-500" />
+                  <h3 className="text-sm font-semibold text-white">{t("infrastructure.backups.title")}</h3>
+                </div>
+                <div className="p-5 space-y-3">
+                  <div className="flex items-center gap-4">
+                    <div className="text-xs text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.backups.lastBackup")}</div>
+                    <span className="text-sm text-zinc-300">
+                      {snapshotsData?.lastBackupAt ? formatRelativeTime(snapshotsData.lastBackupAt) : t("infrastructure.backups.never")}
+                    </span>
+                  </div>
+                </div>
+                {!snapshotsData || snapshotsData.snapshots.length === 0 ? (
+                  <div className="px-5 pb-8 text-center">
+                    <p className="text-zinc-500 text-sm">{t("infrastructure.backups.noSnapshots")}</p>
+                    <p className="text-zinc-600 text-xs mt-1">{t("infrastructure.backups.noSnapshotsDesc")}</p>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto border-t border-white/5">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="text-xs text-zinc-500 border-b border-white/5">
+                          <th className="text-left px-5 py-2">{t("infrastructure.health.time")}</th>
+                          <th className="text-left px-5 py-2">{t("infrastructure.backups.snapshotId")}</th>
+                          <th className="text-left px-5 py-2">{t("infrastructure.backups.size")}</th>
+                          <th className="text-left px-5 py-2">{t("infrastructure.health.status")}</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-white/5">
+                        {snapshotsData.snapshots.map((s) => (
+                          <tr key={s.id} className="hover:bg-white/[0.02]">
+                            <td className="px-5 py-2.5 text-zinc-400 text-xs">{formatRelativeTime(s.createdAt)}</td>
+                            <td className="px-5 py-2.5 text-zinc-300 text-xs font-mono">{s.snapshotId}</td>
+                            <td className="px-5 py-2.5 text-zinc-400 text-xs">
+                              {s.sizeBytes != null ? `${(s.sizeBytes / 1024 / 1024).toFixed(1)} MB` : "—"}
+                            </td>
+                            <td className="px-5 py-2.5">
+                              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                                s.healthy ? "bg-emerald-500/20 text-emerald-300" : "bg-red-500/20 text-red-300"
+                              }`}>{s.healthy ? t("infrastructure.health.healthy") : t("infrastructure.health.down")}</span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+                <div className="p-5 border-t border-white/5">
+                  <p className="text-xs text-zinc-600">{t("infrastructure.backups.note")}</p>
+                </div>
+              </div>
+            </>
           )}
         </div>
       )}

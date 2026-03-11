@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Users, Bot, Activity, AlertCircle, Plus, X, Shield, ChevronDown, MessageCircle, Send, Loader2 } from "lucide-react";
-import { STATUS_COLORS, PLANS, formatDate } from "@/lib/utils";
+import { Users, Bot, Activity, AlertCircle, Plus, X, Shield, ChevronDown, MessageCircle, Send, Loader2, Server } from "lucide-react";
+import { STATUS_COLORS, PLANS, formatDate, formatRelativeTime } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 interface UserRow {
@@ -13,8 +13,32 @@ interface UserRow {
   createdAt: string;
   managerId: string | null;
   managerName: string | null;
-  instances: { id: string; name: string; type: string; status: string }[];
+  instances: { id: string; name: string; type: string; status: string; healthStatus?: string | null }[];
   unreadMessages: number;
+}
+
+interface HealthIssue {
+  id: string;
+  name: string;
+  healthStatus: string;
+  lastCheckedAt: string | null;
+  userEmail: string;
+}
+
+interface HealthSummary {
+  monitored: number;
+  healthy: number;
+  degraded: number;
+  down: number;
+  unknown: number;
+  issues: HealthIssue[];
+}
+
+function HealthDot({ healthStatus }: { healthStatus?: string | null }) {
+  if (healthStatus === "healthy") return <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" title="Healthy" />;
+  if (healthStatus === "degraded") return <span className="w-2 h-2 rounded-full bg-yellow-400 inline-block" title="Degraded" />;
+  if (healthStatus === "down") return <span className="w-2 h-2 rounded-full bg-red-500 inline-block animate-pulse" title="Down" />;
+  return <span className="w-2 h-2 rounded-full bg-zinc-600 inline-block" title="No health data" />;
 }
 
 interface ManagerRow {
@@ -38,10 +62,11 @@ interface Message {
   createdAt: string;
 }
 
-export function AdminClient({ users: initialUsers, managers: initialManagers, stats }: {
+export function AdminClient({ users: initialUsers, managers: initialManagers, stats, healthSummary }: {
   users: UserRow[];
   managers: ManagerRow[];
   stats: Stats;
+  healthSummary: HealthSummary;
 }) {
   const [users, setUsers] = useState(initialUsers);
   const [managers, setManagers] = useState(initialManagers);
@@ -155,6 +180,54 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
           ))}
         </div>
 
+        {/* Infrastructure Health */}
+        <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden mb-6">
+          <div className="p-5 border-b border-white/5 flex items-center gap-2">
+            <Server className="w-4 h-4 text-violet-400" />
+            <h2 className="font-semibold">Infrastructure Health</h2>
+          </div>
+          <div className="p-5">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-4">
+              {[
+                { label: "Monitored", value: healthSummary.monitored, color: "text-zinc-300" },
+                { label: "Healthy", value: healthSummary.healthy, color: "text-emerald-400" },
+                { label: "Degraded", value: healthSummary.degraded, color: "text-yellow-400" },
+                { label: "Down", value: healthSummary.down, color: "text-red-400" },
+                { label: "Unknown", value: healthSummary.unknown, color: "text-zinc-500" },
+              ].map((s) => (
+                <div key={s.label} className="bg-white/[0.03] rounded-xl p-4">
+                  <div className={`text-xl font-bold ${s.color}`}>{s.value}</div>
+                  <div className="text-xs text-zinc-500 mt-1">{s.label}</div>
+                </div>
+              ))}
+            </div>
+            {healthSummary.issues.length > 0 && (
+              <div>
+                <div className="text-xs text-zinc-500 uppercase tracking-wider mb-2">Instances needing attention</div>
+                <div className="space-y-2">
+                  {healthSummary.issues.map((issue) => (
+                    <div key={issue.id} className="flex items-center gap-3 bg-red-500/5 border border-red-500/20 rounded-xl px-4 py-2.5">
+                      <HealthDot healthStatus={issue.healthStatus} />
+                      <span className="text-sm text-white font-medium">{issue.name}</span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                        issue.healthStatus === "degraded" ? "bg-yellow-500/20 text-yellow-300" : "bg-red-500/20 text-red-300"
+                      }`}>{issue.healthStatus}</span>
+                      <span className="text-xs text-zinc-500 ml-auto">{issue.userEmail}</span>
+                      {issue.lastCheckedAt && <span className="text-xs text-zinc-600">{formatRelativeTime(issue.lastCheckedAt)}</span>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {healthSummary.issues.length === 0 && healthSummary.monitored > 0 && (
+              <p className="text-sm text-emerald-400">All monitored instances are healthy ✓</p>
+            )}
+            {healthSummary.monitored === 0 && (
+              <p className="text-sm text-zinc-500">No instances have VPS monitoring configured yet.</p>
+            )}
+          </div>
+        </div>
+
         <div className="grid md:grid-cols-3 gap-6">
           {/* Managers */}
           <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
@@ -249,6 +322,7 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                           <span className="truncate">{inst.name}</span>
                           <span className="text-zinc-700 capitalize">{inst.type}</span>
                           <span className={`px-1.5 py-0.5 rounded-full ${STATUS_COLORS[inst.status]}`}>{inst.status}</span>
+                          <HealthDot healthStatus={inst.healthStatus} />
                         </div>
                       ))}
                     </div>

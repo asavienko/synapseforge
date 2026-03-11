@@ -498,6 +498,47 @@
       "configFailed": "Failed to save config.",
       "keyCreated": "API key created. Copy it now — it won't be shown again.",
       "keyRevoked": "API key revoked."
+    },
+    "infrastructure": {
+      "tab": "Infrastructure",
+      "health": {
+        "title": "Health Status",
+        "status": "Status",
+        "lastChecked": "Last checked",
+        "responseTime": "Response time",
+        "vpsUrl": "VPS Gateway URL",
+        "notConfigured": "Not configured",
+        "noData": "No health data yet",
+        "noDataDesc": "Health checks run automatically from the instance VPS every 5 minutes.",
+        "history": "Health History",
+        "time": "Time",
+        "error": "Error",
+        "healthy": "Healthy",
+        "degraded": "Degraded",
+        "down": "Down",
+        "unknown": "Unknown"
+      },
+      "backups": {
+        "title": "Backups",
+        "lastBackup": "Last backup",
+        "never": "Never",
+        "noSnapshots": "No snapshots yet",
+        "noSnapshotsDesc": "Backups run automatically every hour via Restic.",
+        "snapshotId": "Snapshot ID",
+        "size": "Size",
+        "note": "Backups are managed automatically. Contact your manager to restore a snapshot."
+      }
+    }
+  },
+  "admin": {
+    "health": {
+      "title": "Infrastructure Health",
+      "monitored": "Monitored instances",
+      "healthy": "Healthy",
+      "degraded": "Degraded",
+      "down": "Down",
+      "unknown": "Unknown",
+      "issues": "Instances needing attention"
     }
   }
 }
