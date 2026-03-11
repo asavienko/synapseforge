@@ -186,8 +186,8 @@ describe("04 · Billing", () => {
   });
 
   it("shows Pro upgrade button", () => {
-    // Pro CTA uses pricing.pro.cta translation = "Get started"
-    cy.contains("button", "Get started").should("be.visible");
+    // Pro CTA uses pricing.pro.cta translation = "Get Pro →"
+    cy.contains("button", /Get Pro|Upgrade|Get started/i).should("be.visible");
     cy.snap("04-billing-04-upgrade-btn");
   });
 

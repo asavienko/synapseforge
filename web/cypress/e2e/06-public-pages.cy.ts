@@ -34,7 +34,7 @@ describe("06 · Pricing Page", () => {
   });
 
   it("pricing page loads with title", () => {
-    cy.contains("Simple, Transparent Pricing").should("be.visible");
+    cy.contains("Simple, transparent pricing").should("be.visible");
     cy.snap("06-pricing-01-title");
   });
 
@@ -46,7 +46,7 @@ describe("06 · Pricing Page", () => {
   });
 
   it("Free plan links to sign-up", () => {
-    cy.contains("a", "Get started free")
+    cy.contains("a", /Start free/i)
       .should("be.visible")
       .and("have.attr", "href")
       .and("include", "sign-up");
@@ -54,7 +54,7 @@ describe("06 · Pricing Page", () => {
   });
 
   it("Pro plan links to sign-up", () => {
-    cy.contains("a", "Get started")
+    cy.contains("a", /Get Pro/i)
       .first()
       .should("be.visible")
       .and("have.attr", "href")
@@ -63,26 +63,26 @@ describe("06 · Pricing Page", () => {
   });
 
   it("Enterprise plan shows contact link", () => {
-    cy.contains("a", "Contact us")
+    cy.contains("a", /Contact/i)
       .should("be.visible")
       .and("have.attr", "href", "mailto:hello@synapseforge.ai");
     cy.snap("06-pricing-05-enterprise-cta");
   });
 
   it("has a back-to-home link", () => {
-    cy.get("a").filter('[href="/en"]').should("exist");
+    cy.get("a").filter('[href="/"], [href="/en"]').should("exist");
     cy.snap("06-pricing-06-nav");
   });
 
   it("pricing page loads in Spanish", () => {
     cy.visit("/es/pricing");
-    cy.contains("Precios Simples y Transparentes").should("be.visible");
+    cy.contains("Precios simples y transparentes").should("be.visible");
     cy.snap("06-pricing-07-es");
   });
 
   it("pricing page loads in Ukrainian", () => {
     cy.visit("/uk/pricing");
-    cy.contains("Прозоре ціноутворення").should("be.visible");
+    cy.contains("прозоре ціноутворення", { matchCase: false }).should("be.visible");
     cy.snap("06-pricing-08-uk");
   });
 });

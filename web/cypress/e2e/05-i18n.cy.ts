@@ -2,7 +2,7 @@
  * i18n — Locale routing and translations
  */
 const LOCALES = [
-  { code: "en", hero: "Get started free",      signIn: "Welcome back"         },
+  { code: "en", hero: "Deploy free",            signIn: "Welcome back"         },
   { code: "es", hero: "Empieza gratis",         signIn: "Bienvenido de nuevo"  },
   { code: "uk", hero: "Почати безкоштовно",     signIn: "З поверненням"        },
   { code: "ru", hero: "Начать бесплатно",        signIn: "С возвращением"       },
@@ -40,7 +40,7 @@ describe("05 · i18n — Locale Switcher", () => {
     cy.get("nav").find("button").contains(/EN/i).click();
     cy.get("button").contains("RU").click();
     cy.url({ timeout: 8000 }).should("include", "/ru");
-    cy.contains("Начать бесплатно").should("be.visible");
+    cy.contains("Живой за 3 минуты").should("be.visible");
     cy.snap("05-i18n-switch-to-ru");
   });
 });
