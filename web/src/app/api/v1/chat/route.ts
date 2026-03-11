@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { callLLM, ChatMessage } from "@/lib/llm";
 import { validateApiKey, CORS_HEADERS } from "@/lib/api-auth";
+import { publicChatLimiter, rateLimitHeaders, getRateLimitKey } from "@/lib/rate-limit";
 
 // Handle CORS preflight
 export async function OPTIONS() {
@@ -28,6 +29,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       { error: "Invalid or missing API key. Pass Authorization: Bearer sf-live-<key>" },
       { status: 401, headers: CORS_HEADERS }
+    );
+  }
+
+  // Rate limit: 60 req/min per API key
+  const rlKey = getRateLimitKey(req, "v1-chat", ctx.keyId);
+  const rl = publicChatLimiter.check(rlKey);
+  const rlHeaders = { ...CORS_HEADERS, ...rateLimitHeaders(rl) };
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Rate limit exceeded. Try again later.", retryAfterMs: rl.resetAt - Date.now() },
+      { status: 429, headers: rlHeaders }
     );
   }
 
@@ -90,6 +102,6 @@ export async function POST(req: NextRequest) {
       provider: result.provider,
       latencyMs: result.latencyMs,
     },
-    { headers: CORS_HEADERS }
+    { headers: rlHeaders }
   );
 }

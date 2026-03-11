@@ -2,10 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { callLLM, ChatMessage } from "@/lib/llm";
+import { dashboardChatLimiter, rateLimitHeaders, getRateLimitKey } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // Rate limit: 30 req/min per user
+  const rl = dashboardChatLimiter.check(getRateLimitKey(req, "dash-chat", session.user.id));
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Rate limit exceeded. Slow down a bit.", retryAfterMs: rl.resetAt - Date.now() },
+      { status: 429, headers: rateLimitHeaders(rl) }
+    );
+  }
 
   const { id } = await params;
   const instance = await prisma.aIInstance.findFirst({
