@@ -59,6 +59,15 @@ export async function POST(req: NextRequest) {
     const msg = await prisma.message.create({
       data: { body: body.trim(), senderType: "manager", userId: queryUserId, managerId: user.managerId },
     });
+
+    // Notify the user that their manager replied
+    const manager = await prisma.manager.findUnique({ where: { id: user.managerId } });
+    if (manager && user.email) {
+      emailService
+        .newMessageFromManager(user.email, user.name ?? user.email, manager.name, body.trim().slice(0, 200))
+        .catch(console.error);
+    }
+
     return NextResponse.json(msg, { status: 201 });
   }
 

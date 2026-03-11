@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { email as emailService } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
   // Validate API key
@@ -45,12 +46,37 @@ export async function POST(req: NextRequest) {
   };
 
   // First health check after provisioning: promote to ready + set status running
-  if (instance?.provisionStatus === "provisioning" && status === "healthy") {
+  const justWentLive = instance?.provisionStatus === "provisioning" && status === "healthy";
+  if (justWentLive) {
     updates.provisionStatus = "ready";
     updates.status = "running";
   }
 
   await prisma.aIInstance.update({ where: { id: instanceId }, data: updates });
+
+  // Send "instance is live" email on first successful provisioning
+  if (justWentLive) {
+    const fullInstance = await prisma.aIInstance.findUnique({
+      where: { id: instanceId },
+      include: { user: true, credentials: { select: { key: true } } },
+    });
+    if (fullInstance?.user?.email) {
+      const channels: string[] = [];
+      const credKeys = fullInstance.credentials.map((c) => c.key);
+      if (credKeys.includes("telegram_bot_token")) channels.push("Telegram");
+      if (credKeys.includes("discord_bot_token")) channels.push("Discord");
+      if (credKeys.includes("slack_app_token") || credKeys.includes("slack_bot_token")) channels.push("Slack");
+
+      emailService
+        .instanceReady(
+          fullInstance.user.email,
+          fullInstance.user.name ?? fullInstance.user.email,
+          fullInstance.name,
+          channels
+        )
+        .catch(console.error);
+    }
+  }
 
   // Keep only last 100 health checks per instance
   const checks = await prisma.healthCheck.findMany({
