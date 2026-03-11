@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { X, Check, Copy, Loader2, ChevronRight, ChevronLeft, Bot, MessageSquare, Hash, Zap } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 import { TEMPLATE_PROMPTS, MODEL_OPTIONS, generateOpenClawConfig, type InstanceTemplate, type LLMProvider, type CredentialMap, type InstanceConfig } from "@/lib/openclaw-config";
 import { maskValue } from "@/lib/crypto";
 import { cn } from "@/lib/utils";
@@ -49,6 +50,7 @@ const TEMPLATE_ICONS: Record<InstanceTemplate, string> = {
 
 export function InstanceSetupWizard({ onClose, onCreated }: WizardProps) {
   const t = useTranslations("instanceSetup");
+  const router = useRouter();
   const [step, setStep] = useState<Step>("template");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -194,15 +196,15 @@ export function InstanceSetupWizard({ onClose, onCreated }: WizardProps) {
         });
       }
 
-      // 3. If Hetzner deploy, provision
+      // 3. If Hetzner deploy, kick off VPS provisioning via the user-facing endpoint
       if (state.deployMode === "hetzner") {
-        const provRes = await fetch(`/api/admin/instances/${instanceId}/provision`, {
+        const provRes = await fetch(`/api/instances/${instanceId}/deploy`, {
           method: "POST",
         });
         if (!provRes.ok) {
-          const d = await provRes.json();
-          // Non-fatal: just show a warning
-          setError(`Instance created, but Hetzner provisioning failed: ${d.error}`);
+          const d = await provRes.json().catch(() => ({}));
+          // Non-fatal: instance is created with credentials, user can deploy from the Deploy tab
+          setError(`Instance created! VPS provisioning will start from the Deploy tab. (${d.error ?? provRes.status})`);
         }
       }
 
@@ -284,14 +286,27 @@ export function InstanceSetupWizard({ onClose, onCreated }: WizardProps) {
                 <p className="text-sm text-zinc-400">{t("deploy.provisioningNote")}</p>
               )}
               {error && (
-                <p className="text-sm text-amber-300 mt-2">{error}</p>
+                <p className="text-sm text-amber-300 mt-2 bg-amber-400/10 border border-amber-400/20 rounded-lg px-3 py-2">{error}</p>
               )}
-              <button
-                onClick={onClose}
-                className="mt-6 bg-violet-600 hover:bg-violet-500 transition-colors px-6 py-3 rounded-xl text-sm font-semibold text-white"
-              >
-                Go to dashboard
-              </button>
+              <div className="mt-6 flex flex-col gap-3">
+                {createdInstanceId && (
+                  <button
+                    onClick={() => {
+                      onClose();
+                      router.push(`/dashboard/instances/${createdInstanceId}` as Parameters<typeof router.push>[0]);
+                    }}
+                    className="inline-flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-6 py-3 rounded-xl text-sm font-semibold text-white"
+                  >
+                    {state.deployMode === "hetzner" ? "Monitor deployment →" : "Go to instance →"}
+                  </button>
+                )}
+                <button
+                  onClick={onClose}
+                  className="text-sm text-zinc-500 hover:text-zinc-300 transition-colors"
+                >
+                  Back to dashboard
+                </button>
+              </div>
             </div>
           ) : (
             <>
