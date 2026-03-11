@@ -54,6 +54,10 @@ jobs:
       - name: Generate Prisma client
         run: npx prisma generate
 
+      - name: Apply DB migrations
+        run: npx prisma migrate deploy
+        working-directory: web
+
       - name: Seed test user
         run: npx tsx cypress/support/seed.ts
 
