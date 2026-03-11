@@ -225,20 +225,14 @@ describe("04 · Settings", () => {
   });
 
   it("saves profile changes", () => {
-    // Use a fixed temp name (not timestamp) so the sidebar test is not affected if
-    // cy.session caching causes these tests to run in an unexpected order.
-    const tempName = "CI Test Update";
+    // Use a unique name each run so we always have a real change to submit
+    const tempName = `CI Test ${Date.now()}`;
     cy.intercept("PATCH", "/api/user").as("saveProfile");
     cy.get('input[type="text"]').first().should("not.be.disabled").clear().type(tempName);
     cy.get('button[type="submit"]').contains("Save changes").click({ force: true });
     cy.wait("@saveProfile", { timeout: 10000 }).its("response.statusCode").should("eq", 200);
     cy.snap("04-settings-04-saved");
-
-    // Restore the canonical name so spec 04 sidebar test passes on next session restore
-    cy.intercept("PATCH", "/api/user").as("restoreProfile");
-    cy.get('input[type="text"]').first().should("not.be.disabled").clear().type(Cypress.env("TEST_NAME") as string);
-    cy.get('button[type="submit"]').contains("Save changes").click({ force: true });
-    cy.wait("@restoreProfile", { timeout: 10000 }).its("response.statusCode").should("eq", 200);
-    cy.snap("04-settings-04-restored");
+    // Note: sidebar test uses name OR email fallback — stale name is handled.
+    // Seed resets name to "Cypress Test" at the start of each CI run.
   });
 });
