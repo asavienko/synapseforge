@@ -46,7 +46,7 @@ describe("01 · Landing Page", () => {
   });
 
   it("terminal demo is visible in How it works", () => {
-    cy.contains("Deploying your agent").should("be.visible");
+    cy.contains("Provisioning cloud server").should("be.visible");
     cy.contains("Deployment complete").should("be.visible");
     cy.snap("01-landing-04b-terminal");
   });
@@ -113,7 +113,7 @@ describe("01 · Landing Page", () => {
     cy.clearCookies();
     cy.clearAllSessionStorage();
     cy.visit("/en");
-    cy.contains("Get started free").first().click();
+    cy.contains("Deploy free").first().click();
     cy.url().should("include", "/sign-up");
     cy.snap("01-landing-11-cta-to-signup");
   });

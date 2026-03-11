@@ -51,7 +51,7 @@ const LOCALES = [
     heroCTA: "Розгорнути",
     howTitle: "Запуск за хвилини",
     pricingTitle: "ціноутворення",
-    aboutTitle: "по-іншому",   // substring — "Побудовано по-іншому" or similar
+    aboutTitle: "інакше",   // substring of "Збудовано інакше"
     footer: { privacy: "Конфіденційність", terms: "Умови" },
     auth: {
       signInTitle: "З поверненням",
