@@ -35,56 +35,53 @@
     }
   },
   "pricing": {
-    "title": "Precios Simples y Transparentes",
-    "subtitle": "Empieza gratis, actualiza cuando necesites más.",
+    "title": "Precios simples y transparentes",
+    "subtitle": "Empieza gratis. Actualiza cuando necesites más.",
+    "popular": "Más popular",
     "free": {
       "name": "Gratis",
       "price": "$0",
-      "period": "para siempre",
-      "desc": "Perfecto para empezar",
-      "cta": "Empieza gratis"
+      "desc": "por mes",
+      "cta": "Empezar gratis →"
     },
     "pro": {
       "name": "Pro",
       "price": "$499",
-      "period": "/ mes",
-      "desc": "Para negocios en crecimiento",
-      "cta": "Comenzar"
+      "desc": "por mes",
+      "cta": "Obtener Pro →"
     },
     "enterprise": {
       "name": "Enterprise",
       "price": "Personalizado",
-      "period": "",
-      "desc": "Para grandes organizaciones",
-      "cta": "Contáctanos"
+      "desc": "para grandes equipos",
+      "cta": "Contactar →"
     },
     "features": {
-      "freeInstance": "1 instancia de IA",
-      "managerAssigned": "Gestor asignado",
-      "inAppMsg": "Mensajería integrada",
+      "freeInstance": "1 instancia de agente",
+      "managerAssigned": "Manager dedicado asignado",
+      "inAppMsg": "Mensajería con manager",
       "communitySupport": "Soporte comunitario",
-      "proInstances": "Hasta 3 instancias de IA",
-      "humanManager": "Gestor humano dedicado",
-      "response24h": "Tiempo de respuesta 24h",
-      "customConfig": "Configuraciones personalizadas",
-      "integrations": "Integraciones CRM y Slack",
-      "sla99": "SLA de 99% de disponibilidad",
-      "unlimitedInstances": "Instancias de IA ilimitadas",
-      "managerTeam": "Equipo de gestores dedicado",
-      "sla4h": "SLA de respuesta en 4h",
+      "proInstances": "Hasta 3 instancias",
+      "humanManager": "Manager humano dedicado",
+      "response24h": "Respuesta en 24h",
+      "customConfig": "Configuración de modelo personalizada",
+      "integrations": "Telegram, Discord, Slack",
+      "sla99": "SLA 99%",
+      "unlimitedInstances": "Instancias ilimitadas",
+      "managerTeam": "Equipo de managers",
+      "sla4h": "SLA respuesta 4h",
       "customIntegrations": "Integraciones personalizadas",
       "teamTraining": "Formación del equipo",
-      "whiteLabel": "Opción de marca blanca"
-    },
-    "popular": "Más popular"
+      "whiteLabel": "Opción white-label"
+    }
   },
   "about": {
-    "title": "Forjamos el Stack de IA Para Que No Tengas Que Hacerlo",
-    "subtitle": "SynapseForge fue creado para empresas que quieren resultados reales de IA — no otra herramienta SaaS que descifrar. Nos encargamos del despliegue, la configuración y la gestión continua para que tu equipo pueda centrarse en lo que importa.",
-    "setup": "<30min",
-    "setupLabel": "Tiempo hasta la primera instancia de IA",
+    "title": "Construido diferente",
+    "subtitle": "SynapseForge no es un envoltorio de la API de OpenAI. Es una plataforma completa de despliegue: tu agente corre en infraestructura dedicada, sincroniza la configuración automáticamente y se conecta a los canales donde ya están tus usuarios.",
+    "setup": "<3 min",
+    "setupLabel": "Tiempo hasta el primer agente activo",
     "response": "24h",
-    "responseLabel": "Tiempo de respuesta del gestor",
+    "responseLabel": "Tiempo de respuesta del manager",
     "uptime": "99%",
     "uptimeLabel": "SLA de disponibilidad (Pro+)"
   },

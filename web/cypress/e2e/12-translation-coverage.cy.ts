@@ -9,26 +9,27 @@
  * Strategy: each locale has a "fingerprint" — a key phrase that ONLY appears in
  * that language. If the English fingerprint appears on an ES/UK/RU page, the
  * translation is broken.
+ *
+ * NOTE: keep these strings in sync with messages/<lang>.json and the landing page.
  */
-
-// ─── Config ──────────────────────────────────────────────────────────────────
 
 const LOCALES = [
   {
     code: "es",
     name: "Spanish",
     nav: {
-      services: "Servicios",
+      services: "Funciones",
       pricing: "Precios",
       signIn: "Iniciar sesión",
-      getStarted: "Empieza gratis",
+      getStarted: "Empezar",
     },
-    hero: "Tu Stack de IA, Completamente Gestionado",
-    heroCTA: "Empieza gratis",
-    services: "Lo Que Construimos Para Ti",
-    pricing: "Precios Simples y Transparentes",
-    about: "Forjamos el Stack de IA",
-    footer: { privacy: "Política de Privacidad", terms: "Términos de Servicio" },
+    // A unique phrase from the new hero title (second line)
+    hero: "Activo en 3 minutos",
+    heroCTA: "Desplegar",
+    howTitle: "En funcionamiento en minutos",
+    pricingTitle: "Precios",
+    aboutTitle: "diferente",   // substring match from about.title
+    footer: { privacy: "Privacidad", terms: "Términos" },
     auth: {
       signInTitle: "Bienvenido de nuevo",
       signUpTitle: "Crea tu cuenta",
@@ -41,17 +42,17 @@ const LOCALES = [
     code: "uk",
     name: "Ukrainian",
     nav: {
-      services: "Послуги",
+      services: "Функції",
       pricing: "Ціни",
       signIn: "Увійти",
-      getStarted: "Почати безкоштовно",
+      getStarted: "Почати",
     },
-    hero: "Ваш AI-стек під повним управлінням",
-    heroCTA: "Почати безкоштовно",
-    services: "Що ми будуємо для вас",
-    pricing: "Прозоре ціноутворення",
-    about: "Ми будуємо AI-стек",
-    footer: { privacy: "Політика конфіденційності", terms: "Умови використання" },
+    hero: "Живий за 3 хвилини",
+    heroCTA: "Розгорнути",
+    howTitle: "Запуск за хвилини",
+    pricingTitle: "ціноутворення",
+    aboutTitle: "по-іншому",   // substring — "Побудовано по-іншому" or similar
+    footer: { privacy: "Конфіденційність", terms: "Умови" },
     auth: {
       signInTitle: "З поверненням",
       signUpTitle: "Створіть акаунт",
@@ -64,17 +65,17 @@ const LOCALES = [
     code: "ru",
     name: "Russian",
     nav: {
-      services: "Услуги",
+      services: "Функции",
       pricing: "Цены",
       signIn: "Войти",
-      getStarted: "Начать бесплатно",
+      getStarted: "Начать",
     },
-    hero: "Ваш AI-стек под полным управлением",
-    heroCTA: "Начать бесплатно",
-    services: "Что мы строим для вас",
-    pricing: "Прозрачное ценообразование",
-    about: "Мы строим AI-стек",
-    footer: { privacy: "Политика конфиденциальности", terms: "Условия использования" },
+    hero: "Живой за 3 минуты",
+    heroCTA: "Развернуть",
+    howTitle: "Запуск за минуты",
+    pricingTitle: "ценообразование",
+    aboutTitle: "иначе",   // substring — "Построено иначе" or similar
+    footer: { privacy: "Конфиденциальность", terms: "Условия" },
     auth: {
       signInTitle: "С возвращением",
       signUpTitle: "Создайте аккаунт",
@@ -87,9 +88,9 @@ const LOCALES = [
 
 // Strings that must NOT appear on non-English pages (English fallback detection)
 const ENGLISH_ONLY = [
-  "Get started free",
-  "What We Build For You",
-  "Simple, Transparent Pricing",
+  "Deploy free",
+  "Up and running in minutes",
+  "Simple, transparent pricing",
   "Welcome back",
   "Create your account",
   "Forgot your password?",
@@ -102,7 +103,7 @@ LOCALES.forEach((locale) => {
   describe(`12 · Translations — ${locale.name} (${locale.code}) — Landing`, () => {
     beforeEach(() => cy.visit(`/${locale.code}`));
 
-    it(`nav: services link is translated`, () => {
+    it(`nav: services/features link is translated`, () => {
       cy.get("nav").contains(locale.nav.services).should("be.visible");
       cy.snap(`12-${locale.code}-nav-services`);
     });
@@ -132,25 +133,26 @@ LOCALES.forEach((locale) => {
       cy.snap(`12-${locale.code}-hero-cta`);
     });
 
-    it(`services section title is translated`, () => {
-      cy.get("a[href='#services']").first().click({ force: true });
-      cy.contains(locale.services).should("be.visible");
-      cy.snap(`12-${locale.code}-services-title`);
+    it(`how-it-works section title is translated`, () => {
+      // Nav link points to #how now
+      cy.get("a[href='#how']").first().click({ force: true });
+      cy.contains(locale.howTitle).should("be.visible");
+      cy.snap(`12-${locale.code}-how-title`);
     });
 
     it(`pricing section title is translated`, () => {
       cy.get("a[href='#pricing']").first().click({ force: true });
-      cy.contains(locale.pricing).should("be.visible");
+      cy.contains(locale.pricingTitle).should("be.visible");
       cy.snap(`12-${locale.code}-pricing-title`);
     });
 
     it(`about section title is translated`, () => {
       cy.get("a[href='#about']").first().click({ force: true });
-      cy.contains(locale.about).should("be.visible");
+      cy.contains(locale.aboutTitle).should("be.visible");
       cy.snap(`12-${locale.code}-about-title`);
     });
 
-    it(`footer: privacy policy link is translated`, () => {
+    it(`footer: privacy link is translated`, () => {
       cy.contains(locale.footer.privacy).should("be.visible");
       cy.snap(`12-${locale.code}-footer-privacy`);
     });
@@ -207,15 +209,32 @@ LOCALES.forEach((locale) => {
   });
 });
 
-// ─── English baseline: all strings present ────────────────────────────────────
+// ─── English Baseline ─────────────────────────────────────────────────────────
 
 describe("12 · Translations — English (en) — Baseline", () => {
-  it("landing page has all English strings", () => {
+  it("landing page has new English hero text", () => {
     cy.visit("/en");
-    cy.contains("Your AI Stack, Fully Managed").should("be.visible");
-    cy.contains("What We Build For You").should("be.visible");
-    cy.contains("Simple, Transparent Pricing").should("be.visible");
-    cy.snap("12-en-baseline-landing");
+    cy.contains("Your AI Agent").should("be.visible");
+    cy.contains("Live in 3 Minutes").should("be.visible");
+    cy.snap("12-en-baseline-hero");
+  });
+
+  it("landing page has How it works section in English", () => {
+    cy.visit("/en");
+    cy.contains("Up and running in minutes").should("be.visible");
+    cy.snap("12-en-baseline-how");
+  });
+
+  it("landing page has pricing section in English", () => {
+    cy.visit("/en");
+    cy.contains("Simple, transparent pricing").should("be.visible");
+    cy.snap("12-en-baseline-pricing");
+  });
+
+  it("landing page about section in English", () => {
+    cy.visit("/en");
+    cy.contains("Built different").should("be.visible");
+    cy.snap("12-en-baseline-about");
   });
 
   it("sign-in page has English strings", () => {
