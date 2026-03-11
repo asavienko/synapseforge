@@ -159,7 +159,7 @@ describe("16 · Config preview", () => {
       cy.contains(/view config/i).click();
 
       // Config block should appear
-      cy.get("pre").should("be.visible").and("contain", "agents");
+      cy.get("[data-testid='config-preview']").should("be.visible").and("contain", "agents");
 
       // Real key must NOT appear
       cy.get("pre").invoke("text").should("not.match", /sk-realKeyThatShouldBeMasked/);

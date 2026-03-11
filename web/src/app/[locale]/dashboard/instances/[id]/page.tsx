@@ -1789,7 +1789,7 @@ print(resp.choices[0].message.content)`}</pre>
               </button>
             </div>
             {configPreviewText && (
-              <pre className="bg-black/40 border border-white/10 rounded-xl p-4 text-xs text-zinc-300 overflow-x-auto max-h-64 font-mono">
+              <pre data-testid="config-preview" className="bg-black/40 border border-white/10 rounded-xl p-4 text-xs text-zinc-300 overflow-x-auto max-h-64 font-mono">
                 {configPreviewText}
               </pre>
             )}
