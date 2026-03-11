@@ -293,8 +293,8 @@ describe("16 · Bootstrap API", () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe("16 · Provision API — admin", () => {
-  const ADMIN_EMAIL = () => Cypress.env("ADMIN_EMAIL") || "asavienko@gmail.com";
-  const ADMIN_PASS  = () => Cypress.env("ADMIN_PASS")  || "adminpass123";
+  const ADMIN_EMAIL = () => Cypress.env("ADMIN_EMAIL") || "cypress@synapseforge.ai";
+  const ADMIN_PASS  = () => Cypress.env("ADMIN_PASS") || Cypress.env("ADMIN_PASSWORD") || "cypress123";
 
   it("returns 503 when HETZNER_API_KEY is not configured (expected in CI)", () => {
     cy.login(ADMIN_EMAIL(), ADMIN_PASS());

@@ -111,10 +111,11 @@ describe("04 · Instances", () => {
     cy.snap("04-instances-02-create-btn");
   });
 
-  it("opens create instance modal", () => {
+  it("opens create instance wizard", () => {
     cy.contains("New Instance").click();
-    cy.get("[role='dialog'], [data-modal], form").should("be.visible");
-    cy.snap("04-instances-03-modal");
+    // Wizard uses a fixed overlay div, not a dialog role
+    cy.contains("Set Up Your AI Instance").should("be.visible");
+    cy.snap("04-instances-03-wizard");
   });
 
   it("shows the seeded Cypress Agent in the list", () => {

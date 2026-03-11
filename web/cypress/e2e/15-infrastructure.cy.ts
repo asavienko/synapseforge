@@ -230,7 +230,9 @@ describe("15 · Gateway Connectivity", () => {
   });
 
   it("admin can see Connect VPS button for instances without vpsUrl", () => {
-    cy.login(Cypress.env("ADMIN_EMAIL") || "admin@synapseforge.ai", Cypress.env("ADMIN_PASS") || "adminpass123");
+    const adminEmail = Cypress.env("ADMIN_EMAIL") || "cypress@synapseforge.ai";
+    const adminPass  = Cypress.env("ADMIN_PASS") || Cypress.env("ADMIN_PASSWORD") || "cypress123";
+    cy.login(adminEmail, adminPass);
     cy.visit("/en/admin");
     cy.contains("Connect VPS").should("be.visible");
     cy.snap("15-gateway-02-admin-connect-btn");
