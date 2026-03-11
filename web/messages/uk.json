@@ -310,11 +310,11 @@
       "recentActivity": "Остання активність",
       "noActivityYet": "Активності ще немає.",
       "steps": {
-        "onboarding": "Завершити реєстрацію",
-        "managerAssigned": "Менеджер призначений до акаунту",
-        "configureInstance": "Налаштувати AI-інстанцію",
-        "generateKey": "Згенерувати API-ключ",
-        "messageManager": "Написати менеджеру"
+        "accountCreated": "Обліковий запис створено",
+        "addLLMKey": "Додайте ключ провайдера ШІ (OpenAI, Anthropic або OpenRouter)",
+        "deployInstance": "Розгорніть агента в хмарі",
+        "connectChannel": "Підключіть канал (Telegram, Discord або Slack)",
+        "managerAssigned": "Менеджер призначений — ваш особистий гід"
       }
     },
     "messages": {

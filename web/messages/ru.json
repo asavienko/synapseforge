@@ -310,11 +310,11 @@
       "recentActivity": "Последняя активность",
       "noActivityYet": "Активности пока нет.",
       "steps": {
-        "onboarding": "Завершить регистрацию",
-        "managerAssigned": "Менеджер назначен на аккаунт",
-        "configureInstance": "Настроить AI-инстанцию",
-        "generateKey": "Сгенерировать API-ключ",
-        "messageManager": "Написать менеджеру"
+        "accountCreated": "Аккаунт создан",
+        "addLLMKey": "Добавьте ключ провайдера ИИ (OpenAI, Anthropic или OpenRouter)",
+        "deployInstance": "Разверните агента в облаке",
+        "connectChannel": "Подключите канал (Telegram, Discord или Slack)",
+        "managerAssigned": "Менеджер назначен — ваш личный гид"
       }
     },
     "messages": {

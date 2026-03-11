@@ -28,20 +28,64 @@ export default async function DashboardPage() {
   const usagePct = instanceLimit ? Math.min((instanceUsage / instanceLimit) * 100, 100) : 0;
 
   const hasManager = !!user.manager;
-  const hasConfiguredInstance = user.instances.some((i) => i.config);
-  const hasApiKey = hasConfiguredInstance
-    ? await prisma.apiKey.count({ where: { instance: { userId } } }) > 0
+  const firstInstance = user.instances[0] ?? null;
+
+  // Check: has at least one LLM credential across any instance
+  const hasLLMKey = firstInstance
+    ? await prisma.instanceCredential.count({
+        where: {
+          instanceId: firstInstance.id,
+          key: { in: ["openai_api_key", "anthropic_api_key", "openrouter_api_key"] },
+        },
+      }) > 0
     : false;
-  const hasMessage = hasManager
-    ? await prisma.message.count({ where: { userId, senderType: "user" } }) > 0
+
+  // Check: has a deployed (or provisioning) instance
+  const hasDeployedInstance = user.instances.some(
+    (i) => i.provisionStatus === "ready" || i.provisionStatus === "provisioning"
+  );
+  const deployedInstance = user.instances.find(
+    (i) => i.provisionStatus === "ready" || i.provisionStatus === "provisioning"
+  );
+
+  // Check: has a channel integration
+  const hasChannel = firstInstance
+    ? await prisma.instanceCredential.count({
+        where: {
+          instanceId: firstInstance.id,
+          key: { in: ["telegram_bot_token", "discord_bot_token", "slack_app_token", "slack_bot_token"] },
+        },
+      }) > 0
     : false;
 
   const gettingStartedSteps = [
-    { key: "onboarding", done: true, href: null },
-    { key: "managerAssigned", done: hasManager, href: null },
-    { key: "configureInstance", done: hasConfiguredInstance, href: user.instances[0] ? `/dashboard/instances/${user.instances[0].id}` : "/dashboard/instances" },
-    { key: "generateKey", done: hasApiKey, href: user.instances[0] ? `/dashboard/instances/${user.instances[0].id}?tab=keys` : "/dashboard/instances" },
-    { key: "messageManager", done: hasMessage, href: "/dashboard/messages" },
+    {
+      key: "accountCreated",
+      done: true,
+      href: null,
+    },
+    {
+      key: "addLLMKey",
+      done: hasLLMKey,
+      href: firstInstance ? `/dashboard/instances/${firstInstance.id}` : "/dashboard/instances",
+    },
+    {
+      key: "deployInstance",
+      done: hasDeployedInstance,
+      href: (deployedInstance ?? firstInstance)
+        ? `/dashboard/instances/${(deployedInstance ?? firstInstance)!.id}`
+        : "/dashboard/instances",
+    },
+    {
+      key: "connectChannel",
+      done: hasChannel,
+      href: firstInstance ? `/dashboard/instances/${firstInstance.id}` : "/dashboard/instances",
+    },
+    {
+      key: "managerAssigned",
+      done: hasManager,
+      href: null,
+    },
   ];
   const allDone = gettingStartedSteps.every((s) => s.done);
 

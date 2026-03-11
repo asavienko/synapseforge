@@ -310,11 +310,11 @@
       "recentActivity": "Actividad reciente",
       "noActivityYet": "Sin actividad aún.",
       "steps": {
-        "onboarding": "Completar incorporación",
-        "managerAssigned": "Manager asignado a tu cuenta",
-        "configureInstance": "Configurar tu instancia de IA",
-        "generateKey": "Generar una clave API",
-        "messageManager": "Enviar mensaje a tu manager"
+        "accountCreated": "Cuenta creada",
+        "addLLMKey": "Añade tu clave de proveedor de IA (OpenAI, Anthropic o OpenRouter)",
+        "deployInstance": "Despliega tu agente en la nube",
+        "connectChannel": "Conecta un canal (Telegram, Discord o Slack)",
+        "managerAssigned": "Manager asignado — tu guía personal"
       }
     },
     "messages": {
