@@ -30,36 +30,46 @@ export interface CredentialMap {
   gateway_token: string;  // Always set
 }
 
+/**
+ * Generates openclaw.json5 config for a deployed VPS instance.
+ *
+ * Key design decisions:
+ * - LLM API keys go in `env:` so OpenAI/Anthropic SDKs pick them up automatically
+ * - Channel tokens (Telegram, Discord, Slack) are set directly in the channel config
+ * - Gateway token is set directly in gateway.auth.token (not via env)
+ * - dmPolicy is "open" for all channels — business bots must be reachable by customers
+ *   without requiring QR code pairing (pairing is for personal use only)
+ */
 export function generateOpenClawConfig(
   config: InstanceConfig,
   creds: CredentialMap
 ): string {
-  // Build env section
-  const envEntries: string[] = [];
-  if (creds.openai_api_key) envEntries.push(`OPENAI_API_KEY: "${creds.openai_api_key}"`);
-  if (creds.anthropic_api_key) envEntries.push(`ANTHROPIC_API_KEY: "${creds.anthropic_api_key}"`);
-  if (creds.openrouter_api_key) envEntries.push(`OPENROUTER_API_KEY: "${creds.openrouter_api_key}"`);
-  if (creds.telegram_bot_token) envEntries.push(`TELEGRAM_BOT_TOKEN: "${creds.telegram_bot_token}"`);
-  if (creds.discord_bot_token) envEntries.push(`DISCORD_BOT_TOKEN: "${creds.discord_bot_token}"`);
-  if (creds.slack_app_token) envEntries.push(`SLACK_APP_TOKEN: "${creds.slack_app_token}"`);
-  if (creds.slack_bot_token) envEntries.push(`SLACK_BOT_TOKEN: "${creds.slack_bot_token}"`);
-  envEntries.push(`OPENCLAW_GATEWAY_TOKEN: "${creds.gateway_token}"`);
+  // Build env section (LLM API keys only — SDKs read these from env)
+  const envLines: string[] = [];
+  if (creds.openai_api_key) envLines.push(`    OPENAI_API_KEY: "${esc(creds.openai_api_key)}"`);
+  if (creds.anthropic_api_key) envLines.push(`    ANTHROPIC_API_KEY: "${esc(creds.anthropic_api_key)}"`);
+  if (creds.openrouter_api_key) envLines.push(`    OPENROUTER_API_KEY: "${esc(creds.openrouter_api_key)}"`);
 
-  // Build channels section
+  // Build channels section — use direct token values, not env var references
   const channelParts: string[] = [];
 
   if (creds.telegram_bot_token) {
     channelParts.push(`    telegram: {
       enabled: true,
-      botToken: "\${TELEGRAM_BOT_TOKEN}",
-      dmPolicy: "pairing",
+      botToken: "${esc(creds.telegram_bot_token)}",
+      // open: anyone can message the bot (required for deployed business bots)
+      dmPolicy: "open",
+      groups: {
+        // Allow all groups the bot is added to
+        "*": { requireMention: false, groupPolicy: "open" },
+      },
     }`);
   }
 
   if (creds.discord_bot_token) {
     channelParts.push(`    discord: {
       enabled: true,
-      token: "\${DISCORD_BOT_TOKEN}",
+      token: "${esc(creds.discord_bot_token)}",
     }`);
   }
 
@@ -67,40 +77,50 @@ export function generateOpenClawConfig(
     channelParts.push(`    slack: {
       enabled: true,
       mode: "socket",
-      appToken: "\${SLACK_APP_TOKEN}",
-      botToken: "\${SLACK_BOT_TOKEN}",
+      appToken: "${esc(creds.slack_app_token)}",
+      botToken: "${esc(creds.slack_bot_token)}",
+    }`);
+  } else if (creds.slack_app_token) {
+    // OAuth / Web API flow with just app token
+    channelParts.push(`    slack: {
+      enabled: true,
+      mode: "socket",
+      appToken: "${esc(creds.slack_app_token)}",
     }`);
   }
 
-  // Escape special chars in systemPrompt
+  // Escape special chars in systemPrompt for JSON5 string
   const escapedPrompt = config.systemPrompt
     .replace(/\\/g, "\\\\")
     .replace(/"/g, '\\"')
-    .replace(/\n/g, "\\n");
+    .replace(/\n/g, "\\n")
+    .replace(/\r/g, "");
+
+  const envSection = envLines.length > 0
+    ? `  env: {\n${envLines.join(",\n")},\n  },\n\n`
+    : "";
+
+  const channelsSection = channelParts.length > 0
+    ? `  channels: {\n${channelParts.join(",\n")},\n  },\n\n`
+    : "";
 
   return `{
-  env: {
-${envEntries.map(e => `    ${e}`).join(",\n")},
-  },
-
-  agents: {
+${envSection}  agents: {
     defaults: {
-      model: { primary: "${config.model}" },
+      model: { primary: "${esc(config.model)}" },
       systemPrompt: "${escapedPrompt}",
+      temperature: ${config.temperature},
+      maxTokens: ${config.maxTokens},
       thinking: "adaptive",
     },
   },
 
-  channels: {
-${channelParts.join(",\n")},
-  },
-
-  gateway: {
+${channelsSection}  gateway: {
     bind: "lan",
     port: 18789,
     auth: {
       mode: "token",
-      token: "\${OPENCLAW_GATEWAY_TOKEN}",
+      token: "${esc(creds.gateway_token)}",
     },
     http: {
       endpoints: {
@@ -110,6 +130,11 @@ ${channelParts.join(",\n")},
   },
 }
 `;
+}
+
+/** Escape a string value for embedding in a JSON5 quoted string */
+function esc(s: string): string {
+  return s.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
 }
 
 export const TEMPLATE_PROMPTS: Record<InstanceTemplate, string> = {

@@ -1,5 +1,5 @@
--- CreateTable
-CREATE TABLE "ChatMessage" (
+-- CreateTable (IF NOT EXISTS: safe to re-run if applied via prisma db execute)
+CREATE TABLE IF NOT EXISTS "ChatMessage" (
     "id" TEXT NOT NULL,
     "instanceId" TEXT NOT NULL,
     "role" TEXT NOT NULL,
@@ -13,5 +13,9 @@ CREATE TABLE "ChatMessage" (
     CONSTRAINT "ChatMessage_pkey" PRIMARY KEY ("id")
 );
 
--- AddForeignKey
-ALTER TABLE "ChatMessage" ADD CONSTRAINT "ChatMessage_instanceId_fkey" FOREIGN KEY ("instanceId") REFERENCES "AIInstance"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+-- AddForeignKey (skip if constraint already exists)
+DO $$ BEGIN
+  ALTER TABLE "ChatMessage" ADD CONSTRAINT "ChatMessage_instanceId_fkey"
+    FOREIGN KEY ("instanceId") REFERENCES "AIInstance"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
