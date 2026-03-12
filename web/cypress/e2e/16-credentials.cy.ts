@@ -112,7 +112,12 @@ describe("16 · Credentials — add / edit / delete", () => {
       }).as("getCredentials");
 
       cy.visit(`/en/dashboard/instances/${id}`);
+
+      // Intercept credentials load so we can wait for it after clicking the tab
+      cy.intercept("GET", `/api/instances/${id}/credentials`).as("loadCreds");
+
       cy.contains("Credentials").click();
+      cy.wait("@loadCreds");
 
       // New Telegram connect card UI — when credential exists, shows "Disconnect" button
       cy.contains("Disconnect").should("be.visible");
