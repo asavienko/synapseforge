@@ -13,7 +13,12 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { name, password } = body;
+  const { name, password, referralCode } = body as {
+    name: string;
+    password: string;
+    email: string;
+    referralCode?: string;
+  };
   const userEmail: string = body.email;
 
   if (!userEmail || !password || !name) {

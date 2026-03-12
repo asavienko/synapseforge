@@ -78,9 +78,18 @@ export default function SignUpPage() {
         </div>
 
         <div className="glow-border rounded-2xl p-8 bg-white/[0.02]">
+          {/* Referral banner */}
+          {referralCode && (
+            <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3 mb-5">
+              <Gift className="w-4 h-4 text-emerald-400 shrink-0" />
+              <p className="text-sm text-emerald-300">
+                You were invited! You&apos;ll get <span className="font-semibold">1 free month</span> when you upgrade.
+              </p>
+            </div>
+          )}
           {/* Google OAuth — fastest path to sign up */}
           <div className="mb-6">
-            <GoogleButton callbackUrl="/dashboard" />
+            <GoogleButton callbackUrl="/onboarding" referralCode={referralCode ?? undefined} />
           </div>
           <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">
