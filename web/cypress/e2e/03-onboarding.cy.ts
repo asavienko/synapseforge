@@ -205,6 +205,12 @@ describe("03 · Onboarding", () => {
       body: { ok: true, instanceId: "mock-instance-id" },
     }).as("onboardingPost");
 
+    // Intercept validate-key so fake key passes and step advances to 4
+    cy.intercept("POST", "/api/onboarding/validate-key", {
+      statusCode: 200,
+      body: { valid: true },
+    }).as("validateKey");
+
     registerFreshUser();
     cy.get("input[placeholder='Acme Corp']").type("Test Corp");
     cy.get("select").select("Agency");
@@ -216,6 +222,7 @@ describe("03 · Onboarding", () => {
     cy.contains("OpenAI").click();
     cy.get("input[placeholder='sk-...']").type("sk-test-key-1234");
     cy.contains("Continue").click();
+    cy.wait("@validateKey");
 
     // Step 4: skip channel
     cy.contains("Skip").last().click();

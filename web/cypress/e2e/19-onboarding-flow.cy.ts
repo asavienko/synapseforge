@@ -119,6 +119,12 @@ describe("19 · Onboarding — 5-step flow", () => {
 
   // ── 08. Step 3 → Step 4 with key ─────────────────────────────────────────
   it("fills key and navigates to step 4 — channel", () => {
+    // Intercept validate-key so fake key passes and step advances to 4
+    cy.intercept("POST", "/api/onboarding/validate-key", {
+      statusCode: 200,
+      body: { valid: true },
+    }).as("validateKey");
+
     cy.visit("/en/onboarding");
     cy.get("input[placeholder='Acme Corp']").type("TestCo");
     cy.get("select").select("SaaS / Software");
@@ -129,6 +135,7 @@ describe("19 · Onboarding — 5-step flow", () => {
     cy.contains("OpenAI").click();
     cy.get("input[placeholder='sk-...']").type("sk-test-fake-key-abc123");
     cy.get("button").contains("Continue").click();
+    cy.wait("@validateKey");
 
     cy.contains("Connect a channel").should("be.visible");
     cy.contains("Telegram").should("be.visible");
@@ -196,6 +203,12 @@ describe("19 · Onboarding — 5-step flow", () => {
       body: { ok: true, instanceId: "test-instance-id-123" },
     }).as("onboardingPost2");
 
+    // Intercept validate-key so fake key passes and step advances to 4
+    cy.intercept("POST", "/api/onboarding/validate-key", {
+      statusCode: 200,
+      body: { valid: true },
+    }).as("validateKey2");
+
     cy.visit("/en/onboarding");
     cy.get("input[placeholder='Acme Corp']").type("Acme Corp");
     cy.get("select").select("Healthcare");
@@ -206,6 +219,7 @@ describe("19 · Onboarding — 5-step flow", () => {
     cy.contains("OpenAI").click();
     cy.get("input[placeholder='sk-...']").type("sk-test-key");
     cy.get("button").contains("Continue").click();
+    cy.wait("@validateKey2");
 
     cy.get("button").contains("Telegram").first().click();
     cy.get("input").filter("[placeholder*='1234567890']").type("123456:testtoken");

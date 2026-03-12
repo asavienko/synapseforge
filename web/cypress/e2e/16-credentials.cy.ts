@@ -73,19 +73,22 @@ describe("16 · Credentials — add / edit / delete", () => {
       cy.visit(`/en/dashboard/instances/${id}`);
       cy.contains("Credentials").click();
 
-      // Find Telegram Bot Token row and click Add (go to .p-4 row wrapper)
-      cy.contains("Telegram Bot Token")
-        .closest("div.p-4")
-        .find("button")
-        .contains(/add/i)
-        .click();
+      // Intercept the Telegram setup API so we don't need a real bot token
+      cy.intercept("POST", `/api/instances/${id}/setup-telegram`, {
+        statusCode: 200,
+        body: { ok: true, botUsername: "@TestBot", botName: "Test Bot" },
+      }).as("setupTelegram");
+
+      // New Telegram connect card UI — click "Connect Telegram Bot" to open input
+      cy.contains("Connect Telegram Bot").click();
 
       cy.get('input[type="password"]').first().type("1234567890:TestBotTokenABC");
-      cy.contains("button", /save/i).first().click();
+      cy.contains("button", /^connect$/i).click();
 
-      // After save, masked value should appear
-      cy.contains("1234").should("not.exist"); // raw value not shown
-      cy.get('[data-testid="masked-value"], .font-mono').should("exist");
+      cy.wait("@setupTelegram");
+
+      // After connecting, connected state should be visible
+      cy.contains(/connected|@TestBot|Bot connected/i).should("be.visible");
       cy.snap("16-credentials-03-add-success");
     });
   });
@@ -102,17 +105,12 @@ describe("16 · Credentials — add / edit / delete", () => {
 
       cy.visit(`/en/dashboard/instances/${id}`);
       cy.contains("Credentials").click();
-      cy.contains("Telegram Bot Token").should("be.visible");
 
-      // Click trash/remove button in that row
-      cy.contains("Telegram Bot Token")
-        .closest("div.p-4")
-        .find("button[aria-label*='remove'], button svg")
-        .last()
-        .click({ force: true });
+      // New Telegram connect card UI — when credential exists, shows "Disconnect" button
+      cy.contains("Disconnect").should("be.visible");
 
-      // Confirm if browser confirm dialog appears
-      cy.on("window:confirm", () => true);
+      // Click Disconnect to remove the token
+      cy.contains("Disconnect").click();
 
       cy.snap("16-credentials-04-delete");
     });
