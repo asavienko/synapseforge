@@ -283,4 +283,106 @@ export const email = {
       )
     );
   },
+
+  async instanceDown(
+    to: string,
+    userName: string,
+    instanceName: string,
+    instanceId: string,
+    errorDetail?: string
+  ) {
+    const errorBlock = errorDetail
+      ? `<p style="background:#18181b;border-radius:8px;padding:12px 16px;font-family:monospace;font-size:12px;color:#f87171;margin:12px 0;">${errorDetail}</p>`
+      : "";
+    return send(
+      to,
+      `🔴 Agent "${instanceName}" is down`,
+      base(
+        `"${instanceName}" is unreachable`,
+        `<p>Hi ${userName}, your AI agent <strong style="color:#e4e4e7">"${instanceName}"</strong> failed its health check and appears to be down.</p>
+         ${errorBlock}
+         <p>Your manager has been notified and is investigating. You can also check the Infrastructure tab for details.</p>
+         <p>We'll send you another email when it recovers.</p>`,
+        { href: `${APP_URL}/dashboard/instances/${instanceId}`, label: "View Instance →" }
+      )
+    );
+  },
+
+  async instanceDegraded(
+    to: string,
+    userName: string,
+    instanceName: string,
+    instanceId: string,
+    responseMs?: number
+  ) {
+    const perfNote = responseMs != null
+      ? `<p>Response time: <strong style="color:#fbbf24">${responseMs}ms</strong> (elevated — normal is under 2000ms)</p>`
+      : "";
+    return send(
+      to,
+      `🟡 Agent "${instanceName}" is responding slowly`,
+      base(
+        `"${instanceName}" performance degraded`,
+        `<p>Hi ${userName}, your AI agent <strong style="color:#e4e4e7">"${instanceName}"</strong> is responding but slower than normal.</p>
+         ${perfNote}
+         <p>This is usually temporary and self-resolves. If it persists, your manager will investigate.</p>`,
+        { href: `${APP_URL}/dashboard/instances/${instanceId}`, label: "View Instance →" }
+      )
+    );
+  },
+
+  async instanceRecovered(
+    to: string,
+    userName: string,
+    instanceName: string,
+    instanceId: string,
+    downtimeMinutes?: number
+  ) {
+    const timeNote = downtimeMinutes != null && downtimeMinutes > 0
+      ? `<p>Downtime duration: approximately <strong style="color:#e4e4e7">${downtimeMinutes} minute${downtimeMinutes !== 1 ? "s" : ""}</strong>.</p>`
+      : "";
+    return send(
+      to,
+      `✅ Agent "${instanceName}" is back online`,
+      base(
+        `"${instanceName}" has recovered`,
+        `<p>Hi ${userName}, your AI agent <strong style="color:#e4e4e7">"${instanceName}"</strong> is back online and responding normally.</p>
+         ${timeNote}
+         <p>No action is needed on your end.</p>`,
+        { href: `${APP_URL}/dashboard/instances/${instanceId}`, label: "View Instance →" }
+      )
+    );
+  },
+
+  async managerInstanceAlert(
+    managerEmail: string,
+    managerName: string,
+    clientName: string,
+    clientEmail: string,
+    instanceName: string,
+    instanceId: string,
+    newStatus: "down" | "degraded" | "recovered",
+    errorDetail?: string
+  ) {
+    const statusLabel = newStatus === "down" ? "🔴 DOWN"
+      : newStatus === "degraded" ? "🟡 DEGRADED"
+      : "✅ RECOVERED";
+    const errorBlock = errorDetail
+      ? `<p style="background:#18181b;border-radius:8px;padding:12px 16px;font-family:monospace;font-size:12px;color:#f87171;margin:12px 0;">${errorDetail}</p>`
+      : "";
+    return send(
+      managerEmail,
+      `[Client Alert] ${instanceName} is ${newStatus}`,
+      base(
+        `Client instance health alert`,
+        `<p>Hi ${managerName}, one of your client's instances needs attention:</p>
+         ${row("Client", `${clientName} (${clientEmail})`)}
+         ${row("Instance", instanceName)}
+         ${row("Status", `<strong style="color:${newStatus === 'down' ? '#f87171' : newStatus === 'degraded' ? '#fbbf24' : '#34d399'}">${statusLabel}</strong>`)}
+         ${errorBlock}
+         <p>Please investigate and follow up with the client.</p>`,
+        { href: `${APP_URL}/admin`, label: "Open Admin Panel →" }
+      )
+    );
+  },
 };
