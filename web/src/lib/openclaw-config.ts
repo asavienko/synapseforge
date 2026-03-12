@@ -13,6 +13,17 @@ export interface InstanceConfig {
   temperature: number;
   maxTokens: number;
   template?: InstanceTemplate;
+
+  // Structured identity fields (UI-driven)
+  agentName?: string;
+  role?: string;
+  traits?: string[];
+  customInstructions?: string;
+  businessName?: string;
+  businessContext?: string;
+  memoryEnabled?: boolean;
+  thinking?: "adaptive" | "off";
+  language?: string;
 }
 
 export interface CredentialMap {
@@ -49,13 +60,41 @@ export function generateOpenClawConfig(
   if (creds.openrouter_api_key) env.OPENROUTER_API_KEY = creds.openrouter_api_key;
 
   // Build enriched system prompt
-  // Start from template prompt if a template is set, otherwise use the config's systemPrompt
-  let systemPrompt = config.template && TEMPLATE_PROMPTS[config.template]
-    ? TEMPLATE_PROMPTS[config.template]
-    : config.systemPrompt;
+  // Priority: structured fields > template > raw systemPrompt
+  let systemPrompt: string;
 
-  // Append business context from onboarding data if available
-  if (onboardingData) {
+  if (config.agentName || config.role || (config.traits && config.traits.length > 0)) {
+    // Build from structured identity fields
+    const parts: string[] = [];
+    const name = config.agentName || "Assistant";
+    const role = config.role || "a helpful AI assistant";
+    parts.push(`You are ${name}, ${role}.`);
+
+    if (config.traits && config.traits.length > 0) {
+      parts.push(`Personality: ${config.traits.join(", ")}.`);
+    }
+
+    if (config.businessName) {
+      parts.push(`\nBusiness: ${config.businessName}.`);
+    }
+
+    if (config.businessContext) {
+      parts.push(`\n${config.businessContext}`);
+    }
+
+    if (config.customInstructions) {
+      parts.push(`\n\n${config.customInstructions}`);
+    }
+
+    systemPrompt = parts.join(" ");
+  } else if (config.template && TEMPLATE_PROMPTS[config.template]) {
+    systemPrompt = TEMPLATE_PROMPTS[config.template];
+  } else {
+    systemPrompt = config.systemPrompt;
+  }
+
+  // Append onboarding context if available (legacy / fallback)
+  if (onboardingData && !config.agentName && !config.role) {
     const { business, industry, useCase } = onboardingData;
     if (business || industry || useCase) {
       const contextParts: string[] = [];
@@ -117,8 +156,9 @@ export function generateOpenClawConfig(
         systemPrompt,
         temperature: config.temperature,
         maxTokens: config.maxTokens,
-        thinking: "adaptive",
-        memoryEnabled: true,
+        thinking: config.thinking ?? "adaptive",
+        memoryEnabled: config.memoryEnabled ?? true,
+        ...(config.language ? { language: config.language } : {}),
       },
     },
 

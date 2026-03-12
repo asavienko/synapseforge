@@ -35,6 +35,9 @@ interface Instance {
   provisionStatus?: string | null;
   vpsProvider?: string | null;
   telegramBotUsername?: string | null;
+  discordBotUsername?: string | null;
+  slackBotName?: string | null;
+  slackTeamName?: string | null;
 }
 
 interface CredentialRow {
@@ -78,6 +81,16 @@ interface Config {
   systemPrompt: string;
   temperature: number;
   maxTokens: number;
+  // Structured identity fields
+  agentName: string;
+  role: string;
+  traits: string[];
+  customInstructions: string;
+  businessName: string;
+  businessContext: string;
+  memoryEnabled: boolean;
+  thinking: "adaptive" | "off";
+  language: string;
 }
 
 interface ApiKeyRow {
@@ -116,10 +129,19 @@ const MODELS = [
 ];
 
 const DEFAULT_CONFIG: Config = {
-  model: "gpt-4o",
+  model: "openai/gpt-4o",
   systemPrompt: "You are a helpful AI assistant.",
   temperature: 0.7,
   maxTokens: 1024,
+  agentName: "",
+  role: "",
+  traits: [],
+  customInstructions: "",
+  businessName: "",
+  businessContext: "",
+  memoryEnabled: true,
+  thinking: "adaptive",
+  language: "English",
 };
 
 const LOG_ICONS: Record<string, { icon: string; color: string }> = {
@@ -837,6 +859,20 @@ export default function InstanceDetailPage() {
   const [telegramError, setTelegramError] = useState<string | null>(null);
   const [telegramConnected, setTelegramConnected] = useState<{ username: string; name: string } | null>(null);
 
+  // Discord setup state
+  const [discordTokenInput, setDiscordTokenInput] = useState("");
+  const [discordConnecting, setDiscordConnecting] = useState(false);
+  const [discordError, setDiscordError] = useState<string | null>(null);
+  const [discordInviteUrl, setDiscordInviteUrl] = useState<string | null>(null);
+  const [discordConnected, setDiscordConnected] = useState<{ username: string; inviteUrl: string } | null>(null);
+
+  // Slack setup state
+  const [slackAppTokenInput, setSlackAppTokenInput] = useState("");
+  const [slackBotTokenInput, setSlackBotTokenInput] = useState("");
+  const [slackConnecting, setSlackConnecting] = useState(false);
+  const [slackError, setSlackError] = useState<string | null>(null);
+  const [slackConnected, setSlackConnected] = useState<{ botName: string; teamName: string } | null>(null);
+
   // Sync request state
   const [syncRequesting, setSyncRequesting] = useState(false);
 
@@ -1196,6 +1232,55 @@ export default function InstanceDetailPage() {
       showToast(`Telegram connected: ${data.botUsername}`);
     }
     setTelegramConnecting(false);
+  }
+
+  async function setupDiscord(token: string) {
+    if (!token.trim()) return;
+    setDiscordConnecting(true);
+    setDiscordError(null);
+    setDiscordConnected(null);
+    const res = await fetch(`/api/instances/${id}/setup-discord`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: token.trim() }),
+    });
+    const data = await res.json() as { ok?: boolean; botUsername?: string; inviteUrl?: string; error?: string };
+    if (!res.ok || !data.ok) {
+      setDiscordError(data.error ?? "Failed to connect Discord bot");
+    } else {
+      const connected = { username: data.botUsername ?? "", inviteUrl: data.inviteUrl ?? "" };
+      setDiscordConnected(connected);
+      setDiscordInviteUrl(data.inviteUrl ?? null);
+      setDiscordTokenInput("");
+      await loadCredentials();
+      await loadInstance();
+      showToast(`Discord connected: ${data.botUsername}`);
+    }
+    setDiscordConnecting(false);
+  }
+
+  async function setupSlack(appToken: string, botToken: string) {
+    if (!appToken.trim()) return;
+    setSlackConnecting(true);
+    setSlackError(null);
+    setSlackConnected(null);
+    const res = await fetch(`/api/instances/${id}/setup-slack`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ appToken: appToken.trim(), botToken: botToken.trim() }),
+    });
+    const data = await res.json() as { ok?: boolean; botName?: string; teamName?: string; error?: string };
+    if (!res.ok || !data.ok) {
+      setSlackError(data.error ?? "Failed to connect Slack");
+    } else {
+      setSlackConnected({ botName: data.botName ?? "", teamName: data.teamName ?? "" });
+      setSlackAppTokenInput("");
+      setSlackBotTokenInput("");
+      await loadCredentials();
+      await loadInstance();
+      showToast(`Slack connected: ${data.botName} in ${data.teamName}`);
+    }
+    setSlackConnecting(false);
   }
 
   async function requestSync() {
@@ -2022,60 +2107,231 @@ export default function InstanceDetailPage() {
       {/* ── Configuration ── */}
       {tab === "Configuration" && (
         <div className="space-y-5">
-          <div className="glow-border rounded-2xl bg-white/[0.02] p-6 space-y-5">
-            {/* Active template badge */}
-            {instance.config && (() => {
-              try {
-                const c = JSON.parse(instance.config);
-                if (!c.agentTemplateName) return null;
-                return (
-                  <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-violet-500/10 border border-violet-500/20">
-                    <span className="text-xs text-zinc-400">Template</span>
-                    <span className="text-xs font-semibold text-violet-300">{c.agentTemplateName}</span>
-                  </div>
-                );
-              } catch { return null; }
-            })()}
-            {/* Model */}
-            <div>
-              <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-2">AI Model</label>
-              <select value={config.model}
-                onChange={(e) => { setConfig((p) => ({ ...p, model: e.target.value })); setConfigDirty(true); }}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-zinc-200 focus:outline-none focus:border-violet-500 transition-colors">
-                {MODELS.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}
-              </select>
-            </div>
 
-            {/* System Prompt */}
-            <div>
-              <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-2">System Prompt</label>
-              <textarea value={config.systemPrompt} rows={5}
-                onChange={(e) => { setConfig((p) => ({ ...p, systemPrompt: e.target.value })); setConfigDirty(true); }}
-                placeholder={t("config.systemPromptPlaceholder")}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors resize-none" />
+          {/* ── Section 1: Agent Identity ── */}
+          <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+            <div className="p-4 border-b border-white/5">
+              <h3 className="text-sm font-semibold text-white">Agent Identity</h3>
+              <p className="text-xs text-zinc-500 mt-0.5">Who is your agent? Maps to SOUL.md</p>
             </div>
-
-            {/* Temperature */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-xs text-zinc-500 uppercase tracking-wider">Temperature</label>
-                <span className="text-sm font-mono text-violet-300">{config.temperature.toFixed(1)}</span>
+            <div className="p-5 space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-2">Agent Name</label>
+                  <input
+                    type="text"
+                    value={config.agentName}
+                    onChange={(e) => { setConfig((p) => ({ ...p, agentName: e.target.value })); setConfigDirty(true); }}
+                    placeholder="Customer Support Bot"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-2">Role</label>
+                  <input
+                    type="text"
+                    value={config.role}
+                    onChange={(e) => { setConfig((p) => ({ ...p, role: e.target.value })); setConfigDirty(true); }}
+                    placeholder="I help customers resolve issues quickly"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors"
+                  />
+                </div>
               </div>
-              <input type="range" min="0" max="2" step="0.1" value={config.temperature}
-                onChange={(e) => { setConfig((p) => ({ ...p, temperature: parseFloat(e.target.value) })); setConfigDirty(true); }}
-                className="w-full accent-violet-500" />
-              <div className="flex justify-between text-xs text-zinc-600 mt-1">
-                <span>0.0 — Precise</span><span>1.0 — Balanced</span><span>2.0 — Creative</span>
+
+              <div>
+                <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-2">
+                  Personality Traits <span className="text-zinc-600 normal-case">(pick up to 3)</span>
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {["Friendly", "Professional", "Concise", "Formal", "Casual", "Empathetic"].map((trait) => {
+                    const active = config.traits.includes(trait);
+                    return (
+                      <button
+                        key={trait}
+                        onClick={() => {
+                          setConfig((p) => {
+                            const already = p.traits.includes(trait);
+                            if (already) return { ...p, traits: p.traits.filter((t) => t !== trait) };
+                            if (p.traits.length >= 3) return p;
+                            return { ...p, traits: [...p.traits, trait] };
+                          });
+                          setConfigDirty(true);
+                        }}
+                        className={`text-xs px-3 py-1.5 rounded-full border font-medium transition-colors ${
+                          active
+                            ? "bg-violet-600/30 border-violet-500/50 text-violet-200"
+                            : "bg-white/5 border-white/10 text-zinc-500 hover:text-zinc-300 hover:border-white/20"
+                        }`}
+                      >
+                        {active && "✓ "}{trait}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-2">
+                  Custom Instructions <span className="text-zinc-600 normal-case">(optional)</span>
+                </label>
+                <textarea
+                  value={config.customInstructions}
+                  onChange={(e) => { setConfig((p) => ({ ...p, customInstructions: e.target.value })); setConfigDirty(true); }}
+                  placeholder="Always ask for order number before looking up a case. Keep responses under 3 sentences."
+                  rows={3}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors resize-none"
+                />
               </div>
             </div>
+          </div>
 
-            {/* Max Tokens */}
-            <div>
-              <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-2">Max Tokens</label>
-              <input type="number" value={config.maxTokens} min={64} max={32768} step={64}
-                onChange={(e) => { setConfig((p) => ({ ...p, maxTokens: parseInt(e.target.value) || 1024 })); setConfigDirty(true); }}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-zinc-200 focus:outline-none focus:border-violet-500 transition-colors" />
-              <p className="text-xs text-zinc-600 mt-1">Max response length. Higher = longer answers, more cost.</p>
+          {/* ── Section 2: Business Context ── */}
+          <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+            <div className="p-4 border-b border-white/5">
+              <h3 className="text-sm font-semibold text-white">Business Context</h3>
+              <p className="text-xs text-zinc-500 mt-0.5">What should your agent always know? Maps to MEMORY.md</p>
+            </div>
+            <div className="p-5 space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-2">Business Name</label>
+                  <input
+                    type="text"
+                    value={config.businessName}
+                    onChange={(e) => { setConfig((p) => ({ ...p, businessName: e.target.value })); setConfigDirty(true); }}
+                    placeholder="Acme Corp"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-2">Industry</label>
+                  <select
+                    value={config.businessContext.startsWith("Industry:") ? config.businessContext.split("\n")[0].replace("Industry: ", "") : ""}
+                    onChange={(e) => {
+                      const industry = e.target.value;
+                      setConfig((p) => {
+                        // preserve existing context, just update/add industry line
+                        const existing = p.businessContext.replace(/^Industry: .+\n?/, "");
+                        return { ...p, businessContext: industry ? `Industry: ${industry}\n${existing}`.trim() : existing };
+                      });
+                      setConfigDirty(true);
+                    }}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-zinc-200 focus:outline-none focus:border-violet-500 transition-colors"
+                  >
+                    <option value="">Select industry…</option>
+                    {["E-commerce", "Healthcare", "Finance", "Education", "Technology", "Real Estate", "Hospitality", "Legal", "Marketing", "Other"].map((i) => (
+                      <option key={i} value={i}>{i}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-2">Key information your agent should always know</label>
+                <textarea
+                  value={config.businessContext}
+                  onChange={(e) => { setConfig((p) => ({ ...p, businessContext: e.target.value })); setConfigDirty(true); }}
+                  placeholder={"Our return policy is 30 days. Main products: shoes, bags. Support hours: 9am–6pm EST."}
+                  rows={3}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors resize-none"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* ── Section 3: AI Model ── */}
+          <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+            <div className="p-4 border-b border-white/5">
+              <h3 className="text-sm font-semibold text-white">AI Model</h3>
+            </div>
+            <div className="p-5">
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { value: "openai/gpt-4o", label: "GPT-4o", sub: "Best quality", badge: "⚡" },
+                  { value: "anthropic/claude-sonnet-4-6", label: "Claude Sonnet", sub: "Creative", badge: "✦" },
+                  { value: "openrouter/meta-llama/llama-3.3-70b-instruct", label: "Llama 3", sub: "Free tier", badge: "🦙" },
+                ].map(({ value, label, sub, badge }) => {
+                  const active = config.model === value;
+                  return (
+                    <button
+                      key={value}
+                      onClick={() => { setConfig((p) => ({ ...p, model: value })); setConfigDirty(true); }}
+                      className={`flex flex-col items-start gap-1 p-4 rounded-xl border transition-colors text-left ${
+                        active
+                          ? "bg-violet-600/20 border-violet-500/50"
+                          : "bg-white/[0.02] border-white/10 hover:border-white/20"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 w-full">
+                        <span className="text-base leading-none">{badge}</span>
+                        <span className={`ml-auto w-3 h-3 rounded-full border-2 shrink-0 ${
+                          active ? "border-violet-400 bg-violet-400" : "border-zinc-600"
+                        }`} />
+                      </div>
+                      <div className={`text-sm font-semibold mt-1 ${active ? "text-white" : "text-zinc-300"}`}>{label}</div>
+                      <div className="text-xs text-zinc-500">{sub}</div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* ── Section 4: Capabilities ── */}
+          <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+            <div className="p-4 border-b border-white/5">
+              <h3 className="text-sm font-semibold text-white">Capabilities</h3>
+            </div>
+            <div className="divide-y divide-white/5">
+              {/* Memory */}
+              <div className="flex items-center justify-between px-5 py-4">
+                <div>
+                  <div className="text-sm font-medium text-zinc-200">Memory</div>
+                  <div className="text-xs text-zinc-500 mt-0.5">Remembers past conversations</div>
+                </div>
+                <button
+                  onClick={() => { setConfig((p) => ({ ...p, memoryEnabled: !p.memoryEnabled })); setConfigDirty(true); }}
+                  className={`relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors ${
+                    config.memoryEnabled ? "bg-violet-600" : "bg-zinc-700"
+                  }`}
+                >
+                  <span className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                    config.memoryEnabled ? "translate-x-5" : "translate-x-0"
+                  }`} />
+                </button>
+              </div>
+              {/* Smart Thinking */}
+              <div className="flex items-center justify-between px-5 py-4">
+                <div>
+                  <div className="text-sm font-medium text-zinc-200">Smart Thinking</div>
+                  <div className="text-xs text-zinc-500 mt-0.5">Better for complex questions (uses more tokens)</div>
+                </div>
+                <button
+                  onClick={() => { setConfig((p) => ({ ...p, thinking: p.thinking === "adaptive" ? "off" : "adaptive" })); setConfigDirty(true); }}
+                  className={`relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors ${
+                    config.thinking === "adaptive" ? "bg-violet-600" : "bg-zinc-700"
+                  }`}
+                >
+                  <span className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                    config.thinking === "adaptive" ? "translate-x-5" : "translate-x-0"
+                  }`} />
+                </button>
+              </div>
+              {/* Language */}
+              <div className="flex items-center justify-between px-5 py-4">
+                <div>
+                  <div className="text-sm font-medium text-zinc-200">Language</div>
+                  <div className="text-xs text-zinc-500 mt-0.5">Primary language for responses</div>
+                </div>
+                <select
+                  value={config.language}
+                  onChange={(e) => { setConfig((p) => ({ ...p, language: e.target.value })); setConfigDirty(true); }}
+                  className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-zinc-200 focus:outline-none focus:border-violet-500 transition-colors"
+                >
+                  {["English", "Spanish", "French", "German", "Portuguese", "Italian", "Dutch", "Russian", "Chinese", "Japanese", "Arabic"].map((lang) => (
+                    <option key={lang} value={lang}>{lang}</option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
 
@@ -2976,84 +3232,211 @@ print(resp.choices[0].message.content)`}</pre>
             </div>
           </div>
 
-          {/* ── Discord / Slack tokens ── */}
+          {/* ── Discord Connect Card ── */}
           <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
-            <div className="p-4 border-b border-white/5">
-              <h3 className="text-xs text-zinc-500 uppercase tracking-wider">Other Channels</h3>
+            <div className="p-4 border-b border-white/5 flex items-center justify-between">
+              <h3 className="text-xs text-zinc-500 uppercase tracking-wider">Discord</h3>
+              {(credentials.some((c) => c.key === "discord_bot_token") || discordConnected) && (
+                <button
+                  onClick={() => {
+                    deleteCredential("discord_bot_token");
+                    setDiscordConnected(null);
+                    setDiscordInviteUrl(null);
+                    setDiscordError(null);
+                  }}
+                  className="text-xs text-red-400 hover:text-red-300 transition-colors"
+                >
+                  Disconnect
+                </button>
+              )}
             </div>
-            <div className="divide-y divide-white/5">
-              {["discord_bot_token", "slack_app_token", "slack_bot_token"].map((key) => {
-                const existing = credentials.find((c) => c.key === key);
-                const isEditing = editingKey === key;
-                const isAdding = addingKey === key && key !== "telegram_bot_token";
-                return (
-                  <div key={key} className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="text-sm font-medium text-white">{CREDENTIAL_KEY_LABELS[key]}</div>
-                        {existing && !isEditing && (
-                          <div className="text-xs font-mono text-zinc-500 mt-0.5">{existing.maskedValue}</div>
-                        )}
-                        {!existing && (
-                          <div className="text-xs text-zinc-600 mt-0.5">More configuration in manager portal</div>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {existing && !isEditing && (
-                          <>
-                            <button
-                              onClick={() => { setEditingKey(key); setEditValue(""); }}
-                              className="text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 px-2 py-1 rounded-lg transition-colors"
-                            >
-                              {t("credentials.editCredential")}
-                            </button>
-                            <button
-                              onClick={() => deleteCredential(key)}
-                              className="text-zinc-600 hover:text-red-400 transition-colors"
-                            >
-                              <Trash className="w-3.5 h-3.5" />
-                            </button>
-                          </>
-                        )}
-                        {!existing && !isAdding && (
-                          <button
-                            onClick={() => { setAddingKey(key); setAddValue(""); }}
-                            className="text-xs text-zinc-500 hover:text-white bg-white/5 px-2 py-1 rounded-lg transition-colors"
-                          >
-                            {t("credentials.addCredential")}
-                          </button>
-                        )}
-                      </div>
+            <div className="p-5">
+              {/* Connected state */}
+              {(credentials.some((c) => c.key === "discord_bot_token") || discordConnected) ? (
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-xl shrink-0">🎮</div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-sm font-semibold text-white">
+                        {instance.discordBotUsername ?? discordConnected?.username ?? "Bot connected"}
+                      </span>
+                      <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">Connected</span>
                     </div>
-                    {(isEditing || isAdding) && (
-                      <div className="mt-3 flex gap-2">
+                    <p className="text-xs text-zinc-500">Your Discord bot is live and ready to be invited to servers.</p>
+                    {(discordConnected?.inviteUrl || discordInviteUrl) && (
+                      <a
+                        href={discordConnected?.inviteUrl ?? discordInviteUrl ?? "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-2 inline-flex items-center gap-1.5 text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
+                      >
+                        Invite to Server →
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                /* Not connected state */
+                <div>
+                  <div className="flex items-start gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-xl shrink-0">🎮</div>
+                    <div>
+                      <p className="text-sm font-medium text-white mb-0.5">Connect Discord Bot</p>
+                      <p className="text-xs text-zinc-500">
+                        1. Create a bot at{" "}
+                        <a href="https://discord.com/developers/applications" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300">
+                          discord.com/developers
+                        </a>{" "}
+                        2. Copy the bot token
+                      </p>
+                    </div>
+                  </div>
+
+                  {addingKey === "discord_connect" ? (
+                    <div className="space-y-2">
+                      <div className="flex gap-2">
                         <input
                           type="password"
-                          value={isEditing ? editValue : addValue}
-                          onChange={(e) => isEditing ? setEditValue(e.target.value) : setAddValue(e.target.value)}
-                          placeholder="Enter value..."
+                          value={discordTokenInput}
+                          onChange={(e) => { setDiscordTokenInput(e.target.value); setDiscordError(null); }}
+                          placeholder="Bot token…"
                           autoFocus
-                          className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors font-mono"
+                          className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-indigo-500 transition-colors font-mono"
                         />
                         <button
-                          onClick={() => saveCredential(key, isEditing ? editValue : addValue)}
-                          disabled={savingCred || (isEditing ? !editValue : !addValue)}
-                          className="flex items-center gap-1 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 px-3 py-2 rounded-lg text-xs font-semibold text-white transition-colors"
+                          onClick={() => setupDiscord(discordTokenInput)}
+                          disabled={discordConnecting || !discordTokenInput.trim()}
+                          className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 px-4 py-2 rounded-lg text-xs font-semibold text-white transition-colors"
                         >
-                          {savingCred ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}
-                          {t("credentials.saveCredential")}
+                          {discordConnecting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Zap className="w-3 h-3" />}
+                          {discordConnecting ? "Connecting…" : "Connect"}
                         </button>
                         <button
-                          onClick={() => { setEditingKey(null); setAddingKey(null); }}
+                          onClick={() => { setAddingKey(null); setDiscordTokenInput(""); setDiscordError(null); }}
                           className="text-zinc-500 hover:text-white px-2 py-2 rounded-lg border border-white/10 transition-colors"
                         >
                           <X className="w-3 h-3" />
                         </button>
                       </div>
-                    )}
+                      {discordError && (
+                        <p className="text-xs text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-3 py-2">
+                          {discordError}
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => { setAddingKey("discord_connect"); setDiscordError(null); setDiscordTokenInput(""); }}
+                      className="flex items-center gap-2 bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/30 text-indigo-300 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors"
+                    >
+                      <Zap className="w-4 h-4" />
+                      Connect Discord Bot
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* ── Slack Connect Card ── */}
+          <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+            <div className="p-4 border-b border-white/5 flex items-center justify-between">
+              <h3 className="text-xs text-zinc-500 uppercase tracking-wider">Slack</h3>
+              {(credentials.some((c) => c.key === "slack_app_token" || c.key === "slack_bot_token") || slackConnected) && (
+                <button
+                  onClick={async () => {
+                    await deleteCredential("slack_app_token");
+                    await deleteCredential("slack_bot_token");
+                    setSlackConnected(null);
+                    setSlackError(null);
+                  }}
+                  className="text-xs text-red-400 hover:text-red-300 transition-colors"
+                >
+                  Disconnect
+                </button>
+              )}
+            </div>
+            <div className="p-5">
+              {/* Connected state */}
+              {(credentials.some((c) => c.key === "slack_app_token" || c.key === "slack_bot_token") || slackConnected) ? (
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-yellow-500/20 border border-yellow-500/30 flex items-center justify-center text-xl shrink-0">💬</div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-sm font-semibold text-white">
+                        {instance.slackBotName ?? slackConnected?.botName
+                          ? `@${instance.slackBotName ?? slackConnected?.botName}`
+                          : "Bot connected"}
+                        {(instance.slackTeamName ?? slackConnected?.teamName) && (
+                          <span className="text-zinc-400 font-normal"> in {instance.slackTeamName ?? slackConnected?.teamName}</span>
+                        )}
+                      </span>
+                      <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">Connected</span>
+                    </div>
+                    <p className="text-xs text-zinc-500">Your Slack bot is live in the workspace.</p>
                   </div>
-                );
-              })}
+                </div>
+              ) : (
+                /* Not connected state */
+                <div>
+                  <div className="flex items-start gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-xl shrink-0">💬</div>
+                    <div>
+                      <p className="text-sm font-medium text-white mb-0.5">Connect Slack</p>
+                      <p className="text-xs text-zinc-500">Create a Slack app at api.slack.com and copy your App Token and Bot Token.</p>
+                    </div>
+                  </div>
+
+                  {addingKey === "slack_connect" ? (
+                    <div className="space-y-2">
+                      <input
+                        type="password"
+                        value={slackAppTokenInput}
+                        onChange={(e) => { setSlackAppTokenInput(e.target.value); setSlackError(null); }}
+                        placeholder="App Token (xapp-…)"
+                        autoFocus
+                        className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-yellow-500 transition-colors font-mono"
+                      />
+                      <input
+                        type="password"
+                        value={slackBotTokenInput}
+                        onChange={(e) => { setSlackBotTokenInput(e.target.value); setSlackError(null); }}
+                        placeholder="Bot Token (xoxb-…)"
+                        className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-yellow-500 transition-colors font-mono"
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => setupSlack(slackAppTokenInput, slackBotTokenInput)}
+                          disabled={slackConnecting || !slackAppTokenInput.trim()}
+                          className="flex items-center gap-1.5 bg-yellow-600 hover:bg-yellow-500 disabled:opacity-40 px-4 py-2 rounded-lg text-xs font-semibold text-white transition-colors"
+                        >
+                          {slackConnecting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Zap className="w-3 h-3" />}
+                          {slackConnecting ? "Connecting…" : "Connect to Slack"}
+                        </button>
+                        <button
+                          onClick={() => { setAddingKey(null); setSlackAppTokenInput(""); setSlackBotTokenInput(""); setSlackError(null); }}
+                          className="text-zinc-500 hover:text-white px-2 py-2 rounded-lg border border-white/10 transition-colors"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                      {slackError && (
+                        <p className="text-xs text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-3 py-2">
+                          {slackError}
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => { setAddingKey("slack_connect"); setSlackError(null); setSlackAppTokenInput(""); setSlackBotTokenInput(""); }}
+                      className="flex items-center gap-2 bg-yellow-600/20 hover:bg-yellow-600/30 border border-yellow-500/30 text-yellow-300 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors"
+                    >
+                      <Zap className="w-4 h-4" />
+                      Connect Slack
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
