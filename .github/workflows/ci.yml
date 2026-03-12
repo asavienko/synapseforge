@@ -136,10 +136,13 @@ jobs:
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Apply DB migrations (production)
-        run: npx prisma migrate deploy
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+        run: |
+          # vercel pull wrote production env vars to .vercel/.env.production.local
+          # source them so prisma can connect to the production database
+          if [ -f .vercel/.env.production.local ]; then
+            set -a && source .vercel/.env.production.local && set +a
+          fi
+          npx prisma migrate deploy
 
       - name: Build for Vercel
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
