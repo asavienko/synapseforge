@@ -1,0 +1,21 @@
+#!/bin/sh
+
+echo "🔍 Running pre-push checks..."
+
+cd web
+
+echo "⬡ TypeScript type check..."
+npx tsc --noEmit
+if [ $? -ne 0 ]; then
+  echo "❌ TypeScript errors found. Push aborted. Fix type errors first."
+  exit 1
+fi
+
+echo "🏗️  Building Next.js..."
+npm run build
+if [ $? -ne 0 ]; then
+  echo "❌ Build failed. Push aborted. Fix the build first."
+  exit 1
+fi
+
+echo "✅ All checks passed — pushing."
