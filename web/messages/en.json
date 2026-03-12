@@ -3,6 +3,7 @@
     "services": "Features",
     "pricing": "Pricing",
     "about": "About",
+    "contact": "Contact",
     "signIn": "Sign in",
     "getStarted": "Get started"
   },
@@ -127,7 +128,7 @@
       "submit": "Send reset link",
       "backToSignIn": "Back to sign in",
       "successTitle": "Check your inbox",
-      "successDesc": "If that email exists, you'll receive a reset link shortly. Check your spam folder too."
+      "successDesc": "If {email} exists, you'll receive a reset link shortly. Check your spam folder too."
     },
     "resetPassword": {
       "title": "Set new password",
