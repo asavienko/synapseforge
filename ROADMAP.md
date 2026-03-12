@@ -1,5 +1,10 @@
 # SynapseForge — Implementation Roadmap
 
+> **Core product (locked 2026-03-12):** A managed OpenClaw instance per client.
+> SynapseForge deploys OpenClaw, configures it, connects channels, and keeps it running.
+> The dashboard is the management layer. Managers are the human layer.
+> See `plans/USER_STORY_OPENCLAW.md` for the full user journey.
+
 ## Current State (as of 2026-03-09)
 
 ### ✅ Working
@@ -30,47 +35,76 @@
 
 ---
 
-## Phase 1 — Manager System (Next Priority)
+## Phase 1 — OpenClaw Integration Core (Highest Priority)
 
-**Goal:** Make the manager relationship real and functional.
+**Goal:** Make the "managed OpenClaw instance" story real and functional end-to-end.
+See `plans/USER_STORY_OPENCLAW.md` for full detail.
 
-### 1.1 Admin: Manager Assignment
-- Add manager creation UI to `/admin` (create Manager records)
-- Add "Assign manager" dropdown per user in admin panel
-- Show manager name + contact on user's dashboard immediately after assignment
+### 1.0 Onboarding Flow
+- Post-signup redirect to `/onboarding` (not dashboard)
+- Capture: industry, use case, channels wanted, API key provider preference
+- Save to user profile → trigger manager notification
 
-### 1.2 In-App Manager Messaging
+### 1.1 Admin: Manager Assignment & Provisioning
+- Add manager creation UI to `/admin`
+- Assign manager to user from admin panel
+- **"Provision Instance" button** in admin → calls VPS API (Hetzner/DO) → installs OpenClaw → stores instance VPS URL + credentials in DB
+- Manager sees all assigned clients with their instance status
+
+### 1.2 Instance = Real OpenClaw Instance
+- Each instance record stores: `vpsUrl`, `openclaw_gateway_url`, `status`
+- Dashboard instance status is pulled from live OpenClaw health check API, not just a DB toggle
+- Manager can start/stop/restart the OpenClaw gateway via dashboard
+
+### 1.3 Credential Vault (Client API Keys)
+- Client enters their API keys (OpenAI / Anthropic / OpenRouter) in the dashboard
+- Keys encrypted at rest (AES-256), pushed securely to the client's OpenClaw instance config
+- Client keys never visible after save; shown as `****` with a "Reveal" option for the client only
+
+### 1.4 Channel Setup UI
+- Dashboard section: "Connected Channels" per instance
+- **Telegram first:** Client provides bot token → dashboard calls OpenClaw API to configure channel → shows status
+- WhatsApp, Slack, web widget — follow-on
+- Channel health status visible (green/red per channel)
+
+### 1.5 In-App Manager Messaging
 - New `Message` model in Prisma: `id, senderId, recipientId, body, createdAt, read`
-- Sender can be a `User` or a `Manager`
-- New route: `/dashboard/messages`
-- Thread-style UI — one conversation per user↔manager pair
-- Manager side: a separate `/manager` portal (or extend `/admin`) to view and reply to all client messages
-- Email notification when a new message arrives (via Resend or Nodemailer)
-
-### 1.3 Manager Portal
-- `/manager` — protected by a `Manager` session (separate login or role flag)
-- View all assigned clients
-- See their instances, plan, status
-- Send/receive messages per client
-- Mark instances as needing attention
+- New route: `/dashboard/messages` — thread-style between client and manager
+- Manager portal (`/manager`) — view all clients, their instances, reply to messages
+- Email notification when new message arrives
 
 ---
 
-## Phase 2 — Instance Configuration & Lifecycle
+## Phase 2 — Instance Observability & Health
 
-**Goal:** Make instances more than just DB records.
+**Goal:** Managers and clients can see what's happening with every instance.
 
-### 2.1 Instance Config UI
-- Expose the `config` JSON field in the instance detail page
-- Schema: `{ model, systemPrompt, temperature, maxTokens, integrations[] }`
-- Manager can edit config; user can view it
-- "Request config change" button for users → notifies manager
+### 2.1 Real-Time Instance Status
+- Poll OpenClaw gateway health endpoint every 60s
+- Show: uptime, last seen, response time
+- Alert manager (email/Telegram) when health check fails 3x
 
-### 2.2 Instance Credentials / API Access
-- Generate an API key per instance (`ApiKey` model)
-- Show key on instance detail page (masked, reveal on click)
-- Copy button + "Regenerate" option
-- Docs snippet showing how to call the instance
+### 2.2 Instance Logs
+- Fetch recent logs from OpenClaw instance via SSH or API
+- Show in a scrollable log view on instance detail page
+- Manager can see errors, channel events, agent activity
+
+### 2.3 Usage & Token Tracking
+- Track messages per instance (stored in DB, incremented via webhook or polling)
+- Token usage per instance (from OpenClaw usage stats or model API)
+- Show on dashboard: messages today, this week, this month
+- Plan limit enforcement based on actual usage
+
+### 2.4 Snapshot & Rollback (Restic)
+- Automated hourly snapshots of `~/.openclaw/` on each VPS (via Restic → Backblaze B2)
+- Snapshot tagged `healthy` when health check passes
+- Manager can trigger rollback from admin panel → restores last healthy snapshot
+- Auto-rollback option: if health fails N times, auto-restore + alert
+
+### 2.5 Instance Credentials / API Access (for developers)
+- Generate an API key per instance for external access
+- Docs snippet showing how to call the instance API
+- Rate limiting per API key
 
 ### 2.3 Instance Activity Log
 - `ActivityLog` model: `instanceId, event, details, createdAt`
@@ -176,12 +210,16 @@
 
 ## Immediate Next Steps (Priority Order)
 
-1. **Manager assignment in admin** — so real users can see their manager
-2. **In-app messaging** — core product differentiator
-3. **Welcome/assignment email** — notify user when manager is assigned
-4. **Onboarding flow** — capture intent at sign-up
-5. **Forgot password** — table stakes for any real product
-6. **Instance config UI** — make instances useful
+**The goal: one complete end-to-end flow before adding anything else.**
+
+1. **Onboarding flow** — capture business context at signup → manager notification
+2. **Manager assignment in admin** — assign a manager to a user with one click
+3. **OpenClaw provisioning in admin** — "Provision Instance" → VPS spun up → OpenClaw installed → instance URL saved
+4. **Real instance status** — pull from OpenClaw health check API, not DB toggle
+5. **Credential vault** — client API keys encrypted + pushed to instance
+6. **Telegram channel setup** — first channel connection through dashboard UI
+7. **In-app messaging** — manager ↔ client conversation
+8. **Welcome email** — triggered on signup + on manager assignment
 
 ---
 
@@ -189,10 +227,14 @@
 
 | Area | Current | Planned |
 |---|---|---|
+| AI Runtime | None (DB stub) | **OpenClaw** (one instance per client on dedicated VPS) |
 | DB | SQLite (dev) | PostgreSQL (production) |
+| VPS provider | None | Hetzner CX22 (~€4/mo) or DigitalOcean Basic ($6/mo) |
+| Provisioning | Manual | Shell script → automated via dashboard API call |
+| Backups | None | Restic → Backblaze B2 (hourly, per instance) |
 | Email | None | Resend (transactional) |
 | Payments | None | Stripe |
 | Rate limiting | None | Upstash Redis |
 | File storage | None | Cloudflare R2 or S3 |
-| Hosting | Local dev | Vercel (web) + managed infra |
-| Monitoring | None | Sentry + Uptime robot |
+| Hosting | Local dev | Vercel (web) + per-client VPS |
+| Monitoring | None | Sentry + UptimeRobot per instance |
