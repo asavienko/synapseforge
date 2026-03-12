@@ -326,6 +326,7 @@ describe("18 · Deploy Tab", () => {
   });
 
   // Cleanup: restore instance to known state so later specs aren't affected
+  // (runs even if test 12 didn't delete it)
   after(() => {
     cy.login(EMAIL(), PASS());
     cy.wrap(null).then(() => {
