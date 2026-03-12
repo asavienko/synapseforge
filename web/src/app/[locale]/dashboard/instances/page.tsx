@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { Bot, Plus, Loader2, X } from "lucide-react";
-import { STATUS_COLORS, INSTANCE_TYPES } from "@/lib/utils";
+import { STATUS_COLORS, INSTANCE_TYPES, formatRelativeTime } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { InstanceSetupWizard } from "@/components/InstanceSetupWizard";
 
@@ -16,32 +16,41 @@ interface Instance {
   description?: string;
   createdAt: string;
   healthStatus?: string | null;
+  lastCheckedAt?: string | null;
+  provisionStatus?: string | null;
 }
 
-function HealthDot({ healthStatus }: { healthStatus?: string | null }) {
+function HealthDot({ healthStatus, lastCheckedAt }: { healthStatus?: string | null; lastCheckedAt?: string | null }) {
+  const tooltip = lastCheckedAt
+    ? `Last checked: ${formatRelativeTime(lastCheckedAt)}`
+    : "No health data yet";
+
   if (healthStatus === "healthy") {
     return (
-      <span className="inline-flex items-center gap-1 text-xs text-zinc-500">
-        <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
+      <span title={tooltip} className="inline-flex items-center gap-1 text-xs text-zinc-500 cursor-default">
+        <span className="relative inline-flex w-2 h-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-50" />
+          <span className="relative inline-flex rounded-full w-2 h-2 bg-emerald-400" />
+        </span>
       </span>
     );
   }
   if (healthStatus === "degraded") {
     return (
-      <span className="inline-flex items-center gap-1 text-xs text-zinc-500">
+      <span title={tooltip} className="inline-flex items-center gap-1 text-xs text-zinc-500 cursor-default">
         <span className="w-2 h-2 rounded-full bg-yellow-400 inline-block" />
       </span>
     );
   }
   if (healthStatus === "down") {
     return (
-      <span className="inline-flex items-center gap-1 text-xs text-zinc-500">
-        <span className="w-2 h-2 rounded-full bg-red-500 inline-block animate-pulse" />
+      <span title={tooltip} className="inline-flex items-center gap-1 text-xs text-zinc-500 cursor-default">
+        <span className="w-2 h-2 rounded-full bg-red-500 inline-block" />
       </span>
     );
   }
   return (
-    <span title="No health data yet" className="inline-flex items-center gap-1 text-xs text-zinc-500">
+    <span title={tooltip} className="inline-flex items-center gap-1 text-xs text-zinc-500 cursor-default">
       <span className="w-2 h-2 rounded-full bg-zinc-600 inline-block" />
     </span>
   );

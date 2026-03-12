@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { encrypt, maskValue } from "@/lib/crypto";
+import { encrypt, decrypt, maskValue } from "@/lib/crypto";
+import { sshSyncConfig } from "@/lib/ssh-sync";
 
 export const ALLOWED_CREDENTIAL_KEYS = [
   "openai_api_key",
@@ -147,11 +148,50 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     data: { configSynced: false },
   });
 
-  // If a VPS is already provisioned, trigger a restart signal (non-blocking, fire & forget)
-  if (updatedInstance.vpsUrl && updatedInstance.gatewayToken) {
-    const vpsUrl = updatedInstance.vpsUrl;
-    const gatewayToken = updatedInstance.gatewayToken;
+  // If a VPS is provisioned and SSH key is available, attempt immediate config sync (non-blocking)
+  if (updatedInstance.vpsUrl && updatedInstance.gatewayToken && updatedInstance.sshPrivateKey) {
+    const appUrl = process.env.NEXTAUTH_URL ?? process.env.APP_URL ?? "";
+    const { vpsUrl, gatewayToken, sshPrivateKey } = updatedInstance;
+
     // Fire and forget — don't await, don't block the user response
+    Promise.resolve().then(async () => {
+      try {
+        const decryptedKey = decrypt(sshPrivateKey);
+        const result = await sshSyncConfig({
+          privateKey: decryptedKey,
+          vpsUrl,
+          gatewayToken,
+          appUrl,
+          instanceId: id,
+        });
+        if (result.success) {
+          await prisma.aIInstance.update({
+            where: { id },
+            data: { configSynced: true, syncRequested: false },
+          });
+          await prisma.activityLog.create({
+            data: {
+              instanceId: id,
+              event: "config_synced",
+              details: "Config auto-synced after credential save",
+            },
+          });
+        } else {
+          await prisma.activityLog.create({
+            data: {
+              instanceId: id,
+              event: "config_sync_requested",
+              details: `Auto-sync after credential save failed (${result.error ?? "unknown"}) — queued`,
+            },
+          });
+        }
+      } catch {
+        // Silently ignore — VPS will pick up on next cron poll
+      }
+    });
+  } else if (updatedInstance.vpsUrl && updatedInstance.gatewayToken) {
+    // No SSH key — just ping the wake hook as before (non-blocking)
+    const { vpsUrl, gatewayToken } = updatedInstance;
     fetch(`${vpsUrl}/hooks/wake`, {
       method: "POST",
       headers: {

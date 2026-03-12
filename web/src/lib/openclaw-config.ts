@@ -39,13 +39,41 @@ export interface CredentialMap {
  */
 export function generateOpenClawConfig(
   config: InstanceConfig,
-  creds: CredentialMap
+  creds: CredentialMap,
+  onboardingData?: { business?: string; industry?: string; useCase?: string }
 ): string {
   // Build env section for LLM keys
   const env: Record<string, string> = {};
   if (creds.openai_api_key) env.OPENAI_API_KEY = creds.openai_api_key;
   if (creds.anthropic_api_key) env.ANTHROPIC_API_KEY = creds.anthropic_api_key;
   if (creds.openrouter_api_key) env.OPENROUTER_API_KEY = creds.openrouter_api_key;
+
+  // Build enriched system prompt
+  // Start from template prompt if a template is set, otherwise use the config's systemPrompt
+  let systemPrompt = config.template && TEMPLATE_PROMPTS[config.template]
+    ? TEMPLATE_PROMPTS[config.template]
+    : config.systemPrompt;
+
+  // Append business context from onboarding data if available
+  if (onboardingData) {
+    const { business, industry, useCase } = onboardingData;
+    if (business || industry || useCase) {
+      const contextParts: string[] = [];
+      if (business && industry) {
+        contextParts.push(`You are a helpful AI assistant for ${business}, a ${industry} company.`);
+      } else if (business) {
+        contextParts.push(`You are a helpful AI assistant for ${business}.`);
+      } else if (industry) {
+        contextParts.push(`You are a helpful AI assistant for a ${industry} company.`);
+      }
+      if (useCase) {
+        contextParts.push(`Your primary role is ${useCase}.`);
+      }
+      if (contextParts.length > 0) {
+        systemPrompt = contextParts.join(" ") + "\n\n" + systemPrompt;
+      }
+    }
+  }
 
   // Build channels section
   const channels: Record<string, unknown> = {};
@@ -86,10 +114,11 @@ export function generateOpenClawConfig(
     agents: {
       defaults: {
         model: { primary: config.model },
-        systemPrompt: config.systemPrompt,
+        systemPrompt,
         temperature: config.temperature,
         maxTokens: config.maxTokens,
         thinking: "adaptive",
+        memoryEnabled: true,
       },
     },
 

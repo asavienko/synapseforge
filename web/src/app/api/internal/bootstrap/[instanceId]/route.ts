@@ -18,7 +18,10 @@ export async function GET(
 
   const instance = await prisma.aIInstance.findUnique({
     where: { id: instanceId },
-    include: { credentials: true },
+    include: {
+      credentials: true,
+      user: { select: { onboardingData: true } },
+    },
   });
 
   if (!instance) {
@@ -77,8 +80,17 @@ export async function GET(
     gateway_token: gatewayToken,
   };
 
+  // Parse onboarding data from user profile
+  let onboardingData: { business?: string; industry?: string; useCase?: string } | undefined;
+  try {
+    const raw = (instance.user as { onboardingData?: string | null } | null)?.onboardingData;
+    if (raw) onboardingData = JSON.parse(raw);
+  } catch {
+    // ignore parse errors
+  }
+
   // Generate config
-  const configContent = generateOpenClawConfig(instanceConfig, fullCredMap);
+  const configContent = generateOpenClawConfig(instanceConfig, fullCredMap, onboardingData);
 
   // Mark bootstrap token as used
   await prisma.aIInstance.update({

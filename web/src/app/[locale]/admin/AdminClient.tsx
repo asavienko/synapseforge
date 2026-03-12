@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Users, Bot, Activity, AlertCircle, Plus, X, Shield, ChevronDown, MessageCircle, Send, Loader2, Server, Link, Unlink, CheckCircle2, Rocket, RefreshCw, Copy, Check, Gift, DollarSign, BarChart2, TrendingUp } from "lucide-react";
 import { STATUS_COLORS, PLANS, formatDate, formatRelativeTime } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import { ProvisioningWizard } from "@/components/ProvisioningWizard";
 
 interface UserRow {
   id: string;
@@ -18,6 +19,7 @@ interface UserRow {
     id: string;
     name: string;
     type: string;
+    tier: string;
     status: string;
     healthStatus?: string | null;
     vpsUrl: string | null;
@@ -127,6 +129,31 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
 
   // Gateway modal
   const [gatewayModal, setGatewayModal] = useState<GatewayModal | null>(null);
+
+  // Provisioning Wizard
+  interface WizardState {
+    instanceId: string;
+    instanceName: string;
+    tier: string;
+    provisionStatus: string | null;
+  }
+  const [wizardState, setWizardState] = useState<WizardState | null>(null);
+
+  function openWizard(instanceId: string, instanceName: string, tier: string, provisionStatus: string | null) {
+    setWizardState({ instanceId, instanceName, tier, provisionStatus });
+  }
+
+  function closeWizard(instanceId?: string, newStatus?: string) {
+    if (instanceId && newStatus) {
+      setUsers((prev) => prev.map((u) => ({
+        ...u,
+        instances: u.instances.map((i) =>
+          i.id === instanceId ? { ...i, provisionStatus: newStatus } : i
+        ),
+      })));
+    }
+    setWizardState(null);
+  }
 
   // Provision & sync state
   const [provisioningId, setProvisioningId] = useState<string | null>(null);
@@ -731,20 +758,14 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                                   >
                                     <Link className="w-3 h-3" /> Connect VPS
                                   </button>
-                                  {!inst.provisionStatus && (
-                                    <button
-                                      onClick={() => provisionVps(inst.id)}
-                                      disabled={provisioningId === inst.id}
-                                      className="flex items-center gap-1 text-xs text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 px-2 py-0.5 rounded-lg transition-colors"
-                                      title="Auto-provision Hetzner VPS"
-                                    >
-                                      {provisioningId === inst.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Rocket className="w-3 h-3" />}
-                                      Provision VPS
-                                    </button>
-                                  )}
-                                  {inst.provisionStatus && (
-                                    <span className="text-xs text-zinc-500 italic">{inst.provisionStatus}</span>
-                                  )}
+                                  <button
+                                    onClick={() => openWizard(inst.id, inst.name, inst.tier, inst.provisionStatus ?? null)}
+                                    className="flex items-center gap-1 text-xs text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 px-2 py-0.5 rounded-lg transition-colors"
+                                    title="Provision Hetzner VPS"
+                                  >
+                                    <Rocket className="w-3 h-3" />
+                                    {inst.provisionStatus ? `VPS (${inst.provisionStatus})` : "Provision VPS"}
+                                  </button>
                                 </>
                               )}
                             </div>
@@ -1219,6 +1240,19 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
             </div>
           </div>
         </div>
+      )}
+
+      {/* Provisioning Wizard */}
+      {wizardState && (
+        <ProvisioningWizard
+          instanceId={wizardState.instanceId}
+          instanceName={wizardState.instanceName}
+          tier={wizardState.tier}
+          provisionStatus={wizardState.provisionStatus}
+          provisionEndpoint={`/api/admin/instances/${wizardState.instanceId}/provision`}
+          onClose={() => closeWizard()}
+          onDone={(status) => closeWizard(wizardState.instanceId, status)}
+        />
       )}
     </div>
   );

@@ -77,6 +77,7 @@ export default async function AdminPage() {
           id: i.id,
           name: i.name,
           type: i.type,
+          tier: i.tier,
           status: i.status,
           healthStatus: i.healthStatus ?? null,
           vpsUrl: i.vpsUrl ?? null,

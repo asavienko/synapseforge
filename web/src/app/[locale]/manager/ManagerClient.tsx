@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, MessageCircle, Bot, Send, Loader2, X, Shield, Activity, Server, AlertTriangle, ExternalLink } from "lucide-react";
+import { Users, MessageCircle, Bot, Send, Loader2, X, Shield, Activity, Server, AlertTriangle, ExternalLink, Rocket } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { STATUS_COLORS, PLANS, formatDate, formatRelativeTime } from "@/lib/utils";
+import { ProvisioningWizard } from "@/components/ProvisioningWizard";
 
 interface Client {
   id: string;
@@ -68,6 +69,38 @@ export function ManagerClient({ manager, clients: initialClients }: {
   // Instances tab state
   const [instanceClients, setInstanceClients] = useState<ClientWithInstances[]>([]);
   const [instancesLoading, setInstancesLoading] = useState(false);
+
+  // Provisioning wizard
+  interface WizardState {
+    instanceId: string;
+    instanceName: string;
+    tier: string;
+    provisionStatus: string | null;
+  }
+  const [wizardState, setWizardState] = useState<WizardState | null>(null);
+
+  function openWizard(inst: ManagedInstance) {
+    setWizardState({
+      instanceId: inst.id,
+      instanceName: inst.name,
+      tier: inst.tier,
+      provisionStatus: inst.provisionStatus ?? null,
+    });
+  }
+
+  function closeWizard(instanceId?: string, newStatus?: string) {
+    if (instanceId && newStatus) {
+      setInstanceClients((prev) =>
+        prev.map((c) => ({
+          ...c,
+          instances: c.instances.map((i) =>
+            i.id === instanceId ? { ...i, provisionStatus: newStatus } : i
+          ),
+        }))
+      );
+    }
+    setWizardState(null);
+  }
 
   const totalUnread = clients.reduce((s, c) => s + c.unreadMessages, 0);
   const running = clients.flatMap((c) => c.instances).filter((i) => i.status === "running").length;

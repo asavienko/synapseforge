@@ -938,9 +938,14 @@ export default function InstanceDetailPage() {
 
   async function requestSync() {
     setSyncRequesting(true);
-    const res = await fetch(`/api/instances/${id}/sync-request`, { method: "POST" });
-    if (res.ok) {
-      showToast("Sync requested — your config will update within 5 minutes");
+    const res = await fetch(`/api/instances/${id}/sync-now`, { method: "POST" });
+    const data = await res.json().catch(() => ({})) as { ok?: boolean; synced?: boolean; fallback?: boolean; message?: string };
+    if (res.ok && data.ok) {
+      if (data.synced) {
+        showToast(data.message ?? "Config synced! Bot restarting...", "success");
+      } else {
+        showToast(data.message ?? "Sync queued — bot will update within 5 minutes", "success");
+      }
       await loadInstance();
     } else {
       showToast("Failed to request sync", "error");

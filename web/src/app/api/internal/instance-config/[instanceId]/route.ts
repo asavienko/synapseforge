@@ -31,7 +31,10 @@ export async function GET(
   const { instanceId } = await params;
   const instance = await prisma.aIInstance.findUnique({
     where: { id: instanceId },
-    include: { credentials: true },
+    include: {
+      credentials: true,
+      user: { select: { onboardingData: true } },
+    },
   });
 
   if (!instance) return new NextResponse("Not found", { status: 404 });
@@ -75,7 +78,16 @@ export async function GET(
     gateway_token: instance.gatewayToken,
   };
 
-  const configContent = generateOpenClawConfig(instanceConfig, fullCredMap);
+  // Parse onboarding data from user profile
+  let onboardingData: { business?: string; industry?: string; useCase?: string } | undefined;
+  try {
+    const raw = (instance.user as { onboardingData?: string | null } | null)?.onboardingData;
+    if (raw) onboardingData = JSON.parse(raw);
+  } catch {
+    // ignore parse errors
+  }
+
+  const configContent = generateOpenClawConfig(instanceConfig, fullCredMap, onboardingData);
   const configHash = createHash("sha256").update(configContent).digest("hex").slice(0, 16);
 
   // Mark as synced now that VPS fetched latest
