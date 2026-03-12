@@ -384,6 +384,15 @@ function DeployTab({
                 <div className="text-zinc-300 font-mono text-xs">
                   {instance.hasGateway ? "Connected" : "—"}
                 </div>
+                {instance.tier && (
+                  <div className="text-xs text-zinc-600 mt-1">
+                    {{
+                      minimal: "cx22 · 2 vCPU · 4 GB",
+                      standard: "cx32 · 4 vCPU · 8 GB",
+                      pro: "cx42 · 8 vCPU · 16 GB",
+                    }[instance.tier] ?? instance.tier}
+                  </div>
+                )}
               </div>
               <div>
                 <div className="text-xs text-zinc-500 uppercase tracking-wider mb-1">{t("deploy.channelsLabel")}</div>

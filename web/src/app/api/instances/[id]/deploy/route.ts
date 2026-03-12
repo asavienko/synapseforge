@@ -63,6 +63,17 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
 
   const cloudInit = generateCloudInit({ instanceId: id, gatewayToken, appUrl, bootstrapToken, sfApiKey });
 
+  // Map instance tier to Hetzner server type.
+  // minimal (free plan)    → cx22: 2 vCPU, 4 GB RAM  (~$3.29/mo)
+  // standard (pro plan)    → cx32: 4 vCPU, 8 GB RAM  (~$6.49/mo)
+  // pro (enterprise plan)  → cx42: 8 vCPU, 16 GB RAM (~$13.49/mo)
+  const TIER_TO_SERVER_TYPE: Record<string, string> = {
+    minimal: "cx22",
+    standard: "cx32",
+    pro: "cx42",
+  };
+  const serverType = TIER_TO_SERVER_TYPE[instance.tier] ?? "cx22";
+
   const serverName = `sf-${id.slice(0, 8)}`;
   let hetznerRes: Response;
   try {
@@ -74,7 +85,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       },
       body: JSON.stringify({
         name: serverName,
-        server_type: "cx22",
+        server_type: serverType,
         image: "ubuntu-22.04",
         location: "nbg1",
         user_data: cloudInit,
@@ -119,9 +130,9 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     data: {
       instanceId: id,
       event: "created",
-      details: `Deploying to cloud (server ${serverId}, ip ${ip || "pending"})…`,
+      details: `Deploying to cloud (server ${serverId}, type ${serverType}, ip ${ip || "pending"})…`,
     },
   });
 
-  return NextResponse.json({ ok: true, status: "provisioning", serverId, ip });
+  return NextResponse.json({ ok: true, status: "provisioning", serverId, ip, serverType });
 }

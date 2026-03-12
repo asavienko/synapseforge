@@ -263,4 +263,24 @@ export const email = {
       )
     );
   },
+
+  // ── Infrastructure ────────────────────────────────────────────────────────
+
+  async instanceProvisionFailed(
+    to: string,
+    userName: string,
+    instanceName: string
+  ) {
+    return send(
+      to,
+      `⚠️ Deployment failed for "${instanceName}"`,
+      base(
+        `Deployment timed out for "${instanceName}"`,
+        `<p>Hi ${userName}, the cloud deployment for your AI agent <strong style="color:#e4e4e7">"${instanceName}"</strong> did not complete within the expected time.</p>
+         <p>This can happen due to a temporary cloud provider issue or a configuration problem. Please try deploying again — it usually succeeds on retry.</p>
+         <p>If the problem persists, reply to this email and we'll sort it out for you.</p>`,
+        { href: `${APP_URL}/dashboard/instances`, label: "Retry Deployment →" }
+      )
+    );
+  },
 };
