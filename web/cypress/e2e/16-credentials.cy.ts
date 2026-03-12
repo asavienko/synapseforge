@@ -352,7 +352,9 @@ describe("16 · Instance Setup Wizard", () => {
   it("can navigate from Step 1 to Step 2", () => {
     cy.visit("/en/dashboard/instances");
     cy.contains("New Instance").click();
-    // Fill name on step 1
+    // Select a template first (required by the template gallery UX)
+    cy.contains(/customer support bot|custom agent/i).first().click();
+    // Fill name on step 1 (input appears after template selection)
     cy.get("input[placeholder*='Bot'], input[placeholder*='bot'], input[name='name'], input[type='text']")
       .first()
       .clear()
@@ -366,6 +368,9 @@ describe("16 · Instance Setup Wizard", () => {
   it("can navigate to Step 3 (Channels)", () => {
     cy.visit("/en/dashboard/instances");
     cy.contains("New Instance").click();
+    // Select a template first (required by the template gallery UX)
+    cy.contains(/customer support bot|custom agent/i).first().click();
+    // Fill name on step 1 (input appears after template selection)
     cy.get("input[type='text']").first().clear().type("Channel Test Bot");
     cy.contains("button", /next/i).click();
     // Step 2: AI Provider — must select a provider and enter an API key before Next is enabled
