@@ -79,24 +79,35 @@ function VerifyContent() {
 
   // Error state
   const isExpired = errorType === "expired";
+  const isMissing = errorType === "missing";
   return (
     <div className="glow-border rounded-2xl p-8 bg-white/[0.02] text-center">
       <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
       <h2 className="text-xl font-semibold text-white mb-2">
-        {isExpired ? "This link has expired" : "Verification failed"}
+        {isExpired ? "This link has expired" : isMissing ? "Invalid link" : "Link not found"}
       </h2>
       <p className="text-zinc-400 text-sm mb-6">
         {isExpired
           ? "Verification links expire after 24 hours."
-          : "This link is invalid or has already been used."}
+          : isMissing
+          ? "The verification link is missing or malformed."
+          : "This link was not found or has already been used."}
       </p>
-      <Link
-        href="/dashboard"
-        className="inline-flex items-center gap-2 text-violet-400 hover:text-violet-300 text-sm transition-colors"
-      >
-        <RefreshCcw className="w-3.5 h-3.5" />
-        Request a new one →
-      </Link>
+      <div className="flex flex-col items-center gap-3">
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-2 text-violet-400 hover:text-violet-300 text-sm transition-colors"
+        >
+          <RefreshCcw className="w-3.5 h-3.5" />
+          Request a new one →
+        </Link>
+        <Link
+          href="/dashboard"
+          className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
+        >
+          Go to dashboard →
+        </Link>
+      </div>
     </div>
   );
 }
