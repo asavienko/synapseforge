@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
-import { Zap, LayoutDashboard, Bot, Settings, LogOut, Menu, X, MessageCircle, CreditCard } from "lucide-react";
+import { Zap, LayoutDashboard, Bot, Settings, LogOut, Menu, X, MessageCircle, CreditCard, Shield, Users } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
@@ -10,6 +10,8 @@ import { useTranslations } from "next-intl";
 interface SidebarProps {
   userName?: string | null;
   userEmail?: string | null;
+  isAdmin?: boolean;
+  isManager?: boolean;
 }
 
 function NavItem({ href, icon: Icon, label, badge, onClick }: { href: string; icon: React.ElementType; label: string; badge?: number; onClick?: () => void }) {
@@ -38,7 +40,7 @@ function NavItem({ href, icon: Icon, label, badge, onClick }: { href: string; ic
   );
 }
 
-function SidebarContent({ userName, userEmail, unreadCount, onClose }: SidebarProps & { unreadCount: number; onClose?: () => void }) {
+function SidebarContent({ userName, userEmail, unreadCount, isAdmin, isManager, onClose }: SidebarProps & { unreadCount: number; onClose?: () => void }) {
   const t = useTranslations("dashboard.nav");
 
   return (
@@ -61,6 +63,16 @@ function SidebarContent({ userName, userEmail, unreadCount, onClose }: SidebarPr
         <NavItem href="/dashboard/messages" icon={MessageCircle} label={t("messages")} badge={unreadCount} onClick={onClose} />
         <NavItem href="/dashboard/billing" icon={CreditCard} label={t("billing")} onClick={onClose} />
         <NavItem href="/dashboard/settings" icon={Settings} label={t("settings")} onClick={onClose} />
+        {isManager && (
+          <div className="pt-2 mt-2 border-t border-white/5">
+            <NavItem href="/manager" icon={Users} label="Manager Portal" onClick={onClose} />
+          </div>
+        )}
+        {isAdmin && (
+          <div className={isManager ? "mt-1" : "pt-2 mt-2 border-t border-white/5"}>
+            <NavItem href="/admin" icon={Shield} label="Admin Panel" onClick={onClose} />
+          </div>
+        )}
       </nav>
 
       <div className="p-4 border-t border-white/5">
@@ -85,7 +97,7 @@ function SidebarContent({ userName, userEmail, unreadCount, onClose }: SidebarPr
   );
 }
 
-export function DashboardSidebar({ userName, userEmail }: SidebarProps) {
+export function DashboardSidebar({ userName, userEmail, isAdmin, isManager }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -132,12 +144,12 @@ export function DashboardSidebar({ userName, userEmail }: SidebarProps) {
         "md:hidden fixed top-0 left-0 bottom-0 w-64 bg-[#0a0a0f] border-r border-white/5 z-50 transition-transform duration-200",
         mobileOpen ? "translate-x-0" : "-translate-x-full"
       )}>
-        <SidebarContent userName={userName} userEmail={userEmail} unreadCount={unreadCount} onClose={() => setMobileOpen(false)} />
+        <SidebarContent userName={userName} userEmail={userEmail} unreadCount={unreadCount} isAdmin={isAdmin} isManager={isManager} onClose={() => setMobileOpen(false)} />
       </div>
 
       {/* Desktop sidebar */}
       <aside className="hidden md:flex w-64 border-r border-white/5 flex-col shrink-0">
-        <SidebarContent userName={userName} userEmail={userEmail} unreadCount={unreadCount} />
+        <SidebarContent userName={userName} userEmail={userEmail} unreadCount={unreadCount} isAdmin={isAdmin} isManager={isManager} />
       </aside>
     </>
   );

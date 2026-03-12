@@ -21,7 +21,7 @@ export default async function LandingPage() {
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-zinc-400">
             <a href="#how" className="hover:text-white transition-colors">{t("nav.services")}</a>
-            <a href="#pricing" className="hover:text-white transition-colors">{t("nav.pricing")}</a>
+            <Link href="/pricing" className="hover:text-white transition-colors">{t("nav.pricing")}</Link>
             <a href="#about" className="hover:text-white transition-colors">{t("nav.about")}</a>
             <Link href="/contact" className="hover:text-white transition-colors">{t("nav.contact")}</Link>
           </div>
