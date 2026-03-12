@@ -407,6 +407,26 @@ export const email = {
     );
   },
 
+  async referralConverted(
+    referrerEmail: string,
+    referrerName: string,
+    referredName: string,
+    commissionUsd: number
+  ) {
+    return send(
+      referrerEmail,
+      `💰 You earned $${commissionUsd.toFixed(2)} from ${referredName}'s subscription!`,
+      base(
+        `You earned a referral commission!`,
+        `<p>Hi ${referrerName}, great news! <strong style="color:#e4e4e7">${referredName}</strong> just upgraded their SynapseForge subscription using your referral link.</p>
+         ${row("Commission earned", `<strong style="color:#34d399">$${commissionUsd.toFixed(2)}</strong>`)}
+         <p>This commission will be credited to your account. Keep sharing your referral link to earn more!</p>
+         <p style="color:#71717a;font-size:13px">You earn 10% of every subscription you refer for 6 months. Commissions are paid out manually — contact us if you have questions.</p>`,
+        { href: `${APP_URL}/dashboard/referral`, label: "View Referral Dashboard →" }
+      )
+    );
+  },
+
   async managerInstanceAlert(
     managerEmail: string,
     managerName: string,

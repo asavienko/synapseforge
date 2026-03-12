@@ -127,7 +127,7 @@
       "submit": "Send reset link",
       "backToSignIn": "Back to sign in",
       "successTitle": "Check your inbox",
-      "successDesc": "If an account exists for {email}, you'll receive a password reset link shortly."
+      "successDesc": "If that email exists, you'll receive a reset link shortly. Check your spam folder too."
     },
     "resetPassword": {
       "title": "Set new password",

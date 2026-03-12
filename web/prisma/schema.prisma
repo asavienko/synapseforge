@@ -28,10 +28,38 @@ model User {
   managerId     String?
   manager       Manager?     @relation(fields: [managerId], references: [id])
 
+  referralCode  String?      @unique // auto-generated on first request
+  referrals     Referral[]   @relation("ReferrerUser")
+  referredBy    ReferralConversion? @relation("ReferredUser")
+
   instances     AIInstance[]
   accounts      Account[]
   sessions      Session[]
   messages      Message[]
+}
+
+model Referral {
+  id          String    @id @default(cuid())
+  code        String    @unique // "ANTON-X7K2"
+  referrerId  String
+  referrer    User      @relation("ReferrerUser", fields: [referrerId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+
+  conversions ReferralConversion[]
+}
+
+model ReferralConversion {
+  id               String    @id @default(cuid())
+  referralId       String
+  referral         Referral  @relation(fields: [referralId], references: [id], onDelete: Cascade)
+  referredUserId   String    @unique
+  referredUser     User      @relation("ReferredUser", fields: [referredUserId], references: [id], onDelete: Cascade)
+  status           String    @default("pending") // "pending" | "converted" | "paid"
+  planAtConversion String?   // "pro" | "enterprise"
+  commissionUsd    Float?    // calculated when subscription starts
+  monthsRemaining  Int       @default(6)
+  createdAt        DateTime  @default(now())
+  convertedAt      DateTime?
 }
 
 model PasswordResetToken {

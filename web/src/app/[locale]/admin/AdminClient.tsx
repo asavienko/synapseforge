@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Users, Bot, Activity, AlertCircle, Plus, X, Shield, ChevronDown, MessageCircle, Send, Loader2, Server, Link, Unlink, CheckCircle2, Rocket, RefreshCw, Copy, Check } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Users, Bot, Activity, AlertCircle, Plus, X, Shield, ChevronDown, MessageCircle, Send, Loader2, Server, Link, Unlink, CheckCircle2, Rocket, RefreshCw, Copy, Check, Gift, DollarSign } from "lucide-react";
 import { STATUS_COLORS, PLANS, formatDate, formatRelativeTime } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
@@ -89,6 +89,20 @@ interface GatewayModal {
   result: { ok: boolean; message: string } | null;
 }
 
+interface AdminReferralConversion {
+  id: string;
+  referrerName: string | null;
+  referrerEmail: string;
+  referredName: string | null;
+  referredEmail: string;
+  plan: string;
+  status: string;
+  commissionUsd: number | null;
+  monthsRemaining: number;
+  createdAt: string;
+  convertedAt: string | null;
+}
+
 export function AdminClient({ users: initialUsers, managers: initialManagers, stats, healthSummary }: {
   users: UserRow[];
   managers: ManagerRow[];
@@ -120,6 +134,47 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
   const [syncingId, setSyncingId] = useState<string | null>(null);
   const [syncResult, setSyncResult] = useState<SyncResult | null>(null);
   const [copiedSync, setCopiedSync] = useState(false);
+
+  // Tab navigation
+  const [activeTab, setActiveTab] = useState<"overview" | "referrals">("overview");
+
+  // Referrals tab
+  const [referralConversions, setReferralConversions] = useState<AdminReferralConversion[]>([]);
+  const [referralLoading, setReferralLoading] = useState(false);
+  const [referralLoaded, setReferralLoaded] = useState(false);
+  const [referralOutstanding, setReferralOutstanding] = useState(0);
+  const [markingPaid, setMarkingPaid] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (activeTab === "referrals" && !referralLoaded) {
+      setReferralLoading(true);
+      fetch("/api/admin/referrals")
+        .then((r) => r.json())
+        .then((d) => {
+          setReferralConversions(d.conversions ?? []);
+          setReferralOutstanding(d.totalOutstandingUsd ?? 0);
+          setReferralLoaded(true);
+        })
+        .finally(() => setReferralLoading(false));
+    }
+  }, [activeTab, referralLoaded]);
+
+  async function markAsPaid(id: string) {
+    setMarkingPaid(id);
+    const res = await fetch("/api/admin/referrals", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+    if (res.ok) {
+      const conv = referralConversions.find((c) => c.id === id);
+      setReferralConversions((prev) =>
+        prev.map((c) => (c.id === id ? { ...c, status: "paid" } : c))
+      );
+      setReferralOutstanding((prev) => Math.max(0, prev - (conv?.commissionUsd ?? 0)));
+    }
+    setMarkingPaid(null);
+  }
 
   async function createManager() {
     setCreatingManager(true);
@@ -297,6 +352,122 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
           ))}
         </div>
 
+        {/* Tab switcher */}
+        <div className="flex gap-2 mb-6">
+          {([
+            { key: "overview" as const, label: "Overview", icon: undefined },
+            { key: "referrals" as const, label: "Referrals", icon: Gift },
+          ]).map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={cn(
+                "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors",
+                activeTab === tab.key
+                  ? "bg-violet-600/20 text-white border border-violet-500/20"
+                  : "text-zinc-400 hover:text-white hover:bg-white/5 border border-transparent"
+              )}
+            >
+              {"icon" in tab && tab.icon && <tab.icon className="w-4 h-4" />}
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* ─── Referrals Tab ─────────────────────────────────────────────── */}
+        {activeTab === "referrals" && (
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <DollarSign className="w-5 h-5 text-yellow-400" />
+                <div>
+                  <div className="font-semibold text-white">Outstanding Commissions</div>
+                  <div className="text-xs text-zinc-500">Total owed to referrers (converted but not yet paid)</div>
+                </div>
+              </div>
+              <div className="text-2xl font-bold text-yellow-400">${referralOutstanding.toFixed(2)}</div>
+            </div>
+
+            <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+              <div className="p-5 border-b border-white/5">
+                <h2 className="font-semibold text-white">All Referral Conversions</h2>
+              </div>
+
+              {referralLoading && (
+                <div className="flex items-center justify-center p-12">
+                  <Loader2 className="w-6 h-6 animate-spin text-zinc-500" />
+                </div>
+              )}
+
+              {!referralLoading && referralConversions.length === 0 && (
+                <div className="p-12 text-center text-zinc-500 text-sm">No referral conversions yet.</div>
+              )}
+
+              {!referralLoading && referralConversions.length > 0 && (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="text-zinc-500 text-xs uppercase tracking-wider border-b border-white/5">
+                        <th className="px-5 py-3 text-left font-medium">Referrer</th>
+                        <th className="px-5 py-3 text-left font-medium">Referred</th>
+                        <th className="px-5 py-3 text-left font-medium">Plan</th>
+                        <th className="px-5 py-3 text-left font-medium">Commission</th>
+                        <th className="px-5 py-3 text-left font-medium">Status</th>
+                        <th className="px-5 py-3 text-left font-medium">Date</th>
+                        <th className="px-5 py-3 text-left font-medium">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {referralConversions.map((c) => (
+                        <tr key={c.id} className="hover:bg-white/[0.02] transition-colors">
+                          <td className="px-5 py-3.5">
+                            <div className="text-white text-xs font-medium">{c.referrerName ?? "—"}</div>
+                            <div className="text-zinc-500 text-xs">{c.referrerEmail}</div>
+                          </td>
+                          <td className="px-5 py-3.5">
+                            <div className="text-white text-xs font-medium">{c.referredName ?? "—"}</div>
+                            <div className="text-zinc-500 text-xs">{c.referredEmail}</div>
+                          </td>
+                          <td className="px-5 py-3.5 capitalize text-zinc-300 text-xs">{c.plan}</td>
+                          <td className="px-5 py-3.5 text-zinc-300 text-xs font-mono">
+                            {c.commissionUsd != null ? `$${c.commissionUsd.toFixed(2)}` : "—"}
+                          </td>
+                          <td className="px-5 py-3.5">
+                            <span className={cn(
+                              "px-2 py-0.5 rounded-full text-xs font-medium capitalize",
+                              c.status === "pending" ? "bg-zinc-700/50 text-zinc-400" :
+                              c.status === "converted" ? "bg-yellow-500/20 text-yellow-300" :
+                              "bg-emerald-500/20 text-emerald-300"
+                            )}>
+                              {c.status}
+                            </span>
+                          </td>
+                          <td className="px-5 py-3.5 text-zinc-500 text-xs">
+                            {new Date(c.createdAt).toLocaleDateString()}
+                          </td>
+                          <td className="px-5 py-3.5">
+                            {c.status === "converted" && (
+                              <button
+                                onClick={() => markAsPaid(c.id)}
+                                disabled={markingPaid === c.id}
+                                className="flex items-center gap-1.5 text-xs text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                              >
+                                {markingPaid === c.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}
+                                Mark Paid
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {activeTab === "overview" && <>
         {/* Infrastructure Health */}
         <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden mb-6">
           <div className="p-5 border-b border-white/5 flex items-center gap-2">
@@ -514,6 +685,7 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
             </div>
           </div>
         </div>
+        </>}
       </div>
 
       {/* Provision result toast */}
