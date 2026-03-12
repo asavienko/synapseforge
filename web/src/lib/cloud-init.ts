@@ -214,6 +214,17 @@ done
 # ── 12. Initial health check report ──────────────────────────────────────────
 /opt/synapseforge/scripts/health-check.sh
 
+# ── 13. Notify dashboard that provisioning is complete ───────────────────────
+PUBLIC_IP=$(curl -s --max-time 5 https://checkip.amazonaws.com 2>/dev/null || \
+            curl -s --max-time 5 https://api.ipify.org 2>/dev/null || echo "")
+PROVISION_PAYLOAD=$(printf '{"ip":"%s","openclaw_version":"latest"}' "$PUBLIC_IP")
+curl -sf -X POST \\
+  -H "Authorization: Bearer ${gatewayToken}" \\
+  -H "Content-Type: application/json" \\
+  -d "$PROVISION_PAYLOAD" \\
+  "${appUrl}/api/internal/provision-complete/${instanceId}" > /dev/null 2>&1 || \\
+  echo "[$(date)] WARNING: Failed to notify dashboard of provision-complete (non-fatal)"
+
 echo "[$(date)] Provisioning complete!"
 `;
 }
