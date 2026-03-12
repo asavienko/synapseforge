@@ -523,7 +523,18 @@ export default function InstanceDetailPage() {
     avgLatencyMs: number | null;
     topModel: string | null;
     modelCounts: Record<string, number>;
-    daily: { date: string; count: number }[];
+    modelBreakdown: { model: string; messages: number; inputTokens: number; outputTokens: number; totalTokens: number }[];
+    daily: { date: string; count: number; tokens: number }[];
+    // Tokens
+    totalInputTokens: number;
+    totalOutputTokens: number;
+    totalTokens: number;
+    monthTokens: number;
+    // Cost
+    estimatedCostUsd: number;
+    estimatedCostUsdThisMonth: number;
+    // Source breakdown
+    sourceCounts: Record<string, number>;
   };
   const [usageData, setUsageData] = useState<UsageData | null>(null);
   const [usageLoading, setUsageLoading] = useState(false);
@@ -1040,7 +1051,7 @@ export default function InstanceDetailPage() {
               {usageLoading && <Loader2 className="w-3.5 h-3.5 text-zinc-600 animate-spin" />}
             </div>
             <div className="p-5 space-y-5">
-              {/* Stat row */}
+              {/* Message counts */}
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <div className="text-xs text-zinc-500 uppercase tracking-wider mb-1">{t("usage.allTime")}</div>
@@ -1059,6 +1070,30 @@ export default function InstanceDetailPage() {
                 </div>
               </div>
 
+              {/* Token counts + cost estimate */}
+              {usageData && usageData.totalTokens > 0 && (
+                <div className="grid grid-cols-2 gap-4 pt-1 border-t border-white/5">
+                  <div>
+                    <div className="text-xs text-zinc-500 uppercase tracking-wider mb-1">Tokens (all time)</div>
+                    <div className="text-lg font-bold text-sky-400">
+                      {usageData.totalTokens.toLocaleString()}
+                    </div>
+                    <div className="text-xs text-zinc-600">
+                      {usageData.totalInputTokens.toLocaleString()} in · {usageData.totalOutputTokens.toLocaleString()} out
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-zinc-500 uppercase tracking-wider mb-1">Est. cost this month</div>
+                    <div className="text-lg font-bold text-amber-400">
+                      ${usageData.estimatedCostUsdThisMonth.toFixed(4)}
+                    </div>
+                    <div className="text-xs text-zinc-600">
+                      {usageData.monthTokens.toLocaleString()} tokens · ~${usageData.estimatedCostUsd.toFixed(2)} all time
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Model + latency row */}
               {usageData && (usageData.topModel || usageData.avgLatencyMs !== null) && (
                 <div className="flex gap-5 pt-1 border-t border-white/5">
@@ -1074,6 +1109,19 @@ export default function InstanceDetailPage() {
                       <div className="text-sm font-mono text-zinc-200">{usageData.avgLatencyMs}ms</div>
                     </div>
                   )}
+                  {usageData.sourceCounts && (
+                    <div className="ml-auto text-right">
+                      <div className="text-xs text-zinc-500 uppercase tracking-wider mb-1">Sources</div>
+                      <div className="text-xs text-zinc-400 space-y-0.5">
+                        {usageData.sourceCounts.dashboard > 0 && (
+                          <div>Dashboard: {usageData.sourceCounts.dashboard}</div>
+                        )}
+                        {(usageData.sourceCounts.api ?? 0) + (usageData.sourceCounts["api/openai-compat"] ?? 0) > 0 && (
+                          <div>API: {(usageData.sourceCounts.api ?? 0) + (usageData.sourceCounts["api/openai-compat"] ?? 0)}</div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -1085,14 +1133,17 @@ export default function InstanceDetailPage() {
                     const maxCount = Math.max(...usageData.daily.map((d) => d.count), 1);
                     return (
                       <div className="flex items-end gap-1 h-16">
-                        {usageData.daily.map(({ date, count }) => {
+                        {usageData.daily.map(({ date, count, tokens }) => {
                           const pct = Math.round((count / maxCount) * 100);
                           const isToday = date === new Date().toISOString().slice(0, 10);
+                          const label = tokens > 0
+                            ? `${date}: ${count} msg · ${tokens.toLocaleString()} tokens`
+                            : `${date}: ${count} messages`;
                           return (
                             <div
                               key={date}
                               className="flex-1 flex flex-col items-center justify-end gap-0.5 group"
-                              title={`${date}: ${count} messages`}
+                              title={label}
                             >
                               <div
                                 className={`w-full rounded-sm transition-all ${

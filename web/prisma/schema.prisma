@@ -154,15 +154,18 @@ model ActivityLog {
 }
 
 model ChatMessage {
-  id         String   @id @default(cuid())
-  instanceId String
-  role       String   // "user" | "assistant"
-  content    String
-  isError    Boolean  @default(false)
-  latencyMs  Int?
-  provider   String?
-  model      String?
-  createdAt  DateTime @default(now())
+  id           String   @id @default(cuid())
+  instanceId   String
+  role         String   // "user" | "assistant"
+  content      String
+  isError      Boolean  @default(false)
+  latencyMs    Int?
+  provider     String?
+  model        String?
+  inputTokens  Int?     // prompt token count returned by the LLM provider
+  outputTokens Int?     // completion token count returned by the LLM provider
+  source       String?  // "dashboard" | "api" | "api/openai-compat"
+  createdAt    DateTime @default(now())
 
   instance   AIInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
 }

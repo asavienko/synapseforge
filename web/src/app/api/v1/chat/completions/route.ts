@@ -113,18 +113,38 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Log (fire-and-forget)
+  const inputTokens = result.inputTokens ?? 0;
+  const outputTokens = result.outputTokens ?? 0;
+
+  // Persist user message + assistant reply with token counts (fire-and-forget)
+  const userContent = messages[messages.length - 1]?.content ?? "";
+  prisma.chatMessage.create({
+    data: { instanceId: ctx.instanceId, role: "user", content: userContent, source: "api/openai-compat" },
+  }).catch(console.error);
+
+  prisma.chatMessage.create({
+    data: {
+      instanceId: ctx.instanceId,
+      role: "assistant",
+      content: result.response,
+      latencyMs: result.latencyMs,
+      provider: result.provider,
+      model: result.model,
+      inputTokens: inputTokens || null,
+      outputTokens: outputTokens || null,
+      source: "api/openai-compat",
+    },
+  }).catch(console.error);
+
+  // Log activity with token info
+  const tokenNote = (inputTokens || outputTokens) ? `, tokens: ${inputTokens}in/${outputTokens}out` : "";
   prisma.activityLog.create({
     data: {
       instanceId: ctx.instanceId,
       event: "chat_message",
-      details: `[API/openai-compat] key="${ctx.keyName}", model: ${result.model}, latency: ${result.latencyMs}ms`,
+      details: `[API/openai-compat] key="${ctx.keyName}", model: ${result.model}, latency: ${result.latencyMs}ms${tokenNote}`,
     },
   }).catch(console.error);
-
-  // Return OpenAI-compatible response
-  const inputTokens = result.inputTokens ?? 0;
-  const outputTokens = result.outputTokens ?? 0;
 
   return NextResponse.json(
     {

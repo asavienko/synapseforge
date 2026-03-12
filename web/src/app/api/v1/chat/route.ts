@@ -21,7 +21,8 @@ export async function OPTIONS() {
  *   { "messages": [{ "role": "user", "content": "Hello!" }] }
  *
  * Response:
- *   { "response": "...", "model": "gpt-4o", "provider": "openai", "latencyMs": 312 }
+ *   { "response": "...", "model": "gpt-4o", "provider": "openai", "latencyMs": 312,
+ *     "inputTokens": 12, "outputTokens": 48 }
  */
 export async function POST(req: NextRequest) {
   const ctx = await validateApiKey(req);
@@ -79,6 +80,12 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Persist user message
+  const userContent = messages[messages.length - 1]?.content ?? "";
+  prisma.chatMessage.create({
+    data: { instanceId: ctx.instanceId, role: "user", content: userContent, source: "api" },
+  }).catch(console.error);
+
   const result = await callLLM(ctx.instanceId, messages);
 
   if ("error" in result) {
@@ -86,12 +93,30 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(result, { status, headers: CORS_HEADERS });
   }
 
-  // Log
+  // Persist assistant reply with token counts
+  prisma.chatMessage.create({
+    data: {
+      instanceId: ctx.instanceId,
+      role: "assistant",
+      content: result.response,
+      latencyMs: result.latencyMs,
+      provider: result.provider,
+      model: result.model,
+      inputTokens: result.inputTokens ?? null,
+      outputTokens: result.outputTokens ?? null,
+      source: "api",
+    },
+  }).catch(console.error);
+
+  // Log activity with token info
+  const tokenNote = (result.inputTokens != null && result.outputTokens != null)
+    ? `, tokens: ${result.inputTokens}in/${result.outputTokens}out`
+    : "";
   prisma.activityLog.create({
     data: {
       instanceId: ctx.instanceId,
       event: "chat_message",
-      details: `[API] key="${ctx.keyName}", model: ${result.model}, latency: ${result.latencyMs}ms`,
+      details: `[API] key="${ctx.keyName}", model: ${result.model}, latency: ${result.latencyMs}ms${tokenNote}`,
     },
   }).catch(console.error);
 
@@ -101,6 +126,8 @@ export async function POST(req: NextRequest) {
       model: result.model,
       provider: result.provider,
       latencyMs: result.latencyMs,
+      inputTokens: result.inputTokens ?? undefined,
+      outputTokens: result.outputTokens ?? undefined,
     },
     { headers: rlHeaders }
   );

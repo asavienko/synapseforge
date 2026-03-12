@@ -36,6 +36,9 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
       latencyMs: m.latencyMs ?? undefined,
       provider: m.provider ?? undefined,
       model: m.model ?? undefined,
+      inputTokens: m.inputTokens ?? undefined,
+      outputTokens: m.outputTokens ?? undefined,
+      source: m.source ?? undefined,
       createdAt: m.createdAt.toISOString(),
     }))
   );
@@ -82,7 +85,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   // Persist the user message (the last one in the array)
   const userContent = messages[messages.length - 1]?.content ?? "";
   await prisma.chatMessage.create({
-    data: { instanceId: id, role: "user", content: userContent },
+    data: { instanceId: id, role: "user", content: userContent, source: "dashboard" },
   });
 
   const result = await callLLM(id, messages);
@@ -95,13 +98,14 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         role: "assistant",
         content: result.error,
         isError: true,
+        source: "dashboard",
       },
     });
     const status = result.missingCredential ? 400 : 502;
     return NextResponse.json(result, { status });
   }
 
-  // Persist the assistant reply
+  // Persist the assistant reply — now including token counts
   await prisma.chatMessage.create({
     data: {
       instanceId: id,
@@ -110,15 +114,21 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       latencyMs: result.latencyMs,
       provider: result.provider,
       model: result.model,
+      inputTokens: result.inputTokens ?? null,
+      outputTokens: result.outputTokens ?? null,
+      source: "dashboard",
     },
   });
 
-  // Log to activity (fire-and-forget)
+  // Log to activity with token info (fire-and-forget)
+  const tokenNote = (result.inputTokens != null && result.outputTokens != null)
+    ? `, tokens: ${result.inputTokens}in/${result.outputTokens}out`
+    : "";
   prisma.activityLog.create({
     data: {
       instanceId: id,
       event: "chat_message",
-      details: `Model: ${result.model}, provider: ${result.provider}, latency: ${result.latencyMs}ms`,
+      details: `Model: ${result.model}, provider: ${result.provider}, latency: ${result.latencyMs}ms${tokenNote}`,
     },
   }).catch(console.error);
 
@@ -134,7 +144,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     }
   }).catch(() => {});
 
-  return NextResponse.json(result);
+  return NextResponse.json({
+    ...result,
+    inputTokens: result.inputTokens ?? undefined,
+    outputTokens: result.outputTokens ?? undefined,
+  });
 }
 
 /**
