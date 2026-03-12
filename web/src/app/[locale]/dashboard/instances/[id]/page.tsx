@@ -579,6 +579,8 @@ export default function InstanceDetailPage() {
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
   const [savingCred, setSavingCred] = useState(false);
+  const [validatingCred, setValidatingCred] = useState(false);
+  const [credValidState, setCredValidState] = useState<Record<string, "valid" | "invalid">>({});
   const [addingKey, setAddingKey] = useState<string | null>(null);
   const [addValue, setAddValue] = useState("");
   const [configPreviewText, setConfigPreviewText] = useState<string | null>(null);
@@ -821,6 +823,33 @@ export default function InstanceDetailPage() {
       showToast(data.error ?? "Failed to save credential", "error");
     }
     setSavingCred(false);
+  }
+
+  const LLM_CRED_KEYS = ["openai_api_key", "anthropic_api_key", "openrouter_api_key"];
+
+  async function testAndSaveCredential(key: string, value: string) {
+    if (!value.trim()) return;
+    setValidatingCred(true);
+    setCredValidState((p) => { const n = { ...p }; delete n[key]; return n; });
+
+    const validateRes = await fetch(`/api/instances/${id}/credentials?validate=true`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key, value }),
+    });
+    const validateData = await validateRes.json() as { valid: boolean; error?: string };
+
+    if (!validateData.valid) {
+      setCredValidState((p) => ({ ...p, [key]: "invalid" }));
+      setValidatingCred(false);
+      showToast(validateData.error ?? "API key validation failed", "error");
+      return;
+    }
+
+    setCredValidState((p) => ({ ...p, [key]: "valid" }));
+    setValidatingCred(false);
+    // Now save for real
+    await saveCredential(key, value);
   }
 
   async function deleteCredential(key: string) {
@@ -1085,6 +1114,12 @@ export default function InstanceDetailPage() {
                   <div className="p-5">
                     <div className="text-xs text-zinc-500 uppercase tracking-wider mb-3">Active Configuration</div>
                     <div className="grid grid-cols-2 gap-3 text-sm">
+                      {c.agentTemplateName && (
+                        <div className="col-span-2 flex items-center gap-2">
+                          <span className="text-zinc-500">Template</span>
+                          <span className="text-violet-300 font-medium ml-2">{c.agentTemplateName}</span>
+                        </div>
+                      )}
                       <div><span className="text-zinc-500">Model</span> <span className="text-zinc-200 ml-2">{c.model ?? "—"}</span></div>
                       <div><span className="text-zinc-500">Temperature</span> <span className="text-zinc-200 ml-2">{c.temperature ?? "—"}</span></div>
                       <div><span className="text-zinc-500">Max Tokens</span> <span className="text-zinc-200 ml-2">{c.maxTokens ?? "—"}</span></div>
@@ -1469,6 +1504,19 @@ export default function InstanceDetailPage() {
       {tab === "Configuration" && (
         <div className="space-y-5">
           <div className="glow-border rounded-2xl bg-white/[0.02] p-6 space-y-5">
+            {/* Active template badge */}
+            {instance.config && (() => {
+              try {
+                const c = JSON.parse(instance.config);
+                if (!c.agentTemplateName) return null;
+                return (
+                  <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-violet-500/10 border border-violet-500/20">
+                    <span className="text-xs text-zinc-400">Template</span>
+                    <span className="text-xs font-semibold text-violet-300">{c.agentTemplateName}</span>
+                  </div>
+                );
+              } catch { return null; }
+            })()}
             {/* Model */}
             <div>
               <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-2">AI Model</label>
@@ -1982,6 +2030,8 @@ print(resp.choices[0].message.content)`}</pre>
                   const existing = credentials.find((c) => c.key === key);
                   const isEditing = editingKey === key;
                   const isAdding = addingKey === key;
+                  const currentValue = isEditing ? editValue : addValue;
+                  const validState = credValidState[key];
                   return (
                     <div key={key} className="p-4">
                       <div className="flex items-center justify-between">
@@ -1995,7 +2045,7 @@ print(resp.choices[0].message.content)`}</pre>
                           {existing && !isEditing && (
                             <>
                               <button
-                                onClick={() => { setEditingKey(key); setEditValue(""); }}
+                                onClick={() => { setEditingKey(key); setEditValue(""); setCredValidState((p) => { const n = {...p}; delete n[key]; return n; }); }}
                                 className="text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 px-2 py-1 rounded-lg transition-colors"
                               >
                                 {t("credentials.editCredential")}
@@ -2010,7 +2060,7 @@ print(resp.choices[0].message.content)`}</pre>
                           )}
                           {!existing && !isAdding && (
                             <button
-                              onClick={() => { setAddingKey(key); setAddValue(""); }}
+                              onClick={() => { setAddingKey(key); setAddValue(""); setCredValidState((p) => { const n = {...p}; delete n[key]; return n; }); }}
                               className="text-xs text-zinc-500 hover:text-white bg-white/5 px-2 py-1 rounded-lg transition-colors"
                             >
                               {t("credentials.addCredential")}
@@ -2019,29 +2069,58 @@ print(resp.choices[0].message.content)`}</pre>
                         </div>
                       </div>
                       {(isEditing || isAdding) && (
-                        <div className="mt-3 flex gap-2">
-                          <input
-                            type="password"
-                            value={isEditing ? editValue : addValue}
-                            onChange={(e) => isEditing ? setEditValue(e.target.value) : setAddValue(e.target.value)}
-                            placeholder="Enter value..."
-                            autoFocus
-                            className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors font-mono"
-                          />
-                          <button
-                            onClick={() => saveCredential(key, isEditing ? editValue : addValue)}
-                            disabled={savingCred || (isEditing ? !editValue : !addValue)}
-                            className="flex items-center gap-1 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 px-3 py-2 rounded-lg text-xs font-semibold text-white transition-colors"
-                          >
-                            {savingCred ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}
-                            {t("credentials.saveCredential")}
-                          </button>
-                          <button
-                            onClick={() => { setEditingKey(null); setAddingKey(null); }}
-                            className="text-zinc-500 hover:text-white px-2 py-2 rounded-lg border border-white/10 transition-colors"
-                          >
-                            <X className="w-3 h-3" />
-                          </button>
+                        <div className="mt-3 space-y-2">
+                          <div className="flex gap-2">
+                            <input
+                              type="password"
+                              value={currentValue}
+                              onChange={(e) => {
+                                isEditing ? setEditValue(e.target.value) : setAddValue(e.target.value);
+                                if (validState) setCredValidState((p) => { const n = {...p}; delete n[key]; return n; });
+                              }}
+                              placeholder="Enter value..."
+                              autoFocus
+                              className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors font-mono"
+                            />
+                            {/* Test & Save for LLM keys */}
+                            <button
+                              onClick={() => LLM_CRED_KEYS.includes(key)
+                                ? testAndSaveCredential(key, currentValue)
+                                : saveCredential(key, currentValue)}
+                              disabled={validatingCred || savingCred || !currentValue}
+                              className={cn(
+                                "flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-semibold transition-colors disabled:opacity-40",
+                                validState === "valid"
+                                  ? "bg-emerald-600 hover:bg-emerald-500 text-white"
+                                  : validState === "invalid"
+                                  ? "bg-red-600/80 hover:bg-red-500 text-white"
+                                  : "bg-violet-600 hover:bg-violet-500 text-white"
+                              )}
+                            >
+                              {(validatingCred || savingCred) && <Loader2 className="w-3 h-3 animate-spin" />}
+                              {!validatingCred && !savingCred && validState === "valid" && <Check className="w-3 h-3" />}
+                              {!validatingCred && !savingCred && validState !== "valid" && <Check className="w-3 h-3" />}
+                              {validatingCred ? "Testing…" : savingCred ? "Saving…"
+                                : LLM_CRED_KEYS.includes(key) ? "Test & Save"
+                                : t("credentials.saveCredential")}
+                            </button>
+                            <button
+                              onClick={() => { setEditingKey(null); setAddingKey(null); setCredValidState((p) => { const n = {...p}; delete n[key]; return n; }); }}
+                              className="text-zinc-500 hover:text-white px-2 py-2 rounded-lg border border-white/10 transition-colors"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                          {validState === "invalid" && (
+                            <p className="text-xs text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-3 py-2">
+                              Key validation failed — check that it&apos;s correct and has the right permissions.
+                            </p>
+                          )}
+                          {validState === "valid" && (
+                            <p className="text-xs text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 rounded-lg px-3 py-2">
+                              ✓ Key validated and saved successfully.
+                            </p>
+                          )}
                         </div>
                       )}
                     </div>

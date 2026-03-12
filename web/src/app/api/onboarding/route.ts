@@ -69,6 +69,30 @@ export async function POST(req: NextRequest) {
       user.email,
       user.onboardingData ?? undefined
     ).catch(console.error);
+
+    // Send in-app welcome message from manager — only if no prior conversation exists
+    try {
+      const existing = await prisma.message.findFirst({
+        where: { userId: session.user.id, managerId: user.manager.id },
+      });
+      if (!existing) {
+        const firstName = (user.name ?? "there").split(" ")[0];
+        const business = data.business || "your business";
+        const industry = data.industry || "your industry";
+        const useCase = data.useCase || "your use case";
+        const body = `Hi ${firstName}! I've reviewed your setup for ${business}. Since you're in ${industry} and need ${useCase}, I'll configure your agent specifically for that. I'll have it ready within a few hours! Feel free to message me if you have any questions in the meantime. 🚀`;
+        await prisma.message.create({
+          data: {
+            body,
+            senderType: "manager",
+            userId: session.user.id,
+            managerId: user.manager.id,
+          },
+        });
+      }
+    } catch {
+      // Non-fatal — don't fail onboarding if message creation fails
+    }
   }
 
   return NextResponse.json({ ok: true, instanceId: instance?.id ?? null });

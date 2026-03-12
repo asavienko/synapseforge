@@ -4,18 +4,25 @@ import { prisma } from "@/lib/prisma";
 export async function GET(req: NextRequest) {
   const token = req.nextUrl.searchParams.get("token");
   if (!token) {
-    return NextResponse.redirect(new URL("/verify-email?error=missing", req.url));
+    return NextResponse.json({ error: "missing" }, { status: 400 });
   }
 
   const record = await prisma.verificationToken.findUnique({ where: { token } });
 
   if (!record) {
-    return NextResponse.redirect(new URL("/verify-email?error=invalid", req.url));
+    return NextResponse.json({ error: "invalid" }, { status: 400 });
   }
 
   if (record.expires < new Date()) {
     await prisma.verificationToken.delete({ where: { token } });
-    return NextResponse.redirect(new URL("/verify-email?error=expired", req.url));
+    return NextResponse.json({ error: "expired" }, { status: 400 });
+  }
+
+  // Already-verified case — not an error
+  const user = await prisma.user.findUnique({ where: { email: record.identifier } });
+  if (user?.emailVerified) {
+    await prisma.verificationToken.delete({ where: { token } }).catch(() => null);
+    return NextResponse.json({ ok: true, alreadyVerified: true });
   }
 
   // Mark user as verified
@@ -27,5 +34,5 @@ export async function GET(req: NextRequest) {
   // Clean up token
   await prisma.verificationToken.delete({ where: { token } });
 
-  return NextResponse.redirect(new URL("/dashboard?verified=1", req.url));
+  return NextResponse.json({ ok: true });
 }

@@ -44,6 +44,56 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
   return NextResponse.json(masked);
 }
 
+// ─── LLM Key Validation ──────────────────────────────────────────────────────
+
+async function validateLLMKey(key: string, value: string): Promise<{ valid: boolean; error?: string }> {
+  try {
+    if (key === "openai_api_key") {
+      const res = await fetch("https://api.openai.com/v1/models", {
+        headers: { Authorization: `Bearer ${value}` },
+        signal: AbortSignal.timeout(8000),
+      });
+      if (res.ok) return { valid: true };
+      const d = await res.json().catch(() => ({}));
+      return { valid: false, error: (d as { error?: { message?: string } })?.error?.message ?? `OpenAI returned ${res.status}` };
+    }
+
+    if (key === "anthropic_api_key") {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "x-api-key": value,
+          "anthropic-version": "2023-06-01",
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "claude-haiku-20240307",
+          max_tokens: 1,
+          messages: [{ role: "user", content: "hi" }],
+        }),
+        signal: AbortSignal.timeout(10000),
+      });
+      if (res.ok || res.status === 529) return { valid: true }; // 529 = overloaded but key valid
+      if (res.status === 401) return { valid: false, error: "Invalid API key" };
+      const d = await res.json().catch(() => ({}));
+      return { valid: false, error: (d as { error?: { message?: string } })?.error?.message ?? `Anthropic returned ${res.status}` };
+    }
+
+    if (key === "openrouter_api_key") {
+      const res = await fetch("https://openrouter.ai/api/v1/models", {
+        headers: { Authorization: `Bearer ${value}` },
+        signal: AbortSignal.timeout(8000),
+      });
+      if (res.ok) return { valid: true };
+      return { valid: false, error: `OpenRouter returned ${res.status}` };
+    }
+
+    return { valid: true }; // non-LLM keys skip validation
+  } catch (err) {
+    return { valid: false, error: err instanceof Error ? err.message : "Validation request failed" };
+  }
+}
+
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -66,6 +116,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       { error: `Invalid credential key. Allowed: ${ALLOWED_CREDENTIAL_KEYS.join(", ")}` },
       { status: 400 }
     );
+  }
+
+  // ?validate=true — test the key without saving
+  const validateOnly = req.nextUrl.searchParams.get("validate") === "true";
+  if (validateOnly) {
+    const result = await validateLLMKey(key, value);
+    return NextResponse.json(result, { status: result.valid ? 200 : 400 });
   }
 
   // Encrypt the credential value

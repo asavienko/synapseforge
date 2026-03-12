@@ -5,6 +5,7 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { Zap, Loader2, Check } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
+import { GoogleButton } from "@/components/GoogleButton";
 
 export default function SignUpPage() {
   const t = useTranslations("auth.signUp");
@@ -60,6 +61,19 @@ export default function SignUpPage() {
         </div>
 
         <div className="glow-border rounded-2xl p-8 bg-white/[0.02]">
+          {/* Google OAuth — fastest path to sign up */}
+          <div className="mb-6">
+            <GoogleButton callbackUrl="/dashboard" />
+          </div>
+          <div className="relative mb-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-white/10" />
+            </div>
+            <div className="relative flex justify-center text-xs">
+              <span className="bg-[#111113] px-3 text-zinc-500">or sign up with email</span>
+            </div>
+          </div>
+
           <div className="flex items-start gap-3 bg-violet-500/10 border border-violet-500/20 rounded-xl p-4 mb-6">
             <Zap className="w-4 h-4 text-violet-400 mt-0.5 shrink-0" />
             <div className="text-sm">

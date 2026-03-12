@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { Zap, Loader2, CheckCircle2 } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
+import { GoogleButton } from "@/components/GoogleButton";
 
 export default function SignInPage() {
   const t = useTranslations("auth.signIn");
@@ -62,6 +63,19 @@ export default function SignInPage() {
         )}
 
         <div className="glow-border rounded-2xl p-8 bg-white/[0.02]">
+          {/* Google OAuth — shown above the email/password divider */}
+          <div className="mb-6">
+            <GoogleButton callbackUrl="/dashboard" />
+          </div>
+          <div className="relative mb-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-white/10" />
+            </div>
+            <div className="relative flex justify-center text-xs">
+              <span className="bg-[#111113] px-3 text-zinc-500">or continue with email</span>
+            </div>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm text-zinc-400 mb-1.5">{t("email")}</label>

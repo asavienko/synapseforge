@@ -3,7 +3,54 @@
 import { useState, useEffect } from "react";
 import { Link, useRouter } from "@/i18n/navigation";
 import { Zap, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import { signIn } from "next-auth/react";
+import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
+
+function PasswordStrength({ password }: { password: string }) {
+  if (!password) return null;
+
+  const len = password.length;
+  let label: string;
+  let color: string;
+  let bars: number;
+
+  if (len < 8) {
+    label = "Too short";
+    color = "bg-red-500";
+    bars = 1;
+  } else if (len < 12) {
+    label = "Fair";
+    color = "bg-yellow-500";
+    bars = 2;
+  } else {
+    label = "Strong";
+    color = "bg-emerald-500";
+    bars = 3;
+  }
+
+  return (
+    <div className="mt-2">
+      <div className="flex gap-1 mb-1">
+        {[1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className={cn(
+              "h-1 flex-1 rounded-full transition-colors duration-300",
+              i <= bars ? color : "bg-white/10"
+            )}
+          />
+        ))}
+      </div>
+      <p className={cn(
+        "text-xs",
+        bars === 1 ? "text-red-400" : bars === 2 ? "text-yellow-400" : "text-emerald-400"
+      )}>
+        {label}
+      </p>
+    </div>
+  );
+}
 
 export default function ResetPasswordPage() {
   const t = useTranslations("auth.resetPassword");
@@ -32,14 +79,33 @@ export default function ResetPasswordPage() {
     });
 
     const data = await res.json();
-    setLoading(false);
 
     if (!res.ok) {
+      setLoading(false);
       setError(data.error || "Something went wrong.");
-    } else {
-      setDone(true);
-      setTimeout(() => router.push("/sign-in"), 3000);
+      return;
     }
+
+    // Auto-sign-in with the new password
+    if (data.email) {
+      const result = await signIn("credentials", {
+        email: data.email,
+        password,
+        redirect: false,
+      });
+
+      setLoading(false);
+
+      if (!result?.error) {
+        router.push("/dashboard");
+        return;
+      }
+    }
+
+    // Fallback: show success + redirect to sign-in
+    setLoading(false);
+    setDone(true);
+    setTimeout(() => router.push("/sign-in"), 3000);
   }
 
   if (!token && typeof window !== "undefined") {
@@ -93,6 +159,7 @@ export default function ResetPasswordPage() {
                   placeholder={t("passwordHint")}
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-zinc-600 text-sm focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
                 />
+                <PasswordStrength password={password} />
               </div>
               <div>
                 <label className="block text-sm text-zinc-400 mb-1.5">{t("confirmPassword")}</label>
@@ -112,7 +179,7 @@ export default function ResetPasswordPage() {
                 className="w-full flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 transition-colors py-3 rounded-xl text-sm font-semibold text-white"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                {t("submit")}
+                {loading ? "Resetting…" : t("submit")}
               </button>
             </form>
           </div>

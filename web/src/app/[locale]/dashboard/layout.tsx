@@ -1,8 +1,10 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { Suspense } from "react";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { EmailVerifyBanner } from "@/components/EmailVerifyBanner";
+import { VerifiedSuccessBanner } from "@/components/VerifiedSuccessBanner";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -22,6 +24,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <div className="min-h-screen bg-[#0a0a0f] flex flex-col">
       {needsVerification && <EmailVerifyBanner />}
+      <Suspense fallback={null}>
+        <VerifiedSuccessBanner />
+      </Suspense>
       <div className="flex flex-1">
         <DashboardSidebar
           userName={session.user.name}

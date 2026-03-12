@@ -18,5 +18,6 @@ export async function POST(req: NextRequest) {
   await prisma.user.update({ where: { email: record.email }, data: { password: hashed } });
   await prisma.passwordResetToken.delete({ where: { token } });
 
-  return NextResponse.json({ ok: true });
+  // Return email so the client can auto-sign-in immediately
+  return NextResponse.json({ ok: true, email: record.email });
 }

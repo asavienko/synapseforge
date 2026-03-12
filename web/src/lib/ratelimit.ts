@@ -1,3 +1,7 @@
+// TODO: In production with multiple serverless instances, replace with Redis-based rate limiting
+// e.g. using Upstash Redis: https://upstash.com
+// Current implementation: in-memory (works for single-instance deployments)
+
 /**
  * Simple in-memory rate limiter.
  * For production, replace with Redis-backed (e.g. Upstash).

@@ -8,6 +8,98 @@ import { TEMPLATE_PROMPTS, MODEL_OPTIONS, generateOpenClawConfig, type InstanceT
 import { maskValue } from "@/lib/crypto";
 import { cn } from "@/lib/utils";
 
+// ─── Agent Templates ──────────────────────────────────────────────────────────
+
+interface AgentTemplate {
+  id: string;
+  name: string;
+  emoji: string;
+  desc: string;
+  model: string;
+  systemPrompt: string;
+  color: "blue" | "emerald" | "amber" | "violet" | "pink" | "zinc";
+}
+
+const AGENT_TEMPLATES: AgentTemplate[] = [
+  {
+    id: "customer_support",
+    name: "Customer Support Bot",
+    emoji: "🎧",
+    desc: "Handle inquiries, FAQs, and support tickets 24/7",
+    model: "openai/gpt-4o",
+    systemPrompt:
+      "You are a friendly and professional customer support agent. Help customers resolve their issues efficiently and empathetically. If you cannot resolve an issue, tell the customer you'll escalate it to a human agent and collect their contact information.",
+    color: "blue",
+  },
+  {
+    id: "sales_assistant",
+    name: "Sales Assistant",
+    emoji: "💼",
+    desc: "Qualify leads, answer product questions, book demos",
+    model: "openai/gpt-4o",
+    systemPrompt:
+      "You are a sales assistant. Your goal is to understand potential customers' needs, qualify their interest, and help them take the next step. Ask relevant questions about their use case, team size, and timeline. Collect contact info for follow-up.",
+    color: "emerald",
+  },
+  {
+    id: "faq_bot",
+    name: "FAQ Bot",
+    emoji: "❓",
+    desc: "Answer common questions based on your knowledge base",
+    model: "openai/gpt-4o-mini",
+    systemPrompt:
+      "You are a FAQ bot. Answer questions clearly and concisely based on the information you've been given. If you don't know the answer to something, say so clearly and offer to connect them with a human for more help.",
+    color: "amber",
+  },
+  {
+    id: "internal_helpdesk",
+    name: "Internal Helpdesk",
+    emoji: "🛠️",
+    desc: "Automate internal workflows and employee support",
+    model: "openai/gpt-4o",
+    systemPrompt:
+      "You are an internal helpdesk assistant. Help employees with IT questions, HR policies, onboarding tasks, and general internal queries. Provide clear, actionable answers and escalate to the appropriate team when needed.",
+    color: "violet",
+  },
+  {
+    id: "content_writer",
+    name: "Content Assistant",
+    emoji: "✍️",
+    desc: "Draft content, summaries, and translations",
+    model: "anthropic/claude-sonnet-4-6",
+    systemPrompt:
+      "You are a content assistant. Help write, edit, summarize, and translate text. Match the tone and style requested. Produce clean, professional output ready to use.",
+    color: "pink",
+  },
+  {
+    id: "custom",
+    name: "Custom Agent",
+    emoji: "⚙️",
+    desc: "Start blank — configure everything yourself",
+    model: "openai/gpt-4o",
+    systemPrompt: "You are a helpful AI assistant.",
+    color: "zinc",
+  },
+];
+
+const TEMPLATE_COLOR_IDLE: Record<AgentTemplate["color"], string> = {
+  blue:    "border-white/10 bg-white/[0.02] hover:border-blue-500/40 hover:bg-blue-500/5",
+  emerald: "border-white/10 bg-white/[0.02] hover:border-emerald-500/40 hover:bg-emerald-500/5",
+  amber:   "border-white/10 bg-white/[0.02] hover:border-amber-500/40 hover:bg-amber-500/5",
+  violet:  "border-white/10 bg-white/[0.02] hover:border-violet-500/40 hover:bg-violet-500/5",
+  pink:    "border-white/10 bg-white/[0.02] hover:border-pink-500/40 hover:bg-pink-500/5",
+  zinc:    "border-white/10 bg-white/[0.02] hover:border-white/20",
+};
+
+const TEMPLATE_COLOR_ACTIVE: Record<AgentTemplate["color"], string> = {
+  blue:    "border-blue-500 bg-blue-500/10 ring-1 ring-blue-500/30",
+  emerald: "border-emerald-500 bg-emerald-500/10 ring-1 ring-emerald-500/30",
+  amber:   "border-amber-500 bg-amber-500/10 ring-1 ring-amber-500/30",
+  violet:  "border-violet-500 bg-violet-500/10 ring-1 ring-violet-500/30",
+  pink:    "border-pink-500 bg-pink-500/10 ring-1 ring-pink-500/30",
+  zinc:    "border-white/30 bg-white/[0.06] ring-1 ring-white/20",
+};
+
 interface WizardProps {
   onClose: () => void;
   onCreated: () => void;
@@ -21,6 +113,7 @@ interface WizardState {
   name: string;
   instanceType: string;
   template: InstanceTemplate;
+  agentTemplateId: string; // id from AGENT_TEMPLATES
   // Step 2
   llmProvider: LLMProvider;
   apiKey: string;
@@ -63,6 +156,7 @@ export function InstanceSetupWizard({ onClose, onCreated }: WizardProps) {
     name: "",
     instanceType: "assistant",
     template: "general",
+    agentTemplateId: "",
     llmProvider: "openai",
     apiKey: "",
     model: "openai/gpt-4o",
@@ -87,6 +181,27 @@ export function InstanceSetupWizard({ onClose, onCreated }: WizardProps) {
     updateState({
       template: tpl,
       systemPrompt: TEMPLATE_PROMPTS[tpl],
+    });
+  }
+
+  // Map our gallery template ID → legacy InstanceTemplate
+  const LEGACY_MAP: Record<string, InstanceTemplate> = {
+    customer_support: "customer_support",
+    sales_assistant: "lead_qualification",
+    faq_bot: "faq_bot",
+    internal_helpdesk: "general",
+    content_writer: "general",
+    custom: "general",
+  };
+
+  function selectAgentTemplate(tpl: AgentTemplate) {
+    updateState({
+      agentTemplateId: tpl.id,
+      template: LEGACY_MAP[tpl.id] ?? "general",
+      systemPrompt: tpl.systemPrompt,
+      model: tpl.model,
+      // Pre-fill name with template name only if field is still empty
+      name: state.name.trim() ? state.name : tpl.id !== "custom" ? tpl.name : "",
     });
   }
 
@@ -137,19 +252,22 @@ export function InstanceSetupWizard({ onClose, onCreated }: WizardProps) {
 
     try {
       // 1. Create the instance
+      const chosenAgentTemplate = AGENT_TEMPLATES.find((t) => t.id === state.agentTemplateId);
       const instanceRes = await fetch("/api/instances", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: state.name,
           type: state.instanceType,
-          description: `${TEMPLATE_PROMPTS[state.template].slice(0, 80)}...`,
+          description: chosenAgentTemplate?.desc ?? `${TEMPLATE_PROMPTS[state.template].slice(0, 80)}...`,
           config: JSON.stringify({
             model: state.model,
             systemPrompt: state.systemPrompt,
             temperature: state.temperature,
             maxTokens: state.maxTokens,
             template: state.template,
+            agentTemplateId: state.agentTemplateId || undefined,
+            agentTemplateName: chosenAgentTemplate?.name ?? undefined,
           }),
         }),
       });
@@ -226,7 +344,7 @@ export function InstanceSetupWizard({ onClose, onCreated }: WizardProps) {
 
   const stepIndex = STEPS.indexOf(step);
   const canGoNext = (() => {
-    if (step === "template") return state.name.trim().length > 0;
+    if (step === "template") return state.agentTemplateId.length > 0 && state.name.trim().length > 0;
     if (step === "provider") return state.apiKey.trim().length > 0;
     return true;
   })();
@@ -310,40 +428,48 @@ export function InstanceSetupWizard({ onClose, onCreated }: WizardProps) {
             </div>
           ) : (
             <>
-              {/* ── Step 1: Template ── */}
+              {/* ── Step 1: Template Gallery ── */}
               {step === "template" && (
                 <div className="space-y-5">
+                  {/* Gallery */}
                   <div>
-                    <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-2">Instance Name</label>
-                    <input
-                      type="text"
-                      value={state.name}
-                      onChange={(e) => updateState({ name: e.target.value })}
-                      placeholder="My Support Bot"
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-3">Choose a template</label>
+                    <div className="text-sm font-semibold text-white mb-1">Choose a template</div>
+                    <p className="text-xs text-zinc-500 mb-4">Pick one to pre-fill your agent — you can customise everything afterwards.</p>
                     <div className="grid grid-cols-2 gap-3">
-                      {(["general", "customer_support", "faq_bot", "lead_qualification"] as InstanceTemplate[]).map((tpl) => (
-                        <button
-                          key={tpl}
-                          onClick={() => selectTemplate(tpl)}
-                          className={cn(
-                            "p-4 rounded-xl border text-left transition-colors",
-                            state.template === tpl
-                              ? "border-violet-500 bg-violet-500/10 text-white"
-                              : "border-white/10 bg-white/[0.02] text-zinc-400 hover:border-white/20"
-                          )}
-                        >
-                          <div className="text-2xl mb-2">{TEMPLATE_ICONS[tpl]}</div>
-                          <div className="text-sm font-semibold text-white">{t(`templates.${tpl}`)}</div>
-                          <div className="text-xs text-zinc-500 mt-1 line-clamp-2">{TEMPLATE_PROMPTS[tpl].slice(0, 60)}...</div>
-                        </button>
-                      ))}
+                      {AGENT_TEMPLATES.map((tpl) => {
+                        const active = state.agentTemplateId === tpl.id;
+                        return (
+                          <button
+                            key={tpl.id}
+                            onClick={() => selectAgentTemplate(tpl)}
+                            className={cn(
+                              "p-4 rounded-xl border text-left transition-all",
+                              active ? TEMPLATE_COLOR_ACTIVE[tpl.color] : TEMPLATE_COLOR_IDLE[tpl.color]
+                            )}
+                          >
+                            <div className="text-2xl mb-2">{tpl.emoji}</div>
+                            <div className="text-sm font-semibold text-white">{tpl.name}</div>
+                            <div className="text-xs text-zinc-400 mt-1 line-clamp-2">{tpl.desc}</div>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
+
+                  {/* Name field — shown after selecting a template */}
+                  {state.agentTemplateId && (
+                    <div>
+                      <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-2">Instance Name</label>
+                      <input
+                        type="text"
+                        value={state.name}
+                        onChange={(e) => updateState({ name: e.target.value })}
+                        placeholder="My Support Bot"
+                        autoFocus
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors"
+                      />
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -558,7 +684,7 @@ export function InstanceSetupWizard({ onClose, onCreated }: WizardProps) {
                     {[
                       { label: "Name", value: state.name },
                       { label: "Model", value: state.model },
-                      { label: "Template", value: t(`templates.${state.template}`) },
+                      { label: "Template", value: AGENT_TEMPLATES.find((t) => t.id === state.agentTemplateId)?.name ?? t(`templates.${state.template}`) },
                       {
                         label: "Channels",
                         value: [
