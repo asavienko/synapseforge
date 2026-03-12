@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { PLANS } from "@/lib/utils";
 
 export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -39,6 +40,26 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   if (body.status !== undefined && body.status !== instance.status) {
     const newStatus = body.status as string;
+
+    // Check plan allows running this many instances
+    if (newStatus === "running") {
+      const user = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { plan: true },
+      });
+      const plan = PLANS[(user?.plan ?? "free") as keyof typeof PLANS] ?? PLANS.free;
+      if (plan.instances !== -1) {
+        const runningCount = await prisma.aIInstance.count({
+          where: { userId: session.user.id, status: "running", id: { not: id } },
+        });
+        if (runningCount >= plan.instances) {
+          return NextResponse.json(
+            { error: `Your ${user?.plan ?? "free"} plan allows ${plan.instances} running instance${plan.instances !== 1 ? "s" : ""}. Stop another instance first or upgrade your plan.` },
+            { status: 403 }
+          );
+        }
+      }
+    }
 
     // If starting, optionally probe the gateway
     if (newStatus === "running" && instance.vpsUrl && instance.gatewayToken) {

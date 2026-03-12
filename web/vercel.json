@@ -6,6 +6,10 @@
     {
       "path": "/api/internal/provision-timeout",
       "schedule": "*/10 * * * *"
+    },
+    {
+      "path": "/api/internal/plan-enforcement",
+      "schedule": "0 2 * * *"
     }
   ]
 }

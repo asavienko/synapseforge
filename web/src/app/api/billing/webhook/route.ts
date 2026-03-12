@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
+import { enforcePlanLimits } from "@/lib/plan-enforcement";
+import { email as emailService } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -67,19 +69,37 @@ export async function POST(req: NextRequest) {
         const userId = subscription.metadata?.userId;
         if (!userId) break;
 
-        const plan = subscription.metadata?.plan ?? "free";
+        const previousAttributes = (event.data as Stripe.Event.Data & { previous_attributes?: Record<string, unknown> }).previous_attributes ?? {};
+        const prevPlan: string = (previousAttributes.plan as string) ?? "unknown";
+
+        const newPlan = subscription.metadata?.plan ?? "free";
         const status = subscription.status;
+        const effectivePlan = status === "active" ? newPlan : "free";
 
         await prisma.user.update({
           where: { id: userId },
           data: {
-            plan: status === "active" ? plan : "free",
+            plan: effectivePlan,
             stripeSubscriptionId: subscription.id,
             stripePriceId: subscription.items.data[0].price.id,
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             stripeCurrentPeriodEnd: new Date(((subscription as unknown) as any).current_period_end * 1000),
           },
         });
+
+        // If plan was downgraded (or subscription became non-active), enforce limits
+        if (effectivePlan !== prevPlan && effectivePlan === "free") {
+          const result = await enforcePlanLimits(userId, effectivePlan);
+          if (result) {
+            emailService.planDowngraded(
+              result.userEmail,
+              result.userName,
+              prevPlan,
+              effectivePlan,
+              result.stoppedInstances
+            ).catch(console.error);
+          }
+        }
         break;
       }
 
@@ -87,6 +107,13 @@ export async function POST(req: NextRequest) {
         const subscription = event.data.object as Stripe.Subscription;
         const userId = subscription.metadata?.userId;
         if (!userId) break;
+
+        // Fetch current plan before overwriting (for the email)
+        const user = await prisma.user.findUnique({
+          where: { id: userId },
+          select: { plan: true },
+        });
+        const fromPlan = user?.plan ?? "unknown";
 
         await prisma.user.update({
           where: { id: userId },
@@ -97,7 +124,20 @@ export async function POST(req: NextRequest) {
             stripeCurrentPeriodEnd: null,
           },
         });
-        console.log(`[Stripe] User ${userId} downgraded to free (subscription deleted)`);
+
+        // Stop instances that exceed the free plan limit and notify the user
+        const result = await enforcePlanLimits(userId, "free");
+        if (result) {
+          emailService.planDowngraded(
+            result.userEmail,
+            result.userName,
+            fromPlan,
+            "free",
+            result.stoppedInstances
+          ).catch(console.error);
+        }
+
+        console.log(`[Stripe] User ${userId} downgraded to free (subscription deleted); stopped ${result?.stoppedInstances.length ?? 0} instances`);
         break;
       }
     }

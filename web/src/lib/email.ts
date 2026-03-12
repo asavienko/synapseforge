@@ -354,6 +354,35 @@ export const email = {
     );
   },
 
+  async planDowngraded(
+    to: string,
+    userName: string,
+    fromPlan: string,
+    toPlan: string,
+    stoppedInstances: { name: string }[]
+  ) {
+    const stoppedBlock = stoppedInstances.length > 0
+      ? `<p>The following instance${stoppedInstances.length > 1 ? "s were" : " was"} automatically paused because they exceed the ${toPlan} plan limit:</p>
+         <ul style="margin:8px 0;padding-left:20px;color:#a1a1aa">
+           ${stoppedInstances.map((i) => `<li style="margin:4px 0">${i.name}</li>`).join("")}
+         </ul>
+         <p>Your data and settings are preserved — simply upgrade to restart them.</p>`
+      : "";
+    return send(
+      to,
+      `Your plan has changed to ${toPlan}`,
+      base(
+        `Plan changed: ${fromPlan} → ${toPlan}`,
+        `<p>Hi ${userName}, your SynapseForge subscription has been updated.</p>
+         ${row("Previous plan", fromPlan)}
+         ${row("New plan", toPlan)}
+         ${stoppedBlock}
+         <p>If this was unexpected or you need help, reply to this email and we'll look into it.</p>`,
+        { href: `${APP_URL}/dashboard/billing`, label: "Manage Billing →" }
+      )
+    );
+  },
+
   async managerInstanceAlert(
     managerEmail: string,
     managerName: string,
