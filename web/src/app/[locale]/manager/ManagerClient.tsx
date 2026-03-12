@@ -508,15 +508,24 @@ export function ManagerClient({ manager, clients: initialClients }: {
                                   {inst.vpsUrl}
                                 </span>
                               )}
-                              {inst.provisionStatus && !inst.hasGateway && (
-                                <span className="text-xs text-zinc-500 italic">{inst.provisionStatus}</span>
-                              )}
-                              <a
-                                href={`/admin#instance-${inst.id}`}
-                                className="ml-auto text-xs text-violet-400 hover:text-violet-300 flex items-center gap-1 shrink-0"
-                              >
-                                View in Admin <ExternalLink className="w-3 h-3" />
-                              </a>
+                              <div className="ml-auto flex items-center gap-2 shrink-0">
+                                {!inst.hasGateway && (
+                                  <button
+                                    onClick={() => openWizard(inst)}
+                                    className="flex items-center gap-1 text-xs text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 px-2 py-1 rounded-lg transition-colors"
+                                    title="Provision VPS for this instance"
+                                  >
+                                    <Rocket className="w-3 h-3" />
+                                    {inst.provisionStatus ? inst.provisionStatus : "Provision"}
+                                  </button>
+                                )}
+                                <a
+                                  href={`/admin#instance-${inst.id}`}
+                                  className="text-xs text-violet-400 hover:text-violet-300 flex items-center gap-1"
+                                >
+                                  View <ExternalLink className="w-3 h-3" />
+                                </a>
+                              </div>
                             </div>
                           ))}
                         </div>
@@ -528,6 +537,19 @@ export function ManagerClient({ manager, clients: initialClients }: {
             </>
           )}
         </div>
+      )}
+
+      {/* Provisioning Wizard */}
+      {wizardState && (
+        <ProvisioningWizard
+          instanceId={wizardState.instanceId}
+          instanceName={wizardState.instanceName}
+          tier={wizardState.tier}
+          provisionStatus={wizardState.provisionStatus}
+          provisionEndpoint={`/api/manager/instances/${wizardState.instanceId}/provision`}
+          onClose={() => closeWizard()}
+          onDone={(status) => closeWizard(wizardState.instanceId, status)}
+        />
       )}
     </div>
   );
