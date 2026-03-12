@@ -131,6 +131,7 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
   // Provision & sync state
   const [provisioningId, setProvisioningId] = useState<string | null>(null);
   const [provisionResult, setProvisionResult] = useState<{ instanceId: string; message: string; ok: boolean } | null>(null);
+  const [provisioningUserId, setProvisioningUserId] = useState<string | null>(null);
   const [syncingId, setSyncingId] = useState<string | null>(null);
   const [syncResult, setSyncResult] = useState<SyncResult | null>(null);
   const [copiedSync, setCopiedSync] = useState(false);
@@ -288,6 +289,40 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
     } else {
       setProvisionResult({ instanceId, message: `✗ ${data.error}`, ok: false });
     }
+  }
+
+  async function provisionAllForUser(userId: string) {
+    const user = users.find((u) => u.id === userId);
+    if (!user) return;
+    const unprovisioned = user.instances.filter((i) => !i.hasGateway && !i.provisionStatus);
+    if (unprovisioned.length === 0) {
+      alert("All instances for this user are already provisioned or in progress.");
+      return;
+    }
+    if (!confirm(`Provision ${unprovisioned.length} instance${unprovisioned.length !== 1 ? "s" : ""} for ${user.name ?? user.email}? (~€5/mo per instance)`)) return;
+    setProvisioningUserId(userId);
+    const results: string[] = [];
+    for (const inst of unprovisioned) {
+      const res = await fetch(`/api/admin/instances/${inst.id}/provision`, { method: "POST" });
+      const data = await res.json();
+      if (res.ok) {
+        results.push(`✓ ${inst.name} — server ${data.serverId} at ${data.ip}`);
+        setUsers((prev) => prev.map((u) => ({
+          ...u,
+          instances: u.instances.map((i) =>
+            i.id === inst.id ? { ...i, provisionStatus: "provisioning" } : i
+          ),
+        })));
+      } else {
+        results.push(`✗ ${inst.name} — ${data.error}`);
+      }
+    }
+    setProvisioningUserId(null);
+    setProvisionResult({
+      instanceId: userId,
+      message: results.join(" | "),
+      ok: results.every((r) => r.startsWith("✓")),
+    });
   }
 
   async function syncConfig(instanceId: string) {
@@ -604,6 +639,17 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                       >
                         <MessageCircle className="w-3.5 h-3.5" /> Messages
                       </button>
+                      {user.instances.some((i) => !i.hasGateway && !i.provisionStatus) && (
+                        <button
+                          onClick={() => provisionAllForUser(user.id)}
+                          disabled={provisioningUserId === user.id}
+                          title="Provision all undeployed instances for this user"
+                          className="flex items-center gap-1.5 text-xs text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                        >
+                          {provisioningUserId === user.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Rocket className="w-3.5 h-3.5" />}
+                          Provision
+                        </button>
+                      )}
                     </div>
                   </div>
 

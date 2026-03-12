@@ -81,6 +81,24 @@ export async function POST(req: NextRequest) {
     });
   }
 
+  // Link referral if a code was provided
+  if (referralCode) {
+    try {
+      const referral = await prisma.referral.findUnique({ where: { code: referralCode } });
+      if (referral && referral.referrerId !== user.id) {
+        await prisma.referralConversion.create({
+          data: {
+            referralId: referral.id,
+            referredUserId: user.id,
+            status: "pending",
+          },
+        });
+      }
+    } catch {
+      // Non-fatal: referral linking failure shouldn't block sign-up
+    }
+  }
+
   // Create email verification token (expires in 24h)
   const verificationToken = crypto.randomBytes(32).toString("hex");
   await prisma.verificationToken.create({

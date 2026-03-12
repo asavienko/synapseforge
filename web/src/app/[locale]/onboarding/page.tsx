@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Zap, Loader2, Building2, Sparkles, CheckCircle2, ArrowRight,
   Key, MessageSquare, Bot, Eye, EyeOff,
@@ -115,6 +115,19 @@ function ProgressBar({ step, total }: { step: number; total: number }) {
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Link referral code passed via Google OAuth callback URL
+  useEffect(() => {
+    const ref = searchParams.get("_ref");
+    if (ref) {
+      fetch("/api/referral/link", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: ref }),
+      }).catch(() => {/* non-fatal */});
+    }
+  }, [searchParams]);
 
   // Step state
   const [step, setStep] = useState(1);
@@ -136,9 +149,50 @@ export default function OnboardingPage() {
   const [channelKey, setChannelKey] = useState("");
   const [showChannelKey, setShowChannelKey] = useState(false);
 
+  // LLM key validation state
+  const [llmValidating, setLlmValidating] = useState(false);
+  const [llmValidState, setLlmValidState] = useState<"idle" | "valid" | "invalid">("idle");
+  const [llmValidError, setLlmValidError] = useState<string | null>(null);
+
   // Submission
   const [loading, setLoading] = useState(false);
   const [instanceId, setInstanceId] = useState<string | null>(null);
+
+  // ── Validate LLM key before moving to step 4 ─────────────────────────────
+
+  async function validateAndAdvance() {
+    if (!llmProvider || !llmKey.trim()) {
+      setStep(4);
+      return;
+    }
+    setLlmValidating(true);
+    setLlmValidState("idle");
+    setLlmValidError(null);
+    try {
+      // We call the onboarding validate endpoint directly (no instance id yet)
+      // Instead, use a temporary POST to a public validation endpoint
+      // Since we don't have an instance yet, we call the onboarding route with
+      // a validate=true flag or we can call a different approach.
+      // Simple approach: just call the open validation we'll add, or make a simple fetch.
+      const res = await fetch("/api/onboarding/validate-key", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key: llmProvider, value: llmKey.trim() }),
+      });
+      const data = await res.json() as { valid: boolean; error?: string };
+      if (data.valid) {
+        setLlmValidState("valid");
+        setTimeout(() => setStep(4), 600);
+      } else {
+        setLlmValidState("invalid");
+        setLlmValidError(data.error ?? "Invalid key");
+      }
+    } catch {
+      setLlmValidState("invalid");
+      setLlmValidError("Validation request failed — check your connection");
+    }
+    setLlmValidating(false);
+  }
 
   // ── Finish ───────────────────────────────────────────────────────────────
 
@@ -331,33 +385,51 @@ export default function OnboardingPage() {
 
             {/* Key input */}
             {llmProvider && (
-              <div className="relative mb-2">
-                <input
-                  type={showLlmKey ? "text" : "password"}
-                  value={llmKey}
-                  onChange={(e) => setLlmKey(e.target.value)}
-                  placeholder={LLM_PROVIDERS.find((p) => p.key === llmProvider)?.placeholder ?? "Paste your API key"}
-                  autoFocus
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pr-10 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors font-mono"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowLlmKey((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
-                >
-                  {showLlmKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
+              <div className="space-y-2 mb-2">
+                <div className="relative">
+                  <input
+                    type={showLlmKey ? "text" : "password"}
+                    value={llmKey}
+                    onChange={(e) => { setLlmKey(e.target.value); setLlmValidState("idle"); setLlmValidError(null); }}
+                    placeholder={LLM_PROVIDERS.find((p) => p.key === llmProvider)?.placeholder ?? "Paste your API key"}
+                    autoFocus
+                    className={cn(
+                      "w-full bg-white/5 border rounded-xl px-4 py-3 pr-10 text-sm text-white placeholder-zinc-600 focus:outline-none transition-colors font-mono",
+                      llmValidState === "valid" ? "border-emerald-500 focus:border-emerald-400" :
+                      llmValidState === "invalid" ? "border-red-500 focus:border-red-400" :
+                      "border-white/10 focus:border-violet-500"
+                    )}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowLlmKey((v) => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
+                  >
+                    {showLlmKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                {llmValidState === "valid" && (
+                  <p className="text-xs text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 rounded-lg px-3 py-2 flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3 h-3 shrink-0" /> ✓ Valid key
+                  </p>
+                )}
+                {llmValidState === "invalid" && (
+                  <p className="text-xs text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-3 py-2">
+                    ✗ {llmValidError ?? "Invalid key"} — double-check it
+                  </p>
+                )}
               </div>
             )}
 
             <div className="flex gap-3 mt-6">
               <button onClick={() => setStep(2)} className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors py-3 rounded-xl text-sm font-semibold text-zinc-300">Back</button>
               <button
-                onClick={() => setStep(4)}
-                disabled={!llmProvider || !llmKey.trim()}
+                onClick={validateAndAdvance}
+                disabled={llmValidating || !llmProvider || !llmKey.trim()}
                 className="flex-1 flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 transition-colors py-3 rounded-xl text-sm font-semibold text-white"
               >
-                Continue <ArrowRight className="w-4 h-4" />
+                {llmValidating ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
+                {llmValidating ? "Validating…" : llmValidState === "valid" ? "Validated ✓" : "Continue"}
               </button>
             </div>
             <button

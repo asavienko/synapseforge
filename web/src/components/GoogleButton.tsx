@@ -15,14 +15,22 @@ const GoogleIcon = () => (
 
 interface GoogleButtonProps {
   callbackUrl?: string;
+  /** Referral code to link after OAuth completes */
+  referralCode?: string;
 }
 
-export function GoogleButton({ callbackUrl = "/dashboard" }: GoogleButtonProps) {
+export function GoogleButton({ callbackUrl = "/dashboard", referralCode }: GoogleButtonProps) {
   const [loading, setLoading] = useState(false);
 
   async function handleClick() {
     setLoading(true);
-    await signIn("google", { callbackUrl });
+    // Encode referral code in the callbackUrl so the post-auth page can pick it up
+    let finalCallbackUrl = callbackUrl;
+    if (referralCode) {
+      const sep = callbackUrl.includes("?") ? "&" : "?";
+      finalCallbackUrl = `${callbackUrl}${sep}_ref=${encodeURIComponent(referralCode)}`;
+    }
+    await signIn("google", { callbackUrl: finalCallbackUrl });
     // Note: signIn with redirect will navigate away; loading resets if it stays
     setLoading(false);
   }

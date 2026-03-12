@@ -2408,16 +2408,123 @@ print(resp.choices[0].message.content)`}</pre>
             )}
           </div>
 
-          {/* Channels section */}
+          {/* ── Telegram Connect Card ── */}
+          <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+            <div className="p-4 border-b border-white/5 flex items-center justify-between">
+              <h3 className="text-xs text-zinc-500 uppercase tracking-wider">Telegram</h3>
+              {credentials.some((c) => c.key === "telegram_bot_token") && (
+                <button
+                  onClick={() => {
+                    deleteCredential("telegram_bot_token");
+                    setTelegramConnected(null);
+                    setTelegramError(null);
+                  }}
+                  className="text-xs text-red-400 hover:text-red-300 transition-colors"
+                >
+                  Disconnect
+                </button>
+              )}
+            </div>
+            <div className="p-5">
+              {/* Connected state */}
+              {credentials.some((c) => c.key === "telegram_bot_token") ? (
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-sky-500/20 border border-sky-500/30 flex items-center justify-center text-xl shrink-0">✈</div>
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-sm font-semibold text-white">
+                        {instance.telegramBotUsername ?? telegramConnected?.username ?? "Bot connected"}
+                      </span>
+                      <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">Connected</span>
+                    </div>
+                    <p className="text-xs text-zinc-500">Your Telegram bot is live. Users can message it directly.</p>
+                    <button
+                      onClick={() => {
+                        setTelegramTokenInput("");
+                        setTelegramError(null);
+                        setTelegramConnected(null);
+                        setAddingKey("telegram_bot_token");
+                      }}
+                      className="mt-2 text-xs text-violet-400 hover:text-violet-300 transition-colors"
+                    >
+                      Replace token
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                /* Not connected state */
+                <div>
+                  <div className="flex items-start gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-xl shrink-0">✈</div>
+                    <div>
+                      <p className="text-sm font-medium text-white mb-0.5">Connect Telegram Bot</p>
+                      <p className="text-xs text-zinc-500">
+                        Create a bot via{" "}
+                        <a href="https://t.me/BotFather" target="_blank" rel="noopener noreferrer" className="text-sky-400 hover:text-sky-300">
+                          @BotFather
+                        </a>
+                        , then paste the token here.
+                      </p>
+                    </div>
+                  </div>
+
+                  {addingKey === "telegram_bot_token" ? (
+                    <div className="space-y-2">
+                      <div className="flex gap-2">
+                        <input
+                          type="password"
+                          value={telegramTokenInput}
+                          onChange={(e) => { setTelegramTokenInput(e.target.value); setTelegramError(null); }}
+                          placeholder="1234567890:AAFake_tokenHere..."
+                          autoFocus
+                          className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-sky-500 transition-colors font-mono"
+                        />
+                        <button
+                          onClick={() => setupTelegram(telegramTokenInput)}
+                          disabled={telegramConnecting || !telegramTokenInput.trim()}
+                          className="flex items-center gap-1.5 bg-sky-600 hover:bg-sky-500 disabled:opacity-40 px-4 py-2 rounded-lg text-xs font-semibold text-white transition-colors"
+                        >
+                          {telegramConnecting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Zap className="w-3 h-3" />}
+                          {telegramConnecting ? "Connecting…" : "Connect"}
+                        </button>
+                        <button
+                          onClick={() => { setAddingKey(null); setTelegramTokenInput(""); setTelegramError(null); }}
+                          className="text-zinc-500 hover:text-white px-2 py-2 rounded-lg border border-white/10 transition-colors"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                      {telegramError && (
+                        <p className="text-xs text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-3 py-2">
+                          {telegramError}
+                          {telegramError.includes("BotFather") || telegramError.includes("token") ? "" : " — Make sure the token is correct and was copied from @BotFather."}
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => { setAddingKey("telegram_bot_token"); setTelegramError(null); setTelegramTokenInput(""); }}
+                      className="flex items-center gap-2 bg-sky-600/20 hover:bg-sky-600/30 border border-sky-500/30 text-sky-300 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors"
+                    >
+                      <Zap className="w-4 h-4" />
+                      Connect Telegram Bot
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* ── Discord / Slack tokens ── */}
           <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
             <div className="p-4 border-b border-white/5">
-              <h3 className="text-xs text-zinc-500 uppercase tracking-wider">{t("credentials.channels")}</h3>
+              <h3 className="text-xs text-zinc-500 uppercase tracking-wider">Other Channels</h3>
             </div>
             <div className="divide-y divide-white/5">
-              {["telegram_bot_token", "discord_bot_token", "slack_app_token", "slack_bot_token"].map((key) => {
+              {["discord_bot_token", "slack_app_token", "slack_bot_token"].map((key) => {
                 const existing = credentials.find((c) => c.key === key);
                 const isEditing = editingKey === key;
-                const isAdding = addingKey === key;
+                const isAdding = addingKey === key && key !== "telegram_bot_token";
                 return (
                   <div key={key} className="p-4">
                     <div className="flex items-center justify-between">
@@ -2425,6 +2532,9 @@ print(resp.choices[0].message.content)`}</pre>
                         <div className="text-sm font-medium text-white">{CREDENTIAL_KEY_LABELS[key]}</div>
                         {existing && !isEditing && (
                           <div className="text-xs font-mono text-zinc-500 mt-0.5">{existing.maskedValue}</div>
+                        )}
+                        {!existing && (
+                          <div className="text-xs text-zinc-600 mt-0.5">More configuration in manager portal</div>
                         )}
                       </div>
                       <div className="flex items-center gap-2">

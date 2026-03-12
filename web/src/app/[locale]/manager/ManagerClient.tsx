@@ -162,6 +162,11 @@ export function ManagerClient({ manager, clients: initialClients }: {
         >
           <MessageCircle className="w-4 h-4" />
           Clients &amp; Messages
+          {totalUnread > 0 && (
+            <span className="bg-violet-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center leading-none">
+              {totalUnread}
+            </span>
+          )}
         </button>
         <button
           onClick={() => setActiveTab("instances")}

@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, MessageCircle, Bot, Send, Loader2, X, Shield, Activity, AlertTriangle, Bell, CheckCircle, Clock, Zap } from "lucide-react";
+import { Users, MessageCircle, Bot, Send, Loader2, X, Shield, Activity, AlertTriangle, Bell, CheckCircle, Clock, Zap, Plus, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { STATUS_COLORS, PLANS, formatDate, formatRelativeTime } from "@/lib/utils";
+import { AGENT_TEMPLATES, AgentTemplate } from "@/lib/agent-templates";
 
 interface Client {
   id: string;
@@ -107,6 +108,62 @@ export function ManagerClient({ manager, clients: initialClients }: {
         .finally(() => setInstancesLoading(false));
     }
   }, [activeTab, instancesData]);
+
+  // Create instance for client state
+  const [showCreateInstance, setShowCreateInstance] = useState(false);
+  const [createStep, setCreateStep] = useState<"template" | "details">("template");
+  const [createTemplate, setCreateTemplate] = useState<AgentTemplate | null>(null);
+  const [createForm, setCreateForm] = useState({ userId: "", name: "", type: "assistant", description: "" });
+  const [creating, setCreating] = useState(false);
+  const [createError, setCreateError] = useState("");
+  const [createToast, setCreateToast] = useState<string | null>(null);
+
+  function openCreateInstance() {
+    setShowCreateInstance(true);
+    setCreateStep("template");
+    setCreateTemplate(null);
+    setCreateForm({ userId: clients[0]?.id ?? "", name: "", type: "assistant", description: "" });
+    setCreateError("");
+  }
+
+  function selectCreateTemplate(tpl: AgentTemplate) {
+    setCreateTemplate(tpl);
+    setCreateForm((p) => ({ ...p, name: tpl.defaultAgentName, type: tpl.instanceType }));
+    setCreateStep("details");
+  }
+
+  async function handleCreateInstance(e: React.FormEvent) {
+    e.preventDefault();
+    if (!createForm.userId || !createForm.name) return;
+    setCreating(true);
+    setCreateError("");
+    const res = await fetch("/api/manager/instances", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: createForm.userId,
+        name: createForm.name,
+        type: createForm.type,
+        description: createForm.description,
+        systemPrompt: createTemplate?.systemPrompt,
+        agentTemplateName: createTemplate?.name,
+        agentTemplateId: createTemplate?.id,
+      }),
+    });
+    const data = await res.json();
+    setCreating(false);
+    if (!res.ok) {
+      setCreateError(data.error ?? "Failed to create instance.");
+    } else {
+      setShowCreateInstance(false);
+      setCreateTemplate(null);
+      setCreateStep("template");
+      // Refresh instances list
+      setInstancesData(null);
+      setCreateToast(`Instance "${createForm.name}" created! A welcome message was sent to the client.`);
+      setTimeout(() => setCreateToast(null), 4000);
+    }
+  }
 
   // Compute alerts from instances data
   const alerts = instancesData
@@ -354,6 +411,27 @@ export function ManagerClient({ manager, clients: initialClients }: {
       {/* ─── Instances Tab ─────────────────────────────────────────── */}
       {activeTab === "instances" && (
         <div className="p-8 max-w-7xl mx-auto">
+          {/* Toast */}
+          {createToast && (
+            <div className="fixed top-4 right-4 z-50 px-4 py-3 rounded-xl text-sm font-medium shadow-2xl border bg-emerald-600/90 border-emerald-500 text-white flex items-center gap-2">
+              <Check className="w-4 h-4" /> {createToast}
+            </div>
+          )}
+
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-semibold text-white">Client Instances</h2>
+            {clients.length > 0 && (
+              <button
+                onClick={openCreateInstance}
+                className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2.5 rounded-lg text-sm font-semibold text-white"
+              >
+                <Plus className="w-4 h-4" />
+                Create Instance for Client
+              </button>
+            )}
+          </div>
+
           {instancesLoading && (
             <div className="flex justify-center py-16">
               <Loader2 className="w-6 h-6 text-zinc-500 animate-spin" />
