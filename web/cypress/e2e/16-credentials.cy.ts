@@ -79,8 +79,9 @@ describe("16 · Credentials — add / edit / delete", () => {
         body: { ok: true, botUsername: "@TestBot", botName: "Test Bot" },
       }).as("setupTelegram");
 
-      // New Telegram connect card UI — click "Connect Telegram Bot" to open input
-      cy.contains("Connect Telegram Bot").click();
+      // New Telegram connect card UI — click "Connect Telegram Bot" button to open input
+      // (must target the button specifically; there's also a <p> heading with the same text)
+      cy.contains("button", "Connect Telegram Bot").click();
 
       cy.get('input[type="password"]').first().type("1234567890:TestBotTokenABC");
       cy.contains("button", /^connect$/i).click();

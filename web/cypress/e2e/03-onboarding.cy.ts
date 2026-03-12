@@ -224,6 +224,9 @@ describe("03 · Onboarding", () => {
     cy.contains("Continue").click();
     cy.wait("@validateKey");
 
+    // Wait for step 4 to appear (validateAndAdvance has a 600ms setTimeout before setStep(4))
+    cy.contains("Connect a channel", { timeout: 5000 }).should("be.visible");
+
     // Step 4: skip channel
     cy.contains("Skip").last().click();
 
