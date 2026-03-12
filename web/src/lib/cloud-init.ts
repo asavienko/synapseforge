@@ -8,8 +8,9 @@ export function generateCloudInit(params: {
   appUrl: string;         // e.g. "https://synapseforge.ai"
   bootstrapToken: string; // one-time token to fetch openclaw.json
   sfApiKey: string;       // INTERNAL_API_KEY for health check reporting
+  sshPublicKey?: string;  // ED25519 public key in OpenSSH format for authorized_keys
 }): string {
-  const { instanceId, gatewayToken, appUrl, bootstrapToken, sfApiKey } = params;
+  const { instanceId, gatewayToken, appUrl, bootstrapToken, sfApiKey, sshPublicKey } = params;
 
   // JS template literal: ${var} is expanded NOW (at generation time).
   // Bash heredocs below: single-quoted markers ('COMPOSE', 'HEALTH', 'SYNC') prevent
@@ -25,6 +26,13 @@ apt-get update -qq
 DEBIAN_FRONTEND=noninteractive apt-get install -y curl ca-certificates gnupg cron
 systemctl enable cron || true
 systemctl start cron || true
+
+# ── 1b. Install SSH public key ────────────────────────────────────────────────
+${sshPublicKey ? `mkdir -p /root/.ssh
+chmod 700 /root/.ssh
+echo "${sshPublicKey}" >> /root/.ssh/authorized_keys
+chmod 600 /root/.ssh/authorized_keys
+echo "[$(date)] SSH public key installed."` : "# No SSH public key provided — skipping"}
 
 # ── 2. Install Docker ─────────────────────────────────────────────────────────
 curl -fsSL https://get.docker.com | sh

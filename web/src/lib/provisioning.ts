@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { generateCloudInit } from "@/lib/cloud-init";
-import { randomBytes } from "crypto";
+import { encrypt } from "@/lib/crypto";
+import { randomBytes, generateKeyPairSync, createPublicKey } from "crypto";
 
 export type HetznerRegion = "nbg1" | "fsn1" | "hel1" | "ash" | "hil";
 
@@ -30,6 +31,29 @@ export const TIER_LABEL: Record<string, string> = {
   pro: "Pro (cx42 — 8 vCPU, 16 GB)",
 };
 
+function generateSshKeyPair(): { publicKey: string; privateKey: string } {
+  const { publicKey, privateKey } = generateKeyPairSync("ed25519", {
+    publicKeyEncoding: { type: "spki", format: "pem" },
+    privateKeyEncoding: { type: "pkcs8", format: "pem" },
+  });
+  return { publicKey, privateKey };
+}
+
+function pemToOpenSsh(publicKeyPem: string): string {
+  const pubKeyObj = createPublicKey(publicKeyPem);
+  const pubKeyDer = pubKeyObj.export({ type: "spki", format: "der" }) as Buffer;
+  // The raw 32-byte ED25519 public key is the last 32 bytes of the SPKI DER
+  const rawPublicKey = pubKeyDer.slice(-32);
+  const keyType = Buffer.from("ssh-ed25519");
+  const blob = Buffer.concat([
+    Buffer.from([0, 0, 0, 11]),
+    keyType, // 4-byte length + "ssh-ed25519"
+    Buffer.from([0, 0, 0, 32]),
+    rawPublicKey, // 4-byte length + 32-byte key
+  ]);
+  return `ssh-ed25519 ${blob.toString("base64")} sf-instance`;
+}
+
 export interface ProvisionResult {
   ok: boolean;
   serverId?: string;
@@ -55,10 +79,19 @@ export async function provisionInstance(
   // Generate a fresh bootstrap token
   const bootstrapToken = randomBytes(32).toString("hex");
 
-  // Save both tokens before creating the server
+  // Generate SSH key pair for immediate config sync
+  const { publicKey: pubPem, privateKey: privPem } = generateSshKeyPair();
+  const openSshPubKey = pemToOpenSsh(pubPem);
+
+  // Save tokens + encrypted SSH private key before creating the server
   await prisma.aIInstance.update({
     where: { id: instanceId },
-    data: { gatewayToken, bootstrapToken, bootstrapUsed: false },
+    data: {
+      gatewayToken,
+      bootstrapToken,
+      bootstrapUsed: false,
+      sshPrivateKey: encrypt(privPem),
+    },
   });
 
   const appUrl =
@@ -71,6 +104,7 @@ export async function provisionInstance(
     appUrl,
     bootstrapToken,
     sfApiKey,
+    sshPublicKey: openSshPubKey,
   });
 
   const serverType = TIER_TO_SERVER[instance.tier] ?? "cx22";
