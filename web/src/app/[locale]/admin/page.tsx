@@ -72,6 +72,7 @@ export default async function AdminPage() {
         createdAt: u.createdAt.toISOString(),
         managerId: u.managerId,
         managerName: u.manager?.name ?? null,
+        onboardingData: u.onboardingData,
         instances: u.instances.map((i) => ({
           id: i.id,
           name: i.name,

@@ -13,6 +13,7 @@ interface UserRow {
   createdAt: string;
   managerId: string | null;
   managerName: string | null;
+  onboardingData: string | null;
   instances: {
     id: string;
     name: string;
@@ -407,11 +408,21 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                     </div>
                   </div>
 
-                  {/* Plan + joined */}
+                  {/* Plan + joined + onboarding context */}
                   <div className="flex flex-wrap items-center gap-3 text-xs text-zinc-500 mb-3">
                     <span className="text-zinc-400">{PLANS[user.plan as keyof typeof PLANS]?.label ?? user.plan} plan</span>
                     <span className="text-zinc-700">·</span>
                     <span>Joined {formatDate(user.createdAt)}</span>
+                    {user.onboardingData && (() => {
+                      try {
+                        const od = JSON.parse(user.onboardingData!);
+                        return <>
+                          {od.industry && <><span className="text-zinc-700">·</span><span className="text-violet-400">{od.industry}</span></>}
+                          {od.useCase && <><span className="text-zinc-700">·</span><span className="text-zinc-400">{od.useCase.replace(/-/g, " ")}</span></>}
+                          {od.business && <><span className="text-zinc-700">·</span><span className="text-zinc-400 italic">{od.business}</span></>}
+                        </>;
+                      } catch { return null; }
+                    })()}
                   </div>
 
                   {/* Manager assign */}
