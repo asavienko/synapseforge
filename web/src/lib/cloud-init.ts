@@ -44,7 +44,9 @@ curl -sf \\
   echo "ERROR: Failed to fetch config from bootstrap endpoint"
   exit 1
 }
-chmod 600 /opt/openclaw/openclaw.json
+# 644 not 600: Docker container user (node, uid 1000) needs to READ the config.
+# The directory /opt/openclaw is root-owned 700 for outer security.
+chmod 644 /opt/openclaw/openclaw.json
 echo "[$(date)] Config fetched successfully."
 
 # ── 5. Write Docker Compose file ──────────────────────────────────────────────
@@ -145,8 +147,12 @@ cat > /opt/synapseforge/scripts/sync-config.sh << 'SYNC'
 source /etc/synapseforge.env
 HASH_FILE=/opt/openclaw/.config-hash
 
-# Fetch latest config — authenticate with gateway token
-HTTP_STATUS=$(curl -sf -D /tmp/sync-headers.txt \
+# Fetch latest config — authenticate with gateway token.
+# DO NOT use curl -f: with -f, curl exits non-zero on 4xx, and the || echo "000"
+# would append "000" to the already-written HTTP status code in the output.
+# Without -f, curl exits 0 on any HTTP response; || echo "000" only triggers
+# on actual network/connection failures (curl exit code 6/7 etc.).
+HTTP_STATUS=$(curl -s -D /tmp/sync-headers.txt \
   -H "Authorization: Bearer $OPENCLAW_GATEWAY_TOKEN" \
   "$SF_API_URL/api/internal/instance-config/$SF_INSTANCE_ID" \
   -o /tmp/openclaw-new.json \
@@ -169,6 +175,8 @@ fi
 echo "[sync] Config changed ($OLD_HASH -> $NEW_HASH). Applying..."
 chmod 600 /tmp/openclaw-new.json
 cp /tmp/openclaw-new.json /opt/openclaw/openclaw.json
+# 644: Docker container user (node) needs read access on the bind-mounted file
+chmod 644 /opt/openclaw/openclaw.json
 [ -n "$NEW_HASH" ] && echo "$NEW_HASH" > "$HASH_FILE"
 
 # Restart OpenClaw to pick up new config
