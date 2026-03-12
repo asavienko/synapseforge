@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { email } from "@/lib/email";
 
 /**
  * POST /api/internal/provision-complete/[instanceId]
@@ -74,6 +75,47 @@ export async function POST(
       },
     }),
   ]);
+
+  // Notify client and manager that the instance is live
+  const fullInstance = await prisma.aIInstance.findUnique({
+    where: { id: instanceId },
+    include: {
+      user: {
+        select: {
+          email: true,
+          name: true,
+          manager: { select: { email: true, name: true } },
+        },
+      },
+    },
+  });
+
+  if (fullInstance?.user) {
+    // Email the client — channels array is empty at provision time
+    email
+      .instanceReady(
+        fullInstance.user.email,
+        fullInstance.user.name ?? "there",
+        fullInstance.name,
+        [] // no channels connected yet; user will add them from the dashboard
+      )
+      .catch(console.error);
+
+    // Email the manager if one is assigned
+    if (fullInstance.user.manager) {
+      email
+        .managerInstanceAlert(
+          fullInstance.user.manager.email,
+          fullInstance.user.manager.name,
+          fullInstance.user.name ?? fullInstance.user.email,
+          fullInstance.user.email,
+          fullInstance.name,
+          instanceId,
+          "recovered" // closest available status for "newly provisioned and ready"
+        )
+        .catch(console.error);
+    }
+  }
 
   return NextResponse.json({ ok: true });
 }
