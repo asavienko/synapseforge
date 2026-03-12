@@ -675,6 +675,23 @@ export default function InstanceDetailPage() {
     setChatHistoryLoaded(true);
   }, [id, chatHistoryLoaded]);
 
+  // Proactively detect missing LLM credentials when Chat tab opens
+  useEffect(() => {
+    if (tab !== "Chat" || chatHistoryLoaded) return;
+    // If instance is running and no chat messages yet, check if LLM key exists
+    // We fetch credentials (masked) and show the inline setup if none found
+    fetch(`/api/instances/${id}/credentials`)
+      .then((r) => r.ok ? r.json() : [])
+      .then((creds: { key: string }[]) => {
+        const llmKeys = ["openai_api_key", "anthropic_api_key", "openrouter_api_key"];
+        const hasLLM = creds.some((c) => llmKeys.includes(c.key));
+        if (!hasLLM && chatMessages.length === 0) {
+          setChatNoCredentials(true);
+        }
+      })
+      .catch(() => {/* ignore */});
+  }, [tab, id, chatHistoryLoaded, chatMessages.length]);
+
   useEffect(() => {
     if (tab === "API Keys" && keys.length === 0) loadKeys();
     if (tab === "Activity Log") loadLogs();
@@ -905,10 +922,10 @@ export default function InstanceDetailPage() {
     if (res.ok) {
       setChatNoCredentials(false);
       setInlineKeyValue("");
-      // Send the queued message if there is one
-      if (chatInput.trim()) {
-        sendChat();
-      }
+      // Auto-focus the chat input so user can immediately type
+      setTimeout(() => {
+        document.querySelector<HTMLTextAreaElement>("textarea[placeholder]")?.focus();
+      }, 100);
     } else {
       const data = await res.json();
       setInlineKeyError(data.error ?? "Failed to save key");

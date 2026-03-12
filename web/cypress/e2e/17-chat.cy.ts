@@ -114,8 +114,8 @@ describe("17 · Chat Tab", () => {
     cy.get("main").find("[data-testid='chat-send-btn']").click();
     cy.wait("@chatNoCreds");
 
-    cy.get("main").contains("No AI credentials configured").should("be.visible");
-    cy.get("main").contains("Configure credentials").should("be.visible");
+    cy.get("main").contains("One step to start chatting").should("be.visible");
+    cy.get("main").find("input[type='password']").should("be.visible");
     cy.snap("17-chat-04-no-credentials");
   });
 
@@ -144,7 +144,7 @@ describe("17 · Chat Tab", () => {
     cy.get("main").find("[data-testid='chat-send-btn']").click();
     cy.wait("@chatNoCreds2");
 
-    cy.get("main").contains("Configure credentials").click();
+    cy.get("main").contains("Advanced setup").click();
     // Should now be on Credentials tab
     cy.get("main").contains("OpenClaw Config").should("be.visible");
     cy.snap("17-chat-05-creds-tab-navigation");
