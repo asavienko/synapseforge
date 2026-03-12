@@ -674,6 +674,142 @@ export function ManagerClient({ manager, clients: initialClients }: {
           )}
         </div>
       )}
+
+      {/* ─── Create Instance Modal ────────────────────────────────── */}
+      {showCreateInstance && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+          <div className="bg-[#111118] border border-white/10 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden">
+            {/* Modal header */}
+            <div className="flex items-center justify-between px-6 py-5 border-b border-white/5">
+              <div>
+                <h2 className="text-lg font-bold text-white">Create Instance for Client</h2>
+                {createStep === "template" && (
+                  <p className="text-xs text-zinc-500 mt-0.5">Choose a template — the agent will be pre-configured and a welcome message sent.</p>
+                )}
+                {createStep === "details" && createTemplate && (
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="text-xs text-zinc-500">Template:</span>
+                    <span className="text-xs font-semibold text-violet-300">{createTemplate.icon} {createTemplate.name}</span>
+                    <button onClick={() => setCreateStep("template")} className="text-xs text-zinc-600 hover:text-zinc-400 ml-1 underline">
+                      change
+                    </button>
+                  </div>
+                )}
+              </div>
+              <button onClick={() => setShowCreateInstance(false)} className="text-zinc-500 hover:text-white transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Step 1: Template gallery */}
+            {createStep === "template" && (
+              <div className="p-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {AGENT_TEMPLATES.map((tpl) => (
+                    <button
+                      key={tpl.id}
+                      onClick={() => selectCreateTemplate(tpl)}
+                      className="group text-left p-4 rounded-xl border border-white/10 hover:border-violet-500/60 hover:bg-violet-500/5 transition-all"
+                    >
+                      <div className="text-2xl mb-2">{tpl.icon}</div>
+                      <div className="text-sm font-semibold text-white mb-1 group-hover:text-violet-300 transition-colors">
+                        {tpl.name}
+                      </div>
+                      <p className="text-xs text-zinc-500 leading-relaxed line-clamp-2">
+                        {tpl.description}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Step 2: Details form */}
+            {createStep === "details" && (
+              <form onSubmit={handleCreateInstance} className="p-6 space-y-4">
+                {/* Template prompt preview */}
+                {createTemplate && createTemplate.id !== "custom" && (
+                  <div className="bg-violet-500/5 border border-violet-500/20 rounded-xl px-4 py-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Check className="w-3.5 h-3.5 text-violet-400" />
+                      <span className="text-xs font-medium text-violet-300">Pre-filled system prompt</span>
+                    </div>
+                    <p className="text-xs text-zinc-400 line-clamp-3 leading-relaxed">{createTemplate.systemPrompt}</p>
+                  </div>
+                )}
+
+                {/* Client selector */}
+                <div>
+                  <label className="block text-sm font-medium text-zinc-300 mb-1.5">Client</label>
+                  <select
+                    value={createForm.userId}
+                    onChange={(e) => setCreateForm((p) => ({ ...p, userId: e.target.value }))}
+                    required
+                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-violet-500 transition-colors"
+                  >
+                    {clients.map((c) => (
+                      <option key={c.id} value={c.id} className="bg-zinc-900">
+                        {c.name ?? c.email} ({c.email})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-zinc-300 mb-1.5">Instance Name</label>
+                  <input
+                    type="text"
+                    value={createForm.name}
+                    onChange={(e) => setCreateForm((p) => ({ ...p, name: e.target.value }))}
+                    required
+                    placeholder="Support Agent"
+                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-zinc-300 mb-1.5">Description (optional)</label>
+                  <textarea
+                    value={createForm.description}
+                    onChange={(e) => setCreateForm((p) => ({ ...p, description: e.target.value }))}
+                    rows={2}
+                    placeholder="What does this agent do?"
+                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 transition-colors resize-none"
+                  />
+                </div>
+
+                <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl px-4 py-3 text-xs text-amber-300/80">
+                  ℹ️ A personalized welcome message will be sent to the client using their onboarding context.
+                </div>
+
+                {createError && (
+                  <div className="text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-4 py-3">
+                    {createError}
+                  </div>
+                )}
+
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setCreateStep("template")}
+                    className="flex-1 py-3 border border-white/10 hover:border-white/20 text-zinc-300 rounded-lg text-sm font-semibold transition-colors"
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={creating || !createForm.userId || !createForm.name}
+                    className="flex-1 flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 transition-colors py-3 rounded-lg text-sm font-semibold text-white"
+                  >
+                    {creating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                    {creating ? "Creating…" : "Create & Notify Client"}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
