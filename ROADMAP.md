@@ -67,7 +67,9 @@ See `plans/USER_STORY_OPENCLAW.md` for full detail.
 - WhatsApp, Slack, web widget — follow-on
 - Channel health status visible (green/red per channel)
 
-### 1.5 In-App Manager Messaging
+### 1.5 In-App Manager Messaging ⏸️ ON HOLD
+> **Status:** Deprioritized — 2026-03-12. Focus is on provisioning, credentials, and channel setup first.
+> Resume when core instance flow is end-to-end working.
 - New `Message` model in Prisma: `id, senderId, recipientId, body, createdAt, read`
 - New route: `/dashboard/messages` — thread-style between client and manager
 - Manager portal (`/manager`) — view all clients, their instances, reply to messages
@@ -218,8 +220,8 @@ See `plans/USER_STORY_OPENCLAW.md` for full detail.
 4. **Real instance status** — pull from OpenClaw health check API, not DB toggle
 5. **Credential vault** — client API keys encrypted + pushed to instance
 6. **Telegram channel setup** — first channel connection through dashboard UI
-7. **In-app messaging** — manager ↔ client conversation
-8. **Welcome email** — triggered on signup + on manager assignment
+7. **Welcome email** — triggered on signup + on manager assignment
+8. ~~**In-app messaging**~~ — ⏸️ **ON HOLD** (resume after core instance flow is complete)
 
 ---
 
