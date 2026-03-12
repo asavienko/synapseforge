@@ -95,6 +95,13 @@ export function generateOpenClawConfig(
 
     ...(Object.keys(channels).length > 0 ? { channels } : {}),
 
+    // Hooks: use same token as gateway auth for simplicity.
+    // /hooks/wake is used by our health checks and config-sync restart signal.
+    hooks: {
+      enabled: true,
+      token: creds.gateway_token,
+    },
+
     gateway: {
       bind: "lan",
       port: 18789,

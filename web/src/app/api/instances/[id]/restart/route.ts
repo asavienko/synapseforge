@@ -28,13 +28,13 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
 
   // Send restart signal to gateway
   try {
-    const res = await fetch(`${instance.vpsUrl}/hooks/restart`, {
+    const res = await fetch(`${instance.vpsUrl}/hooks/wake`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${instance.gatewayToken ?? ""}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ reason: "config_sync" }),
+      body: JSON.stringify({ text: "config_sync", mode: "next-heartbeat" }),
       signal: AbortSignal.timeout(10000),
     });
 

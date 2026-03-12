@@ -95,13 +95,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const vpsUrl = updatedInstance.vpsUrl;
     const gatewayToken = updatedInstance.gatewayToken;
     // Fire and forget — don't await, don't block the user response
-    fetch(`${vpsUrl}/hooks/restart`, {
+    fetch(`${vpsUrl}/hooks/wake`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${gatewayToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ reason: "credential_updated" }),
+      body: JSON.stringify({ text: "credential_updated", mode: "next-heartbeat" }),
       signal: AbortSignal.timeout(5000),
     }).catch(() => {
       // Gateway may be offline — that's fine, VPS will pick up on next 5-min poll

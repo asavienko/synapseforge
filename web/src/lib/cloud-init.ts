@@ -108,10 +108,14 @@ cat > /opt/synapseforge/scripts/health-check.sh << 'HEALTH'
 source /etc/synapseforge.env
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 START_MS=$(date +%s%3N)
-# Check if OpenClaw gateway responds (any HTTP response = up; 000 = down)
+# POST /hooks/wake with mode=next-heartbeat — validates gateway is up + auth is working.
+# /hooks/health does NOT exist; /hooks/wake is the correct liveness endpoint.
 HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 \
+  -X POST \
   -H "Authorization: Bearer $OPENCLAW_GATEWAY_TOKEN" \
-  "$OPENCLAW_GATEWAY_URL/hooks/health" 2>/dev/null || echo "000")
+  -H "Content-Type: application/json" \
+  -d '{"text":"health-check","mode":"next-heartbeat"}' \
+  "$OPENCLAW_GATEWAY_URL/hooks/wake" 2>/dev/null || echo "000")
 END_MS=$(date +%s%3N)
 RESPONSE_MS=$((END_MS - START_MS))
 
