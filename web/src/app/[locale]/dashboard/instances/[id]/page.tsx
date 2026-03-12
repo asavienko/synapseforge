@@ -566,6 +566,10 @@ export default function InstanceDetailPage() {
   const [chatLoading, setChatLoading] = useState(false);
   const [chatNoCredentials, setChatNoCredentials] = useState(false);
   const [chatProvider, setChatProvider] = useState<string | null>(null);
+  const [inlineKeyValue, setInlineKeyValue] = useState("");
+  const [inlineKeyProvider, setInlineKeyProvider] = useState<"openai" | "anthropic" | "openrouter">("openai");
+  const [inlineKeySaving, setInlineKeySaving] = useState(false);
+  const [inlineKeyError, setInlineKeyError] = useState("");
   const [chatHistoryLoaded, setChatHistoryLoaded] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -884,6 +888,32 @@ export default function InstanceDetailPage() {
       ]);
     }
     setChatLoading(false);
+  }
+
+  async function saveInlineKey() {
+    if (!inlineKeyValue.trim()) return;
+    setInlineKeySaving(true);
+    setInlineKeyError("");
+    const credKey = inlineKeyProvider === "openai" ? "openai_api_key"
+      : inlineKeyProvider === "anthropic" ? "anthropic_api_key"
+      : "openrouter_api_key";
+    const res = await fetch(`/api/instances/${id}/credentials`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key: credKey, value: inlineKeyValue.trim() }),
+    });
+    if (res.ok) {
+      setChatNoCredentials(false);
+      setInlineKeyValue("");
+      // Send the queued message if there is one
+      if (chatInput.trim()) {
+        sendChat();
+      }
+    } else {
+      const data = await res.json();
+      setInlineKeyError(data.error ?? "Failed to save key");
+    }
+    setInlineKeySaving(false);
   }
 
   async function deployInstance() {
@@ -1224,21 +1254,82 @@ export default function InstanceDetailPage() {
             </div>
           )}
 
-          {/* No credentials state */}
+          {/* Inline key setup — shown when no credentials, right inside chat */}
           {instance.status === "running" && chatNoCredentials && chatMessages.length === 0 && (
-            <div className="flex-1 flex items-center justify-center">
-              <div className="text-center max-w-sm">
-                <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-4">
-                  <AlertCircle className="w-7 h-7 text-amber-400" />
+            <div className="flex-1 flex items-center justify-center px-2">
+              <div className="w-full max-w-md">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-10 h-10 rounded-xl bg-violet-600/20 border border-violet-500/20 flex items-center justify-center">
+                    <Zap className="w-5 h-5 text-violet-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-white font-semibold text-sm">One step to start chatting</h3>
+                    <p className="text-zinc-500 text-xs">Add your AI API key — stays private, never shared</p>
+                  </div>
                 </div>
-                <h3 className="text-white font-semibold mb-2">{t("chat.noCredsTitle")}</h3>
-                <p className="text-zinc-500 text-sm mb-4">{t("chat.noCredsDesc")}</p>
-                <button
-                  onClick={() => setTab("Credentials")}
-                  className="text-sm text-violet-400 hover:text-violet-300 bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/20 px-4 py-2 rounded-xl transition-colors"
-                >
-                  {t("chat.goToCredentials")}
-                </button>
+
+                {/* Provider tabs */}
+                <div className="flex gap-1 p-1 bg-white/5 rounded-xl mb-3">
+                  {(["openai", "anthropic", "openrouter"] as const).map((p) => (
+                    <button
+                      key={p}
+                      onClick={() => setInlineKeyProvider(p)}
+                      className={`flex-1 text-xs py-1.5 rounded-lg font-medium transition-colors ${
+                        inlineKeyProvider === p
+                          ? "bg-violet-600 text-white"
+                          : "text-zinc-500 hover:text-zinc-300"
+                      }`}
+                    >
+                      {p === "openai" ? "OpenAI" : p === "anthropic" ? "Anthropic" : "OpenRouter"}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Key input */}
+                <div className="flex gap-2">
+                  <input
+                    type="password"
+                    value={inlineKeyValue}
+                    onChange={(e) => setInlineKeyValue(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && saveInlineKey()}
+                    placeholder={
+                      inlineKeyProvider === "openai" ? "sk-..." :
+                      inlineKeyProvider === "anthropic" ? "sk-ant-..." : "sk-or-..."
+                    }
+                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors"
+                  />
+                  <button
+                    onClick={saveInlineKey}
+                    disabled={inlineKeySaving || !inlineKeyValue.trim()}
+                    className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 transition-colors px-4 py-3 rounded-xl text-sm font-semibold text-white shrink-0"
+                  >
+                    {inlineKeySaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                    {inlineKeySaving ? "Saving…" : "Start"}
+                  </button>
+                </div>
+                {inlineKeyError && (
+                  <p className="text-red-400 text-xs mt-2">{inlineKeyError}</p>
+                )}
+                <div className="flex items-center justify-between mt-3">
+                  <a
+                    href={
+                      inlineKeyProvider === "openai" ? "https://platform.openai.com/api-keys" :
+                      inlineKeyProvider === "anthropic" ? "https://console.anthropic.com/settings/keys" :
+                      "https://openrouter.ai/keys"
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors"
+                  >
+                    Get a free API key →
+                  </a>
+                  <button
+                    onClick={() => setTab("Credentials")}
+                    className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors"
+                  >
+                    Advanced setup
+                  </button>
+                </div>
               </div>
             </div>
           )}

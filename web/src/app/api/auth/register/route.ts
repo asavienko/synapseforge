@@ -31,21 +31,28 @@ export async function POST(req: NextRequest) {
 
   const hashedPassword = await bcrypt.hash(password, 12);
 
+  // Auto-assign default manager if configured
+  const defaultManagerId = process.env.DEFAULT_MANAGER_ID?.trim() || null;
+  const defaultManager = defaultManagerId
+    ? await prisma.manager.findUnique({ where: { id: defaultManagerId } })
+    : null;
+
   const user = await prisma.user.create({
     data: {
       name,
       email: userEmail,
       password: hashedPassword,
       plan: "free",
+      ...(defaultManager ? { managerId: defaultManager.id } : {}),
     },
   });
 
-  // Auto-create a free minimal instance
+  // Auto-create a free minimal instance — start as "running" so chat works immediately
   const instance = await prisma.aIInstance.create({
     data: {
       name: "My First Agent",
       type: "assistant",
-      status: "stopped",
+      status: "running",
       tier: "minimal",
       description: "Your starter AI assistant",
       userId: user.id,
@@ -55,6 +62,19 @@ export async function POST(req: NextRequest) {
   await prisma.activityLog.create({
     data: { event: "created", details: "Instance created on sign-up", instanceId: instance.id },
   });
+
+  // If a manager was auto-assigned, drop a personalised welcome message in their thread
+  if (defaultManager) {
+    const firstName = name.split(" ")[0];
+    await prisma.message.create({
+      data: {
+        body: `Hi ${firstName}! 👋 I'm ${defaultManager.name}, your dedicated manager at SynapseForge. I'll be helping you get your AI agent set up and running. To get started, head to the Chat tab and add your OpenAI (or Anthropic) API key — you'll be chatting with your AI in under a minute. Let me know if you have any questions!`,
+        senderType: "manager",
+        userId: user.id,
+        managerId: defaultManager.id,
+      },
+    });
+  }
 
   // Create email verification token (expires in 24h)
   const verificationToken = crypto.randomBytes(32).toString("hex");
@@ -70,7 +90,12 @@ export async function POST(req: NextRequest) {
   emailService.welcome(userEmail, name).catch(console.error);
   emailService.verifyEmail(userEmail, name, verificationToken).catch(console.error);
 
-  // Notify admins so a manager can be assigned immediately
+  // Notify manager + admins
+  if (defaultManager) {
+    emailService
+      .newUserAlert(defaultManager.email, defaultManager.name, name, userEmail)
+      .catch(console.error);
+  }
   const adminEmails = (process.env.ADMIN_EMAILS ?? "").split(",").map((e) => e.trim()).filter(Boolean);
   if (adminEmails.length > 0) {
     emailService.newSignupAlert(adminEmails, name, userEmail).catch(console.error);
