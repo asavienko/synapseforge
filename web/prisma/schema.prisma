@@ -111,8 +111,10 @@ model AIInstance {
   vpsServerId      String?   // Hetzner server numeric ID
   bootstrapToken   String?   // One-time token for config delivery to VPS
   bootstrapUsed    Boolean   @default(false)
-  configSynced     Boolean   @default(true)  // false when credentials changed but not pushed to VPS
-  sshPrivateKey    String?   // Encrypted ED25519 private key for config updates
+  configSynced       Boolean   @default(true)  // false when credentials changed but not pushed to VPS
+  syncRequested      Boolean   @default(false) // user clicked "Sync Now" — VPS will pick up on next poll
+  telegramBotUsername String?  // e.g. "@MyBot" — set after successful Telegram setup
+  sshPrivateKey      String?   // Encrypted ED25519 private key for config updates
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

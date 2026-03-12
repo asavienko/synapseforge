@@ -16,7 +16,7 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
 
   // Return instance but never expose gatewayToken; expose hasGateway flag
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { gatewayToken: _token, vpsUrl: _vps, ...safeInstance } = instance;
+  const { gatewayToken: _token, vpsUrl: _vps, sshPrivateKey: _ssh, ...safeInstance } = instance;
   return NextResponse.json({ ...safeInstance, hasGateway: !!instance.vpsUrl });
 }
 

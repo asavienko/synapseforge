@@ -1,18 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useRouter } from "@/i18n/navigation";
-import { Zap, Loader2, Check } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { Zap, Loader2, Check, Gift } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { GoogleButton } from "@/components/GoogleButton";
 
+/** Read referral code: prefer URL ?ref=, fallback to cookie */
+function getReferralCode(): string | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(/(?:^|;\s*)referral_code=([^;]+)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
 export default function SignUpPage() {
   const t = useTranslations("auth.signUp");
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [referralCode, setReferralCode] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Prefer URL param; fall back to cookie
+    const refFromUrl = searchParams.get("ref");
+    const refFromCookie = getReferralCode();
+    setReferralCode(refFromUrl ?? refFromCookie);
+  }, [searchParams]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -22,7 +39,7 @@ export default function SignUpPage() {
     const res = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify({ ...form, referralCode: referralCode ?? undefined }),
     });
 
     const data = await res.json();

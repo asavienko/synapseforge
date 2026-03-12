@@ -31,8 +31,10 @@ interface Instance {
   lastBackupAt?: string | null;
   hasGateway?: boolean;
   configSynced?: boolean;
+  syncRequested?: boolean;
   provisionStatus?: string | null;
   vpsProvider?: string | null;
+  telegramBotUsername?: string | null;
 }
 
 interface CredentialRow {
@@ -61,6 +63,8 @@ interface HealthData {
   healthStatus: string | null;
   lastCheckedAt: string | null;
   vpsUrl: string | null;
+  provisionStatus: string | null;
+  liveCheck: { healthy: boolean; latencyMs: number; error?: string } | null;
   checks: HealthCheckRow[];
 }
 
@@ -543,6 +547,8 @@ export default function InstanceDetailPage() {
   const [healthData, setHealthData] = useState<HealthData | null>(null);
   const [snapshotsData, setSnapshotsData] = useState<SnapshotsData | null>(null);
   const [infraLoading, setInfraLoading] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [resyncLoading, setResyncLoading] = useState(false);
 
   // Gateway status
   const [gatewayStatus, setGatewayStatus] = useState<GatewayStatus | null>(null);
@@ -585,6 +591,15 @@ export default function InstanceDetailPage() {
   const [addValue, setAddValue] = useState("");
   const [configPreviewText, setConfigPreviewText] = useState<string | null>(null);
   const [configPreviewLoading, setConfigPreviewLoading] = useState(false);
+
+  // Telegram setup state
+  const [telegramTokenInput, setTelegramTokenInput] = useState("");
+  const [telegramConnecting, setTelegramConnecting] = useState(false);
+  const [telegramError, setTelegramError] = useState<string | null>(null);
+  const [telegramConnected, setTelegramConnected] = useState<{ username: string; name: string } | null>(null);
+
+  // Sync request state
+  const [syncRequesting, setSyncRequesting] = useState(false);
 
   function showToast(text: string, type: "success" | "error" = "success") {
     setToast({ text, type });
@@ -653,6 +668,25 @@ export default function InstanceDetailPage() {
     const interval = setInterval(() => { loadInstance(); }, 10000);
     return () => clearInterval(interval);
   }, [instance?.provisionStatus, loadInstance]);
+
+  // Fetch admin status once on mount
+  useEffect(() => {
+    fetch("/api/user/me")
+      .then((r) => r.ok ? r.json() : null)
+      .then((d) => { if (d?.isAdmin) setIsAdmin(true); })
+      .catch(() => {});
+  }, []);
+
+  // Poll health every 30s when on Infrastructure tab
+  useEffect(() => {
+    if (tab !== "Infrastructure") return;
+    const pollHealth = async () => {
+      const res = await fetch(`/api/instances/${id}/health`);
+      if (res.ok) setHealthData(await res.json());
+    };
+    const interval = setInterval(pollHealth, 30_000);
+    return () => clearInterval(interval);
+  }, [tab, id]);
 
   const loadChatHistory = useCallback(async () => {
     if (chatHistoryLoaded) return;
@@ -802,6 +836,19 @@ export default function InstanceDetailPage() {
     setCheckingGateway(false);
   }
 
+  async function resyncConfig() {
+    setResyncLoading(true);
+    const res = await fetch(`/api/admin/instances/${id}/sync-config`, { method: "POST" });
+    if (res.ok) {
+      showToast("Config sync triggered — VPS will pick up changes within 5 minutes.");
+      await loadInstance();
+    } else {
+      const data = await res.json().catch(() => ({}));
+      showToast(data.error ?? "Sync failed", "error");
+    }
+    setResyncLoading(false);
+  }
+
   async function saveCredential(key: string, value: string) {
     setSavingCred(true);
     const res = await fetch(`/api/instances/${id}/credentials`, {
@@ -860,6 +907,43 @@ export default function InstanceDetailPage() {
       await loadInstance();
       showToast("Credential removed.");
     }
+  }
+
+  async function setupTelegram(token: string) {
+    if (!token.trim()) return;
+    setTelegramConnecting(true);
+    setTelegramError(null);
+    setTelegramConnected(null);
+
+    const res = await fetch(`/api/instances/${id}/setup-telegram`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: token.trim(), setWebhook: true }),
+    });
+    const data = await res.json() as { ok?: boolean; botUsername?: string; botName?: string; error?: string };
+
+    if (!res.ok || !data.ok) {
+      setTelegramError(data.error ?? "Failed to connect Telegram bot");
+    } else {
+      setTelegramConnected({ username: data.botUsername ?? "", name: data.botName ?? "" });
+      setTelegramTokenInput("");
+      await loadCredentials();
+      await loadInstance();
+      showToast(`Telegram connected: ${data.botUsername}`);
+    }
+    setTelegramConnecting(false);
+  }
+
+  async function requestSync() {
+    setSyncRequesting(true);
+    const res = await fetch(`/api/instances/${id}/sync-request`, { method: "POST" });
+    if (res.ok) {
+      showToast("Sync requested — your config will update within 5 minutes");
+      await loadInstance();
+    } else {
+      showToast("Failed to request sync", "error");
+    }
+    setSyncRequesting(false);
   }
 
   async function loadConfigPreview() {
@@ -1730,6 +1814,105 @@ print(resp.choices[0].message.content)`}</pre>
             </div>
           ) : (
             <>
+              {/* ── Provision Status card ── */}
+              {(instance.provisionStatus || instance.hasGateway) && (
+                <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+                  <div className="p-5 border-b border-white/5 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Server className="w-4 h-4 text-zinc-500" />
+                      <h3 className="text-sm font-semibold text-white">VPS Provisioning</h3>
+                    </div>
+                    {/* Re-sync Config button */}
+                    {isAdmin ? (
+                      <button
+                        onClick={resyncConfig}
+                        disabled={resyncLoading}
+                        className="flex items-center gap-1.5 text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/20 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                      >
+                        {resyncLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Zap className="w-3 h-3" />}
+                        Re-sync Config
+                      </button>
+                    ) : (
+                      instance.configSynced === false && (
+                        <span className="text-xs text-amber-400">Contact your manager to sync config</span>
+                      )
+                    )}
+                  </div>
+                  <div className="p-5 space-y-3">
+                    {/* Provision status */}
+                    <div className="flex items-center gap-4">
+                      <div className="text-xs text-zinc-500 uppercase tracking-wider w-28">Status</div>
+                      {(() => {
+                        const ps = instance.provisionStatus;
+                        if (ps === "provisioning") return (
+                          <span className="flex items-center gap-1.5 text-sm px-3 py-1 rounded-full border font-medium bg-amber-500/20 text-amber-300 border-amber-500/30">
+                            <Loader2 className="w-3 h-3 animate-spin" /> Provisioning…
+                          </span>
+                        );
+                        if (ps === "ready") return (
+                          <span className="text-sm px-3 py-1 rounded-full border font-medium bg-emerald-500/20 text-emerald-300 border-emerald-500/30">
+                            Ready
+                          </span>
+                        );
+                        if (ps === "failed") return (
+                          <span className="text-sm px-3 py-1 rounded-full border font-medium bg-red-500/20 text-red-300 border-red-500/30">
+                            Failed
+                          </span>
+                        );
+                        if (instance.hasGateway) return (
+                          <span className="text-sm px-3 py-1 rounded-full border font-medium bg-emerald-500/20 text-emerald-300 border-emerald-500/30">
+                            Ready
+                          </span>
+                        );
+                        return (
+                          <span className="text-sm px-3 py-1 rounded-full border font-medium bg-zinc-700/30 text-zinc-400 border-zinc-600/30">
+                            {ps ?? "Unknown"}
+                          </span>
+                        );
+                      })()}
+                    </div>
+                    {/* VPS URL */}
+                    {healthData?.vpsUrl && (
+                      <div className="flex items-center gap-4">
+                        <div className="text-xs text-zinc-500 uppercase tracking-wider w-28">VPS URL</div>
+                        <span className="text-sm text-zinc-300 font-mono">{healthData.vpsUrl}</span>
+                      </div>
+                    )}
+                    {/* Config sync status */}
+                    {instance.configSynced === false && (
+                      <div className="flex items-center gap-4">
+                        <div className="text-xs text-zinc-500 uppercase tracking-wider w-28">Config</div>
+                        <span className="flex items-center gap-1.5 text-xs text-amber-400">
+                          <AlertCircle className="w-3 h-3" /> Out of sync — VPS will auto-sync within 5 min
+                        </span>
+                      </div>
+                    )}
+                    {/* Live check result */}
+                    {healthData?.liveCheck && (
+                      <div className="flex items-center gap-4">
+                        <div className="text-xs text-zinc-500 uppercase tracking-wider w-28">Last Check</div>
+                        <div className="flex items-center gap-2">
+                          {healthData.liveCheck.healthy ? (
+                            <>
+                              <Wifi className="w-3.5 h-3.5 text-emerald-400" />
+                              <span className="text-sm text-emerald-300">{healthData.liveCheck.latencyMs}ms</span>
+                            </>
+                          ) : (
+                            <>
+                              <WifiOff className="w-3.5 h-3.5 text-red-400" />
+                              <span className="text-sm text-red-400">{healthData.liveCheck.error ?? "Unreachable"}</span>
+                            </>
+                          )}
+                          {healthData.lastCheckedAt && (
+                            <span className="text-xs text-zinc-600">· {formatRelativeTime(healthData.lastCheckedAt)}</span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* VPS Gateway Status */}
               <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
                 <div className="p-5 border-b border-white/5 flex items-center gap-2">
@@ -1986,13 +2169,108 @@ print(resp.choices[0].message.content)`}</pre>
       {/* ── Credentials ── */}
       {tab === "Credentials" && (
         <div className="space-y-5">
-          {/* Out of sync banner */}
+          {/* Out of sync banner — with Sync Now button if VPS is provisioned */}
           {instance.configSynced === false && (
-            <div className="flex items-start gap-3 bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3">
-              <AlertCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-              <span className="text-sm text-amber-300">{t("credentials.configOutOfSync")}</span>
+            <div className="flex items-center gap-3 bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3">
+              <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+              <span className="text-sm text-amber-300 flex-1">{t("credentials.configOutOfSync")}</span>
+              {instance.hasGateway && (
+                <button
+                  onClick={requestSync}
+                  disabled={syncRequesting}
+                  className="flex items-center gap-1.5 text-xs font-semibold bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50 shrink-0"
+                >
+                  {syncRequesting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Wifi className="w-3 h-3" />}
+                  Sync Now
+                </button>
+              )}
             </div>
           )}
+
+          {/* ── Connected Channels Overview ── */}
+          <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+            <div className="p-4 border-b border-white/5">
+              <h3 className="text-xs text-zinc-500 uppercase tracking-wider">Connected Channels</h3>
+            </div>
+            <div className="divide-y divide-white/5">
+              {/* Telegram */}
+              {(() => {
+                const hasTelegram = credentials.some((c) => c.key === "telegram_bot_token");
+                const tgUsername = instance.telegramBotUsername ?? (telegramConnected?.username ?? null);
+                return (
+                  <div className="flex items-center gap-3 p-4">
+                    <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-base shrink-0">✈</div>
+                    <div className="flex-1">
+                      <div className="text-sm font-medium text-white">Telegram</div>
+                      {hasTelegram && tgUsername ? (
+                        <div className="text-xs text-emerald-400 mt-0.5 flex items-center gap-1">
+                          <Check className="w-3 h-3" /> {tgUsername} — Connected
+                        </div>
+                      ) : hasTelegram ? (
+                        <div className="text-xs text-emerald-400 mt-0.5 flex items-center gap-1">
+                          <Check className="w-3 h-3" /> Token saved
+                        </div>
+                      ) : (
+                        <div className="text-xs text-zinc-500 mt-0.5">Not connected</div>
+                      )}
+                    </div>
+                    {!hasTelegram && (
+                      <span className="text-xs text-zinc-600 bg-white/5 px-2 py-1 rounded-lg">Not set up</span>
+                    )}
+                    {hasTelegram && (
+                      <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-lg">Live</span>
+                    )}
+                  </div>
+                );
+              })()}
+              {/* Discord */}
+              {(() => {
+                const hasDiscord = credentials.some((c) => c.key === "discord_bot_token");
+                return (
+                  <div className="flex items-center gap-3 p-4">
+                    <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-base shrink-0">🎮</div>
+                    <div className="flex-1">
+                      <div className="text-sm font-medium text-white">Discord</div>
+                      {hasDiscord ? (
+                        <div className="text-xs text-emerald-400 mt-0.5 flex items-center gap-1"><Check className="w-3 h-3" /> Token saved</div>
+                      ) : (
+                        <div className="text-xs text-zinc-500 mt-0.5">Not connected</div>
+                      )}
+                      {hasDiscord && <div className="text-xs text-zinc-600 mt-0.5">Full configuration in manager portal</div>}
+                    </div>
+                    {hasDiscord ? (
+                      <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-lg">Live</span>
+                    ) : (
+                      <span className="text-xs text-zinc-600 bg-white/5 px-2 py-1 rounded-lg">Not set up</span>
+                    )}
+                  </div>
+                );
+              })()}
+              {/* Slack */}
+              {(() => {
+                const hasSlack = credentials.some((c) => c.key === "slack_app_token" || c.key === "slack_bot_token");
+                return (
+                  <div className="flex items-center gap-3 p-4">
+                    <div className="w-8 h-8 rounded-lg bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-base shrink-0">💬</div>
+                    <div className="flex-1">
+                      <div className="text-sm font-medium text-white">Slack</div>
+                      {hasSlack ? (
+                        <div className="text-xs text-emerald-400 mt-0.5 flex items-center gap-1"><Check className="w-3 h-3" /> Token saved</div>
+                      ) : (
+                        <div className="text-xs text-zinc-500 mt-0.5">Not connected</div>
+                      )}
+                      {hasSlack && <div className="text-xs text-zinc-600 mt-0.5">Full configuration in manager portal</div>}
+                    </div>
+                    {hasSlack ? (
+                      <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-lg">Live</span>
+                    ) : (
+                      <span className="text-xs text-zinc-600 bg-white/5 px-2 py-1 rounded-lg">Not set up</span>
+                    )}
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
 
           {/* Config preview / download */}
           <div className="glow-border rounded-2xl bg-white/[0.02] p-5">
