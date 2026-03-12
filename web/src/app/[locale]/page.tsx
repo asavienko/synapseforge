@@ -162,6 +162,116 @@ export default async function LandingPage() {
         </div>
       </section>
 
+      {/* ── Product Preview ──────────────────────────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-6 py-20">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Your AI command center</h2>
+          <p className="text-zinc-400 max-w-xl mx-auto">Everything you need to deploy, monitor, and chat with your AI agent — in one clean dashboard.</p>
+        </div>
+
+        {/* Browser mockup */}
+        <div className="max-w-5xl mx-auto">
+          <div className="rounded-2xl border border-white/10 bg-black/60 overflow-hidden shadow-2xl shadow-violet-500/5">
+            {/* Browser chrome */}
+            <div className="flex items-center gap-2 px-4 py-3 border-b border-white/10 bg-white/[0.03]">
+              <span className="w-3 h-3 rounded-full bg-red-500/60" />
+              <span className="w-3 h-3 rounded-full bg-amber-500/60" />
+              <span className="w-3 h-3 rounded-full bg-emerald-500/60" />
+              <div className="flex-1 mx-4">
+                <div className="bg-white/5 border border-white/10 rounded-md px-3 py-1 text-xs text-zinc-500 font-mono max-w-xs mx-auto text-center">
+                  app.synapseforge.ai/dashboard
+                </div>
+              </div>
+            </div>
+
+            {/* Dashboard layout */}
+            <div className="flex" style={{ minHeight: 420 }}>
+              {/* Sidebar */}
+              <div className="w-52 border-r border-white/5 bg-white/[0.01] p-3 shrink-0 hidden md:block">
+                <div className="flex items-center gap-2 px-2 py-3 mb-4">
+                  <div className="w-6 h-6 rounded bg-violet-600 flex items-center justify-center">
+                    <span className="text-white text-xs font-bold">S</span>
+                  </div>
+                  <span className="text-xs font-semibold text-white">SynapseForge</span>
+                </div>
+                {[
+                  { label: "Overview", active: false, dot: null },
+                  { label: "AI Instances", active: true, dot: null },
+                  { label: "Messages", active: false, dot: "2" },
+                  { label: "Billing", active: false, dot: null },
+                  { label: "Settings", active: false, dot: null },
+                ].map((item) => (
+                  <div key={item.label} className={`flex items-center justify-between px-3 py-2 rounded-lg mb-0.5 text-xs ${item.active ? "bg-violet-600/20 text-violet-300" : "text-zinc-500"}`}>
+                    <span>{item.label}</span>
+                    {item.dot && (
+                      <span className="w-4 h-4 rounded-full bg-violet-600 text-white text-[10px] flex items-center justify-center font-bold">{item.dot}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Main content */}
+              <div className="flex-1 p-5 overflow-hidden">
+                <div className="flex items-center justify-between mb-5">
+                  <h2 className="text-sm font-semibold text-white">AI Instances</h2>
+                  <div className="text-xs bg-violet-600/80 text-white px-3 py-1.5 rounded-lg font-medium">+ New Instance</div>
+                </div>
+
+                {/* Instance cards */}
+                {[
+                  { name: "Customer Support Bot", type: "Support", status: "running", health: "healthy", model: "GPT-4o", msgs: "1,248" },
+                  { name: "Sales Assistant", type: "Sales", status: "running", health: "healthy", model: "Claude Sonnet", msgs: "893" },
+                  { name: "Internal Helpdesk", type: "Internal", status: "stopped", health: null, model: "GPT-4 Turbo", msgs: "412" },
+                ].map((inst) => (
+                  <div key={inst.name} className="flex items-center gap-3 p-3 rounded-xl border border-white/5 bg-white/[0.02] mb-2 hover:bg-white/[0.04] transition-colors cursor-pointer">
+                    <div className="w-8 h-8 rounded-lg bg-zinc-800 border border-white/5 flex items-center justify-center shrink-0">
+                      <span className="text-zinc-400 text-xs">🤖</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs font-medium text-white truncate">{inst.name}</div>
+                      <div className="text-[11px] text-zinc-600">{inst.type} · {inst.model}</div>
+                    </div>
+                    <div className="text-[11px] text-zinc-500 hidden sm:block">{inst.msgs} msgs</div>
+                    <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium ${inst.status === "running" ? "bg-emerald-500/10 text-emerald-400" : "bg-zinc-700/50 text-zinc-500"}`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${inst.status === "running" ? "bg-emerald-400" : "bg-zinc-500"}`} />
+                      {inst.status}
+                    </div>
+                  </div>
+                ))}
+
+                {/* Manager card */}
+                <div className="mt-4 flex items-center gap-3 p-3 rounded-xl border border-violet-500/20 bg-violet-500/5">
+                  <div className="w-8 h-8 rounded-full bg-violet-600/30 border border-violet-500/30 flex items-center justify-center shrink-0">
+                    <span className="text-violet-300 text-xs font-bold">M</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[11px] text-zinc-500 mb-0.5">Your dedicated manager</div>
+                    <div className="text-xs font-medium text-white">Alex Kim · alex@synapseforge.ai</div>
+                  </div>
+                  <div className="text-[11px] bg-violet-600/20 text-violet-300 px-2 py-1 rounded-lg">Message</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Feature callouts below mockup */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
+            {[
+              { emoji: "⚡", label: "Live in 3 minutes", desc: "One click to deploy" },
+              { emoji: "🤖", label: "Any LLM model", desc: "OpenAI, Claude, custom" },
+              { emoji: "👤", label: "Human manager", desc: "Real expert on your account" },
+              { emoji: "📊", label: "Full analytics", desc: "Usage, tokens, uptime" },
+            ].map((item) => (
+              <div key={item.label} className="rounded-xl border border-white/5 bg-white/[0.02] p-3 text-center">
+                <div className="text-xl mb-1">{item.emoji}</div>
+                <div className="text-xs font-semibold text-white">{item.label}</div>
+                <div className="text-[11px] text-zinc-600 mt-0.5">{item.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── Features grid ────────────────────────────────────────────────── */}
       <section id="features" className="max-w-7xl mx-auto px-6 py-20">
         <div className="text-center mb-14">

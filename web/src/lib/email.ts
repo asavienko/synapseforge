@@ -140,6 +140,30 @@ export const email = {
     );
   },
 
+  async newSignupAlert(
+    adminEmails: string[],
+    userName: string,
+    userEmail: string,
+  ) {
+    const results = await Promise.allSettled(
+      adminEmails.map((to) =>
+        send(
+          to,
+          `🆕 New signup: ${userName}`,
+          base(
+            `New user signed up: ${userName}`,
+            `<p>A new user just created a SynapseForge account and needs a manager assigned.</p>
+             ${row("Name", userName)}
+             ${row("Email", userEmail)}
+             <p style="font-size:13px;color:#71717a;margin-top:16px">Go to the admin panel to assign a manager and kick off their onboarding.</p>`,
+            { href: `${APP_URL}/admin`, label: "Open Admin Panel →" }
+          )
+        )
+      )
+    );
+    return results;
+  },
+
   async newUserAlert(
     managerEmail: string,
     managerName: string,

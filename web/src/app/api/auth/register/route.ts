@@ -70,5 +70,11 @@ export async function POST(req: NextRequest) {
   emailService.welcome(userEmail, name).catch(console.error);
   emailService.verifyEmail(userEmail, name, verificationToken).catch(console.error);
 
+  // Notify admins so a manager can be assigned immediately
+  const adminEmails = (process.env.ADMIN_EMAILS ?? "").split(",").map((e) => e.trim()).filter(Boolean);
+  if (adminEmails.length > 0) {
+    emailService.newSignupAlert(adminEmails, name, userEmail).catch(console.error);
+  }
+
   return NextResponse.json({ ok: true });
 }
