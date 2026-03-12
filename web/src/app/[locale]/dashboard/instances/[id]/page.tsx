@@ -7,7 +7,7 @@ import {
   Settings2, Key, Activity, Copy, Check, Eye, EyeOff,
   Plus, X, Zap, AlertCircle, Terminal, Server, Database,
   Wifi, WifiOff, MessageSquare, Send, ShieldCheck, Download,
-  Pencil, Trash,
+  Pencil, Trash, Share2,
 } from "lucide-react";
 import Link from "next/link";
 import { STATUS_COLORS, INSTANCE_TYPES, formatDate, formatRelativeTime } from "@/lib/utils";
@@ -840,6 +840,15 @@ export default function InstanceDetailPage() {
   // Sync request state
   const [syncRequesting, setSyncRequesting] = useState(false);
 
+  // Overview quick test state
+  const [overviewTestInput, setOverviewTestInput] = useState("");
+  const [overviewTestSending, setOverviewTestSending] = useState(false);
+  const [overviewTestResponse, setOverviewTestResponse] = useState<{ text: string; latencyMs?: number } | null>(null);
+  const [overviewTestError, setOverviewTestError] = useState<string | null>(null);
+
+  // Recent activity for Overview
+  const [recentLogs, setRecentLogs] = useState<LogRow[]>([]);
+
   function showToast(text: string, type: "success" | "error" = "success") {
     setToast({ text, type });
     setTimeout(() => setToast(null), 3000);
@@ -868,6 +877,14 @@ export default function InstanceDetailPage() {
     const res = await fetch(`/api/instances/${id}/logs`);
     if (res.ok) setLogs(await res.json());
     setLogsLoading(false);
+  }, [id]);
+
+  const loadRecentLogs = useCallback(async () => {
+    const res = await fetch(`/api/instances/${id}/logs?limit=5`);
+    if (res.ok) {
+      const data = await res.json();
+      setRecentLogs(Array.isArray(data) ? data.slice(0, 5) : []);
+    }
   }, [id]);
 
   const loadUsage = useCallback(async () => {
@@ -978,7 +995,7 @@ export default function InstanceDetailPage() {
   useEffect(() => {
     if (tab === "API Keys" && keys.length === 0) loadKeys();
     if (tab === "Activity Log") loadLogs();
-    if (tab === "Overview") { loadUsage(); if (credentials.length === 0) loadCredentials(); }
+    if (tab === "Overview") { loadUsage(); loadRecentLogs(); if (credentials.length === 0) loadCredentials(); }
     if (tab === "Infrastructure") loadInfra();
     if (tab === "Credentials") loadCredentials();
     if (tab === "Deploy" && credentials.length === 0) loadCredentials();
@@ -1207,6 +1224,26 @@ export default function InstanceDetailPage() {
       setConfigPreviewText("// Failed to load config preview");
     }
     setConfigPreviewLoading(false);
+  }
+
+  async function sendOverviewTestMessage() {
+    if (!overviewTestInput.trim()) return;
+    setOverviewTestSending(true);
+    setOverviewTestResponse(null);
+    setOverviewTestError(null);
+    const res = await fetch(`/api/instances/${id}/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: overviewTestInput.trim() }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      setOverviewTestError(data.error ?? "Something went wrong");
+    } else {
+      const text = data.response ?? data.text ?? data.message ?? data.content ?? JSON.stringify(data);
+      setOverviewTestResponse({ text, latencyMs: data.latencyMs });
+    }
+    setOverviewTestSending(false);
   }
 
   async function sendChatMessage() {
@@ -1444,6 +1481,31 @@ export default function InstanceDetailPage() {
             instanceId={id}
           />
 
+          {/* Go Live / Share CTA */}
+          {(() => {
+            const credKeys = credentials.map((c) => c.key);
+            const hasLLMKey = credKeys.some((k) => ["openai_api_key", "anthropic_api_key", "openrouter_api_key"].includes(k));
+            const hasChannel = credKeys.some((k) => ["telegram_bot_token", "discord_bot_token", "slack_app_token", "slack_bot_token"].includes(k));
+            const isSetupComplete = hasLLMKey && hasChannel && instance.status === "running";
+            return isSetupComplete ? (
+              <Link
+                href={`/dashboard/instances/${id}/share`}
+                className="flex items-center justify-center gap-3 w-full bg-emerald-600 hover:bg-emerald-500 transition-colors text-white font-semibold text-sm px-5 py-3.5 rounded-xl"
+              >
+                <Share2 className="w-4 h-4" />
+                🚀 Share Your Agent →
+              </Link>
+            ) : (
+              <button
+                onClick={() => { setTab("Credentials"); loadCredentials(); }}
+                className="flex items-center justify-center gap-3 w-full bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 transition-colors text-amber-300 font-semibold text-sm px-5 py-3.5 rounded-xl"
+              >
+                <Zap className="w-4 h-4" />
+                Complete Setup →
+              </button>
+            );
+          })()}
+
           <div className="glow-border rounded-2xl bg-white/[0.02] divide-y divide-white/5">
             {instance.description && (
               <div className="p-5">
@@ -1611,6 +1673,99 @@ export default function InstanceDetailPage() {
               )}
             </div>
           </div>
+
+          {/* Quick test input */}
+          {instance.status === "running" && (
+            <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+              <div className="p-4 border-b border-white/5 flex items-center gap-2">
+                <MessageSquare className="w-4 h-4 text-zinc-500" />
+                <h3 className="text-sm font-semibold text-white">Quick test</h3>
+                <span className="text-xs text-zinc-600">One message, instant feedback</span>
+              </div>
+              <div className="p-4 space-y-3">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={overviewTestInput}
+                    onChange={(e) => { setOverviewTestInput(e.target.value); setOverviewTestError(null); setOverviewTestResponse(null); }}
+                    onKeyDown={(e) => { if (e.key === "Enter") sendOverviewTestMessage(); }}
+                    placeholder="Say something to your agent…"
+                    disabled={overviewTestSending}
+                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors disabled:opacity-50"
+                  />
+                  <button
+                    onClick={sendOverviewTestMessage}
+                    disabled={overviewTestSending || !overviewTestInput.trim()}
+                    className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 transition-colors px-4 py-2.5 rounded-xl text-sm font-semibold text-white shrink-0"
+                  >
+                    {overviewTestSending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                    {overviewTestSending ? "…" : "Send →"}
+                  </button>
+                </div>
+                {overviewTestError && (
+                  <div className="flex items-start gap-2 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
+                    <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                    <span className="text-sm text-red-300">{overviewTestError}</span>
+                  </div>
+                )}
+                {overviewTestResponse && (
+                  <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <Bot className="w-3.5 h-3.5 text-zinc-500" />
+                        <span className="text-xs text-zinc-500">Agent response</span>
+                      </div>
+                      {overviewTestResponse.latencyMs != null && (
+                        <span className="text-xs text-zinc-600">{overviewTestResponse.latencyMs}ms</span>
+                      )}
+                    </div>
+                    <p className="text-sm text-zinc-200 whitespace-pre-wrap leading-relaxed">{overviewTestResponse.text}</p>
+                    <button
+                      onClick={() => { setOverviewTestInput(""); setOverviewTestResponse(null); }}
+                      className="mt-2 text-xs text-zinc-600 hover:text-zinc-400 transition-colors"
+                    >
+                      Try another →
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Recent Activity */}
+          {recentLogs.length > 0 && (
+            <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+              <div className="p-4 border-b border-white/5 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Activity className="w-4 h-4 text-zinc-500" />
+                  <h3 className="text-sm font-semibold text-white">Recent Activity</h3>
+                </div>
+                <button
+                  onClick={() => setTab("Activity Log")}
+                  className="text-xs text-violet-400 hover:text-violet-300 transition-colors"
+                >
+                  See all →
+                </button>
+              </div>
+              <div className="divide-y divide-white/5">
+                {recentLogs.map((log) => {
+                  const meta = LOG_ICONS[log.event] ?? { icon: "·", color: "text-zinc-400" };
+                  return (
+                    <div key={log.id} className="flex items-center gap-3 px-4 py-3">
+                      <span className="text-base shrink-0 leading-none">{meta.icon}</span>
+                      <div className="flex-1 min-w-0">
+                        <span className="text-sm text-zinc-300 capitalize">{log.event.replace(/_/g, " ")}</span>
+                        {log.details && (
+                          <span className="text-xs text-zinc-600 ml-2 truncate">{log.details}</span>
+                        )}
+                      </div>
+                      <span className="text-xs text-zinc-600 shrink-0">{formatRelativeTime(log.createdAt)}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-sm text-amber-300 flex gap-3">
             <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
