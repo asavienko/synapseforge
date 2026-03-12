@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { callLLM, ChatMessage } from "@/lib/llm";
+import { callLLM, ChatMessage, LLMResult, parseInstanceConfig } from "@/lib/llm";
+import { callOpenClawVps } from "@/lib/openclaw-proxy";
 import { dashboardChatLimiter, rateLimitHeaders, getRateLimitKey } from "@/lib/rate-limit";
 
 const HISTORY_LIMIT = 50;
@@ -88,7 +89,35 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     data: { instanceId: id, role: "user", content: userContent, source: "dashboard" },
   });
 
-  const result = await callLLM(id, messages);
+  // ── Routing: prefer the client's real OpenClaw VPS when provisioned ──────────
+  let result: LLMResult | Awaited<ReturnType<typeof callLLM>>;
+  let routedViaVps = false;
+  let fallbackNote = "";
+
+  const hasVps =
+    instance.vpsUrl &&
+    instance.provisionStatus === "ready" &&
+    instance.gatewayToken;
+
+  if (hasVps) {
+    try {
+      const instanceConfig = parseInstanceConfig(instance.config);
+      result = await callOpenClawVps(
+        { vpsUrl: instance.vpsUrl!, gatewayToken: instance.gatewayToken! },
+        messages,
+        instanceConfig
+      );
+      routedViaVps = true;
+    } catch (vpsErr) {
+      // VPS unreachable — fall back to direct LLM silently
+      console.error("[openclaw-proxy] VPS call failed, falling back:", vpsErr);
+      fallbackNote = "[Routed via SynapseForge fallback]";
+      result = await callLLM(id, messages);
+    }
+  } else {
+    result = await callLLM(id, messages);
+  }
+  // ─────────────────────────────────────────────────────────────────────────────
 
   if ("error" in result) {
     // Persist the error as an assistant message so the UI can show it after reload
@@ -105,30 +134,41 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json(result, { status });
   }
 
+  // If the fallback was used, append a metadata note to the response
+  if (fallbackNote) {
+    (result as LLMResult).response = (result as LLMResult).response
+      ? `${(result as LLMResult).response}\n\n_${fallbackNote}_`
+      : fallbackNote;
+  }
+
+  const messageSource = routedViaVps ? "openclaw" : "direct";
+
   // Persist the assistant reply — now including token counts
   await prisma.chatMessage.create({
     data: {
       instanceId: id,
       role: "assistant",
-      content: result.response,
-      latencyMs: result.latencyMs,
-      provider: result.provider,
-      model: result.model,
-      inputTokens: result.inputTokens ?? null,
-      outputTokens: result.outputTokens ?? null,
-      source: "dashboard",
+      content: (result as LLMResult).response,
+      latencyMs: (result as LLMResult).latencyMs,
+      provider: (result as LLMResult).provider,
+      model: (result as LLMResult).model,
+      inputTokens: (result as LLMResult).inputTokens ?? null,
+      outputTokens: (result as LLMResult).outputTokens ?? null,
+      source: messageSource,
     },
   });
 
   // Log to activity with token info (fire-and-forget)
-  const tokenNote = (result.inputTokens != null && result.outputTokens != null)
-    ? `, tokens: ${result.inputTokens}in/${result.outputTokens}out`
+  const llmResult = result as LLMResult;
+  const tokenNote = (llmResult.inputTokens != null && llmResult.outputTokens != null)
+    ? `, tokens: ${llmResult.inputTokens}in/${llmResult.outputTokens}out`
     : "";
+  const routeNote = routedViaVps ? ", source: openclaw-vps" : "";
   prisma.activityLog.create({
     data: {
       instanceId: id,
       event: "chat_message",
-      details: `Model: ${result.model}, provider: ${result.provider}, latency: ${result.latencyMs}ms${tokenNote}`,
+      details: `Model: ${llmResult.model}, provider: ${llmResult.provider}, latency: ${llmResult.latencyMs}ms${tokenNote}${routeNote}`,
     },
   }).catch(console.error);
 
@@ -145,9 +185,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   }).catch(() => {});
 
   return NextResponse.json({
-    ...result,
-    inputTokens: result.inputTokens ?? undefined,
-    outputTokens: result.outputTokens ?? undefined,
+    ...llmResult,
+    inputTokens: llmResult.inputTokens ?? undefined,
+    outputTokens: llmResult.outputTokens ?? undefined,
+    source: messageSource,
   });
 }
 

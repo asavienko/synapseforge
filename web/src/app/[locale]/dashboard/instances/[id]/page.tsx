@@ -141,6 +141,7 @@ interface ChatMsg {
   content: string;
   latencyMs?: number;
   isError?: boolean;
+  source?: string;
 }
 
 const CREDENTIAL_KEY_LABELS: Record<string, string> = {
@@ -695,12 +696,13 @@ export default function InstanceDetailPage() {
       if (res.ok) {
         const history = await res.json();
         if (Array.isArray(history) && history.length > 0) {
-          setChatMessages(history.map((m: { role: string; content: string; isError?: boolean; latencyMs?: number; provider?: string }) => ({
+          setChatMessages(history.map((m: { role: string; content: string; isError?: boolean; latencyMs?: number; provider?: string; source?: string }) => ({
             role: m.role as "user" | "assistant",
             content: m.content,
             isError: m.isError ?? false,
             latencyMs: m.latencyMs,
             provider: m.provider,
+            source: m.source,
           })));
           if (history[history.length - 1]?.provider) {
             setChatProvider(history[history.length - 1].provider);
@@ -1016,7 +1018,7 @@ export default function InstanceDetailPage() {
       setChatProvider(data.provider ?? null);
       setChatMessages((prev) => [
         ...prev,
-        { role: "assistant", content: data.response, latencyMs: data.latencyMs },
+        { role: "assistant", content: data.response, latencyMs: data.latencyMs, source: data.source },
       ]);
     }
     setChatLoading(false);
@@ -1502,8 +1504,15 @@ export default function InstanceDetailPage() {
                           : "bg-white/[0.04] border border-white/10 text-zinc-200"
                     }`}>
                       <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
-                      {msg.latencyMs != null && (
-                        <p className="text-xs text-zinc-600 mt-1">{msg.latencyMs}ms</p>
+                      {(msg.latencyMs != null || msg.source === "openclaw") && (
+                        <p className="text-xs text-zinc-600 mt-1 flex items-center gap-2">
+                          {msg.latencyMs != null && <span>{msg.latencyMs}ms</span>}
+                          {msg.source === "openclaw" && (
+                            <span className="inline-flex items-center gap-0.5 text-amber-400 font-medium">
+                              ⚡ OpenClaw
+                            </span>
+                          )}
+                        </p>
                       )}
                     </div>
                   </div>
