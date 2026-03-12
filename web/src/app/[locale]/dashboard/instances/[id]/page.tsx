@@ -716,6 +716,8 @@ export default function InstanceDetailPage() {
     if (!res.ok) {
       if (data.gatewayError) {
         setGatewayError(data.error);
+      } else if (res.status === 403) {
+        showToast(`${data.error ?? "Plan limit reached."} → Go to Billing to upgrade.`, "error");
       } else {
         showToast(data.error ?? "Failed to update status", "error");
       }
@@ -1025,28 +1027,32 @@ export default function InstanceDetailPage() {
         </div>
       )}
 
-      {/* Tabs */}
-      <div className="flex gap-1 border-b border-white/5 mb-6">
-        {TABS.map((tabKey) => {
-          const tabLabels: Record<string, string> = {
-            "Overview": t("tabs.overview"),
-            "Chat": t("chat.tab"),
-            "Deploy": t("deploy.tab"),
-            "Configuration": t("tabs.configuration"),
-            "API Keys": t("tabs.apiKeys"),
-            "Activity Log": t("tabs.activityLog"),
-            "Infrastructure": t("infrastructure.tab"),
-            "Credentials": t("credentials.tab"),
-          };
-          return (
-            <button key={tabKey} onClick={() => setTab(tabKey)}
-              className={cn("px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px",
-                tab === tabKey ? "border-violet-500 text-white" : "border-transparent text-zinc-500 hover:text-zinc-300"
-              )}>
-              {tabLabels[tabKey]}
-            </button>
-          );
-        })}
+      {/* Tabs — scrollable on mobile so all 8 tabs are always reachable */}
+      <div className="relative mb-6">
+        <div className="flex gap-1 border-b border-white/5 overflow-x-auto scrollbar-none">
+          {TABS.map((tabKey) => {
+            const tabLabels: Record<string, string> = {
+              "Overview": t("tabs.overview"),
+              "Chat": t("chat.tab"),
+              "Deploy": t("deploy.tab"),
+              "Configuration": t("tabs.configuration"),
+              "API Keys": t("tabs.apiKeys"),
+              "Activity Log": t("tabs.activityLog"),
+              "Infrastructure": t("infrastructure.tab"),
+              "Credentials": t("credentials.tab"),
+            };
+            return (
+              <button key={tabKey} onClick={() => setTab(tabKey)}
+                className={cn("px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px shrink-0 whitespace-nowrap",
+                  tab === tabKey ? "border-violet-500 text-white" : "border-transparent text-zinc-500 hover:text-zinc-300"
+                )}>
+                {tabLabels[tabKey]}
+              </button>
+            );
+          })}
+        </div>
+        {/* Right fade hint to indicate more tabs are scrollable */}
+        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#0a0a0f] to-transparent" />
       </div>
 
       {/* ── Overview ── */}

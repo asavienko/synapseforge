@@ -23,6 +23,7 @@ export default async function LandingPage() {
             <a href="#how" className="hover:text-white transition-colors">{t("nav.services")}</a>
             <a href="#pricing" className="hover:text-white transition-colors">{t("nav.pricing")}</a>
             <a href="#about" className="hover:text-white transition-colors">{t("nav.about")}</a>
+            <Link href="/contact" className="hover:text-white transition-colors">{t("nav.contact")}</Link>
           </div>
           <div className="flex items-center gap-3">
             <LocaleSwitcher />
@@ -430,7 +431,7 @@ export default async function LandingPage() {
           <div className="flex gap-6">
             <Link href="/privacy" className="hover:text-white transition-colors">{t("footer.privacy")}</Link>
             <Link href="/terms" className="hover:text-white transition-colors">{t("footer.terms")}</Link>
-            <a href="mailto:hello@synapseforge.ai" className="hover:text-white transition-colors">{t("footer.contact")}</a>
+            <Link href="/contact" className="hover:text-white transition-colors">{t("footer.contact")}</Link>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-500" />
