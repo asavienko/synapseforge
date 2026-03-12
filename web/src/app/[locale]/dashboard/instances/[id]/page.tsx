@@ -123,15 +123,253 @@ const DEFAULT_CONFIG: Config = {
 };
 
 const LOG_ICONS: Record<string, { icon: string; color: string }> = {
-  started:        { icon: "▶", color: "text-emerald-400" },
-  stopped:        { icon: "■", color: "text-zinc-400" },
-  config_changed: { icon: "⚙", color: "text-blue-400" },
-  key_generated:  { icon: "🔑", color: "text-violet-400" },
-  key_revoked:    { icon: "✕", color: "text-red-400" },
-  created:        { icon: "✦", color: "text-violet-400" },
-  deleted:        { icon: "✕", color: "text-red-400" },
-  chat_message:   { icon: "💬", color: "text-sky-400" },
+  started:          { icon: "▶️",  color: "text-emerald-400" },
+  stopped:          { icon: "⏹️",  color: "text-zinc-400" },
+  config_changed:   { icon: "⚙️",  color: "text-blue-400" },
+  key_generated:    { icon: "🔑",  color: "text-violet-400" },
+  key_revoked:      { icon: "❌",  color: "text-red-400" },
+  created:          { icon: "🆕",  color: "text-violet-400" },
+  deleted:          { icon: "❌",  color: "text-red-400" },
+  chat_message:     { icon: "💬",  color: "text-sky-400" },
+  config_synced:    { icon: "🔄",  color: "text-blue-400" },
+  health_check:     { icon: "💓",  color: "text-rose-400" },
+  provision_start:  { icon: "⚙️",  color: "text-amber-400" },
+  provision_done:   { icon: "⚙️",  color: "text-emerald-400" },
+  provision_failed: { icon: "❌",  color: "text-red-400" },
+  error:            { icon: "❌",  color: "text-red-400" },
 };
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function formatAbsoluteTime(date: string | Date): string {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short", day: "numeric", year: "numeric",
+    hour: "2-digit", minute: "2-digit",
+  }).format(new Date(date));
+}
+
+function groupLogsByDay(logs: LogRow[]): Array<{ label: string; logs: LogRow[] }> {
+  const groups: Map<string, LogRow[]> = new Map();
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  for (const log of logs) {
+    const d = new Date(log.createdAt);
+    let key: string;
+    if (d.toDateString() === today.toDateString()) key = "Today";
+    else if (d.toDateString() === yesterday.toDateString()) key = "Yesterday";
+    else key = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(d);
+
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key)!.push(log);
+  }
+  return Array.from(groups.entries()).map(([label, logs]) => ({ label, logs }));
+}
+
+// ─── Provisioning Banner ─────────────────────────────────────────────────────
+
+interface ProvisioningBannerProps {
+  instance: Instance;
+  onDismiss: () => void;
+  onReady: () => void;
+  onFailed: () => void;
+}
+
+function ProvisioningBanner({ instance, onDismiss, onReady, onFailed }: ProvisioningBannerProps) {
+  const id = instance.id;
+  const [dismissed, setDismissed] = useState(false);
+  const [failedBanner, setFailedBanner] = useState(false);
+
+  // Calculate elapsed seconds since createdAt
+  const elapsedSec = Math.max(0, Math.floor((Date.now() - new Date(instance.createdAt).getTime()) / 1000));
+
+  function getStep(sec: number): string {
+    if (sec < 30) return "Creating server…";
+    if (sec < 120) return "Installing Docker…";
+    if (sec < 300) return "Starting OpenClaw…";
+    return "Running health check…";
+  }
+
+  // Progress: 0–8 min maps to 0–100%
+  const MAX_SEC = 480;
+  const pct = Math.min(Math.round((elapsedSec / MAX_SEC) * 100), 95); // cap at 95 until actually ready
+
+  // Poll provision-status every 8s
+  useEffect(() => {
+    const poll = async () => {
+      try {
+        const res = await fetch(`/api/instances/${id}/provision-status`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.provisionStatus === "ready") {
+          onReady();
+        } else if (data.provisionStatus === "failed") {
+          setFailedBanner(true);
+          onFailed();
+        }
+      } catch { /* ignore */ }
+    };
+    const interval = setInterval(poll, 8000);
+    return () => clearInterval(interval);
+  }, [id, onReady, onFailed]);
+
+  if (dismissed) return null;
+
+  if (failedBanner) {
+    return (
+      <div className="mb-4 flex items-start gap-3 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3">
+        <span className="text-base shrink-0">❌</span>
+        <div className="flex-1">
+          <div className="text-sm font-semibold text-red-300">Provisioning failed</div>
+          <div className="text-xs text-red-400/80 mt-0.5">Something went wrong setting up your server. Please contact your manager.</div>
+        </div>
+        <button onClick={() => { setDismissed(true); onDismiss(); }} className="text-red-500 hover:text-red-300 transition-colors">
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mb-4 flex items-start gap-3 bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3">
+      <span className="text-base shrink-0 mt-0.5">⚙️</span>
+      <div className="flex-1 min-w-0">
+        <div className="text-sm font-semibold text-amber-300 mb-1.5">
+          Your server is being provisioned — this takes 3–8 minutes.
+        </div>
+        {/* Progress bar */}
+        <div className="w-full h-2 bg-amber-900/40 rounded-full overflow-hidden mb-1.5">
+          <div
+            className="h-full bg-amber-400 rounded-full transition-all duration-1000"
+            style={{ width: `${pct}%` }}
+          />
+        </div>
+        <div className="text-xs text-amber-500">{getStep(elapsedSec)}</div>
+      </div>
+      <button onClick={() => { setDismissed(true); onDismiss(); }} className="text-amber-600 hover:text-amber-300 transition-colors shrink-0">
+        <X className="w-4 h-4" />
+      </button>
+    </div>
+  );
+}
+
+// ─── Setup Checklist Card ────────────────────────────────────────────────────
+
+interface SetupChecklistCardProps {
+  instance: Instance;
+  credentials: CredentialRow[];
+  onGoToCredentials: () => void;
+  instanceId: string;
+}
+
+function SetupChecklistCard({ instance, credentials, onGoToCredentials, instanceId }: SetupChecklistCardProps) {
+  const [dismissed, setDismissed] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem(`sf_checklist_dismissed_${instanceId}`) === "1";
+  });
+
+  const credKeys = credentials.map((c) => c.key);
+  const hasLLMKey = credKeys.some((k) => ["openai_api_key", "anthropic_api_key", "openrouter_api_key"].includes(k));
+  const hasChannel = credKeys.some((k) => ["telegram_bot_token", "discord_bot_token", "slack_app_token", "slack_bot_token"].includes(k));
+  const hasGateway = !!(instance.hasGateway && instance.provisionStatus === "ready");
+  const isHealthy = instance.healthStatus === "healthy";
+
+  const allGreen = hasLLMKey && hasChannel && hasGateway && isHealthy;
+
+  function dismiss() {
+    localStorage.setItem(`sf_checklist_dismissed_${instanceId}`, "1");
+    setDismissed(true);
+  }
+
+  if (dismissed || allGreen) return null;
+
+  const items: Array<{
+    done: boolean;
+    label: string;
+    doneText: string;
+    pendingText: string;
+    action?: () => void;
+    actionLabel?: string;
+  }> = [
+    {
+      done: hasLLMKey,
+      label: "AI model connected",
+      doneText: "API key saved",
+      pendingText: "Add an API key",
+      action: onGoToCredentials,
+      actionLabel: "Add API key →",
+    },
+    {
+      done: hasChannel,
+      label: "Channel connected",
+      doneText: "Channel token saved",
+      pendingText: "Connect a channel",
+      action: onGoToCredentials,
+      actionLabel: "Connect →",
+    },
+    {
+      done: hasGateway,
+      label: "Server provisioned",
+      doneText: instance.vpsProvider ? `VPS running` : "VPS running",
+      pendingText: "Your manager is setting this up",
+    },
+    {
+      done: isHealthy,
+      label: "Agent is healthy",
+      doneText: instance.lastCheckedAt ? `Online` : "Online",
+      pendingText: "Waiting for first health check",
+    },
+  ];
+
+  return (
+    <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden mb-4">
+      <div className="p-4 border-b border-white/5 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Zap className="w-4 h-4 text-violet-400" />
+          <h3 className="text-sm font-semibold text-white">Setup Checklist</h3>
+          <span className="text-xs text-zinc-500">
+            {items.filter((i) => i.done).length}/{items.length} complete
+          </span>
+        </div>
+        <button
+          onClick={dismiss}
+          title="Dismiss checklist"
+          className="text-zinc-600 hover:text-zinc-400 transition-colors"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+      <div className="divide-y divide-white/5">
+        {items.map((item) => (
+          <div key={item.label} className="flex items-center gap-3 px-4 py-3">
+            <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${
+              item.done
+                ? "bg-emerald-500/20 text-emerald-400"
+                : "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+            }`}>
+              {item.done ? "✓" : "·"}
+            </div>
+            <div className="flex-1 min-w-0">
+              <span className="text-sm text-zinc-300">{item.label}</span>
+              <span className={`text-xs ml-2 ${item.done ? "text-emerald-500" : "text-amber-500/80"}`}>
+                — {item.done ? item.doneText : item.pendingText}
+              </span>
+            </div>
+            {!item.done && item.action && (
+              <button
+                onClick={item.action}
+                className="text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 px-2 py-1 rounded-lg transition-colors shrink-0"
+              >
+                {item.actionLabel}
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 const TABS = ["Overview", "Chat", "Deploy", "Configuration", "API Keys", "Activity Log", "Infrastructure", "Credentials"] as const;
 type Tab = (typeof TABS)[number];
@@ -663,10 +901,10 @@ export default function InstanceDetailPage() {
 
   useEffect(() => { loadInstance(); }, [loadInstance]);
 
-  // Auto-poll while provisioning
+  // Auto-poll while provisioning (8s — banner has its own dedicated poller)
   useEffect(() => {
     if (instance?.provisionStatus !== "provisioning") return;
-    const interval = setInterval(() => { loadInstance(); }, 10000);
+    const interval = setInterval(() => { loadInstance(); }, 8000);
     return () => clearInterval(interval);
   }, [instance?.provisionStatus, loadInstance]);
 
@@ -688,6 +926,13 @@ export default function InstanceDetailPage() {
     const interval = setInterval(pollHealth, 30_000);
     return () => clearInterval(interval);
   }, [tab, id]);
+
+  // Auto-refresh logs every 30s when on Activity Log tab
+  useEffect(() => {
+    if (tab !== "Activity Log") return;
+    const interval = setInterval(() => loadLogs(), 30_000);
+    return () => clearInterval(interval);
+  }, [tab, loadLogs]);
 
   const loadChatHistory = useCallback(async () => {
     if (chatHistoryLoaded) return;
@@ -733,7 +978,7 @@ export default function InstanceDetailPage() {
   useEffect(() => {
     if (tab === "API Keys" && keys.length === 0) loadKeys();
     if (tab === "Activity Log") loadLogs();
-    if (tab === "Overview") loadUsage();
+    if (tab === "Overview") { loadUsage(); if (credentials.length === 0) loadCredentials(); }
     if (tab === "Infrastructure") loadInfra();
     if (tab === "Credentials") loadCredentials();
     if (tab === "Deploy" && credentials.length === 0) loadCredentials();
@@ -1134,6 +1379,19 @@ export default function InstanceDetailPage() {
         </div>
       </div>
 
+      {/* Provisioning progress banner */}
+      {instance.provisionStatus === "provisioning" && (
+        <ProvisioningBanner
+          instance={instance}
+          onDismiss={() => {/* user dismissed */}}
+          onReady={() => {
+            showToast("🎉 Your AI agent is live!");
+            loadInstance();
+          }}
+          onFailed={() => loadInstance()}
+        />
+      )}
+
       {/* Gateway error banner */}
       {gatewayError && (
         <div className="mb-4 flex items-start gap-3 bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3">
@@ -1178,6 +1436,14 @@ export default function InstanceDetailPage() {
       {/* ── Overview ── */}
       {tab === "Overview" && (
         <div className="space-y-4">
+          {/* Setup checklist — visible until all 4 items green */}
+          <SetupChecklistCard
+            instance={instance}
+            credentials={credentials}
+            onGoToCredentials={() => { setTab("Credentials"); loadCredentials(); }}
+            instanceId={id}
+          />
+
           <div className="glow-border rounded-2xl bg-white/[0.02] divide-y divide-white/5">
             {instance.description && (
               <div className="p-5">
@@ -1789,10 +2055,16 @@ print(resp.choices[0].message.content)`}</pre>
       {tab === "Activity Log" && (
         <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
           <div className="p-5 border-b border-white/5 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-white">{t("activity.title")}</h3>
-            <button onClick={loadLogs} className="text-xs text-zinc-500 hover:text-white transition-colors">Refresh</button>
+            <div className="flex items-center gap-2">
+              <h3 className="text-sm font-semibold text-white">{t("activity.title")}</h3>
+              {logsLoading && <Loader2 className="w-3.5 h-3.5 text-zinc-600 animate-spin" />}
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-zinc-600">Auto-refreshes every 30s</span>
+              <button onClick={loadLogs} className="text-xs text-zinc-500 hover:text-white transition-colors">Refresh</button>
+            </div>
           </div>
-          {logsLoading ? (
+          {logsLoading && logs.length === 0 ? (
             <div className="p-8 flex justify-center"><Loader2 className="w-5 h-5 text-zinc-500 animate-spin" /></div>
           ) : logs.length === 0 ? (
             <div className="p-8 text-center">
@@ -1800,20 +2072,40 @@ print(resp.choices[0].message.content)`}</pre>
               <p className="text-zinc-500 text-sm">{t("activity.noActivity")}</p>
             </div>
           ) : (
-            <div className="divide-y divide-white/5">
-              {logs.map((log) => {
-                const meta = LOG_ICONS[log.event] ?? { icon: "·", color: "text-zinc-400" };
-                return (
-                  <div key={log.id} className="flex items-start gap-4 p-4">
-                    <span className={`text-base mt-0.5 shrink-0 ${meta.color}`}>{meta.icon}</span>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm text-zinc-200 capitalize">{log.event.replace(/_/g, " ")}</div>
-                      {log.details && <div className="text-xs text-zinc-500 mt-0.5">{log.details}</div>}
-                    </div>
-                    <div className="text-xs text-zinc-600 shrink-0">{formatDate(log.createdAt)}</div>
+            <div>
+              {groupLogsByDay(logs).map(({ label, logs: dayLogs }) => (
+                <div key={label}>
+                  {/* Day separator */}
+                  <div className="px-4 py-2 bg-white/[0.01] border-b border-white/5">
+                    <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">{label}</span>
                   </div>
-                );
-              })}
+                  <div className="divide-y divide-white/5">
+                    {dayLogs.map((log) => {
+                      // Map event to icon — fallback for provision_* events
+                      let meta = LOG_ICONS[log.event];
+                      if (!meta && log.event.startsWith("provision_")) {
+                        meta = { icon: "⚙️", color: "text-amber-400" };
+                      }
+                      meta = meta ?? { icon: "·", color: "text-zinc-400" };
+                      const relTime = formatRelativeTime(log.createdAt);
+                      const absTime = formatAbsoluteTime(log.createdAt);
+                      return (
+                        <div key={log.id} className="flex items-start gap-4 p-4">
+                          <span className="text-base mt-0.5 shrink-0 leading-none">{meta.icon}</span>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm text-zinc-200 capitalize">{log.event.replace(/_/g, " ")}</div>
+                            {log.details && <div className="text-xs text-zinc-500 mt-0.5">{log.details}</div>}
+                          </div>
+                          <div
+                            title={absTime}
+                            className="text-xs text-zinc-600 shrink-0 cursor-default"
+                          >{relTime}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>

@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { Bot, Zap, User, ArrowRight, Activity, MessageCircle, MessageSquare, CheckCircle2, Circle } from "lucide-react";
+import { Bot, Zap, User, ArrowRight, Activity, MessageCircle, MessageSquare, CheckCircle2, Circle, Heart } from "lucide-react";
 import { PLANS, STATUS_COLORS, formatDate } from "@/lib/utils";
 import { DashboardUpgrade } from "@/components/DashboardUpgrade";
 import { getTranslations } from "next-intl/server";
@@ -47,6 +47,15 @@ export default async function DashboardPage() {
   const deployedInstance = user.instances.find(
     (i) => i.provisionStatus === "ready" || i.provisionStatus === "provisioning"
   );
+
+  // System health aggregation
+  const instancesWithHealth = user.instances;
+  const healthyInstances = instancesWithHealth.filter((i) => i.healthStatus === "healthy").length;
+  const degradedInstances = instancesWithHealth.filter((i) => i.healthStatus === "degraded").length;
+  const downInstances = instancesWithHealth.filter((i) => i.healthStatus === "down").length;
+  const monitoredInstances = instancesWithHealth.filter((i) => i.healthStatus !== null).length;
+  const allHealthy = monitoredInstances > 0 && degradedInstances === 0 && downInstances === 0;
+  const needsAttention = degradedInstances + downInstances;
 
   // Aggregate chat message count across all user instances
   const totalChatMessages = await prisma.activityLog.count({
@@ -120,7 +129,7 @@ export default async function DashboardPage() {
         <p className="text-zinc-400 mt-1">{t("subtitle")}</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
         <div className="glow-border rounded-2xl p-5 bg-white/[0.02]">
           <div className="flex items-center gap-3 mb-3">
             <Bot className="w-5 h-5 text-violet-400" />
@@ -172,6 +181,35 @@ export default async function DashboardPage() {
             <div className="text-xs text-zinc-500">
               {user.plan === "free" ? t("managerBeingAssigned") : t("activeSubscription")}
             </div>
+          )}
+        </div>
+
+        <div className="glow-border rounded-2xl p-5 bg-white/[0.02]">
+          <div className="flex items-center gap-3 mb-3">
+            <Heart className="w-5 h-5 text-rose-400" />
+            <span className="text-xs text-zinc-500 uppercase tracking-wider">System Health</span>
+          </div>
+          {monitoredInstances === 0 ? (
+            <>
+              <div className="text-2xl font-bold text-zinc-500 mb-1">—</div>
+              <div className="text-xs text-zinc-600">No data yet</div>
+            </>
+          ) : allHealthy ? (
+            <>
+              <div className="text-lg font-bold text-emerald-400 mb-1 flex items-center gap-1.5">
+                <span>✅</span> Operational
+              </div>
+              <div className="text-xs text-zinc-500">{healthyInstances} instance{healthyInstances !== 1 ? "s" : ""} healthy</div>
+            </>
+          ) : (
+            <>
+              <div className="text-lg font-bold text-amber-400 mb-1 flex items-center gap-1.5">
+                <span>⚠️</span> Attention
+              </div>
+              <div className="text-xs text-zinc-500">
+                {needsAttention} instance{needsAttention !== 1 ? "s" : ""} need{needsAttention === 1 ? "s" : ""} attention
+              </div>
+            </>
           )}
         </div>
       </div>

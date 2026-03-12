@@ -85,14 +85,22 @@ export default function InstancesPage() {
     setTimeout(() => setToast(null), 3000);
   }
 
-  async function loadInstances() {
+  const loadInstances = useCallback(async () => {
     const res = await fetch("/api/instances");
     const data = await res.json();
     setInstances(Array.isArray(data) ? data : []);
     setLoading(false);
-  }
+  }, []);
 
-  useEffect(() => { loadInstances(); }, []);
+  useEffect(() => { loadInstances(); }, [loadInstances]);
+
+  // Poll every 10s if any instance is provisioning
+  useEffect(() => {
+    const hasProvisioning = instances.some((i) => i.provisionStatus === "provisioning");
+    if (!hasProvisioning) return;
+    const interval = setInterval(loadInstances, 10_000);
+    return () => clearInterval(interval);
+  }, [instances, loadInstances]);
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
@@ -158,30 +166,45 @@ export default function InstancesPage() {
         </div>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {instances.map((instance) => (
-            <Link
-              key={instance.id}
-              href={`/dashboard/instances/${instance.id}`}
-              className="glow-border rounded-2xl p-5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors block"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="w-10 h-10 rounded-xl bg-violet-600/20 border border-violet-500/20 flex items-center justify-center">
-                  <Bot className="w-5 h-5 text-violet-400" />
+          {instances.map((instance) => {
+            const isProvisioning = instance.provisionStatus === "provisioning";
+            return (
+              <Link
+                key={instance.id}
+                href={`/dashboard/instances/${instance.id}`}
+                className="glow-border rounded-2xl p-5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors block"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="relative w-10 h-10 rounded-xl bg-violet-600/20 border border-violet-500/20 flex items-center justify-center">
+                    <Bot className="w-5 h-5 text-violet-400" />
+                    {isProvisioning && (
+                      <span className="absolute -top-1 -right-1 w-3.5 h-3.5">
+                        <Loader2 className="w-3.5 h-3.5 text-amber-400 animate-spin" />
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <HealthDot healthStatus={instance.healthStatus} lastCheckedAt={instance.lastCheckedAt} />
+                    {isProvisioning ? (
+                      <span className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full font-medium bg-amber-400/10 text-amber-400 border border-amber-400/20">
+                        <Loader2 className="w-2.5 h-2.5 animate-spin" />
+                        Provisioning…
+                      </span>
+                    ) : (
+                      <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${STATUS_COLORS[instance.status]}`}>
+                        {instance.status}
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <HealthDot healthStatus={instance.healthStatus} />
-                  <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${STATUS_COLORS[instance.status]}`}>
-                    {instance.status}
-                  </span>
-                </div>
-              </div>
-              <h3 className="font-semibold text-white mb-1 truncate">{instance.name}</h3>
-              <p className="text-xs text-zinc-500 mb-3 capitalize">{instance.type} · {instance.tier}</p>
-              {instance.description && (
-                <p className="text-sm text-zinc-400 line-clamp-2">{instance.description}</p>
-              )}
-            </Link>
-          ))}
+                <h3 className="font-semibold text-white mb-1 truncate">{instance.name}</h3>
+                <p className="text-xs text-zinc-500 mb-3 capitalize">{instance.type} · {instance.tier}</p>
+                {instance.description && (
+                  <p className="text-sm text-zinc-400 line-clamp-2">{instance.description}</p>
+                )}
+              </Link>
+            );
+          })}
         </div>
       )}
 
