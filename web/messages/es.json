@@ -42,19 +42,22 @@
       "name": "Gratis",
       "price": "$0",
       "desc": "por mes",
-      "cta": "Empezar gratis →"
+      "cta": "Empezar gratis →",
+      "period": "siempre gratis"
     },
     "pro": {
       "name": "Pro",
       "price": "$499",
       "desc": "por mes",
-      "cta": "Obtener Pro →"
+      "cta": "Obtener Pro →",
+      "period": "/ mes"
     },
     "enterprise": {
       "name": "Enterprise",
       "price": "Personalizado",
       "desc": "para grandes equipos",
-      "cta": "Contactar →"
+      "cta": "Contactar →",
+      "period": "/ mes"
     },
     "features": {
       "freeInstance": "1 instancia de agente",

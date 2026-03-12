@@ -42,18 +42,21 @@
       "name": "Free",
       "price": "$0",
       "desc": "per month",
+      "period": "forever",
       "cta": "Start free →"
     },
     "pro": {
       "name": "Pro",
       "price": "$499",
       "desc": "per month",
+      "period": "/ month",
       "cta": "Get Pro →"
     },
     "enterprise": {
       "name": "Enterprise",
       "price": "Custom",
       "desc": "for large teams",
+      "period": "/ month",
       "cta": "Contact us →"
     },
     "features": {

@@ -869,7 +869,7 @@ export default function InstanceDetailPage() {
     if (!res.ok) {
       if (data.missingCredential) {
         setChatNoCredentials(true);
-        setChatMessages((prev) => prev.slice(0, -1)); // remove user msg — can't process
+        setChatMessages([]); // clear all messages so the full no-creds state is shown
       } else {
         setChatMessages((prev) => [
           ...prev,
