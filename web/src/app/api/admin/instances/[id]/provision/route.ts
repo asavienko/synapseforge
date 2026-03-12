@@ -28,7 +28,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const result = await provisionInstance(id, region);
 
   if (!result.ok) {
-    return NextResponse.json({ error: result.error }, { status: result.error?.includes("not found") ? 404 : 502 });
+    const status = result.error?.includes("not configured") ? 503
+      : result.error?.includes("not found") ? 404
+      : 502;
+    return NextResponse.json({ error: result.error }, { status });
   }
 
   return NextResponse.json({ ok: true, serverId: result.serverId, ip: result.ip });

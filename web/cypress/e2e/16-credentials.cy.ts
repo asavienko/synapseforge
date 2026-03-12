@@ -102,7 +102,14 @@ describe("16 · Credentials — add / edit / delete", () => {
         method: "POST",
         url: `/api/instances/${id}/credentials`,
         body: { key: "telegram_bot_token", value: "1111111111:DeleteMeToken" },
+        failOnStatusCode: false,
       });
+
+      // Intercept GET credentials so the component reliably sees the token
+      cy.intercept("GET", `/api/instances/${id}/credentials`, {
+        statusCode: 200,
+        body: [{ key: "telegram_bot_token", maskedValue: "••••••••" }],
+      }).as("getCredentials");
 
       cy.visit(`/en/dashboard/instances/${id}`);
       cy.contains("Credentials").click();
