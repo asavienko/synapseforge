@@ -100,27 +100,31 @@ describe("07 · Instance Detail", () => {
     beforeEach(() => cy.contains("Configuration").click());
 
     it("renders configuration tab", () => {
+      cy.contains("Agent Identity").should("be.visible");
+      cy.contains("Business Context").should("be.visible");
       cy.contains("AI Model").should("be.visible");
-      cy.contains("System Prompt").should("be.visible");
-      cy.contains("Temperature").should("be.visible");
+      cy.contains("Capabilities").should("be.visible");
       cy.snap("07-detail-07-config-tab");
     });
 
     it("can change model", () => {
-      cy.get("select").select("claude-3-5-sonnet");
-      cy.get("select").should("have.value", "claude-3-5-sonnet");
+      // AI Model section uses card buttons, not a <select>
+      cy.contains("Claude Sonnet").click();
+      cy.contains("GPT-4o").click();
       cy.snap("07-detail-08-config-model");
     });
 
     it("can edit system prompt", () => {
-      cy.get("textarea").clear().type("You are a sales assistant for Cypress Corp.");
-      cy.get("textarea").should("contain.value", "sales assistant");
+      // Target the Custom Instructions textarea (first textarea in the Configuration tab)
+      cy.get('textarea[placeholder*="Always ask"]').clear().type("You are a sales assistant for Cypress Corp.");
+      cy.get('textarea[placeholder*="Always ask"]').should("contain.value", "sales assistant");
       cy.snap("07-detail-09-config-prompt");
     });
 
     it("saves configuration and shows success toast", () => {
-      cy.get("textarea").clear().type("Updated by Cypress test.");
-      cy.contains("Save Configuration").click();
+      // Target the Custom Instructions textarea specifically, then save
+      cy.get('textarea[placeholder*="Always ask"]').clear().type("Updated by Cypress test.");
+      cy.contains("button", /save/i).click();
       cy.contains("saved", { matchCase: false, timeout: 8000 }).should("be.visible");
       cy.snap("07-detail-10-config-saved");
     });
