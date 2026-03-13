@@ -371,7 +371,9 @@
       "operational": "Operational",
       "attention": "Attention",
       "instancesHealthy": "{count} {count, plural, one {instance} other {instances}} healthy",
-      "instancesNeedAttention": "{count} {count, plural, one {instance needs} other {instances need}} attention"
+      "instancesNeedAttention": "{count} {count, plural, one {instance needs} other {instances need}} attention",
+      "referralTitle": "Invite friends, earn rewards",
+      "referralDesc": "Share your referral link and earn commission on every signup that converts."
     },
     "messages": {
       "title": "Messages",
@@ -409,9 +411,7 @@
       "saveChanges": "Save changes",
       "profileUpdateSuccess": "Profile updated successfully.",
       "profileUpdateError": "Something went wrong."
-    },
-    "referralTitle": "Invite friends, earn rewards",
-    "referralDesc": "Share your referral link and earn commission on every signup that converts."
+    }
   },
   "common": {
     "loading": "Loading...",

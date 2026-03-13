@@ -371,7 +371,9 @@
       "operational": "Работает",
       "attention": "Требует внимания",
       "instancesHealthy": "{count} {count, plural, one {экземпляр} few {экземпляра} other {экземпляров}} в норме",
-      "instancesNeedAttention": "{count} {count, plural, one {экземпляр требует} other {экземпляров требуют}} внимания"
+      "instancesNeedAttention": "{count} {count, plural, one {экземпляр требует} other {экземпляров требуют}} внимания",
+      "referralTitle": "Приглашайте друзей, получайте награды",
+      "referralDesc": "Поделитесь реферальной ссылкой и зарабатывайте комиссию с каждой конвертации."
     },
     "messages": {
       "title": "Сообщения",
@@ -409,9 +411,7 @@
       "saveChanges": "Сохранить изменения",
       "profileUpdateSuccess": "Профиль успешно обновлён.",
       "profileUpdateError": "Что-то пошло не так."
-    },
-    "referralTitle": "Приглашайте друзей, получайте награды",
-    "referralDesc": "Поделитесь реферальной ссылкой и зарабатывайте комиссию с каждой конвертации."
+    }
   },
   "common": {
     "loading": "Загрузка...",

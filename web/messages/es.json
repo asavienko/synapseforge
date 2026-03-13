@@ -371,7 +371,9 @@
       "operational": "Operativo",
       "attention": "Atención",
       "instancesHealthy": "{count} {count, plural, one {instancia} other {instancias}} en buen estado",
-      "instancesNeedAttention": "{count} {count, plural, one {instancia necesita} other {instancias necesitan}} atención"
+      "instancesNeedAttention": "{count} {count, plural, one {instancia necesita} other {instancias necesitan}} atención",
+      "referralTitle": "Invita amigos, gana recompensas",
+      "referralDesc": "Comparte tu enlace de referido y gana comisión por cada registro que se convierte."
     },
     "messages": {
       "title": "Mensajes",
@@ -409,9 +411,7 @@
       "saveChanges": "Guardar cambios",
       "profileUpdateSuccess": "Perfil actualizado correctamente.",
       "profileUpdateError": "Algo salió mal."
-    },
-    "referralTitle": "Invita amigos, gana recompensas",
-    "referralDesc": "Comparte tu enlace de referido y gana comisión por cada registro que se convierte."
+    }
   },
   "common": {
     "loading": "Cargando...",
