@@ -178,16 +178,6 @@ describe("29 · Sandbox Mode — free-to-paid funnel", () => {
 
   // ── 05 ── 402 → out-of-credits inline message ──────────────────────────────
   it("05 sending chat when exhausted triggers 402 → out-of-credits inline message", () => {
-    // Seed a real DB message so the chat history GET returns it reliably.
-    // This ensures chatMessages.length > 0 on load, making the textarea visible
-    // even when chatNoCredentials=true — avoids the HTTP-intercept race condition.
-    cy.task("seedChatMessage", {
-      instanceId,
-      role: "user",
-      content: "Hello there",
-      clearFirst: true,
-    });
-
     cy.task("setSandboxState", { instanceId, sandboxMode: true, sandboxUsed: 20 });
 
     // Intercept the chat POST to return 402 sandbox_exhausted
@@ -202,11 +192,9 @@ describe("29 · Sandbox Mode — free-to-paid funnel", () => {
 
     openChatTab();
 
-    // Chat history loads from DB — the seeded message should appear
-    cy.contains("Hello there", { timeout: 15000 }).should("be.visible");
-
-    // The chat textarea should be visible (chatMessages.length > 0 satisfies the condition)
-    cy.get('textarea[placeholder*="message"]', { timeout: 10000 }).should("be.visible").type("One more");
+    // In sandbox mode the textarea is always visible — no credentials gate.
+    // The sandbox banner explains the situation; users can still try to send.
+    cy.get('textarea[placeholder*="message"]', { timeout: 15000 }).should("be.visible").type("One more");
 
     // Send button
     cy.contains("button", /^Send$/).click();

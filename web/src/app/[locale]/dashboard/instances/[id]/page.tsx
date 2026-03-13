@@ -2254,7 +2254,7 @@ export default function InstanceDetailPage() {
           )}
 
           {/* Inline key setup — shown when no credentials, right inside chat */}
-          {instance.status === "running" && chatNoCredentials && chatMessages.length === 0 && (
+          {instance.status === "running" && chatNoCredentials && chatMessages.length === 0 && !instance.sandboxMode && (
             <div className="flex-1 flex items-center justify-center px-2">
               <div className="w-full max-w-md">
                 <div className="flex items-center gap-3 mb-5">
@@ -2334,7 +2334,7 @@ export default function InstanceDetailPage() {
           )}
 
           {/* Chat messages */}
-          {instance.status === "running" && (!chatNoCredentials || chatMessages.length > 0) && (
+          {instance.status === "running" && (!chatNoCredentials || chatMessages.length > 0 || instance.sandboxMode) && (
             <>
               <div className="flex-1 overflow-y-auto space-y-4 mb-4 pr-1" style={{ maxHeight: 400 }}>
                 {chatMessages.length === 0 && !chatLoading && (
