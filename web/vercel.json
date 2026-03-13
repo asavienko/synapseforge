@@ -2,12 +2,6 @@
   "buildCommand": "prisma generate && next build",
   "installCommand": "npm install",
   "framework": "nextjs",
-  "outputFileTracingIncludes": {
-    "/api/**/*": [
-      "./node_modules/.prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node",
-      "./node_modules/.prisma/client/query_engine-rhel-openssl-3.0.x.so.node"
-    ]
-  },
   "crons": [
     {
       "path": "/api/internal/provision-timeout",
