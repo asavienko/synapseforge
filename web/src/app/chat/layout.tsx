@@ -14,8 +14,9 @@ export default async function ChatLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Always serve the public chat in English — it's a shared, unlocalized URL.
-  const messages = await getMessages({ locale: "en" } as Parameters<typeof getMessages>[0]);
+  // getRequestConfig falls back to defaultLocale ("en") when no locale path segment exists.
+  // We call getMessages() without args — it reads locale from the request context.
+  const messages = await getMessages();
 
   return (
     <NextIntlClientProvider locale="en" messages={messages}>
