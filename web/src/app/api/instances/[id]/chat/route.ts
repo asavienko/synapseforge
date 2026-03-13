@@ -7,6 +7,7 @@ import { retrieveContext } from "@/lib/rag";
 import { dashboardChatLimiter, rateLimitHeaders, getRateLimitKey } from "@/lib/rate-limit";
 import { deliverWebhook } from "@/lib/webhooks";
 import { isSandboxExhausted } from "@/lib/sandbox";
+import { captureApiError } from "@/lib/monitoring";
 
 // LLM calls can take 30-60s
 export const maxDuration = 60;
@@ -294,6 +295,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     // Return a plain text stream — client reads chunks directly
     return result.toTextStreamResponse();
   } catch (err: unknown) {
+    captureApiError(err, { instanceId: id, route: "chat" });
     const message = err instanceof Error ? err.message : "LLM call failed";
     return NextResponse.json({ error: message }, { status: 502 });
   }

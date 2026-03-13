@@ -8,6 +8,8 @@ import { routing } from "@/i18n/routing";
 import { Suspense } from "react";
 import { PostHogProvider } from "@/components/PostHogProvider";
 import { PostHogPageView } from "@/components/PostHogPageView";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({ subsets: ["latin", "cyrillic"] });
 
@@ -50,6 +52,8 @@ export default async function LocaleLayout({
             {children}
           </NextIntlClientProvider>
         </PostHogProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
