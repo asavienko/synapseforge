@@ -353,9 +353,14 @@ export default function OnboardingPage() {
               </div>
             </div>
 
-            <p className="text-xs text-zinc-600 mb-5">
-              Your key is encrypted and stored securely. We never share it or use it for anything other than running your agent.
-            </p>
+            {/* "What's an API key?" explainer */}
+            <div className="bg-violet-500/5 border border-violet-500/15 rounded-xl p-4 mb-5">
+              <p className="text-xs font-semibold text-violet-300 mb-1">💡 What&apos;s an API key?</p>
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                It&apos;s your personal billing connection to the AI company — like a hotel key card that lets your agent use the AI. OpenAI gives new accounts <strong className="text-white">$5 free credits</strong>, enough for thousands of messages.
+              </p>
+              <p className="text-xs text-zinc-500 mt-2">Your key is encrypted and stored securely. We never share it or use it for anything other than running your agent.</p>
+            </div>
 
             {/* Provider picker */}
             <div className="space-y-2.5 mb-5">
@@ -443,9 +448,9 @@ export default function OnboardingPage() {
             </div>
             <button
               onClick={() => { analytics.onboardingStep(3, true); setStep(4); }}
-              className="w-full mt-2 text-xs text-zinc-600 hover:text-zinc-400 transition-colors py-2"
+              className="w-full mt-3 text-sm text-violet-400 hover:text-violet-300 transition-colors py-2.5 rounded-xl border border-violet-500/20 hover:border-violet-500/40 bg-violet-500/5 hover:bg-violet-500/10"
             >
-              Skip for now — I&apos;ll add this later
+              Try 20 free sandbox messages first →
             </button>
           </div>
         )}
