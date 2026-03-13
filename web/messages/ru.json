@@ -273,7 +273,8 @@
       "signOut": "Выйти",
       "managerPortal": "Портал менеджера",
       "adminPanel": "Панель администратора",
-      "apiDocs": "API Документация"
+      "apiDocs": "API Документация",
+      "integrations": "Интеграции"
     },
     "billing": {
       "title": "Биллинг и планы",
@@ -934,5 +935,38 @@
     "notePlaceholder": "Добавить заметку об этом клиенте...",
     "capacity": "Вместимость",
     "clients": "клиентов"
+  },
+  "integrations": {
+    "title": "Интеграции",
+    "subtitle": "Подключите ваших ИИ-агентов к любому инструменту",
+    "comingSoon": "Скоро",
+    "zapier": {
+      "title": "Zapier",
+      "subtitle": "Автоматизируйте рабочие процессы с 6 000+ приложениями",
+      "openZapier": "Открыть Zapier",
+      "triggers": "Триггеры",
+      "actions": "Действия"
+    },
+    "apiEndpoint": {
+      "title": "Прямой API",
+      "subtitle": "Используйте наш REST API напрямую в ваших рабочих процессах",
+      "hint": "Укажите API-ключ вашего экземпляра в заголовке x-api-key"
+    },
+    "make": {
+      "title": "Make (Integromat)",
+      "subtitle": "Визуальная автоматизация с 1 000+ коннекторами приложений"
+    }
+  },
+  "whiteLabel": {
+    "title": "Белая метка",
+    "subtitle": "Настройте брендинг для ваших клиентов",
+    "brandName": "Название бренда",
+    "brandColor": "Цвет бренда",
+    "logoUrl": "URL логотипа",
+    "customDomain": "Пользовательский домен",
+    "hidePoweredBy": "Скрыть \"Работает на SynapseForge\"",
+    "agencyRequired": "Требуется план агентства",
+    "save": "Сохранить изменения",
+    "saved": "Изменения сохранены"
   }
 }

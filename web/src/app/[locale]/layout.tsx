@@ -15,6 +15,13 @@ export const metadata: Metadata = {
   title: "SynapseForge ⚡ — We forge the AI stack so you don't have to.",
   description:
     "Deploy, manage, and scale AI instances with SynapseForge. From LLM integrations to custom agent deployment — we handle the stack.",
+  manifest: "/manifest.json",
+  themeColor: "#7c3aed",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "SynapseForge",
+  },
 };
 
 export default async function LocaleLayout({

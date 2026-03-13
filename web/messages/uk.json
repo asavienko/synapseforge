@@ -273,7 +273,8 @@
       "signOut": "Вийти",
       "managerPortal": "Портал менеджера",
       "adminPanel": "Панель адміністратора",
-      "apiDocs": "API Документація"
+      "apiDocs": "API Документація",
+      "integrations": "Інтеграції"
     },
     "billing": {
       "title": "Білінг та плани",
@@ -934,5 +935,38 @@
     "notePlaceholder": "Додати нотатку про цього клієнта...",
     "capacity": "Місткість",
     "clients": "клієнтів"
+  },
+  "integrations": {
+    "title": "Інтеграції",
+    "subtitle": "Підключіть ваших ІІ-агентів до будь-якого інструменту",
+    "comingSoon": "Незабаром",
+    "zapier": {
+      "title": "Zapier",
+      "subtitle": "Автоматизуйте робочі процеси з 6 000+ застосунками",
+      "openZapier": "Відкрити Zapier",
+      "triggers": "Тригери",
+      "actions": "Дії"
+    },
+    "apiEndpoint": {
+      "title": "Прямий API",
+      "subtitle": "Використовуйте наш REST API безпосередньо у ваших робочих процесах",
+      "hint": "Вкажіть API-ключ вашого екземпляра у заголовку x-api-key"
+    },
+    "make": {
+      "title": "Make (Integromat)",
+      "subtitle": "Візуальна автоматизація з 1 000+ конекторами застосунків"
+    }
+  },
+  "whiteLabel": {
+    "title": "Біла мітка",
+    "subtitle": "Налаштуйте брендинг для ваших клієнтів",
+    "brandName": "Назва бренду",
+    "brandColor": "Колір бренду",
+    "logoUrl": "URL логотипу",
+    "customDomain": "Власний домен",
+    "hidePoweredBy": "Приховати \"Працює на SynapseForge\"",
+    "agencyRequired": "Потрібен план агентства",
+    "save": "Зберегти зміни",
+    "saved": "Зміни збережено"
   }
 }

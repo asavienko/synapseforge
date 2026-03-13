@@ -21,6 +21,7 @@ export default async function ManagerPage() {
       },
     },
     orderBy: { createdAt: "desc" },
+    // healthScore is already on User model
   });
 
   const unreadCounts = await prisma.message.groupBy({
@@ -41,6 +42,7 @@ export default async function ManagerPage() {
         plan: c.plan,
         createdAt: c.createdAt.toISOString(),
         onboardingData: c.onboardingData,
+        healthScore: c.healthScore ?? null,
         unreadMessages: unreadMap[c.id] ?? 0,
         lastMessage: c.messages[0] ? {
           body: c.messages[0].body,

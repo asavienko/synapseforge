@@ -1,11 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, MessageCircle, Bot, Send, Loader2, X, Shield, Activity, Server, AlertTriangle, ExternalLink, Rocket, ChevronDown } from "lucide-react";
+import { Users, MessageCircle, Send, Loader2, X, Shield, Activity, Server, AlertTriangle, ExternalLink, Rocket, ChevronDown, ChevronUp, StickyNote, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { STATUS_COLORS, PLANS, formatDate, formatRelativeTime } from "@/lib/utils";
 import { ProvisioningWizard } from "@/components/ProvisioningWizard";
+import { healthScoreLabel } from "@/lib/health-score-utils";
+
+interface ClientNote {
+  id: string;
+  managerId: string;
+  userId: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 interface Client {
   id: string;
@@ -14,6 +24,7 @@ interface Client {
   plan: string;
   createdAt: string;
   onboardingData: string | null;
+  healthScore: number | null;
   unreadMessages: number;
   lastMessage: { body: string; senderType: string; createdAt: string } | null;
   instances: { id: string; name: string; type: string; status: string; tier: string }[];
@@ -53,6 +64,21 @@ interface ChatLogMessage {
   model?: string;
 }
 
+function HealthScoreBadge({ score }: { score: number | null }) {
+  if (score === null) return null;
+  const { label, color } = healthScoreLabel(score);
+  return (
+    <span
+      className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full"
+      style={{ color, backgroundColor: `${color}20`, border: `1px solid ${color}40` }}
+      title={label}
+    >
+      <span style={{ color }}>●</span>
+      {score}%
+    </span>
+  );
+}
+
 function HealthDot({ healthStatus, hasVps }: { healthStatus: string | null; hasVps: boolean }) {
   if (!hasVps) return <span className="w-2.5 h-2.5 rounded-full bg-zinc-600 inline-block" title="No VPS" />;
   if (healthStatus === "healthy") return <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block" title="Healthy" />;
@@ -76,6 +102,9 @@ const TIERS = [
   { value: "pro", label: "Pro — 8 vCPU, 16 GB" },
 ] as const;
 
+// Capacity defaults by manager plan (Manager model has no plan field yet, use fixed default)
+const DEFAULT_CLIENT_CAPACITY = 25;
+
 export function ManagerClient({ manager, clients: initialClients }: {
   manager: { id: string; name: string; email: string };
   clients: Client[];
@@ -88,6 +117,16 @@ export function ManagerClient({ manager, clients: initialClients }: {
   const [replyBody, setReplyBody] = useState("");
   const [replying, setReplying] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>("clients");
+
+  // Sort state
+  const [sortBy, setSortBy] = useState<"health" | "name" | "messages">("health");
+
+  // Notes state
+  const [openNotesClientId, setOpenNotesClientId] = useState<string | null>(null);
+  const [notesMap, setNotesMap] = useState<Record<string, ClientNote[]>>({});
+  const [notesLoading, setNotesLoading] = useState<string | null>(null);
+  const [newNoteText, setNewNoteText] = useState<Record<string, string>>({});
+  const [notesSaving, setNotesSaving] = useState<string | null>(null);
 
   // Instances tab state
   const [instanceClients, setInstanceClients] = useState<ClientWithInstances[]>([]);
@@ -169,8 +208,70 @@ export function ManagerClient({ manager, clients: initialClients }: {
     setChatLogLoading(false);
   }
 
+  async function loadNotes(userId: string) {
+    setNotesLoading(userId);
+    const res = await fetch(`/api/manager/clients/${userId}/notes`);
+    if (res.ok) {
+      const data = await res.json();
+      setNotesMap((prev) => ({ ...prev, [userId]: data.notes }));
+    }
+    setNotesLoading(null);
+  }
+
+  async function toggleNotes(userId: string) {
+    if (openNotesClientId === userId) {
+      setOpenNotesClientId(null);
+    } else {
+      setOpenNotesClientId(userId);
+      if (!notesMap[userId]) {
+        await loadNotes(userId);
+      }
+    }
+  }
+
+  async function addNote(userId: string) {
+    const content = newNoteText[userId]?.trim();
+    if (!content) return;
+    setNotesSaving(userId);
+    const res = await fetch(`/api/manager/clients/${userId}/notes`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content }),
+    });
+    if (res.ok) {
+      const note: ClientNote = await res.json();
+      setNotesMap((prev) => ({ ...prev, [userId]: [note, ...(prev[userId] ?? [])] }));
+      setNewNoteText((prev) => ({ ...prev, [userId]: "" }));
+    }
+    setNotesSaving(null);
+  }
+
+  async function deleteNote(userId: string, noteId: string) {
+    const res = await fetch(`/api/manager/clients/${userId}/notes/${noteId}`, { method: "DELETE" });
+    if (res.ok) {
+      setNotesMap((prev) => ({ ...prev, [userId]: (prev[userId] ?? []).filter((n) => n.id !== noteId) }));
+    }
+  }
+
+  // Sorted clients
+  const sortedClients = [...clients].sort((a, b) => {
+    if (sortBy === "health") {
+      const sa = a.healthScore ?? -1;
+      const sb = b.healthScore ?? -1;
+      return sa - sb; // worst first = needs attention
+    }
+    if (sortBy === "name") {
+      return (a.name ?? a.email).localeCompare(b.name ?? b.email);
+    }
+    if (sortBy === "messages") {
+      return b.instances.length - a.instances.length; // approximate activity by instance count
+    }
+    return 0;
+  });
+
   const totalUnread = clients.reduce((s, c) => s + c.unreadMessages, 0);
   const running = clients.flatMap((c) => c.instances).filter((i) => i.status === "running").length;
+  const capacityPercent = Math.min(100, Math.round((clients.length / DEFAULT_CLIENT_CAPACITY) * 100));
 
   async function loadInstances() {
     setInstancesLoading(true);
@@ -235,7 +336,25 @@ export function ManagerClient({ manager, clients: initialClients }: {
           </div>
         </div>
         <div className="flex items-center gap-4 text-sm text-zinc-400">
-          <span><strong className="text-white">{clients.length}</strong> clients</span>
+          {/* Capacity indicator */}
+          <div className="flex items-center gap-2">
+            <span className={cn(
+              "font-medium",
+              capacityPercent >= 100 ? "text-red-400" : capacityPercent >= 80 ? "text-amber-400" : "text-white"
+            )}>
+              {clients.length}
+            </span>
+            <span>/ {DEFAULT_CLIENT_CAPACITY} {t("clients")}</span>
+            <div className="w-20 h-1.5 rounded-full bg-white/10 overflow-hidden">
+              <div
+                className={cn(
+                  "h-full rounded-full transition-all",
+                  capacityPercent >= 100 ? "bg-red-500" : capacityPercent >= 80 ? "bg-amber-400" : "bg-violet-500"
+                )}
+                style={{ width: `${capacityPercent}%` }}
+              />
+            </div>
+          </div>
           <span><strong className="text-emerald-400">{running}</strong> running</span>
           {totalUnread > 0 && (
             <span className="bg-violet-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">{totalUnread} unread</span>
@@ -290,7 +409,27 @@ export function ManagerClient({ manager, clients: initialClients }: {
       {activeTab === "clients" && (
         <div className="flex h-[calc(100vh-121px)]">
           {/* Client list */}
-          <div className="w-80 border-r border-white/5 overflow-y-auto shrink-0">
+          <div className="w-80 border-r border-white/5 overflow-y-auto shrink-0 flex flex-col">
+            {/* Sort buttons */}
+            {clients.length > 0 && (
+              <div className="px-3 py-2 border-b border-white/5 flex items-center gap-1 text-xs">
+                <span className="text-zinc-600 mr-1">{t("sortBy")}:</span>
+                {(["health", "name", "messages"] as const).map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => setSortBy(s)}
+                    className={cn(
+                      "px-2 py-1 rounded-lg transition-colors",
+                      sortBy === s
+                        ? "bg-violet-600/30 text-violet-300 border border-violet-500/30"
+                        : "text-zinc-500 hover:text-zinc-300"
+                    )}
+                  >
+                    {s === "health" ? t("sortByHealth") : s === "name" ? t("sortByName") : t("sortByActivity")}
+                  </button>
+                ))}
+              </div>
+            )}
             {clients.length === 0 ? (
               <div className="p-8 text-center">
                 <Users className="w-8 h-8 text-zinc-700 mx-auto mb-3" />
@@ -298,46 +437,118 @@ export function ManagerClient({ manager, clients: initialClients }: {
                 <p className="text-zinc-600 text-xs mt-1">{t("noClientsDesc")}</p>
               </div>
             ) : (
-              clients.map((client) => {
+              sortedClients.map((client) => {
                 const od = client.onboardingData
                   ? (() => { try { return JSON.parse(client.onboardingData!); } catch { return null; } })()
                   : null;
                 return (
-                  <button
+                  <div
                     key={client.id}
-                    onClick={() => openThread(client)}
                     className={cn(
-                      "w-full text-left p-4 border-b border-white/5 hover:bg-white/[0.03] transition-colors",
-                      activeClient?.id === client.id && "bg-white/[0.05] border-l-2 border-l-violet-500"
+                      "border-b border-white/5",
+                      activeClient?.id === client.id && "border-l-2 border-l-violet-500"
                     )}
                   >
-                    <div className="flex items-start gap-3">
-                      <div className="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center text-sm font-bold text-zinc-300 shrink-0">
-                        {client.name?.[0]?.toUpperCase() ?? "U"}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium text-white truncate">{client.name ?? client.email}</span>
-                          {client.unreadMessages > 0 && (
-                            <span className="bg-violet-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full shrink-0 ml-2">
-                              {client.unreadMessages}
-                            </span>
+                    <button
+                      onClick={() => openThread(client)}
+                      className={cn(
+                        "w-full text-left p-4 hover:bg-white/[0.03] transition-colors",
+                        activeClient?.id === client.id && "bg-white/[0.05]"
+                      )}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center text-sm font-bold text-zinc-300 shrink-0">
+                          {client.name?.[0]?.toUpperCase() ?? "U"}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-sm font-medium text-white truncate">{client.name ?? client.email}</span>
+                            <div className="flex items-center gap-1 shrink-0">
+                              {client.healthScore !== null && <HealthScoreBadge score={client.healthScore} />}
+                              {client.unreadMessages > 0 && (
+                                <span className="bg-violet-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+                                  {client.unreadMessages}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <div className="text-xs text-zinc-500 truncate">{client.email}</div>
+                          {od && (
+                            <div className="text-xs text-zinc-600 mt-0.5 truncate">
+                              {od.business} · {od.useCase}
+                            </div>
+                          )}
+                          {client.lastMessage && (
+                            <div className="text-xs text-zinc-600 mt-1 truncate">
+                              {client.lastMessage.senderType === "user" ? "→ " : "← "}{client.lastMessage.body}
+                            </div>
                           )}
                         </div>
-                        <div className="text-xs text-zinc-500 truncate">{client.email}</div>
-                        {od && (
-                          <div className="text-xs text-zinc-600 mt-0.5 truncate">
-                            {od.business} · {od.useCase}
-                          </div>
+                      </div>
+                    </button>
+                    {/* Notes toggle button */}
+                    <div className="px-4 pb-2 flex items-center gap-2">
+                      <button
+                        onClick={() => toggleNotes(client.id)}
+                        className={cn(
+                          "flex items-center gap-1 text-xs px-2 py-1 rounded-lg transition-colors",
+                          openNotesClientId === client.id
+                            ? "text-amber-300 bg-amber-500/10 border border-amber-500/20"
+                            : "text-zinc-500 hover:text-zinc-300"
                         )}
-                        {client.lastMessage && (
-                          <div className="text-xs text-zinc-600 mt-1 truncate">
-                            {client.lastMessage.senderType === "user" ? "→ " : "← "}{client.lastMessage.body}
+                      >
+                        <StickyNote className="w-3 h-3" />
+                        {t("notes")}
+                        {openNotesClientId === client.id
+                          ? <ChevronUp className="w-3 h-3" />
+                          : <ChevronDown className="w-3 h-3" />}
+                      </button>
+                    </div>
+                    {/* Notes panel */}
+                    {openNotesClientId === client.id && (
+                      <div className="px-4 pb-3 space-y-2">
+                        {notesLoading === client.id ? (
+                          <div className="flex justify-center py-2">
+                            <Loader2 className="w-4 h-4 text-zinc-500 animate-spin" />
                           </div>
+                        ) : (
+                          <>
+                            {(notesMap[client.id] ?? []).map((note) => (
+                              <div key={note.id} className="bg-white/[0.03] border border-white/10 rounded-lg p-2.5 text-xs">
+                                <div className="flex items-start justify-between gap-2">
+                                  <p className="text-zinc-300 whitespace-pre-wrap flex-1">{note.content}</p>
+                                  <button
+                                    onClick={() => deleteNote(client.id, note.id)}
+                                    className="text-zinc-600 hover:text-red-400 transition-colors shrink-0"
+                                    title={t("deleteNote")}
+                                  >
+                                    <Trash2 className="w-3 h-3" />
+                                  </button>
+                                </div>
+                                <p className="text-zinc-600 mt-1">{formatRelativeTime(note.updatedAt)}</p>
+                              </div>
+                            ))}
+                            <div className="flex gap-2">
+                              <textarea
+                                value={newNoteText[client.id] ?? ""}
+                                onChange={(e) => setNewNoteText((prev) => ({ ...prev, [client.id]: e.target.value }))}
+                                placeholder={t("notePlaceholder")}
+                                rows={2}
+                                className="flex-1 bg-white/5 border border-white/10 rounded-lg px-2.5 py-2 text-xs text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors resize-none"
+                              />
+                              <button
+                                onClick={() => addNote(client.id)}
+                                disabled={!newNoteText[client.id]?.trim() || notesSaving === client.id}
+                                className="self-end flex items-center gap-1 bg-amber-600/80 hover:bg-amber-500 disabled:opacity-40 transition-colors px-2.5 py-1.5 rounded-lg text-xs font-medium text-white"
+                              >
+                                {notesSaving === client.id ? <Loader2 className="w-3 h-3 animate-spin" /> : t("addNote")}
+                              </button>
+                            </div>
+                          </>
                         )}
                       </div>
-                    </div>
-                  </button>
+                    )}
+                  </div>
                 );
               })
             )}

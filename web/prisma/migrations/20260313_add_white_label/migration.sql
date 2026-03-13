@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS "WhiteLabelConfig" (
+  "id" TEXT NOT NULL PRIMARY KEY,
+  "userId" TEXT NOT NULL UNIQUE,
+  "brandName" TEXT NOT NULL DEFAULT 'SynapseForge',
+  "brandColor" TEXT NOT NULL DEFAULT '#7c3aed',
+  "logoUrl" TEXT,
+  "customDomain" TEXT,
+  "hidePoweredBy" BOOLEAN NOT NULL DEFAULT false,
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "WhiteLabelConfig_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE
+);

@@ -273,7 +273,8 @@
       "signOut": "Cerrar sesión",
       "managerPortal": "Portal del Gestor",
       "adminPanel": "Panel de Administración",
-      "apiDocs": "Docs de API"
+      "apiDocs": "Docs de API",
+      "integrations": "Integraciones"
     },
     "billing": {
       "title": "Facturación y Planes",
@@ -934,5 +935,38 @@
     "notePlaceholder": "Agregar una nota sobre este cliente...",
     "capacity": "Capacidad",
     "clients": "clientes"
+  },
+  "integrations": {
+    "title": "Integraciones",
+    "subtitle": "Conecta tus agentes de IA con cualquier herramienta",
+    "comingSoon": "Próximamente",
+    "zapier": {
+      "title": "Zapier",
+      "subtitle": "Automatiza flujos de trabajo con más de 6.000 aplicaciones",
+      "openZapier": "Abrir Zapier",
+      "triggers": "Disparadores",
+      "actions": "Acciones"
+    },
+    "apiEndpoint": {
+      "title": "API Directa",
+      "subtitle": "Usa nuestra API REST directamente en tus flujos de trabajo",
+      "hint": "Incluye la clave API de tu instancia en el encabezado x-api-key"
+    },
+    "make": {
+      "title": "Make (Integromat)",
+      "subtitle": "Automatización visual con más de 1.000 conectores de aplicaciones"
+    }
+  },
+  "whiteLabel": {
+    "title": "Marca Blanca",
+    "subtitle": "Personaliza la marca para tus clientes",
+    "brandName": "Nombre de marca",
+    "brandColor": "Color de marca",
+    "logoUrl": "URL del logotipo",
+    "customDomain": "Dominio personalizado",
+    "hidePoweredBy": "Ocultar \"Desarrollado por SynapseForge\"",
+    "agencyRequired": "Plan de agencia requerido",
+    "save": "Guardar cambios",
+    "saved": "Cambios guardados"
   }
 }

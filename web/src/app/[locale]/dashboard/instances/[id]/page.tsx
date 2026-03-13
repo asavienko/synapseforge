@@ -399,7 +399,7 @@ function SetupChecklistCard({ instance, credentials, onGoToCredentials, onGoToDe
   );
 }
 
-const TABS = ["Overview", "Credentials", "Deploy", "Chat", "Configuration", "API Keys", "Activity Log", "Infrastructure"] as const;
+const TABS = ["Overview", "Credentials", "Deploy", "Chat", "Configuration", "Knowledge", "API Keys", "Activity Log", "Infrastructure"] as const;
 type Tab = (typeof TABS)[number];
 
 interface ChatMsg {
@@ -939,6 +939,66 @@ export default function InstanceDetailPage() {
   // Recent activity for Overview
   const [recentLogs, setRecentLogs] = useState<LogRow[]>([]);
 
+  // Knowledge Base state
+  interface KnowledgeDocRow {
+    id: string;
+    filename: string;
+    fileSize: number;
+    status: string;
+    createdAt: string;
+  }
+  const [knowledgeDocs, setKnowledgeDocs] = useState<KnowledgeDocRow[]>([]);
+  const [knowledgeLoading, setKnowledgeLoading] = useState(false);
+  const [knowledgeUploading, setKnowledgeUploading] = useState(false);
+  const knowledgeFileRef = useRef<HTMLInputElement>(null);
+
+  const loadKnowledge = useCallback(async () => {
+    setKnowledgeLoading(true);
+    try {
+      const res = await fetch(`/api/instances/${id}/knowledge`);
+      if (res.ok) {
+        const data = await res.json();
+        setKnowledgeDocs(data.documents ?? []);
+      }
+    } finally {
+      setKnowledgeLoading(false);
+    }
+  }, [id]);
+
+  async function handleKnowledgeUpload(file: File) {
+    setKnowledgeUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch(`/api/instances/${id}/knowledge/upload`, {
+        method: "POST",
+        body: fd,
+      });
+      if (res.ok) {
+        await loadKnowledge();
+        showToast(file.name + " uploaded", "success");
+      } else {
+        const err = await res.json().catch(() => ({ error: "Upload failed" }));
+        showToast(err.error ?? "Upload failed", "error");
+      }
+    } catch {
+      showToast("Upload failed", "error");
+    } finally {
+      setKnowledgeUploading(false);
+    }
+  }
+
+  async function handleKnowledgeDelete(docId: string, filename: string) {
+    if (!confirm(t("knowledge.deleteConfirm"))) return;
+    const res = await fetch(`/api/instances/${id}/knowledge/${docId}`, { method: "DELETE" });
+    if (res.ok) {
+      setKnowledgeDocs((prev) => prev.filter((d) => d.id !== docId));
+      showToast(filename + " removed", "success");
+    } else {
+      showToast("Delete failed", "error");
+    }
+  }
+
   function showToast(text: string, type: "success" | "error" = "success") {
     setToast({ text, type });
     setTimeout(() => setToast(null), 3000);
@@ -1090,6 +1150,7 @@ export default function InstanceDetailPage() {
     if (tab === "Credentials") loadCredentials();
     if (tab === "Deploy" && credentials.length === 0) loadCredentials();
     if (tab === "Chat") loadChatHistory();
+    if (tab === "Knowledge") loadKnowledge();
   }, [tab]);
 
   async function toggleStatus() {
@@ -1667,6 +1728,7 @@ export default function InstanceDetailPage() {
               "Activity Log": t("tabs.activityLog"),
               "Infrastructure": t("infrastructure.tab"),
               "Credentials": t("credentials.tab"),
+              "Knowledge": t("knowledge.tab"),
             };
             return (
               <button key={tabKey} onClick={() => setTab(tabKey)}
@@ -3137,6 +3199,103 @@ print(resp.choices[0].message.content)`}</pre>
                 </div>
               )}
             </>
+          )}
+        </div>
+      )}
+
+      {/* ── Knowledge Base ── */}
+      {tab === "Knowledge" && (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-white">{t("knowledge.title")}</h2>
+              <p className="text-sm text-zinc-400 mt-0.5">{t("knowledge.uploadHint")}</p>
+            </div>
+            <div>
+              <input
+                ref={knowledgeFileRef}
+                type="file"
+                accept=".txt,.md"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleKnowledgeUpload(file);
+                  e.target.value = "";
+                }}
+              />
+              <button
+                onClick={() => knowledgeFileRef.current?.click()}
+                disabled={knowledgeUploading}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-sm font-medium text-white transition-colors"
+              >
+                {knowledgeUploading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    {t("knowledge.uploading")}
+                  </>
+                ) : (
+                  <>
+                    <Plus className="w-4 h-4" />
+                    {t("knowledge.upload")}
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {knowledgeLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-6 h-6 animate-spin text-violet-400" />
+            </div>
+          ) : knowledgeDocs.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 text-center border border-dashed border-white/10 rounded-xl">
+              <Database className="w-10 h-10 text-zinc-600 mb-3" />
+              <p className="text-zinc-400 text-sm">{t("knowledge.empty")}</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {knowledgeDocs.map((doc) => (
+                <div
+                  key={doc.id}
+                  className="flex items-center justify-between gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Database className="w-4 h-4 text-zinc-400 shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-white truncate">{doc.filename}</p>
+                      <p className="text-xs text-zinc-500">
+                        {(doc.fileSize / 1024).toFixed(1)} KB · {formatDate(doc.createdAt)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span
+                      className={cn(
+                        "text-xs px-2 py-0.5 rounded-full font-medium",
+                        doc.status === "ready"
+                          ? "bg-green-500/20 text-green-400"
+                          : doc.status === "error"
+                          ? "bg-red-500/20 text-red-400"
+                          : "bg-amber-500/20 text-amber-400"
+                      )}
+                    >
+                      {doc.status === "ready"
+                        ? t("knowledge.ready")
+                        : doc.status === "error"
+                        ? t("knowledge.error")
+                        : t("knowledge.processing")}
+                    </span>
+                    <button
+                      onClick={() => handleKnowledgeDelete(doc.id, doc.filename)}
+                      className="text-zinc-500 hover:text-red-400 transition-colors p-1"
+                      title={t("knowledge.delete")}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       )}
