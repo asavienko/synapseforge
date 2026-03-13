@@ -24,6 +24,17 @@ export async function GET() {
         plan: true,
         createdAt: true,
         managerId: true,
+        onboardingDone: true,
+        emailVerified: true,
+        instances: {
+          select: {
+            id: true,
+            sandboxMode: true,
+            sandboxUsed: true,
+            credentials: { select: { key: true } },
+            telegramBotUsername: true,
+          },
+        },
       },
       orderBy: { createdAt: "desc" },
     }),
@@ -102,6 +113,17 @@ export async function GET() {
 
   const unassignedUsers = users.filter((u) => !u.managerId).length;
 
+  // Activation funnel
+  const funnelSteps = {
+    signedUp: users.length,
+    emailVerified: users.filter((u) => !!u.emailVerified).length,
+    onboardingDone: users.filter((u) => u.onboardingDone).length,
+    triedSandbox: users.filter((u) => u.instances.some((i) => (i.sandboxUsed ?? 0) > 0)).length,
+    sandboxExhausted: users.filter((u) => u.instances.some((i) => (i.sandboxUsed ?? 0) >= 20)).length,
+    addedApiKey: users.filter((u) => u.instances.some((i) => !i.sandboxMode)).length,
+    connectedTelegram: users.filter((u) => u.instances.some((i) => !!i.telegramBotUsername)).length,
+  };
+
   return NextResponse.json({
     planCounts,
     mrr,
@@ -114,5 +136,6 @@ export async function GET() {
     userGrowth,
     managerEfficiency,
     unassignedUsers,
+    funnel: funnelSteps,
   });
 }

@@ -316,6 +316,15 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
     userGrowth: { date: string; count: number }[];
     managerEfficiency: { id: string; name: string; email: string; userCount: number }[];
     unassignedUsers: number;
+    funnel?: {
+      signedUp: number;
+      emailVerified: number;
+      onboardingDone: number;
+      triedSandbox: number;
+      sandboxExhausted: number;
+      addedApiKey: number;
+      connectedTelegram: number;
+    };
   }
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
@@ -1219,6 +1228,59 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                     </div>
                   </div>
                 </div>
+
+                {/* Activation Funnel */}
+                {analyticsData.funnel && (
+                  <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+                    <div className="p-5 border-b border-white/5 flex items-center gap-2">
+                      <TrendingUp className="w-4 h-4 text-violet-400" />
+                      <div>
+                        <h2 className="font-semibold">Activation Funnel</h2>
+                        <p className="text-xs text-zinc-500 mt-0.5">Where users drop off</p>
+                      </div>
+                    </div>
+                    <div className="p-5">
+                      {(() => {
+                        const f = analyticsData.funnel!;
+                        const steps: { label: string; count: number }[] = [
+                          { label: "Signed up", count: f.signedUp },
+                          { label: "Email verified", count: f.emailVerified },
+                          { label: "Onboarding done", count: f.onboardingDone },
+                          { label: "Tried sandbox", count: f.triedSandbox },
+                          { label: "Sandbox exhausted", count: f.sandboxExhausted },
+                          { label: "Added API key", count: f.addedApiKey },
+                          { label: "Connected Telegram", count: f.connectedTelegram },
+                        ];
+                        const baseline = f.signedUp || 1;
+                        return (
+                          <div>
+                            {steps.map((step, idx) => {
+                              const pct = (step.count / baseline) * 100;
+                              const prevCount = idx === 0 ? baseline : steps[idx - 1].count;
+                              const dropOff = idx === 0 ? null : prevCount === 0 ? 0 : (step.count / prevCount) * 100;
+                              return (
+                                <div key={step.label} className="flex items-center gap-3 py-2 border-b border-white/5 last:border-0">
+                                  <div className="w-40 shrink-0 text-xs text-zinc-400">{step.label}</div>
+                                  <div className="flex-1 bg-white/5 rounded-full h-2 overflow-hidden">
+                                    <div className="bg-violet-500 h-full rounded-full" style={{ width: `${pct}%` }} />
+                                  </div>
+                                  <div className="w-12 text-right text-xs font-mono text-white">{step.count}</div>
+                                  <div className="w-14 text-right text-xs text-zinc-400">{pct.toFixed(0)}%</div>
+                                  {dropOff !== null && dropOff < 80 && (
+                                    <div className="w-12 text-xs text-amber-400">↓{dropOff.toFixed(0)}%</div>
+                                  )}
+                                  {(dropOff === null || dropOff >= 80) && (
+                                    <div className="w-12" />
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  </div>
+                )}
 
               </div>
             )}
