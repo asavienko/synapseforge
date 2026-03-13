@@ -29,6 +29,9 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
       snapshotId: s.snapshotId,
       sizeBytes: s.sizeBytes,
       healthy: s.healthy,
+      label: s.label ?? null,
+      tag: s.tag ?? null,
+      triggeredBy: s.triggeredBy ?? null,
       createdAt: s.createdAt.toISOString(),
     })),
   });
