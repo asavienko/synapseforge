@@ -41,6 +41,8 @@ interface Instance {
   discordBotUsername?: string | null;
   slackBotName?: string | null;
   slackTeamName?: string | null;
+  currentVersion?: string | null;
+  autoUpdate?: boolean;
 }
 
 interface CredentialRow {
@@ -856,6 +858,10 @@ export default function InstanceDetailPage() {
   const [infraLoading, setInfraLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [resyncLoading, setResyncLoading] = useState(false);
+  // Snapshot restore state
+  const [commands, setCommands] = useState<CommandRow[]>([]);
+  const [restoreConfirmId, setRestoreConfirmId] = useState<string | null>(null);
+  const [restoreRequested, setRestoreRequested] = useState<string | null>(null);
 
   // Gateway status
   const [gatewayStatus, setGatewayStatus] = useState<GatewayStatus | null>(null);
@@ -1050,14 +1056,30 @@ export default function InstanceDetailPage() {
 
   const loadInfra = useCallback(async () => {
     setInfraLoading(true);
-    const [healthRes, snapshotsRes] = await Promise.all([
+    const [healthRes, snapshotsRes, commandsRes] = await Promise.all([
       fetch(`/api/instances/${id}/health`),
       fetch(`/api/instances/${id}/snapshots`),
+      fetch(`/api/instances/${id}/commands`),
     ]);
     if (healthRes.ok) setHealthData(await healthRes.json());
     if (snapshotsRes.ok) setSnapshotsData(await snapshotsRes.json());
+    if (commandsRes.ok) {
+      const d = await commandsRes.json();
+      setCommands(d.commands ?? []);
+    }
     setInfraLoading(false);
   }, [id]);
+
+  async function requestRollback(snapshotId: string) {
+    await fetch(`/api/instances/${id}/request-rollback`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ snapshotId }),
+    });
+    setRestoreConfirmId(null);
+    setRestoreRequested(snapshotId);
+    setTimeout(() => setRestoreRequested(null), 4000);
+  }
 
   const loadCredentials = useCallback(async () => {
     setCredsLoading(true);
@@ -3125,13 +3147,15 @@ print(resp.choices[0].message.content)`}</pre>
                           <th className="text-left px-5 py-2">{t("infrastructure.backups.snapshotId")}</th>
                           <th className="text-left px-5 py-2">{t("infrastructure.backups.size")}</th>
                           <th className="text-left px-5 py-2">{t("infrastructure.health.status")}</th>
+                          <th className="text-left px-5 py-2">{t("infrastructure.backups.label")}</th>
+                          <th className="px-5 py-2"></th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-white/5">
                         {snapshotsData.snapshots.map((s) => (
                           <tr key={s.id} className="hover:bg-white/[0.02]">
                             <td className="px-5 py-2.5 text-zinc-400 text-xs">{formatRelativeTime(s.createdAt)}</td>
-                            <td className="px-5 py-2.5 text-zinc-300 text-xs font-mono">{s.snapshotId}</td>
+                            <td className="px-5 py-2.5 text-zinc-300 text-xs font-mono">{s.snapshotId?.slice(0, 12)}</td>
                             <td className="px-5 py-2.5 text-zinc-400 text-xs">
                               {s.sizeBytes != null ? `${(s.sizeBytes / 1024 / 1024).toFixed(1)} MB` : "—"}
                             </td>
@@ -3139,6 +3163,38 @@ print(resp.choices[0].message.content)`}</pre>
                               <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                                 s.healthy ? "bg-emerald-500/20 text-emerald-300" : "bg-red-500/20 text-red-300"
                               }`}>{s.healthy ? t("infrastructure.health.healthy") : t("infrastructure.health.down")}</span>
+                            </td>
+                            <td className="px-5 py-2.5 text-zinc-500 text-xs">
+                              {s.label && (
+                                <span className="bg-violet-500/10 text-violet-400 px-1.5 py-0.5 rounded">{s.label}</span>
+                              )}
+                            </td>
+                            <td className="px-5 py-2.5 text-right">
+                              {restoreRequested === s.snapshotId ? (
+                                <span className="text-xs text-emerald-400">{t("infrastructure.backups.restoreRequested")}</span>
+                              ) : restoreConfirmId === s.id ? (
+                                <div className="flex items-center gap-2 justify-end">
+                                  <button
+                                    onClick={() => requestRollback(s.snapshotId)}
+                                    className="text-xs px-2 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-lg hover:bg-amber-500/20 transition-colors"
+                                  >
+                                    {t("infrastructure.backups.confirmRestore")}
+                                  </button>
+                                  <button
+                                    onClick={() => setRestoreConfirmId(null)}
+                                    className="text-xs text-zinc-500 hover:text-white"
+                                  >
+                                    {t("common.cancel")}
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  onClick={() => setRestoreConfirmId(s.id)}
+                                  className="text-xs text-zinc-500 hover:text-violet-400 transition-colors"
+                                >
+                                  {t("infrastructure.backups.restore")}
+                                </button>
+                              )}
                             </td>
                           </tr>
                         ))}
@@ -3150,6 +3206,32 @@ print(resp.choices[0].message.content)`}</pre>
                   <p className="text-xs text-zinc-600">{t("infrastructure.backups.note")}</p>
                 </div>
               </div>
+
+              {/* Command Queue */}
+              {commands.length > 0 && (
+                <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+                  <div className="p-5 border-b border-white/5 flex items-center gap-2">
+                    <Server className="w-4 h-4 text-zinc-500" />
+                    <h3 className="text-sm font-semibold text-white">{t("infrastructure.commandQueue.title")}</h3>
+                  </div>
+                  <div className="divide-y divide-white/5">
+                    {commands.slice(0, 10).map((cmd) => (
+                      <div key={cmd.id} className="flex items-center justify-between px-5 py-3 text-xs">
+                        <span className="text-zinc-400 font-mono">{cmd.type}</span>
+                        <div className="flex items-center gap-3">
+                          {cmd.note && <span className="text-zinc-600">{cmd.note}</span>}
+                          <span className={`font-medium ${
+                            cmd.status === "done" ? "text-emerald-400" :
+                            cmd.status === "running" ? "text-blue-400" :
+                            cmd.status === "failed" ? "text-red-400" :
+                            "text-zinc-400"
+                          }`}>{cmd.status}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Test Chat */}
               {instance.hasGateway && instance.status === "running" && (
