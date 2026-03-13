@@ -574,7 +574,15 @@
         "noSnapshotsDesc": "Резервные копии создаются автоматически каждый час через Restic.",
         "snapshotId": "ID снимка",
         "size": "Размер",
+        "label": "Метка",
+        "restore": "Восстановить",
+        "confirmRestore": "Подтвердить восстановление",
+        "restoreRequested": "Запрос на восстановление отправлен менеджеру",
         "note": "Резервные копии управляются автоматически. Обратитесь к менеджеру для восстановления снимка."
+      },
+      "commandQueue": {
+        "title": "Очередь команд",
+        "noCommands": "Нет команд в очереди"
       },
       "gateway": {
         "title": "VPS Шлюз",
@@ -595,6 +603,18 @@
         "sending": "Отправка...",
         "responseLabel": "Ответ",
         "note": "Это отправляет тестовое сообщение напрямую на ваш ИИ шлюз."
+      },
+      "version": {
+        "title": "Управление версиями",
+        "currentVersion": "Версия OpenClaw",
+        "versionUnknown": "Неизвестно",
+        "autoUpdate": "Авто-обновление",
+        "commandQueue": "Очередь команд",
+        "noCommands": "Нет команд в очереди",
+        "commandPending": "Ожидает",
+        "commandRunning": "Выполняется",
+        "commandDone": "Выполнено",
+        "commandFailed": "Ошибка"
       }
     },
     "credentials": {
@@ -759,7 +779,11 @@
     "estMrr": "Ожид. MRR",
     "activeInstances": "Активные инстансы",
     "provisionedVps": "VPS развёрнуто",
-    "adminPanel": "Панель администратора"
+    "adminPanel": "Панель администратора",
+    "versions": "Версии",
+    "publishVersion": "Опубликовать версию",
+    "markStable": "Отметить как стабильную",
+    "markDeprecated": "Отметить как устаревшую"
   },
   "instanceSetup": {
     "title": "Настройка экземпляра ИИ",

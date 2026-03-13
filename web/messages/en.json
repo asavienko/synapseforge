@@ -574,7 +574,15 @@
         "noSnapshotsDesc": "Backups run automatically every hour via Restic.",
         "snapshotId": "Snapshot ID",
         "size": "Size",
+        "label": "Label",
+        "restore": "Restore",
+        "confirmRestore": "Confirm restore",
+        "restoreRequested": "Restore request sent to your manager",
         "note": "Backups are managed automatically. Contact your manager to restore a snapshot."
+      },
+      "commandQueue": {
+        "title": "Command Queue",
+        "noCommands": "No commands queued"
       },
       "gateway": {
         "title": "VPS Gateway",
@@ -595,6 +603,18 @@
         "sending": "Sending...",
         "responseLabel": "Response",
         "note": "This sends a test message directly to your AI gateway."
+      },
+      "version": {
+        "title": "Version Management",
+        "currentVersion": "OpenClaw Version",
+        "versionUnknown": "Unknown",
+        "autoUpdate": "Auto-update",
+        "commandQueue": "Command Queue",
+        "noCommands": "No commands queued",
+        "commandPending": "Pending",
+        "commandRunning": "Running",
+        "commandDone": "Done",
+        "commandFailed": "Failed"
       }
     },
     "credentials": {
@@ -759,7 +779,11 @@
     "estMrr": "Est. MRR",
     "activeInstances": "Active Instances",
     "provisionedVps": "Provisioned VPS",
-    "adminPanel": "Admin Panel"
+    "adminPanel": "Admin Panel",
+    "versions": "Versions",
+    "publishVersion": "Publish Version",
+    "markStable": "Mark Stable",
+    "markDeprecated": "Mark Deprecated"
   },
   "referral": {
     "pageTitle": "Referral Program",
@@ -839,7 +863,15 @@
     "deleteNote": "Delete",
     "notePlaceholder": "Add a note about this client...",
     "capacity": "Capacity",
-    "clients": "clients"
+    "clients": "clients",
+    "snapshots": "Snapshots",
+    "snapshotsPanel": "Snapshots",
+    "noSnapshots": "No snapshots yet",
+    "takeSnapshot": "Take snapshot",
+    "snapshotQueued": "Snapshot queued ✓",
+    "restore": "Restore",
+    "confirmRollback": "Confirm rollback",
+    "cancel": "Cancel"
   },
   "instanceSetup": {
     "title": "Set Up Your AI Instance",

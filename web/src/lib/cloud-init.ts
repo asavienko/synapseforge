@@ -193,11 +193,89 @@ echo "[sync] Config applied and OpenClaw restarted (hash: $NEW_HASH)"
 SYNC
 chmod +x /opt/synapseforge/scripts/sync-config.sh
 
+# ── 9b. Poll-commands script ──────────────────────────────────────────────────
+# Called every minute by cron — fetches next pending command from SynapseForge
+# and executes it (update_version, rollback_restic, take_restic_snapshot, restart)
+cat > /opt/synapseforge/scripts/poll-commands.sh << 'POLL'
+#!/bin/bash
+source /etc/synapseforge.env
+
+PENDING=$(curl -sf \
+  -H "Authorization: Bearer $OPENCLAW_GATEWAY_TOKEN" \
+  "$SF_API_URL/api/internal/commands/$SF_INSTANCE_ID" 2>/dev/null || echo '{}')
+
+COMMAND_TYPE=$(echo "$PENDING" | jq -r '.command.type // empty' 2>/dev/null)
+COMMAND_ID=$(echo "$PENDING" | jq -r '.command.id // empty' 2>/dev/null)
+
+if [ -z "$COMMAND_TYPE" ]; then exit 0; fi
+
+# Mark as running
+curl -sf -X PATCH \
+  -H "Authorization: Bearer $OPENCLAW_GATEWAY_TOKEN" \
+  -H "Content-Type: application/json" \
+  "$SF_API_URL/api/internal/commands/$SF_INSTANCE_ID/$COMMAND_ID/status" \
+  -d '{"status":"running"}' 2>/dev/null
+
+case "$COMMAND_TYPE" in
+  "update_version")
+    TAG=$(echo "$PENDING" | jq -r '.command.payload.tag')
+    /opt/synapseforge/scripts/update-version.sh "$TAG" "$COMMAND_ID"
+    ;;
+  "rollback_restic")
+    SNAP=$(echo "$PENDING" | jq -r '.command.payload.snapshotId')
+    /opt/synapseforge/scripts/rollback-restic.sh "$SNAP" "$COMMAND_ID"
+    ;;
+  "take_restic_snapshot")
+    NOTE=$(echo "$PENDING" | jq -r '.command.note // "scheduled"')
+    SNAPSHOT_LABEL="$NOTE" /opt/synapseforge/scripts/take-snapshot.sh "$COMMAND_ID"
+    ;;
+  "restart")
+    cd /opt/openclaw && docker compose restart
+    curl -sf -X PATCH \
+      -H "Authorization: Bearer $OPENCLAW_GATEWAY_TOKEN" \
+      -H "Content-Type: application/json" \
+      "$SF_API_URL/api/internal/commands/$SF_INSTANCE_ID/$COMMAND_ID/status" \
+      -d '{"status":"done"}' 2>/dev/null
+    ;;
+esac
+POLL
+chmod +x /opt/synapseforge/scripts/poll-commands.sh
+
+# ── 9c. Update-version script ─────────────────────────────────────────────────
+cat > /opt/synapseforge/scripts/update-version.sh << 'UPDATE'
+#!/bin/bash
+source /etc/synapseforge.env
+NEW_TAG="$1"
+COMMAND_ID="$2"
+NEW_IMAGE="ghcr.io/openclaw/openclaw:\${NEW_TAG}"
+
+echo "[\$(date)] Updating OpenClaw to \${NEW_TAG}..."
+docker pull "\${NEW_IMAGE}"
+sed -i "s|image: ghcr.io/openclaw/openclaw:.*|image: \${NEW_IMAGE}|" /opt/openclaw/docker-compose.yml
+cd /opt/openclaw && docker compose up -d --remove-orphans
+sleep 5
+
+curl -sf -X POST \
+  -H "Authorization: Bearer $OPENCLAW_GATEWAY_TOKEN" \
+  -H "Content-Type: application/json" \
+  "$SF_API_URL/api/internal/version-report/$SF_INSTANCE_ID" \
+  -d "{\"version\": \"\${NEW_TAG}\"}" 2>/dev/null
+
+curl -sf -X PATCH \
+  -H "Authorization: Bearer $OPENCLAW_GATEWAY_TOKEN" \
+  -H "Content-Type: application/json" \
+  "$SF_API_URL/api/internal/commands/$SF_INSTANCE_ID/$COMMAND_ID/status" \
+  -d '{"status":"done"}' 2>/dev/null
+echo "[\$(date)] Update complete."
+UPDATE
+chmod +x /opt/synapseforge/scripts/update-version.sh
+
 # ── 10. Install cron jobs ─────────────────────────────────────────────────────
-# Health check every 5 min; config sync every 5 min
+# Health check every 5 min; config sync every 5 min; command poll every 1 min
 (crontab -l 2>/dev/null || true
  echo "*/5 * * * * /opt/synapseforge/scripts/health-check.sh >> /var/log/sf-health.log 2>&1"
  echo "*/5 * * * * /opt/synapseforge/scripts/sync-config.sh >> /var/log/sf-sync.log 2>&1"
+ echo "* * * * * /opt/synapseforge/scripts/poll-commands.sh >> /var/log/sf-commands.log 2>&1"
 ) | crontab -
 
 # ── 11. Wait for gateway to become available (up to 8 minutes) ────────────────

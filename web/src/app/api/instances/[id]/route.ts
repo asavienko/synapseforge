@@ -37,6 +37,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   if (body.name !== undefined) data.name = body.name;
   if (body.description !== undefined) data.description = body.description;
+  if (body.autoUpdate !== undefined) data.autoUpdate = Boolean(body.autoUpdate);
 
   if (body.status !== undefined && body.status !== instance.status) {
     const newStatus = body.status as string;

@@ -64,6 +64,16 @@ interface ChatLogMessage {
   model?: string;
 }
 
+interface InstanceSnapshot {
+  id: string;
+  snapshotId: string;
+  sizeBytes?: number | null;
+  healthy: boolean;
+  label?: string | null;
+  tag?: string | null;
+  createdAt: string;
+}
+
 function HealthScoreBadge({ score }: { score: number | null }) {
   if (score === null) return null;
   const { label, color } = healthScoreLabel(score);
@@ -161,6 +171,15 @@ export function ManagerClient({ manager, clients: initialClients }: {
   const [chatLog, setChatLog] = useState<ChatLogMessage[]>([]);
   const [chatLogLoading, setChatLogLoading] = useState(false);
 
+  // Snapshot management state
+  const [instanceSnapshots, setInstanceSnapshots] = useState<Record<string, InstanceSnapshot[]>>({});
+  const [snapshotsInstanceId, setSnapshotsInstanceId] = useState<string | null>(null);
+  const [snapshotsLoading, setSnapshotsLoading] = useState(false);
+  const [takingSnapshotId, setTakingSnapshotId] = useState<string | null>(null);
+  const [snapshotDoneId, setSnapshotDoneId] = useState<string | null>(null);
+  const [rollbackConfirmKey, setRollbackConfirmKey] = useState<string | null>(null); // "instanceId:snapshotId"
+  const [rollingBackKey, setRollingBackKey] = useState<string | null>(null);
+
   function openWizard(inst: ManagedInstance, region?: string) {
     setWizardState({
       instanceId: inst.id,
@@ -206,6 +225,43 @@ export function ManagerClient({ manager, clients: initialClients }: {
     const res = await fetch(`/api/manager/instances/${instanceId}/chat-log`);
     if (res.ok) setChatLog(await res.json());
     setChatLogLoading(false);
+  }
+
+  async function loadSnapshots(instanceId: string) {
+    setSnapshotsLoading(true);
+    setSnapshotsInstanceId(instanceId);
+    const res = await fetch(`/api/instances/${instanceId}/snapshots`);
+    if (res.ok) {
+      const data = await res.json();
+      setInstanceSnapshots((prev) => ({ ...prev, [instanceId]: data.snapshots ?? [] }));
+    }
+    setSnapshotsLoading(false);
+  }
+
+  async function takeSnapshot(instanceId: string) {
+    setTakingSnapshotId(instanceId);
+    await fetch(`/api/manager/instances/${instanceId}/snapshot`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ note: "manual" }),
+    });
+    setTakingSnapshotId(null);
+    setSnapshotDoneId(instanceId);
+    setTimeout(() => setSnapshotDoneId(null), 3000);
+  }
+
+  async function rollback(instanceId: string, snapshotId: string) {
+    const key = `${instanceId}:${snapshotId}`;
+    setRollingBackKey(key);
+    await fetch(`/api/manager/instances/${instanceId}/rollback`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ snapshotId, type: "restic" }),
+    });
+    setRollingBackKey(null);
+    setRollbackConfirmKey(null);
+    // Refresh snapshots list
+    await loadSnapshots(instanceId);
   }
 
   async function loadNotes(userId: string) {
@@ -830,6 +886,27 @@ export function ManagerClient({ manager, clients: initialClients }: {
                                     {t("viewChatLog")}
                                   </button>
 
+                                  {/* Snapshots button */}
+                                  <button
+                                    onClick={() => {
+                                      if (snapshotsInstanceId === inst.id) {
+                                        setSnapshotsInstanceId(null);
+                                      } else {
+                                        setEditingConfigForInstance(null);
+                                        setChatLogInstanceId(null);
+                                        loadSnapshots(inst.id);
+                                      }
+                                    }}
+                                    className={cn(
+                                      "text-xs px-3 py-1.5 rounded-lg transition-colors",
+                                      snapshotsInstanceId === inst.id
+                                        ? "text-amber-300 bg-amber-500/20 border border-amber-500/30"
+                                        : "text-amber-400 hover:text-amber-300 bg-amber-500/10"
+                                    )}
+                                  >
+                                    {t("snapshots")}
+                                  </button>
+
                                   {/* Provision button */}
                                   {!inst.hasGateway && (
                                     <button
@@ -1080,6 +1157,93 @@ export function ManagerClient({ manager, clients: initialClients }: {
                                           </div>
                                         </div>
                                       ))}
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+
+                              {/* ── Snapshots Panel ── */}
+                              {snapshotsInstanceId === inst.id && (
+                                <div className="mt-3 p-4 bg-white/[0.03] border border-white/10 rounded-xl">
+                                  <div className="flex items-center justify-between mb-3">
+                                    <h4 className="text-sm font-semibold text-white">{t("snapshotsPanel")}</h4>
+                                    <div className="flex items-center gap-3">
+                                      {snapshotDoneId === inst.id && (
+                                        <span className="text-xs text-emerald-400">{t("snapshotQueued")}</span>
+                                      )}
+                                      <button
+                                        onClick={() => takeSnapshot(inst.id)}
+                                        disabled={takingSnapshotId === inst.id}
+                                        className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/20 rounded-lg transition-colors disabled:opacity-50"
+                                      >
+                                        {takingSnapshotId === inst.id ? (
+                                          <Loader2 className="w-3 h-3 animate-spin" />
+                                        ) : (
+                                          "📸"
+                                        )}
+                                        {t("takeSnapshot")}
+                                      </button>
+                                      <button
+                                        onClick={() => setSnapshotsInstanceId(null)}
+                                        className="text-zinc-600 hover:text-white transition-colors"
+                                      >
+                                        <X className="w-4 h-4" />
+                                      </button>
+                                    </div>
+                                  </div>
+                                  {snapshotsLoading ? (
+                                    <div className="flex justify-center py-6">
+                                      <Loader2 className="w-5 h-5 text-zinc-500 animate-spin" />
+                                    </div>
+                                  ) : !instanceSnapshots[inst.id] || instanceSnapshots[inst.id].length === 0 ? (
+                                    <p className="text-sm text-zinc-500 text-center py-4">{t("noSnapshots")}</p>
+                                  ) : (
+                                    <div className="space-y-1.5 max-h-72 overflow-y-auto">
+                                      {instanceSnapshots[inst.id].slice(0, 15).map((snap) => {
+                                        const confirmKey = `${inst.id}:${snap.snapshotId}`;
+                                        const isRollingBack = rollingBackKey === confirmKey;
+                                        return (
+                                          <div key={snap.id} className="flex items-center justify-between p-2.5 bg-white/[0.02] rounded-lg border border-white/5">
+                                            <div className="flex items-center gap-2 min-w-0">
+                                              <span className="text-xs text-zinc-300 font-mono shrink-0">{snap.snapshotId?.slice(0, 10)}</span>
+                                              {snap.label && (
+                                                <span className="text-xs bg-violet-500/10 text-violet-400 px-1.5 py-0.5 rounded shrink-0">{snap.label}</span>
+                                              )}
+                                              <span className={`text-xs ${snap.healthy ? "text-emerald-400" : "text-red-400"}`}>
+                                                {snap.healthy ? "✓" : "✗"}
+                                              </span>
+                                              <span className="text-xs text-zinc-600 truncate">
+                                                {snap.sizeBytes ? `${(snap.sizeBytes / 1024 / 1024).toFixed(1)}MB · ` : ""}
+                                                {new Date(snap.createdAt).toLocaleString()}
+                                              </span>
+                                            </div>
+                                            {rollbackConfirmKey === confirmKey ? (
+                                              <div className="flex items-center gap-1.5 shrink-0">
+                                                <button
+                                                  onClick={() => rollback(inst.id, snap.snapshotId)}
+                                                  disabled={isRollingBack}
+                                                  className="text-xs px-2 py-1 bg-red-500/10 text-red-400 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-colors disabled:opacity-50"
+                                                >
+                                                  {isRollingBack ? <Loader2 className="w-3 h-3 animate-spin inline" /> : t("confirmRollback")}
+                                                </button>
+                                                <button
+                                                  onClick={() => setRollbackConfirmKey(null)}
+                                                  className="text-xs text-zinc-500 hover:text-white"
+                                                >
+                                                  {t("cancel")}
+                                                </button>
+                                              </div>
+                                            ) : (
+                                              <button
+                                                onClick={() => setRollbackConfirmKey(confirmKey)}
+                                                className="text-xs text-zinc-500 hover:text-amber-400 transition-colors shrink-0"
+                                              >
+                                                {t("restore")}
+                                              </button>
+                                            )}
+                                          </div>
+                                        );
+                                      })}
                                     </div>
                                   )}
                                 </div>

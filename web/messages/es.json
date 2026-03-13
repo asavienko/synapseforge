@@ -574,7 +574,15 @@
         "noSnapshotsDesc": "Las copias de seguridad se ejecutan automáticamente cada hora vía Restic.",
         "snapshotId": "ID de instantánea",
         "size": "Tamaño",
+        "label": "Etiqueta",
+        "restore": "Restaurar",
+        "confirmRestore": "Confirmar restauración",
+        "restoreRequested": "Solicitud de restauración enviada a tu gestor",
         "note": "Las copias de seguridad se gestionan automáticamente. Contacta a tu gestor para restaurar una instantánea."
+      },
+      "commandQueue": {
+        "title": "Cola de comandos",
+        "noCommands": "Sin comandos en cola"
       },
       "gateway": {
         "title": "VPS Gateway",
@@ -595,6 +603,18 @@
         "sending": "Enviando...",
         "responseLabel": "Respuesta",
         "note": "Esto envía un mensaje de prueba directamente a tu gateway de IA."
+      },
+      "version": {
+        "title": "Gestión de Versiones",
+        "currentVersion": "Versión de OpenClaw",
+        "versionUnknown": "Desconocida",
+        "autoUpdate": "Auto-actualización",
+        "commandQueue": "Cola de comandos",
+        "noCommands": "No hay comandos en cola",
+        "commandPending": "Pendiente",
+        "commandRunning": "En ejecución",
+        "commandDone": "Completado",
+        "commandFailed": "Fallido"
       }
     },
     "credentials": {
@@ -759,7 +779,11 @@
     "estMrr": "MRR estimado",
     "activeInstances": "Instancias activas",
     "provisionedVps": "VPS aprovisionados",
-    "adminPanel": "Panel de Administración"
+    "adminPanel": "Panel de Administración",
+    "versions": "Versiones",
+    "publishVersion": "Publicar versión",
+    "markStable": "Marcar como estable",
+    "markDeprecated": "Marcar como obsoleto"
   },
   "instanceSetup": {
     "title": "Configura tu Instancia de IA",
@@ -934,7 +958,15 @@
     "deleteNote": "Eliminar",
     "notePlaceholder": "Agregar una nota sobre este cliente...",
     "capacity": "Capacidad",
-    "clients": "clientes"
+    "clients": "clientes",
+    "snapshots": "Instantáneas",
+    "snapshotsPanel": "Instantáneas",
+    "noSnapshots": "Sin instantáneas aún",
+    "takeSnapshot": "Tomar instantánea",
+    "snapshotQueued": "Instantánea en cola ✓",
+    "restore": "Restaurar",
+    "confirmRollback": "Confirmar reversión",
+    "cancel": "Cancelar"
   },
   "integrations": {
     "title": "Integraciones",

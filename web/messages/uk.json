@@ -574,7 +574,15 @@
         "noSnapshotsDesc": "Резервні копії створюються автоматично щогодини через Restic.",
         "snapshotId": "ID знімка",
         "size": "Розмір",
+        "label": "Мітка",
+        "restore": "Відновити",
+        "confirmRestore": "Підтвердити відновлення",
+        "restoreRequested": "Запит на відновлення надіслано менеджеру",
         "note": "Резервні копії керуються автоматично. Зверніться до менеджера для відновлення знімка."
+      },
+      "commandQueue": {
+        "title": "Черга команд",
+        "noCommands": "Немає команд у черзі"
       },
       "gateway": {
         "title": "VPS Шлюз",
@@ -595,6 +603,18 @@
         "sending": "Надсилання...",
         "responseLabel": "Відповідь",
         "note": "Це надсилає тестове повідомлення безпосередньо до вашого ІІ шлюзу."
+      },
+      "version": {
+        "title": "Керування версіями",
+        "currentVersion": "Версія OpenClaw",
+        "versionUnknown": "Невідомо",
+        "autoUpdate": "Авто-оновлення",
+        "commandQueue": "Черга команд",
+        "noCommands": "Немає команд у черзі",
+        "commandPending": "Очікує",
+        "commandRunning": "Виконується",
+        "commandDone": "Виконано",
+        "commandFailed": "Помилка"
       }
     },
     "credentials": {
@@ -759,7 +779,11 @@
     "estMrr": "Очік. MRR",
     "activeInstances": "Активні інстанси",
     "provisionedVps": "VPS розгорнуто",
-    "adminPanel": "Панель адміністратора"
+    "adminPanel": "Панель адміністратора",
+    "versions": "Версії",
+    "publishVersion": "Опублікувати версію",
+    "markStable": "Позначити як стабільну",
+    "markDeprecated": "Позначити як застарілу"
   },
   "instanceSetup": {
     "title": "Налаштування екземпляра ШІ",

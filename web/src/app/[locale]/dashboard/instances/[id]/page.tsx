@@ -64,7 +64,20 @@ interface SnapshotRow {
   snapshotId: string;
   sizeBytes?: number | null;
   healthy: boolean;
+  label?: string | null;
   createdAt: string;
+}
+
+interface CommandRow {
+  id: string;
+  type: string;
+  status: string;
+  payload?: string | null;
+  note?: string | null;
+  createdAt: string;
+  startedAt?: string | null;
+  completedAt?: string | null;
+  errorMsg?: string | null;
 }
 
 interface HealthData {
@@ -1284,6 +1297,22 @@ export default function InstanceDetailPage() {
       showToast(data.error ?? "Sync failed", "error");
     }
     setResyncLoading(false);
+  }
+
+  async function toggleAutoUpdate() {
+    if (!instance) return;
+    const newValue = !instance.autoUpdate;
+    const res = await fetch(`/api/instances/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ autoUpdate: newValue }),
+    });
+    if (res.ok) {
+      setInstance((prev) => prev ? { ...prev, autoUpdate: newValue } : prev);
+    } else {
+      const data = await res.json().catch(() => ({}));
+      showToast(data.error ?? "Failed to update auto-update setting", "error");
+    }
   }
 
   async function saveCredential(key: string, value: string) {
@@ -3116,6 +3145,35 @@ print(resp.choices[0].message.content)`}</pre>
                       </table>
                     </div>
                   )}
+                </div>
+              </div>
+
+              {/* Version */}
+              <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+                <div className="p-5 border-b border-white/5 flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-zinc-500" />
+                  <h3 className="text-sm font-semibold text-white">{t("infrastructure.version.title")}</h3>
+                </div>
+                <div className="p-5">
+                  <div className="bg-white/3 rounded-xl p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-xs text-zinc-500">{t("infrastructure.version.currentVersion")}</p>
+                        <p className="text-sm text-white font-mono mt-1">
+                          {instance?.currentVersion ?? t("infrastructure.version.versionUnknown")}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <label className="text-xs text-zinc-500">{t("infrastructure.version.autoUpdate")}</label>
+                        <button
+                          onClick={toggleAutoUpdate}
+                          className={`relative w-9 h-5 rounded-full transition-colors ${instance?.autoUpdate ? "bg-violet-600" : "bg-zinc-700"}`}
+                        >
+                          <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-transform ${instance?.autoUpdate ? "translate-x-4 left-0.5" : "translate-x-0 left-0.5"}`} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
