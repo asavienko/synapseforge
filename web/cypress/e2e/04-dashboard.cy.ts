@@ -175,7 +175,8 @@ describe("04 · Billing", () => {
 
   it("shows current plan card", () => {
     cy.contains("Current Plan").should("be.visible");
-    cy.contains("free", { matchCase: false }).should("be.visible");
+    // Seed user is plan=pro (needed for spec 27 which creates a 2nd instance)
+    cy.contains("pro", { matchCase: false }).should("be.visible");
     cy.snap("04-billing-02-current-plan");
   });
 
@@ -186,9 +187,9 @@ describe("04 · Billing", () => {
     cy.snap("04-billing-03-all-plans");
   });
 
-  it("shows Pro upgrade button", () => {
-    // Pro CTA uses pricing.pro.cta translation = "Get Pro →"
-    cy.contains("button", /Get Pro|Upgrade|Get started/i).should("be.visible");
+  it("shows upgrade option — pro user sees Enterprise contact link", () => {
+    // Seed user is plan=pro; Pro card shows "Current plan"; Enterprise shows a mailto CTA
+    cy.get("a[href='mailto:hello@synapseforge.ai']").should("be.visible");
     cy.snap("04-billing-04-upgrade-btn");
   });
 

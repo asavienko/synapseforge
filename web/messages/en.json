@@ -1379,7 +1379,7 @@
     "saved": "Changes saved"
   },
   "sandbox": {
-    "usedFreeMessages": "You've used your 20 free messages",
+    "usedFreeMessages": "You've used all 20 free sandbox messages",
     "upgradeDesc": "Ready to go beyond the sandbox? Book a setup call — we'll configure your AI agent and get you running on your own API keys.",
     "bookCall": "Book a Setup Call",
     "addApiKey": "Add my API key",

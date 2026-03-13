@@ -1379,7 +1379,7 @@
     "testConnection": "Probar conexión"
   },
   "sandbox": {
-    "usedFreeMessages": "Has usado tus 20 mensajes gratuitos",
+    "usedFreeMessages": "Has utilizado los 20 mensajes gratuitos del sandbox",
     "upgradeDesc": "¿Listo para ir más allá del sandbox? Reserva una llamada de configuración — configuraremos tu agente de IA y te pondremos en marcha con tus propias claves API.",
     "bookCall": "Reservar una llamada de configuración",
     "addApiKey": "Añadir mi clave API",
