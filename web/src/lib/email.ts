@@ -98,7 +98,7 @@ export const email = {
   // ── Auth ──────────────────────────────────────────────────────────────────
 
   async verifyEmail(to: string, name: string, token: string) {
-    const url = `${APP_URL}/verify-email?token=${token}`;
+    const url = `${APP_URL}/en/verify-email?token=${token}`;
     return send(
       to,
       "Verify your SynapseForge email",

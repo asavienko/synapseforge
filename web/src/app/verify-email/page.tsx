@@ -1,56 +1,52 @@
+/**
+ * Root /verify-email page — redirects to the locale-aware version.
+ *
+ * The verification email sends users to /verify-email?token=..., but the
+ * actual verification logic lives at /[locale]/verify-email. This page
+ * preserves all query params and forwards the user instantly.
+ *
+ * Using a client-side redirect to preserve all search params (token, error).
+ * A server-side redirect at this level can't read search params reliably.
+ */
 "use client";
 
+import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import Link from "next/link";
-import { Zap, AlertCircle, CheckCircle2, Clock } from "lucide-react";
 import { Suspense } from "react";
+import { Zap } from "lucide-react";
 
-const ERROR_MESSAGES: Record<string, { title: string; body: string }> = {
-  missing: { title: "Invalid link", body: "The verification link is missing a token. Please use the link from your email." },
-  invalid: { title: "Link not found", body: "This verification link is invalid or has already been used." },
-  expired: { title: "Link expired", body: "This verification link has expired. Request a new one from your dashboard." },
-};
-
-function VerifyContent() {
+function RedirectToLocale() {
   const params = useSearchParams();
-  const error = params.get("error");
 
-  if (error) {
-    const msg = ERROR_MESSAGES[error] ?? { title: "Something went wrong", body: "Unable to verify your email." };
-    return (
-      <div className="glow-border rounded-2xl p-8 bg-white/[0.02] text-center">
-        <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-        <h2 className="text-xl font-semibold text-white mb-2">{msg.title}</h2>
-        <p className="text-zinc-400 text-sm mb-6">{msg.body}</p>
-        <Link href="/dashboard" className="text-violet-400 hover:text-violet-300 text-sm transition-colors">
-          Go to dashboard →
-        </Link>
-      </div>
-    );
-  }
+  useEffect(() => {
+    const qs = params.toString();
+    const target = `/en/verify-email${qs ? `?${qs}` : ""}`;
+    window.location.replace(target);
+  }, [params]);
 
-  // If we're on this page without error or success, it means the token is being processed
   return (
-    <div className="glow-border rounded-2xl p-8 bg-white/[0.02] text-center">
-      <Clock className="w-12 h-12 text-violet-400 mx-auto mb-4 animate-pulse" />
-      <h2 className="text-xl font-semibold text-white mb-2">Verifying…</h2>
-      <p className="text-zinc-400 text-sm">Please wait while we verify your email.</p>
+    <div className="flex flex-col items-center gap-4">
+      <div className="w-12 h-12 rounded-full bg-violet-600/20 border border-violet-500/20 flex items-center justify-center animate-pulse">
+        <Zap className="w-6 h-6 text-violet-400" />
+      </div>
+      <p className="text-zinc-500 text-sm">Verifying your email…</p>
     </div>
   );
 }
 
-export default function VerifyEmailPage() {
+export default function VerifyEmailRootPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        <div className="flex justify-center mb-8">
-          <Link href="/" className="flex items-center gap-2">
-            <Zap className="w-6 h-6 text-violet-400" />
-            <span className="text-xl font-bold text-white tracking-tight">SynapseForge</span>
-          </Link>
-        </div>
-        <Suspense fallback={<div className="text-center text-zinc-500 text-sm">Loading…</div>}>
-          <VerifyContent />
+      <div className="w-full max-w-md text-center">
+        <Suspense fallback={
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-violet-600/20 border border-violet-500/20 flex items-center justify-center">
+              <Zap className="w-6 h-6 text-violet-400" />
+            </div>
+            <p className="text-zinc-500 text-sm">Loading…</p>
+          </div>
+        }>
+          <RedirectToLocale />
         </Suspense>
       </div>
     </div>
