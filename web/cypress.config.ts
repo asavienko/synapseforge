@@ -39,6 +39,40 @@ export default defineConfig({
             await prisma.$disconnect();
           }
         },
+
+        /**
+         * Seed a ChatMessage directly into the DB for an instance.
+         * Used by spec 29 test 05 to ensure chat history exists without
+         * relying on intercepted HTTP responses (avoids race conditions).
+         * Also wipes existing messages when clearFirst=true.
+         */
+        async seedChatMessage({
+          instanceId,
+          role,
+          content,
+          clearFirst,
+        }: {
+          instanceId: string;
+          role: string;
+          content: string;
+          clearFirst?: boolean;
+        }) {
+          const { PrismaClient } = await import("@prisma/client");
+          const prisma = new PrismaClient();
+          try {
+            if (clearFirst) {
+              await (prisma as unknown as { chatMessage: { deleteMany: (a: unknown) => Promise<unknown> } })
+                .chatMessage.deleteMany({ where: { instanceId } });
+            }
+            await (prisma as unknown as { chatMessage: { create: (a: unknown) => Promise<unknown> } })
+              .chatMessage.create({
+                data: { instanceId, role, content, isError: false, source: "web" },
+              });
+            return { ok: true };
+          } finally {
+            await prisma.$disconnect();
+          }
+        },
       });
     },
     reporter: "cypress-multi-reporters",
