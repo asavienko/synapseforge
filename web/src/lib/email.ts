@@ -9,6 +9,19 @@ const FOOTER_EMAIL = "hello@synapseforge.ai";
 
 // ─── Core send ────────────────────────────────────────────────────────────────
 
+/** Standalone export for cron routes and other server-side callers */
+export async function sendEmail({
+  to,
+  subject,
+  html,
+}: {
+  to: string;
+  subject: string;
+  html: string;
+}): Promise<boolean> {
+  return send(to, subject, html);
+}
+
 async function send(to: string, subject: string, html: string): Promise<boolean> {
   if (!resend) {
     console.log(`[Email - no RESEND_API_KEY] To: ${to} | Subject: ${subject}`);

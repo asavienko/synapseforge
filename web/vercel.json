@@ -16,6 +16,18 @@
     {
       "path": "/api/internal/plan-enforcement",
       "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/weekly-digest",
+      "schedule": "0 9 * * 1"
+    },
+    {
+      "path": "/api/cron/check-milestones",
+      "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/cron/check-inactivity",
+      "schedule": "0 10 * * *"
     }
   ]
 }
