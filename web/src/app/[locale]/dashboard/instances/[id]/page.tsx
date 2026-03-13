@@ -282,10 +282,11 @@ interface SetupChecklistCardProps {
   instance: Instance;
   credentials: CredentialRow[];
   onGoToCredentials: () => void;
+  onGoToDeploy: () => void;
   instanceId: string;
 }
 
-function SetupChecklistCard({ instance, credentials, onGoToCredentials, instanceId }: SetupChecklistCardProps) {
+function SetupChecklistCard({ instance, credentials, onGoToCredentials, onGoToDeploy, instanceId }: SetupChecklistCardProps) {
   const [dismissed, setDismissed] = useState(() => {
     if (typeof window === "undefined") return false;
     return localStorage.getItem(`sf_checklist_dismissed_${instanceId}`) === "1";
@@ -332,9 +333,11 @@ function SetupChecklistCard({ instance, credentials, onGoToCredentials, instance
     },
     {
       done: hasGateway,
-      label: "Server provisioned",
-      doneText: instance.vpsProvider ? `VPS running` : "VPS running",
-      pendingText: "Your manager is setting this up",
+      label: "Agent deployed",
+      doneText: instance.vpsProvider ? `VPS running on ${instance.vpsProvider}` : "VPS running",
+      pendingText: "Not yet deployed",
+      action: onGoToDeploy,
+      actionLabel: "Launch →",
     },
     {
       done: isHealthy,
@@ -393,7 +396,7 @@ function SetupChecklistCard({ instance, credentials, onGoToCredentials, instance
   );
 }
 
-const TABS = ["Overview", "Chat", "Deploy", "Configuration", "API Keys", "Activity Log", "Infrastructure", "Credentials"] as const;
+const TABS = ["Overview", "Credentials", "Deploy", "Chat", "Configuration", "API Keys", "Activity Log", "Infrastructure"] as const;
 type Tab = (typeof TABS)[number];
 
 interface ChatMsg {
@@ -611,17 +614,52 @@ function DeployTab({
 
       {/* ── Provisioning in progress ── */}
       {isProvisioning && (
-        <div className="glow-border rounded-2xl bg-white/[0.02] p-8 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center mx-auto mb-5">
-            <Loader2 className="w-8 h-8 text-violet-400 animate-spin" />
+        <div className="glow-border rounded-2xl bg-white/[0.02] p-6 md:p-8">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-12 h-12 rounded-xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center shrink-0">
+              <Loader2 className="w-6 h-6 text-violet-400 animate-spin" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-white">{t("deploy.provisioningTitle")}</h2>
+              <p className="text-sm text-zinc-400">{t("deploy.provisioningDesc")}</p>
+            </div>
           </div>
-          <h2 className="text-lg font-semibold text-white mb-2">{t("deploy.provisioningTitle")}</h2>
-          <p className="text-zinc-400 text-sm mb-4">{t("deploy.provisioningDesc")}</p>
+
+          {/* Step progress */}
+          <div className="space-y-3 mb-6">
+            {[
+              { label: "Provisioning cloud server", sublabel: "Allocating your dedicated VPS", done: true, active: false },
+              { label: "Installing OpenClaw runtime", sublabel: "Setting up the AI agent engine", done: false, active: true },
+              { label: "Configuring your agent", sublabel: "Applying your credentials and settings", done: false, active: false },
+              { label: "Going live", sublabel: "Your agent will start responding on connected channels", done: false, active: false },
+            ].map((step, i) => (
+              <div key={i} className={`flex items-start gap-3 p-3 rounded-xl border transition-colors ${
+                step.active ? "bg-violet-500/10 border-violet-500/30" :
+                step.done  ? "bg-emerald-500/5 border-emerald-500/20" :
+                             "bg-white/[0.02] border-white/5"
+              }`}>
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 ${
+                  step.done   ? "bg-emerald-500/20 text-emerald-400" :
+                  step.active ? "bg-violet-600/30 text-violet-300" :
+                                "bg-zinc-800 text-zinc-600"
+                }`}>
+                  {step.done ? "✓" : step.active ? <Loader2 className="w-3 h-3 animate-spin" /> : i + 1}
+                </div>
+                <div>
+                  <div className={`text-sm font-medium ${
+                    step.active ? "text-white" : step.done ? "text-emerald-300" : "text-zinc-500"
+                  }`}>{step.label}</div>
+                  <div className="text-xs text-zinc-600 mt-0.5">{step.sublabel}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+
           <div className="flex items-center gap-2 bg-violet-500/5 border border-violet-500/10 rounded-xl px-4 py-3 text-xs text-zinc-500 justify-center">
             <Loader2 className="w-3 h-3 animate-spin" />
             {t("deploy.provisioningNote")}
           </div>
-          <p className="text-xs text-zinc-600 mt-4">This page will update automatically when your agent is ready.</p>
+          <p className="text-xs text-zinc-600 mt-4 text-center">This page will update automatically when your agent is ready.</p>
         </div>
       )}
 
@@ -875,6 +913,9 @@ export default function InstanceDetailPage() {
 
   // Sync request state
   const [syncRequesting, setSyncRequesting] = useState(false);
+
+  // Advanced config collapsible
+  const [showAdvancedConfig, setShowAdvancedConfig] = useState(false);
 
   // Overview quick test state
   const [overviewTestInput, setOverviewTestInput] = useState("");
@@ -1509,6 +1550,8 @@ export default function InstanceDetailPage() {
           onReady={() => {
             showToast("🎉 Your AI agent is live!");
             loadInstance();
+            // Auto-switch to Chat tab so user immediately experiences the agent
+            setTimeout(() => setTab("Chat"), 1500);
           }}
           onFailed={() => loadInstance()}
         />
@@ -1565,32 +1608,59 @@ export default function InstanceDetailPage() {
             instance={instance}
             credentials={credentials}
             onGoToCredentials={() => { setTab("Credentials"); loadCredentials(); }}
+            onGoToDeploy={() => setTab("Deploy")}
             instanceId={id}
           />
 
-          {/* Go Live / Share CTA */}
+          {/* Contextual next-step CTA */}
           {(() => {
             const credKeys = credentials.map((c) => c.key);
             const hasLLMKey = credKeys.some((k) => ["openai_api_key", "anthropic_api_key", "openrouter_api_key"].includes(k));
             const hasChannel = credKeys.some((k) => ["telegram_bot_token", "discord_bot_token", "slack_app_token", "slack_bot_token"].includes(k));
-            const isSetupComplete = hasLLMKey && hasChannel && instance.status === "running";
-            return isSetupComplete ? (
-              <Link
-                href={`/dashboard/instances/${id}/share`}
-                className="flex items-center justify-center gap-3 w-full bg-emerald-600 hover:bg-emerald-500 transition-colors text-white font-semibold text-sm px-5 py-3.5 rounded-xl"
-              >
-                <Share2 className="w-4 h-4" />
-                🚀 Share Your Agent →
-              </Link>
-            ) : (
-              <button
-                onClick={() => { setTab("Credentials"); loadCredentials(); }}
-                className="flex items-center justify-center gap-3 w-full bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 transition-colors text-amber-300 font-semibold text-sm px-5 py-3.5 rounded-xl"
-              >
-                <Zap className="w-4 h-4" />
-                Complete Setup →
-              </button>
-            );
+            const isDeployed = !!(instance.hasGateway && instance.provisionStatus === "ready");
+            const isSetupComplete = hasLLMKey && hasChannel && isDeployed;
+
+            if (isSetupComplete) {
+              return (
+                <Link href={`/dashboard/instances/${id}/share`}
+                  className="flex items-center justify-center gap-3 w-full bg-emerald-600 hover:bg-emerald-500 transition-colors text-white font-semibold text-sm px-5 py-3.5 rounded-xl">
+                  <Share2 className="w-4 h-4" />
+                  🚀 Share Your Agent →
+                </Link>
+              );
+            }
+
+            if (!hasLLMKey) {
+              return (
+                <button onClick={() => { setTab("Credentials"); loadCredentials(); }}
+                  className="flex items-center justify-center gap-3 w-full bg-violet-600/20 hover:bg-violet-600/30 border border-violet-500/30 transition-colors text-violet-300 font-semibold text-sm px-5 py-3.5 rounded-xl">
+                  <Key className="w-4 h-4" />
+                  Step 1: Add your AI API key →
+                </button>
+              );
+            }
+
+            if (!isDeployed) {
+              return (
+                <button onClick={() => setTab("Deploy")}
+                  className="flex items-center justify-center gap-3 w-full bg-violet-600 hover:bg-violet-500 transition-colors text-white font-semibold text-sm px-5 py-3.5 rounded-xl">
+                  <Zap className="w-4 h-4" />
+                  Step 2: Launch your agent →
+                </button>
+              );
+            }
+
+            if (!hasChannel) {
+              return (
+                <button onClick={() => { setTab("Credentials"); loadCredentials(); }}
+                  className="flex items-center justify-center gap-3 w-full bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 transition-colors text-amber-300 font-semibold text-sm px-5 py-3.5 rounded-xl">
+                  <MessageSquare className="w-4 h-4" />
+                  Step 3: Connect a channel (Telegram, Discord, Slack) →
+                </button>
+              );
+            }
+
+            return null;
           })()}
 
           <div className="glow-border rounded-2xl bg-white/[0.02] divide-y divide-white/5">
@@ -2001,20 +2071,18 @@ export default function InstanceDetailPage() {
                   </div>
                 )}
                 {chatMessages.map((msg, i) => (
-                  <div key={i} className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
-                    <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
-                      msg.role === "user" ? "bg-violet-600" : "bg-zinc-700"
-                    }`}>
-                      {msg.role === "user"
-                        ? <span className="text-xs font-bold text-white">U</span>
-                        : <Bot className="w-3.5 h-3.5 text-zinc-300" />}
-                    </div>
-                    <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm ${
+                  <div key={i} className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse justify-end" : "flex-row"}`}>
+                    {msg.role === "assistant" && (
+                      <div className="w-7 h-7 rounded-full bg-zinc-700 flex items-center justify-center shrink-0 mt-0.5">
+                        <Bot className="w-3.5 h-3.5 text-zinc-300" />
+                      </div>
+                    )}
+                    <div className={`relative group max-w-[80%] px-4 py-3 text-sm ${
                       msg.role === "user"
-                        ? "bg-violet-600/30 border border-violet-500/30 text-white"
+                        ? "bg-violet-600/20 border border-violet-500/20 rounded-2xl rounded-br-sm text-white"
                         : msg.isError
-                          ? "bg-red-500/10 border border-red-500/20 text-red-300"
-                          : "bg-white/[0.04] border border-white/10 text-zinc-200"
+                          ? "bg-red-500/10 border border-red-500/20 rounded-2xl rounded-bl-sm text-red-300"
+                          : "bg-white/5 border border-white/10 rounded-2xl rounded-bl-sm text-zinc-200"
                     }`}>
                       <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
                       {(msg.latencyMs != null || msg.source === "openclaw") && (
@@ -2027,25 +2095,36 @@ export default function InstanceDetailPage() {
                           )}
                         </p>
                       )}
+                      {msg.role === "assistant" && !msg.isError && (
+                        <button
+                          onClick={() => navigator.clipboard.writeText(msg.content)}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity absolute top-2 right-2 p-1.5 rounded-lg text-zinc-600 hover:text-zinc-300 hover:bg-white/10"
+                          title="Copy response"
+                        >
+                          <Copy className="w-3.5 h-3.5" />
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}
-                {chatLoading && (
-                  <div className="flex gap-3">
-                    <div className="w-7 h-7 rounded-full bg-zinc-700 flex items-center justify-center shrink-0 mt-0.5">
-                      <Bot className="w-3.5 h-3.5 text-zinc-300" />
-                    </div>
-                    <div className="bg-white/[0.04] border border-white/10 rounded-2xl px-4 py-3">
-                      <div className="flex gap-1 items-center h-4">
-                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-bounce" style={{ animationDelay: "0ms" }} />
-                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-bounce" style={{ animationDelay: "150ms" }} />
-                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-bounce" style={{ animationDelay: "300ms" }} />
-                      </div>
-                    </div>
-                  </div>
-                )}
                 <div ref={chatEndRef} />
               </div>
+
+              {/* Typing indicator — shown below messages list, before input */}
+              {chatLoading && (
+                <div className="flex items-end gap-2 mb-4">
+                  <div className="w-7 h-7 rounded-full bg-violet-600/20 border border-violet-500/20 flex items-center justify-center shrink-0">
+                    <Bot className="w-3.5 h-3.5 text-violet-400" />
+                  </div>
+                  <div className="bg-white/5 border border-white/10 rounded-2xl rounded-bl-sm px-4 py-3">
+                    <div className="flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-bounce" style={{ animationDelay: "0ms" }} />
+                      <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-bounce" style={{ animationDelay: "150ms" }} />
+                      <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-bounce" style={{ animationDelay: "300ms" }} />
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* No creds banner (inline, after first failed attempt) */}
               {chatNoCredentials && chatMessages.length > 0 && (
@@ -2335,6 +2414,53 @@ export default function InstanceDetailPage() {
                 </select>
               </div>
             </div>
+          </div>
+
+          {/* ── Advanced settings (collapsible) ── */}
+          <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+            <button
+              onClick={() => setShowAdvancedConfig(!showAdvancedConfig)}
+              className="flex items-center gap-2 text-xs text-zinc-500 hover:text-zinc-300 transition-colors w-full px-5 py-4"
+            >
+              <Settings2 className="w-3.5 h-3.5" />
+              {showAdvancedConfig ? "Hide advanced settings" : "Show advanced settings (temperature, tokens)"}
+              <span className="ml-auto">{showAdvancedConfig ? "▲" : "▼"}</span>
+            </button>
+            {showAdvancedConfig && (
+              <div className="px-5 pb-5 space-y-4 border-t border-white/5 pt-4">
+                <div>
+                  <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-2">
+                    Temperature <span className="text-zinc-600 normal-case">(0 = deterministic, 1 = creative)</span>
+                  </label>
+                  <div className="flex items-center gap-4">
+                    <input
+                      type="range"
+                      min={0}
+                      max={1}
+                      step={0.05}
+                      value={config.temperature}
+                      onChange={(e) => { setConfig((p) => ({ ...p, temperature: parseFloat(e.target.value) })); setConfigDirty(true); }}
+                      className="flex-1 accent-violet-500"
+                    />
+                    <span className="text-sm text-zinc-300 w-10 text-right tabular-nums">{config.temperature.toFixed(2)}</span>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-2">
+                    Max Tokens <span className="text-zinc-600 normal-case">(max response length)</span>
+                  </label>
+                  <input
+                    type="number"
+                    min={64}
+                    max={8192}
+                    step={64}
+                    value={config.maxTokens}
+                    onChange={(e) => { setConfig((p) => ({ ...p, maxTokens: parseInt(e.target.value) || 1024 })); setConfigDirty(true); }}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-zinc-200 focus:outline-none focus:border-violet-500 transition-colors"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           <button onClick={saveConfig} disabled={!configDirty || savingConfig}
