@@ -228,7 +228,8 @@
         "cancelBtn": "Cancelar",
         "createBtn": "Crear",
         "failedError": "Error al crear la instancia."
-      }
+      },
+      "noHealthData": "Sin datos de salud aún"
     },
     "running": "En ejecución",
     "plan": "Plan",
@@ -252,7 +253,9 @@
       "messages": "Mensajes",
       "billing": "Facturación",
       "settings": "Configuración",
-      "signOut": "Cerrar sesión"
+      "signOut": "Cerrar sesión",
+      "managerPortal": "Portal del Gestor",
+      "adminPanel": "Panel de Administración"
     },
     "billing": {
       "title": "Facturación y Planes",
@@ -656,7 +659,22 @@
     "gatewayToken": "Token del Gateway",
     "testAndSave": "Probar y guardar",
     "connectionSuccess": "Conectado correctamente",
-    "connectionFailed": "Error de conexión"
+    "connectionFailed": "Error de conexión",
+    "deleteManagerConfirm": "¿Eliminar este gestor? Sus usuarios quedarán sin asignar.",
+    "disconnectVpsConfirm": "¿Desconectar este VPS? La configuración del gateway se borrará.",
+    "tabOverview": "Resumen",
+    "tabReferrals": "Referidos",
+    "tabAnalytics": "Análisis",
+    "provisionAllTitle": "Aprovisionar todas las instancias no desplegadas para este usuario",
+    "disconnectVpsTitle": "Desconectar VPS",
+    "syncConfigToVpsTitle": "Sincronizar config al VPS",
+    "provisionHetznerTitle": "Aprovisionar VPS en Hetzner",
+    "provisionVps": "Aprovisionar VPS",
+    "totalUsers": "Total de usuarios",
+    "estMrr": "MRR estimado",
+    "activeInstances": "Instancias activas",
+    "provisionedVps": "VPS aprovisionados",
+    "adminPanel": "Panel de Administración"
   },
   "instanceSetup": {
     "title": "Configura tu Instancia de IA",
@@ -752,5 +770,45 @@
     "line4": "✓ Conectando Telegram",
     "line5": "✓ Agente activo en Telegram",
     "done": "🚀 Despliegue completado en 1m 47s"
+  },
+  "referral": {
+    "pageTitle": "Programa de referidos",
+    "yourReferralLink": "Tu enlace de referido",
+    "copyCode": "Copiar código",
+    "copyLink": "Copiar enlace",
+    "copyLinkBtn": "Copiar enlace",
+    "shareOnX": "Compartir en X",
+    "signUps": "Registros",
+    "conversions": "Conversiones",
+    "pendingEarnings": "Ganancias pendientes",
+    "paidOut": "Pagado",
+    "noReferralsYet": "Sin referidos aún",
+    "noReferralsDesc": "Comparte tu enlace para empezar a ganar.",
+    "howItWorks": "Cómo funciona",
+    "shareYourLink": "Comparte tu enlace",
+    "shareDesc": "Envía tu enlace de referido a amigos o publícalo en línea.",
+    "theySignUp": "Se registran",
+    "theySignUpDesc": "Cuando se registran con tu código, quedan como tu referido.",
+    "earnCommissions": "Gana comisiones",
+    "earnCommissionsDesc": "Cuando suben a Pro o Enterprise, ganas el 10% de su suscripción durante 6 meses."
+  },
+  "share": {
+    "somethingWentWrong": "Algo salió mal",
+    "telegramQrCode": "Código QR de Telegram",
+    "copied": "¡Copiado!",
+    "copy": "Copiar",
+    "copyWebChatLink": "Copiar enlace del chat web",
+    "sayHello": "Di algo a tu agente…",
+    "send": "Enviar →",
+    "sending": "…"
+  },
+  "manager": {
+    "portalLabel": "Portal del Gestor",
+    "you": "Tú",
+    "client": "Cliente",
+    "provisionVpsTitle": "Aprovisionar VPS para esta instancia",
+    "provision": "Aprovisionar",
+    "noClients": "No hay clientes asignados aún.",
+    "noClientsDesc": "El administrador te asigna los clientes."
   }
 }

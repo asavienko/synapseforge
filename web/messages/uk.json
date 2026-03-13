@@ -228,7 +228,8 @@
         "cancelBtn": "Скасувати",
         "createBtn": "Створити",
         "failedError": "Не вдалося створити інстанцію."
-      }
+      },
+      "noHealthData": "Даних про стан ще немає"
     },
     "running": "Активні",
     "plan": "План",
@@ -252,7 +253,9 @@
       "messages": "Повідомлення",
       "billing": "Білінг",
       "settings": "Налаштування",
-      "signOut": "Вийти"
+      "signOut": "Вийти",
+      "managerPortal": "Портал менеджера",
+      "adminPanel": "Панель адміністратора"
     },
     "billing": {
       "title": "Білінг та плани",
@@ -656,7 +659,22 @@
     "gatewayToken": "Токен Шлюзу",
     "testAndSave": "Тест і зберегти",
     "connectionSuccess": "Успішно підключено",
-    "connectionFailed": "Помилка підключення"
+    "connectionFailed": "Помилка підключення",
+    "deleteManagerConfirm": "Видалити цього менеджера? Його користувачі залишаться без призначення.",
+    "disconnectVpsConfirm": "Відключити цей VPS? Конфігурацію шлюзу буде очищено.",
+    "tabOverview": "Огляд",
+    "tabReferrals": "Реферали",
+    "tabAnalytics": "Аналітика",
+    "provisionAllTitle": "Розгорнути всі нерозгорнуті інстанси для цього користувача",
+    "disconnectVpsTitle": "Відключити VPS",
+    "syncConfigToVpsTitle": "Синхронізувати конфіг на VPS",
+    "provisionHetznerTitle": "Розгорнути VPS у Hetzner",
+    "provisionVps": "Розгорнути VPS",
+    "totalUsers": "Всього користувачів",
+    "estMrr": "Очік. MRR",
+    "activeInstances": "Активні інстанси",
+    "provisionedVps": "VPS розгорнуто",
+    "adminPanel": "Панель адміністратора"
   },
   "instanceSetup": {
     "title": "Налаштування екземпляра ШІ",
@@ -752,5 +770,45 @@
     "line4": "✓ Підключення Telegram",
     "line5": "✓ Агент активний у Telegram",
     "done": "🚀 Розгортання завершено за 1хв 47с"
+  },
+  "referral": {
+    "pageTitle": "Реферальна програма",
+    "yourReferralLink": "Ваше реферальне посилання",
+    "copyCode": "Копіювати код",
+    "copyLink": "Копіювати посилання",
+    "copyLinkBtn": "Копіювати посилання",
+    "shareOnX": "Поділитися в X",
+    "signUps": "Реєстрації",
+    "conversions": "Конверсії",
+    "pendingEarnings": "Очікувані доходи",
+    "paidOut": "Виплачено",
+    "noReferralsYet": "Рефералів поки немає",
+    "noReferralsDesc": "Поділіться посиланням, щоб почати заробляти.",
+    "howItWorks": "Як це працює",
+    "shareYourLink": "Поділіться посиланням",
+    "shareDesc": "Надішліть ваше реферальне посилання друзям або опублікуйте його онлайн.",
+    "theySignUp": "Вони реєструються",
+    "theySignUpDesc": "Коли вони реєструються з вашим кодом, вони стають вашим рефералом.",
+    "earnCommissions": "Заробляйте комісії",
+    "earnCommissionsDesc": "Коли вони переходять на Pro або Enterprise, ви отримуєте 10% від їхньої підписки протягом 6 місяців."
+  },
+  "share": {
+    "somethingWentWrong": "Щось пішло не так",
+    "telegramQrCode": "QR-код Telegram",
+    "copied": "Скопійовано!",
+    "copy": "Копіювати",
+    "copyWebChatLink": "Копіювати посилання веб-чату",
+    "sayHello": "Напишіть щось своєму агенту…",
+    "send": "Надіслати →",
+    "sending": "…"
+  },
+  "manager": {
+    "portalLabel": "Портал менеджера",
+    "you": "Ви",
+    "client": "Клієнт",
+    "provisionVpsTitle": "Розгорнути VPS для цього інстансу",
+    "provision": "Розгорнути",
+    "noClients": "Клієнтів поки не призначено.",
+    "noClientsDesc": "Адміністратор призначає клієнтів."
   }
 }
