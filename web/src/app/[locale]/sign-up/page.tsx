@@ -8,6 +8,7 @@ import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { GoogleButton } from "@/components/GoogleButton";
 import zxcvbn from "zxcvbn";
+import { analytics } from "@/lib/analytics";
 
 /** Read referral code: prefer URL ?ref=, fallback to cookie */
 function getReferralCode(): string | null {
@@ -32,6 +33,7 @@ export default function SignUpPage() {
     const refFromUrl = searchParams.get("ref");
     const refFromCookie = getReferralCode();
     setReferralCode(refFromUrl ?? refFromCookie);
+    analytics.signupStarted();
   }, [searchParams]);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -64,6 +66,7 @@ export default function SignUpPage() {
     if (result?.error) {
       router.push("/sign-in?registered=1");
     } else {
+      analytics.signupCompleted("email");
       router.push("/onboarding");
     }
   }

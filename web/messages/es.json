@@ -629,6 +629,14 @@
         "saved": "WhatsApp conectado exitosamente",
         "disconnected": "WhatsApp desconectado",
         "connect": "Conectar WhatsApp"
+      },
+      "widget": {
+        "title": "Widget Web",
+        "desc": "Incorpora tu agente de IA en cualquier sitio web",
+        "instructions": "Copia el código iframe a continuación y pégalo en el HTML de tu sitio web.",
+        "copied": "¡Código de inserción copiado!",
+        "linkCopied": "¡Enlace copiado!",
+        "directLink": "Enlace directo"
       }
     },
     "chat": {
@@ -644,7 +652,15 @@
       "goToCredentials": "Configurar credenciales",
       "you": "Tú",
       "assistant": "Asistente",
-      "errorPrefix": "Error"
+      "errorPrefix": "Error",
+      "emptyState": "Envía un mensaje para iniciar la conversación.",
+      "inlineKeyTitle": "Un paso para empezar a chatear",
+      "inlineKeyDesc": "Agrega tu clave API de IA — es privada, nunca se comparte",
+      "inlineKeySaving": "Guardando…",
+      "inlineKeyStart": "Iniciar",
+      "inlineKeyGetKey": "Obtener una clave API gratuita →",
+      "inlineKeyAdvanced": "Configuración avanzada",
+      "stop": "Detener"
     },
     "deploy": {
       "tab": "Desplegar",

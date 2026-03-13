@@ -629,6 +629,14 @@
         "saved": "WhatsApp успішно підключено",
         "disconnected": "WhatsApp відключено",
         "connect": "Підключити WhatsApp"
+      },
+      "widget": {
+        "title": "Веб-віджет",
+        "desc": "Вбудуйте свого AI-агента на будь-який сайт",
+        "instructions": "Скопіюйте код iframe нижче та вставте його в HTML вашого сайту.",
+        "copied": "Код вбудовування скопійовано!",
+        "linkCopied": "Посилання скопійовано!",
+        "directLink": "Пряме посилання"
       }
     },
     "chat": {
@@ -644,7 +652,15 @@
       "goToCredentials": "Налаштувати облікові дані",
       "you": "Ви",
       "assistant": "Асистент",
-      "errorPrefix": "Помилка"
+      "errorPrefix": "Помилка",
+      "emptyState": "Надішліть повідомлення, щоб почати розмову.",
+      "inlineKeyTitle": "Один крок до початку чату",
+      "inlineKeyDesc": "Додайте API-ключ ШІ — він приватний, ніколи не передається",
+      "inlineKeySaving": "Збереження…",
+      "inlineKeyStart": "Почати",
+      "inlineKeyGetKey": "Отримати безкоштовний API-ключ →",
+      "inlineKeyAdvanced": "Розширене налаштування",
+      "stop": "Зупинити"
     },
     "deploy": {
       "tab": "Розгорнути",

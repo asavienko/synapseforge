@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { Loader2 } from "lucide-react";
+import { analytics } from "@/lib/analytics";
 
 const GoogleIcon = () => (
   <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
@@ -24,6 +25,7 @@ export function GoogleButton({ callbackUrl = "/dashboard", referralCode }: Googl
 
   async function handleClick() {
     setLoading(true);
+    analytics.signupCompleted("google");
     // Encode referral code in the callbackUrl so the post-auth page can pick it up
     let finalCallbackUrl = callbackUrl;
     if (referralCode) {

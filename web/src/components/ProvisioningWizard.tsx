@@ -30,6 +30,8 @@ interface ProvisioningWizardProps {
   provisionStatus?: string | null;
   /** API endpoint to call for provisioning — defaults to admin route */
   provisionEndpoint?: string;
+  /** Pre-select a region in the configure step */
+  defaultRegion?: HetznerRegion;
   onClose: () => void;
   /** Called when provisioning completes (ready or failed) */
   onDone?: (status: "ready" | "failed") => void;
@@ -59,6 +61,7 @@ export function ProvisioningWizard({
   tier,
   provisionStatus,
   provisionEndpoint,
+  defaultRegion,
   onClose,
   onDone,
 }: ProvisioningWizardProps) {
@@ -72,7 +75,7 @@ export function ProvisioningWizard({
     "configure"
   );
 
-  const [region, setRegion] = useState<HetznerRegion>("nbg1");
+  const [region, setRegion] = useState<HetznerRegion>(defaultRegion ?? "nbg1");
   const [provisioning, setProvisioning] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

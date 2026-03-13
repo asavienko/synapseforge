@@ -403,11 +403,13 @@ const TABS = ["Overview", "Credentials", "Deploy", "Chat", "Configuration", "API
 type Tab = (typeof TABS)[number];
 
 interface ChatMsg {
+  id?: string;             // temp id used for in-flight streaming message tracking
   role: "user" | "assistant";
   content: string;
   latencyMs?: number;
   isError?: boolean;
   source?: string;
+  createdAt?: string;      // ISO timestamp for DB-loaded messages
 }
 
 const CREDENTIAL_KEY_LABELS: Record<string, string> = {
@@ -2093,7 +2095,7 @@ export default function InstanceDetailPage() {
                     onClick={() => setTab("Credentials")}
                     className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors"
                   >
-                    Advanced setup
+                    {t("chat.inlineKeyAdvanced")}
                   </button>
                 </div>
               </div>
@@ -2106,7 +2108,7 @@ export default function InstanceDetailPage() {
               <div className="flex-1 overflow-y-auto space-y-4 mb-4 pr-1" style={{ maxHeight: 400 }}>
                 {chatMessages.length === 0 && !chatLoading && (
                   <div className="flex items-center justify-center h-40">
-                    <p className="text-zinc-600 text-sm">Send a message to start the conversation.</p>
+                    <p className="text-zinc-600 text-sm">{t("chat.emptyState")}</p>
                   </div>
                 )}
                 {chatMessages.map((msg, i) => (
@@ -2142,9 +2144,9 @@ export default function InstanceDetailPage() {
                           )}
                         </p>
                       )}
-                      {"createdAt" in msg && msg.createdAt && (
+                      {msg.createdAt && (
                         <span className="text-xs text-zinc-700 group-hover:text-zinc-500 transition-colors">
-                          {new Date(msg.createdAt as string).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                          {new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                         </span>
                       )}
                       {msg.role === "assistant" && !msg.isError && (

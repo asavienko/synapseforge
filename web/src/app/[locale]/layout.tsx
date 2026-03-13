@@ -5,6 +5,9 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
+import { Suspense } from "react";
+import { PostHogProvider } from "@/components/PostHogProvider";
+import { PostHogPageView } from "@/components/PostHogPageView";
 
 const inter = Inter({ subsets: ["latin", "cyrillic"] });
 
@@ -32,9 +35,14 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <body className={`${inter.className} antialiased`}>
-        <NextIntlClientProvider messages={messages}>
-          {children}
-        </NextIntlClientProvider>
+        <PostHogProvider>
+          <NextIntlClientProvider messages={messages}>
+            <Suspense fallback={null}>
+              <PostHogPageView />
+            </Suspense>
+            {children}
+          </NextIntlClientProvider>
+        </PostHogProvider>
       </body>
     </html>
   );
