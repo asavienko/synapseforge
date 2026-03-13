@@ -272,7 +272,8 @@
       "settings": "Настройки",
       "signOut": "Выйти",
       "managerPortal": "Портал менеджера",
-      "adminPanel": "Панель администратора"
+      "adminPanel": "Панель администратора",
+      "apiDocs": "API Документация"
     },
     "billing": {
       "title": "Биллинг и планы",
@@ -669,6 +670,19 @@
       "inlineKeyAdvanced": "Расширенная настройка",
       "stop": "Остановить"
     },
+    "knowledge": {
+      "title": "База знаний",
+      "tab": "Знания",
+      "upload": "Загрузить документ",
+      "uploadHint": "Поддерживаются файлы .txt и .md до 10МБ",
+      "empty": "Документов пока нет. Загрузите файлы, чтобы дать агенту контекст.",
+      "processing": "Обработка",
+      "ready": "Готово",
+      "error": "Ошибка",
+      "delete": "Удалить",
+      "deleteConfirm": "Удалить этот документ?",
+      "uploading": "Загрузка..."
+    },
     "deploy": {
       "tab": "Развернуть",
       "sectionTitle": "Развернуть в облаке",
@@ -904,6 +918,21 @@
     "selectRegion": "Выбрать регион",
     "selectTier": "Выбрать уровень",
     "mostPopular": "Самый популярный",
-    "perMonth": "/мес"
+    "perMonth": "/мес",
+    "healthScore": "Оценка активности",
+    "healthy": "Активен",
+    "moderate": "Умеренно",
+    "atRisk": "Под угрозой",
+    "inactive": "Неактивен",
+    "sortBy": "Сортировать по",
+    "sortByHealth": "Активности",
+    "sortByName": "Имени",
+    "sortByActivity": "Действиям",
+    "notes": "Заметки",
+    "addNote": "Добавить заметку",
+    "deleteNote": "Удалить",
+    "notePlaceholder": "Добавить заметку об этом клиенте...",
+    "capacity": "Вместимость",
+    "clients": "клиентов"
   }
 }

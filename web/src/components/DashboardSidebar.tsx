@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
-import { Zap, LayoutDashboard, Bot, Settings, LogOut, Menu, X, MessageCircle, CreditCard, Shield, Users } from "lucide-react";
+import { Zap, LayoutDashboard, Bot, Settings, LogOut, Menu, X, MessageCircle, CreditCard, Shield, Users, BookOpen } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
@@ -41,6 +41,20 @@ function NavItem({ href, icon: Icon, label, badge, onClick }: { href: string; ic
   );
 }
 
+function ExternalNavItem({ href, icon: Icon, label }: { href: string; icon: React.ElementType; label: string }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-zinc-400 hover:text-white hover:bg-white/5"
+    >
+      <Icon className="w-4 h-4" />
+      <span className="flex-1">{label}</span>
+    </a>
+  );
+}
+
 function SidebarContent({ userName, userEmail, unreadCount, isAdmin, isManager, onClose }: SidebarProps & { unreadCount: number; onClose?: () => void }) {
   const t = useTranslations("dashboard.nav");
 
@@ -66,7 +80,9 @@ function SidebarContent({ userName, userEmail, unreadCount, isAdmin, isManager, 
         <NavItem href="/dashboard/instances" icon={Bot} label={t("instances")} onClick={onClose} />
         <NavItem href="/dashboard/messages" icon={MessageCircle} label={t("messages")} badge={unreadCount} onClick={onClose} />
         <NavItem href="/dashboard/billing" icon={CreditCard} label={t("billing")} onClick={onClose} />
+        <NavItem href="/dashboard/integrations" icon={Zap} label={t("integrations")} onClick={onClose} />
         <NavItem href="/dashboard/settings" icon={Settings} label={t("settings")} onClick={onClose} />
+        <ExternalNavItem href="/docs" icon={BookOpen} label={t("apiDocs")} />
         {isManager && (
           <div className="pt-2 mt-2 border-t border-white/5">
             <NavItem href="/manager" icon={Users} label={t("managerPortal")} onClick={onClose} />

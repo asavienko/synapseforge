@@ -3,7 +3,9 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { streamLLM, resolveCredentials, ChatMessage, parseInstanceConfig } from "@/lib/llm";
 import { callOpenClawVps } from "@/lib/openclaw-proxy";
+import { retrieveContext } from "@/lib/rag";
 import { dashboardChatLimiter, rateLimitHeaders, getRateLimitKey } from "@/lib/rate-limit";
+import { deliverWebhook } from "@/lib/webhooks";
 
 // LLM calls can take 30-60s
 export const maxDuration = 60;
@@ -94,6 +96,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   const instanceConfig = parseInstanceConfig(instance.config);
 
+  // ── RAG: inject knowledge base context into system prompt ──────────────────
+  const kbContext = await retrieveContext(id, userContent).catch(() => "");
+  if (kbContext) {
+    instanceConfig.systemPrompt = `${instanceConfig.systemPrompt}\n\n## Relevant Knowledge\n\n${kbContext}`;
+  }
+
   // ── VPS routing: if instance has a live VPS, try it first ──────────────────
   const hasVps =
     instance.vpsUrl &&
@@ -131,6 +139,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
             },
           })
           .catch(console.error);
+
+        deliverWebhook({
+          userId: instance.userId,
+          event: "chat.message",
+          data: { instanceId: id, role: "assistant", content: vpsResult.response },
+        }).catch(console.error);
 
         const encoder = new TextEncoder();
         const stream = new ReadableStream({
@@ -190,6 +204,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
             },
           })
           .catch(console.error);
+
+        deliverWebhook({
+          userId: instance.userId,
+          event: "chat.message",
+          data: { instanceId: id, role: "assistant", content: text },
+        }).catch(console.error);
 
         // Trim old messages — keep at most 200 per instance
         prisma.chatMessage

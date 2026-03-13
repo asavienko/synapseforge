@@ -272,7 +272,8 @@
       "settings": "Configuración",
       "signOut": "Cerrar sesión",
       "managerPortal": "Portal del Gestor",
-      "adminPanel": "Panel de Administración"
+      "adminPanel": "Panel de Administración",
+      "apiDocs": "Docs de API"
     },
     "billing": {
       "title": "Facturación y Planes",
@@ -669,6 +670,19 @@
       "inlineKeyAdvanced": "Configuración avanzada",
       "stop": "Detener"
     },
+    "knowledge": {
+      "title": "Base de conocimiento",
+      "tab": "Conocimiento",
+      "upload": "Subir documento",
+      "uploadHint": "Soporta archivos .txt y .md de hasta 10MB",
+      "empty": "No hay documentos aún. Sube archivos para dar contexto a tu agente.",
+      "processing": "Procesando",
+      "ready": "Listo",
+      "error": "Error",
+      "delete": "Eliminar",
+      "deleteConfirm": "¿Eliminar este documento?",
+      "uploading": "Subiendo..."
+    },
     "deploy": {
       "tab": "Desplegar",
       "sectionTitle": "Desplegar en la nube",
@@ -904,6 +918,21 @@
     "selectRegion": "Seleccionar región",
     "selectTier": "Seleccionar nivel",
     "mostPopular": "Más popular",
-    "perMonth": "/mes"
+    "perMonth": "/mes",
+    "healthScore": "Puntuación de salud",
+    "healthy": "Saludable",
+    "moderate": "Moderado",
+    "atRisk": "En riesgo",
+    "inactive": "Inactivo",
+    "sortBy": "Ordenar por",
+    "sortByHealth": "Salud",
+    "sortByName": "Nombre",
+    "sortByActivity": "Actividad",
+    "notes": "Notas",
+    "addNote": "Agregar nota",
+    "deleteNote": "Eliminar",
+    "notePlaceholder": "Agregar una nota sobre este cliente...",
+    "capacity": "Capacidad",
+    "clients": "clientes"
   }
 }

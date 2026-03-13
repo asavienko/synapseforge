@@ -32,6 +32,7 @@ model User {
   manager       Manager?     @relation(fields: [managerId], references: [id])
 
   referralCode  String?      @unique // auto-generated on first request
+  managerNotes  ClientNote[]
   referrals     Referral[]   @relation("ReferrerUser")
   referredBy    ReferralConversion? @relation("ReferredUser")
 
@@ -40,6 +41,8 @@ model User {
   sessions      Session[]
   messages      Message[]
   notifications Notification[]
+  webhooks      Webhook[]
+  whiteLabelConfig WhiteLabelConfig?
 }
 
 model Referral {
@@ -82,6 +85,18 @@ model Manager {
   createdAt DateTime  @default(now())
   users     User[]
   messages  Message[]
+  notes     ClientNote[]
+}
+
+model ClientNote {
+  id         String   @id @default(cuid())
+  managerId  String
+  userId     String
+  content    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  manager    Manager  @relation(fields: [managerId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Message {
@@ -147,6 +162,38 @@ model AIInstance {
   snapshots     Snapshot[]
   credentials   InstanceCredential[]
   chatMessages  ChatMessage[]
+  webhooks      Webhook[]
+  knowledgeBase KnowledgeBase?
+}
+
+model KnowledgeBase {
+  id         String           @id @default(cuid())
+  instanceId String           @unique
+  name       String           @default("Knowledge Base")
+  createdAt  DateTime         @default(now())
+  instance   AIInstance       @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+  documents  KnowledgeDoc[]
+}
+
+model KnowledgeDoc {
+  id              String           @id @default(cuid())
+  knowledgeBaseId String
+  filename        String
+  fileSize        Int
+  status          String           @default("processing") // "processing" | "ready" | "error"
+  createdAt       DateTime         @default(now())
+  knowledgeBase   KnowledgeBase    @relation(fields: [knowledgeBaseId], references: [id], onDelete: Cascade)
+  chunks          KnowledgeChunk[]
+}
+
+model KnowledgeChunk {
+  id        String       @id @default(cuid())
+  docId     String
+  content   String
+  // TODO: migrate to vector(1536) once pgvector confirmed — currently stored as String for compatibility
+  embedding String?
+  createdAt DateTime     @default(now())
+  doc       KnowledgeDoc @relation(fields: [docId], references: [id], onDelete: Cascade)
 }
 
 model InstanceCredential {
@@ -253,4 +300,30 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Webhook {
+  id         String      @id @default(cuid())
+  userId     String
+  instanceId String?
+  url        String
+  events     String      // comma-separated: "chat.message,instance.deployed,instance.down"
+  secret     String      @default(cuid()) // Used to sign payloads
+  active     Boolean     @default(true)
+  createdAt  DateTime    @default(now())
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  instance   AIInstance? @relation(fields: [instanceId], references: [id], onDelete: SetNull)
+}
+
+model WhiteLabelConfig {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  brandName     String   @default("SynapseForge")
+  brandColor    String   @default("#7c3aed")
+  logoUrl       String?
+  customDomain  String?
+  hidePoweredBy Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

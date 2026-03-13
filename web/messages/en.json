@@ -272,7 +272,9 @@
       "settings": "Settings",
       "signOut": "Sign out",
       "managerPortal": "Manager Portal",
-      "adminPanel": "Admin Panel"
+      "adminPanel": "Admin Panel",
+      "apiDocs": "API Docs",
+      "integrations": "Integrations"
     },
     "billing": {
       "title": "Billing & Plans",
@@ -669,6 +671,19 @@
       "inlineKeyAdvanced": "Advanced setup",
       "stop": "Stop"
     },
+    "knowledge": {
+      "title": "Knowledge Base",
+      "tab": "Knowledge",
+      "upload": "Upload Document",
+      "uploadHint": "Supports .txt and .md files up to 10MB",
+      "empty": "No documents yet. Upload files to give your agent context.",
+      "processing": "Processing",
+      "ready": "Ready",
+      "error": "Error",
+      "delete": "Delete",
+      "deleteConfirm": "Remove this document?",
+      "uploading": "Uploading..."
+    },
     "deploy": {
       "tab": "Deploy",
       "sectionTitle": "Deploy to Cloud",
@@ -809,7 +824,22 @@
     "selectRegion": "Select Region",
     "selectTier": "Select Tier",
     "mostPopular": "Most popular",
-    "perMonth": "/mo"
+    "perMonth": "/mo",
+    "healthScore": "Health Score",
+    "healthy": "Healthy",
+    "moderate": "Moderate",
+    "atRisk": "At Risk",
+    "inactive": "Inactive",
+    "sortBy": "Sort by",
+    "sortByHealth": "Health",
+    "sortByName": "Name",
+    "sortByActivity": "Activity",
+    "notes": "Notes",
+    "addNote": "Add Note",
+    "deleteNote": "Delete",
+    "notePlaceholder": "Add a note about this client...",
+    "capacity": "Capacity",
+    "clients": "clients"
   },
   "instanceSetup": {
     "title": "Set Up Your AI Instance",
@@ -905,5 +935,38 @@
     "line4": "✓ Connecting Telegram integration",
     "line5": "✓ Agent is live — responding on Telegram",
     "done": "🚀 Deployment complete in 1m 47s"
+  },
+  "integrations": {
+    "title": "Integrations",
+    "subtitle": "Connect your AI agents to any tool",
+    "comingSoon": "Coming soon",
+    "zapier": {
+      "title": "Zapier",
+      "subtitle": "Automate workflows with 6,000+ apps",
+      "openZapier": "Open Zapier",
+      "triggers": "Triggers",
+      "actions": "Actions"
+    },
+    "apiEndpoint": {
+      "title": "Direct API",
+      "subtitle": "Use our REST API directly in your workflows",
+      "hint": "Include your instance API key in the x-api-key header"
+    },
+    "make": {
+      "title": "Make (Integromat)",
+      "subtitle": "Visual automation with 1,000+ app connectors"
+    }
+  },
+  "whiteLabel": {
+    "title": "White Label",
+    "subtitle": "Customize the branding for your clients",
+    "brandName": "Brand Name",
+    "brandColor": "Brand Color",
+    "logoUrl": "Logo URL",
+    "customDomain": "Custom Domain",
+    "hidePoweredBy": "Hide \"Powered by SynapseForge\"",
+    "agencyRequired": "Agency plan required",
+    "save": "Save Changes",
+    "saved": "Changes saved"
   }
 }

@@ -272,7 +272,8 @@
       "settings": "Налаштування",
       "signOut": "Вийти",
       "managerPortal": "Портал менеджера",
-      "adminPanel": "Панель адміністратора"
+      "adminPanel": "Панель адміністратора",
+      "apiDocs": "API Документація"
     },
     "billing": {
       "title": "Білінг та плани",
@@ -669,6 +670,19 @@
       "inlineKeyAdvanced": "Розширене налаштування",
       "stop": "Зупинити"
     },
+    "knowledge": {
+      "title": "База знань",
+      "tab": "Знання",
+      "upload": "Завантажити документ",
+      "uploadHint": "Підтримуються файли .txt та .md до 10МБ",
+      "empty": "Документів поки немає. Завантажте файли, щоб надати агенту контекст.",
+      "processing": "Обробка",
+      "ready": "Готово",
+      "error": "Помилка",
+      "delete": "Видалити",
+      "deleteConfirm": "Видалити цей документ?",
+      "uploading": "Завантаження..."
+    },
     "deploy": {
       "tab": "Розгорнути",
       "sectionTitle": "Розгорнути в хмарі",
@@ -904,6 +918,21 @@
     "selectRegion": "Вибрати регіон",
     "selectTier": "Вибрати рівень",
     "mostPopular": "Найпопулярніший",
-    "perMonth": "/міс"
+    "perMonth": "/міс",
+    "healthScore": "Оцінка активності",
+    "healthy": "Активний",
+    "moderate": "Помірно",
+    "atRisk": "Під загрозою",
+    "inactive": "Неактивний",
+    "sortBy": "Сортувати за",
+    "sortByHealth": "Активністю",
+    "sortByName": "Іменем",
+    "sortByActivity": "Діями",
+    "notes": "Нотатки",
+    "addNote": "Додати нотатку",
+    "deleteNote": "Видалити",
+    "notePlaceholder": "Додати нотатку про цього клієнта...",
+    "capacity": "Місткість",
+    "clients": "клієнтів"
   }
 }
