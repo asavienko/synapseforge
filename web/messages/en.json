@@ -312,7 +312,10 @@
         "managerAssigned": "Manager assigned — your personal guide"
       },
       "messagesLabel": "Messages",
-      "allTimeMessages": "chat messages sent"
+      "allTimeMessages": "chat messages sent",
+      "bookCall": "Book a call",
+      "bookCallDesc": "Prefer a live conversation? Schedule time with your manager.",
+      "scheduleCall": "Schedule a call"
     },
     "messages": {
       "title": "Messages",
@@ -321,7 +324,10 @@
       "noManagerDesc": "A dedicated manager will be assigned to your account shortly. Once assigned, you can message them directly here.",
       "noMessagesYet": "No messages yet. Say hi to your manager!",
       "messagePlaceholder": "Type a message...",
-      "failedSend": "Failed to send message."
+      "failedSend": "Failed to send message.",
+      "bookCall": "Book a call",
+      "bookCallDesc": "Prefer a live conversation? Schedule time with your manager.",
+      "scheduleCall": "Schedule a call"
     },
     "settingsPage": {
       "title": "Settings",

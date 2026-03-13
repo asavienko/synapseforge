@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Send, Loader2, MessageCircle, User, Shield } from "lucide-react";
+import { Send, Loader2, MessageCircle, User, Shield, CalendarDays } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
+import { CalBookingButton } from "@/components/CalBookingButton";
 
 interface Message {
   id: string;
@@ -28,6 +29,7 @@ export default function MessagesPage() {
   const [body, setBody] = useState("");
   const [error, setError] = useState("");
   const [noManager, setNoManager] = useState(false);
+  const [calLink, setCalLink] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   async function loadMessages() {
@@ -35,9 +37,13 @@ export default function MessagesPage() {
     if (res.ok) {
       const data = await res.json();
       if (Array.isArray(data)) {
+        // Legacy shape fallback
         setMessages(data);
       } else if (data?.noManager) {
         setNoManager(true);
+      } else if (data?.messages) {
+        setMessages(data.messages);
+        if (data.calLink) setCalLink(data.calLink);
       }
     }
     setLoading(false);
@@ -104,6 +110,19 @@ export default function MessagesPage() {
         <h1 className="text-2xl font-bold text-white">{t("title")}</h1>
         <p className="text-zinc-400 text-sm mt-1">{t("subtitle")}</p>
       </div>
+
+      {/* Book a call CTA — shown only when manager has a Cal.com link */}
+      {calLink && (
+        <div className="px-6 py-3 border-b border-white/5 bg-violet-600/5 shrink-0">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <CalendarDays className="w-4 h-4 text-violet-400" />
+              <span className="text-sm text-zinc-300">Prefer a live conversation?</span>
+            </div>
+            <CalBookingButton calLink={calLink} variant="outline" label="Schedule a call" />
+          </div>
+        </div>
+      )}
 
       <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
         {messages.length === 0 ? (

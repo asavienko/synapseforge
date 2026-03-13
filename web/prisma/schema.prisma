@@ -75,6 +75,7 @@ model Manager {
   id        String    @id @default(cuid())
   name      String
   email     String    @unique
+  calLink   String?   // e.g. "john-smith/30min" — Cal.com path (no leading slash, no https)
   createdAt DateTime  @default(now())
   users     User[]
   messages  Message[]

@@ -312,7 +312,10 @@
         "managerAssigned": "Manager asignado — tu guía personal"
       },
       "messagesLabel": "Mensajes",
-      "allTimeMessages": "mensajes de chat enviados"
+      "allTimeMessages": "mensajes de chat enviados",
+      "bookCall": "Book a call",
+      "bookCallDesc": "Prefer a live conversation? Schedule time with your manager.",
+      "scheduleCall": "Schedule a call"
     },
     "messages": {
       "title": "Mensajes",
@@ -321,7 +324,10 @@
       "noManagerDesc": "Pronto se te asignará un manager dedicado. Una vez asignado, podrás enviarle mensajes aquí.",
       "noMessagesYet": "Aún no hay mensajes. ¡Saluda a tu manager!",
       "messagePlaceholder": "Escribe un mensaje...",
-      "failedSend": "Error al enviar el mensaje."
+      "failedSend": "Error al enviar el mensaje.",
+      "bookCall": "Book a call",
+      "bookCallDesc": "Prefer a live conversation? Schedule time with your manager.",
+      "scheduleCall": "Schedule a call"
     },
     "settingsPage": {
       "title": "Configuración",

@@ -116,7 +116,7 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
 
   // Manager creation
   const [showCreateManager, setShowCreateManager] = useState(false);
-  const [managerForm, setManagerForm] = useState({ name: "", email: "" });
+  const [managerForm, setManagerForm] = useState({ name: "", email: "", calLink: "" });
   const [creatingManager, setCreatingManager] = useState(false);
   const [managerError, setManagerError] = useState("");
 
@@ -243,7 +243,7 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
     setCreatingManager(false);
     if (!res.ok) { setManagerError(data.error); return; }
     setManagers((prev) => [...prev, { ...data, userCount: 0 }]);
-    setManagerForm({ name: "", email: "" });
+    setManagerForm({ name: "", email: "", calLink: "" });
     setShowCreateManager(false);
   }
 
@@ -1110,6 +1110,19 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                 <input type="email" value={managerForm.email} onChange={(e) => setManagerForm((p) => ({ ...p, email: e.target.value }))}
                   placeholder="jane@synapseforge.ai"
                   className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors" />
+              </div>
+              <div>
+                <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-1">
+                  Cal.com Link <span className="text-zinc-600 normal-case">(optional)</span>
+                </label>
+                <input
+                  type="text"
+                  value={managerForm.calLink}
+                  onChange={(e) => setManagerForm((p) => ({ ...p, calLink: e.target.value }))}
+                  placeholder="john-smith/30min"
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors"
+                />
+                <p className="text-xs text-zinc-600 mt-1.5">Cal.com path only — e.g. <code className="text-zinc-500">your-name/30min</code></p>
               </div>
               {managerError && <p className="text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-4 py-3">{managerError}</p>}
               <div className="flex gap-3 pt-2">

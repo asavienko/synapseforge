@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Bot, Zap, User, ArrowRight, Activity, MessageCircle, MessageSquare, CheckCircle2, Circle, Heart } from "lucide-react";
 import { PLANS, STATUS_COLORS, formatDate } from "@/lib/utils";
 import { DashboardUpgrade } from "@/components/DashboardUpgrade";
+import { CalBookingButton } from "@/components/CalBookingButton";
 import { getTranslations } from "next-intl/server";
 
 export default async function DashboardPage() {
@@ -225,13 +226,18 @@ export default async function DashboardPage() {
               {user.manager.email}
             </a>
           </div>
-          <Link
-            href="/dashboard/messages"
-            className="flex items-center gap-2 text-sm text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2.5 rounded-xl transition-colors shrink-0"
-          >
-            <MessageCircle className="w-4 h-4" />
-            {t("messageBtn")}
-          </Link>
+          <div className="flex items-center gap-2 shrink-0">
+            <Link
+              href="/dashboard/messages"
+              className="flex items-center gap-2 text-sm text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2.5 rounded-xl transition-colors"
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span className="hidden sm:inline">{t("messageBtn")}</span>
+            </Link>
+            {user.manager.calLink && (
+              <CalBookingButton calLink={user.manager.calLink} variant="compact" label="Book a call" />
+            )}
+          </div>
         </div>
       ) : (
         <div className="glow-border rounded-2xl p-5 bg-white/[0.02] mb-6 flex items-center gap-4">

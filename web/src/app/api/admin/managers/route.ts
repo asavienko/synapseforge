@@ -22,13 +22,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { name, email } = await req.json();
+  const { name, email, calLink } = await req.json();
   if (!name || !email) return NextResponse.json({ error: "Name and email required." }, { status: 400 });
 
   const existing = await prisma.manager.findUnique({ where: { email } });
   if (existing) return NextResponse.json({ error: "Manager with this email already exists." }, { status: 409 });
 
-  const manager = await prisma.manager.create({ data: { name, email } });
+  const manager = await prisma.manager.create({ data: { name, email, calLink: calLink || null } });
   return NextResponse.json(manager, { status: 201 });
 }
 

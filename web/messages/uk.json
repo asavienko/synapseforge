@@ -312,7 +312,10 @@
         "managerAssigned": "Менеджер призначений — ваш особистий гід"
       },
       "messagesLabel": "Повідомлення",
-      "allTimeMessages": "чат-повідомлень надіслано"
+      "allTimeMessages": "чат-повідомлень надіслано",
+      "bookCall": "Book a call",
+      "bookCallDesc": "Prefer a live conversation? Schedule time with your manager.",
+      "scheduleCall": "Schedule a call"
     },
     "messages": {
       "title": "Повідомлення",
@@ -321,7 +324,10 @@
       "noManagerDesc": "Незабаром вам буде призначений персональний менеджер. Після призначення ви зможете надсилати йому повідомлення тут.",
       "noMessagesYet": "Повідомлень ще немає. Привітайте вашого менеджера!",
       "messagePlaceholder": "Введіть повідомлення...",
-      "failedSend": "Не вдалося надіслати повідомлення."
+      "failedSend": "Не вдалося надіслати повідомлення.",
+      "bookCall": "Book a call",
+      "bookCallDesc": "Prefer a live conversation? Schedule time with your manager.",
+      "scheduleCall": "Schedule a call"
     },
     "settingsPage": {
       "title": "Налаштування",

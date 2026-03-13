@@ -22,7 +22,10 @@ export async function GET(req: NextRequest) {
     userId = queryUserId;
   }
 
-  const user = await prisma.user.findUnique({ where: { id: userId } });
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    include: { manager: { select: { calLink: true } } },
+  });
   if (!user?.managerId) return NextResponse.json({ noManager: true }, { status: 200 });
 
   // Mark messages sent by manager as read
@@ -36,7 +39,7 @@ export async function GET(req: NextRequest) {
     orderBy: { createdAt: "asc" },
   });
 
-  return NextResponse.json(messages);
+  return NextResponse.json({ messages, calLink: user.manager?.calLink ?? null });
 }
 
 // POST: user sends a message; admin sends as manager (with ?asManager=true&userId=)

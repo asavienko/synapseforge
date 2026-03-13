@@ -312,7 +312,10 @@
         "managerAssigned": "Менеджер назначен — ваш личный гид"
       },
       "messagesLabel": "Сообщения",
-      "allTimeMessages": "чат-сообщений отправлено"
+      "allTimeMessages": "чат-сообщений отправлено",
+      "bookCall": "Book a call",
+      "bookCallDesc": "Prefer a live conversation? Schedule time with your manager.",
+      "scheduleCall": "Schedule a call"
     },
     "messages": {
       "title": "Сообщения",
@@ -321,7 +324,10 @@
       "noManagerDesc": "Вам скоро будет назначен персональный менеджер. После назначения вы сможете писать ему сообщения здесь.",
       "noMessagesYet": "Сообщений пока нет. Поприветствуйте вашего менеджера!",
       "messagePlaceholder": "Введите сообщение...",
-      "failedSend": "Не удалось отправить сообщение."
+      "failedSend": "Не удалось отправить сообщение.",
+      "bookCall": "Book a call",
+      "bookCallDesc": "Prefer a live conversation? Schedule time with your manager.",
+      "scheduleCall": "Schedule a call"
     },
     "settingsPage": {
       "title": "Настройки",
