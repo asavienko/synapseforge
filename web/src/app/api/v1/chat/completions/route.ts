@@ -5,6 +5,9 @@ import { validateApiKey, CORS_HEADERS } from "@/lib/api-auth";
 import { randomBytes } from "crypto";
 import { publicChatLimiter, rateLimitHeaders, getRateLimitKey } from "@/lib/rate-limit";
 
+// LLM calls can take 30-60s — extend Vercel's default 10s limit
+export const maxDuration = 60;
+
 // Handle CORS preflight
 export async function OPTIONS() {
   return new NextResponse(null, { status: 204, headers: CORS_HEADERS });

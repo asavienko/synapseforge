@@ -57,13 +57,12 @@ export default async function DashboardPage() {
   const allHealthy = monitoredInstances > 0 && degradedInstances === 0 && downInstances === 0;
   const needsAttention = degradedInstances + downInstances;
 
-  // Aggregate chat message count across all user instances
-  const totalChatMessages = await prisma.activityLog.count({
-    where: {
-      instanceId: { in: user.instances.map((i) => i.id) },
-      event: "chat_message",
-    },
-  });
+  // Aggregate chat message count across all user instances (use ChatMessage — source of truth)
+  const totalChatMessages = user.instances.length > 0
+    ? await prisma.chatMessage.count({
+        where: { instanceId: { in: user.instances.map((i) => i.id) } },
+      })
+    : 0;
 
   // Check: has a channel integration
   const hasChannel = firstInstance

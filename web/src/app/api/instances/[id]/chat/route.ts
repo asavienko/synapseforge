@@ -5,6 +5,9 @@ import { callLLM, ChatMessage, LLMResult, parseInstanceConfig } from "@/lib/llm"
 import { callOpenClawVps } from "@/lib/openclaw-proxy";
 import { dashboardChatLimiter, rateLimitHeaders, getRateLimitKey } from "@/lib/rate-limit";
 
+// LLM calls can take 30-60s — extend Vercel's default 10s limit
+export const maxDuration = 60;
+
 const HISTORY_LIMIT = 50;
 
 /**

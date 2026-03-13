@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { callLLM, LLMResult, LLMError } from "@/lib/llm";
 
+// LLM calls can take 30-60s — extend Vercel's default 10s limit
+export const maxDuration = 60;
+
 // Simple in-memory rate limiter: max 20 req/min per IP+instance
 const windowMs = 60_000;
 const maxPerWindow = 20;
