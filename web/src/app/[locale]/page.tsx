@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
 import { MobileNav } from "@/components/MobileNav";
+import { LandingDemoChat } from "@/components/LandingDemoChat";
 import {
   Zap, Bot, ArrowRight, Check, Shield, RefreshCw,
   MessageSquare, Code2, Activity, Users, Key,
@@ -527,6 +528,9 @@ export default async function LandingPage() {
           </div>
         </div>
       </footer>
+
+      {/* ── Demo chat widget (fixed position, outside layout flow) ─────── */}
+      <LandingDemoChat />
     </div>
   );
 }

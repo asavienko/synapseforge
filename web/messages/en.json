@@ -1298,7 +1298,7 @@
     "f6desc": "Every message, config change, and deployment event is logged. Know exactly what your agent is doing."
   },
   "demo": {
-    "title": "See it in action",
+    "title": "Live Demo",
     "subtitle": "This is what your dashboard looks like after deploying your first agent.",
     "badge": "Live demo",
     "terminalTitle": "Deploying your agent...",
@@ -1307,7 +1307,11 @@
     "line3": "✓ Loading your config (gpt-4o, custom system prompt)",
     "line4": "✓ Connecting Telegram integration",
     "line5": "✓ Agent is live — responding on Telegram",
-    "done": "🚀 Deployment complete in 1m 47s"
+    "done": "🚀 Deployment complete in 1m 47s",
+    "tryIt": "Try it free →",
+    "placeholder": "Ask me anything...",
+    "limitReached": "Trial complete! Deploy your own agent in 3 minutes.",
+    "signUpCta": "Sign up free →"
   },
   "integrations": {
     "title": "Integrations",

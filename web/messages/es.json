@@ -1194,7 +1194,7 @@
     "f6desc": "Cada mensaje y cambio de configuración queda registrado. Sabe exactamente qué hace tu agente."
   },
   "demo": {
-    "title": "Vélo en acción",
+    "title": "Demo en vivo",
     "subtitle": "Así es tu dashboard tras desplegar tu primer agente.",
     "badge": "Demo en vivo",
     "terminalTitle": "Desplegando tu agente...",
@@ -1203,7 +1203,11 @@
     "line3": "✓ Cargando configuración (gpt-4o)",
     "line4": "✓ Conectando Telegram",
     "line5": "✓ Agente activo en Telegram",
-    "done": "🚀 Despliegue completado en 1m 47s"
+    "done": "🚀 Despliegue completado en 1m 47s",
+    "tryIt": "Pruébalo gratis →",
+    "placeholder": "Pregúntame lo que quieras...",
+    "limitReached": "¡Prueba completada! Despliega tu propio agente en 3 minutos.",
+    "signUpCta": "Regístrate gratis →"
   },
   "referral": {
     "pageTitle": "Programa de referidos",
