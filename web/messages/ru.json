@@ -771,7 +771,18 @@
         "facebookPageIdDesc": "Числовой ID вашей страницы Facebook",
         "twitterBearerDesc": "Поиск и публикация твитов через API Twitter/X",
         "youtubeDesc": "Анализ YouTube-каналов, комментариев и поиск видео",
-        "elevenlabsDesc": "Генерируйте голосовые ответы с ElevenLabs TTS"
+        "elevenlabsDesc": "Генерируйте голосовые ответы с ElevenLabs TTS",
+        "coinGeckoName": "CoinGecko",
+        "coinGeckoAlways": "✓ Всегда доступно",
+        "yelpPlaceholder": "Ваш API-ключ Yelp",
+        "bravePlaceholder": "BSA...",
+        "firecrawlPlaceholder": "fc-...",
+        "facebookTokenPlaceholder": "EAA...",
+        "facebookPageIdPlaceholder": "1234567890",
+        "twitterBearerPlaceholder": "AAAA...",
+        "youtubeApiPlaceholder": "AIza...",
+        "elevenlabsPlaceholder": "sk_...",
+        "googleMapsPlaceholder": "AIza..."
       },
       "syncNow": "Sync Now",
       "connectedChannels": "Connected Channels",
@@ -810,7 +821,9 @@
         "instructions": "Create a Slack app at api.slack.com and copy your App Token and Bot Token.",
         "appTokenPlaceholder": "App Token (xapp-…)",
         "botTokenPlaceholder": "Bot Token (xoxb-…)"
-      }
+      },
+      "dismissChecklist": "Скрыть чеклист",
+      "valuePlaceholder": "Введите значение…"
     },
     "chat": {
       "tab": "Чат",
@@ -839,7 +852,8 @@
       "sandboxExhausted": "Бесплатные сообщения исчерпаны",
       "sandboxExhaustedDesc": "Добавьте ваш API-ключ для продолжения чата",
       "sandboxOutOfCredits": "Вы использовали все 20 бесплатных сообщений. Добавьте свой API-ключ на вкладке Учётные данные, чтобы продолжить.",
-      "addApiKey": "Добавить API-ключ →"
+      "addApiKey": "Добавить API-ключ →",
+      "copyResponse": "Копировать ответ"
     },
     "knowledge": {
       "title": "База знаний",

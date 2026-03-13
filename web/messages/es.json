@@ -771,7 +771,18 @@
         "facebookPageIdDesc": "El ID numérico de tu Página de Facebook",
         "twitterBearerDesc": "Busca y publica tweets a través de la API de Twitter/X",
         "youtubeDesc": "Analiza canales de YouTube, comentarios y busca videos",
-        "elevenlabsDesc": "Genera respuestas de voz con ElevenLabs TTS"
+        "elevenlabsDesc": "Genera respuestas de voz con ElevenLabs TTS",
+        "coinGeckoName": "CoinGecko",
+        "coinGeckoAlways": "✓ Siempre disponible",
+        "yelpPlaceholder": "Tu clave API de Yelp",
+        "bravePlaceholder": "BSA...",
+        "firecrawlPlaceholder": "fc-...",
+        "facebookTokenPlaceholder": "EAA...",
+        "facebookPageIdPlaceholder": "1234567890",
+        "twitterBearerPlaceholder": "AAAA...",
+        "youtubeApiPlaceholder": "AIza...",
+        "elevenlabsPlaceholder": "sk_...",
+        "googleMapsPlaceholder": "AIza..."
       },
       "syncNow": "Sync Now",
       "connectedChannels": "Connected Channels",
@@ -810,7 +821,9 @@
         "instructions": "Create a Slack app at api.slack.com and copy your App Token and Bot Token.",
         "appTokenPlaceholder": "App Token (xapp-…)",
         "botTokenPlaceholder": "Bot Token (xoxb-…)"
-      }
+      },
+      "dismissChecklist": "Descartar lista",
+      "valuePlaceholder": "Introducir valor…"
     },
     "chat": {
       "tab": "Chat",
@@ -839,7 +852,8 @@
       "sandboxExhausted": "Mensajes gratuitos agotados",
       "sandboxExhaustedDesc": "Agrega tu clave API para seguir chateando",
       "sandboxOutOfCredits": "Has usado los 20 mensajes gratuitos del sandbox. Por favor agrega tu clave API en la pestaña Credenciales para continuar.",
-      "addApiKey": "Agregar clave API →"
+      "addApiKey": "Agregar clave API →",
+      "copyResponse": "Copiar respuesta"
     },
     "knowledge": {
       "title": "Base de conocimiento",

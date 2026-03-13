@@ -383,7 +383,7 @@ function SetupChecklistCard({ instance, credentials, onGoToCredentials, onGoToDe
         </div>
         <button
           onClick={dismiss}
-          title="Dismiss checklist"
+          title={t("credentials.dismissChecklist")}
           className="text-zinc-600 hover:text-zinc-400 transition-colors"
         >
           <X className="w-4 h-4" />
@@ -2401,7 +2401,7 @@ export default function InstanceDetailPage() {
                         <button
                           onClick={() => navigator.clipboard.writeText(msg.content)}
                           className="opacity-0 group-hover:opacity-100 transition-opacity absolute top-2 right-2 p-1.5 rounded-lg text-zinc-600 hover:text-zinc-300 hover:bg-white/10"
-                          title="Copy response"
+                          title={t("chat.copyResponse")}
                         >
                           <Copy className="w-3.5 h-3.5" />
                         </button>
@@ -3066,7 +3066,7 @@ print(resp.choices[0].message.content)`}</pre>
                     {/* Live check result */}
                     {healthData?.liveCheck && (
                       <div className="flex items-center gap-4">
-                        <div className="text-xs text-zinc-500 uppercase tracking-wider w-28">Last Check</div>
+                        <div className="text-xs text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.lastCheck")}</div>
                         <div className="flex items-center gap-2">
                           {healthData.liveCheck.healthy ? (
                             <>
@@ -3097,7 +3097,7 @@ print(resp.choices[0].message.content)`}</pre>
                 </div>
                 <div className="p-5 space-y-4">
                   <div className="flex items-center gap-4">
-                    <div className="text-xs text-zinc-500 uppercase tracking-wider w-28">Status</div>
+                    <div className="text-xs text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.status")}</div>
                     {instance.hasGateway ? (
                       <span className="text-sm px-3 py-1 rounded-full border font-medium bg-emerald-500/20 text-emerald-300 border-emerald-500/30">
                         {t("infrastructure.gateway.connected")}
@@ -3569,7 +3569,7 @@ print(resp.choices[0].message.content)`}</pre>
                   <div className="flex items-center gap-3 p-4">
                     <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-base shrink-0">✈</div>
                     <div className="flex-1">
-                      <div className="text-sm font-medium text-white">Telegram</div>
+                      <div className="text-sm font-medium text-white">{t("credentials.telegram.header")}</div>
                       {hasTelegram && tgUsername ? (
                         <div className="text-xs text-emerald-400 mt-0.5 flex items-center gap-1">
                           <Check className="w-3 h-3" /> {tgUsername} — {t("credentials.connected")}
@@ -3598,7 +3598,7 @@ print(resp.choices[0].message.content)`}</pre>
                   <div className="flex items-center gap-3 p-4">
                     <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-base shrink-0">🎮</div>
                     <div className="flex-1">
-                      <div className="text-sm font-medium text-white">Discord</div>
+                      <div className="text-sm font-medium text-white">{t("credentials.discord.header")}</div>
                       {hasDiscord ? (
                         <div className="text-xs text-emerald-400 mt-0.5 flex items-center gap-1"><Check className="w-3 h-3" /> {t("credentials.tokenSaved")}</div>
                       ) : (
@@ -3621,7 +3621,7 @@ print(resp.choices[0].message.content)`}</pre>
                   <div className="flex items-center gap-3 p-4">
                     <div className="w-8 h-8 rounded-lg bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-base shrink-0">💬</div>
                     <div className="flex-1">
-                      <div className="text-sm font-medium text-white">Slack</div>
+                      <div className="text-sm font-medium text-white">{t("credentials.slack.header")}</div>
                       {hasSlack ? (
                         <div className="text-xs text-emerald-400 mt-0.5 flex items-center gap-1"><Check className="w-3 h-3" /> {t("credentials.tokenSaved")}</div>
                       ) : (
@@ -3746,7 +3746,7 @@ print(resp.choices[0].message.content)`}</pre>
                                 isEditing ? setEditValue(e.target.value) : setAddValue(e.target.value);
                                 if (validState) setCredValidState((p) => { const n = {...p}; delete n[key]; return n; });
                               }}
-                              placeholder="Enter value..."
+                              placeholder={t("credentials.valuePlaceholder")}
                               autoFocus
                               className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors font-mono"
                             />
@@ -4156,7 +4156,7 @@ print(resp.choices[0].message.content)`}</pre>
                       type="text"
                       value={whatsappForm.accountSid}
                       onChange={(e) => setWhatsappForm(f => ({ ...f, accountSid: e.target.value }))}
-                      placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                      placeholder={t("credentials.whatsapp.accountSidPlaceholder")}
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors font-mono"
                     />
                     <input
@@ -4229,7 +4229,7 @@ print(resp.choices[0].message.content)`}</pre>
                 description={t("credentials.integrations.braveDesc")}
                 docsUrl="https://brave.com/search/api/"
                 credKey="brave_api_key"
-                placeholder="BSA..."
+                placeholder={t("credentials.integrations.bravePlaceholder")}
                 enabled={credentials.some((c) => c.key === "brave_api_key")}
                 instanceId={id}
                 onSave={async (key, value) => { await saveCredential(key, value); }}
@@ -4241,7 +4241,7 @@ print(resp.choices[0].message.content)`}</pre>
                 description={t("credentials.integrations.firecrawlDesc")}
                 docsUrl="https://firecrawl.dev"
                 credKey="firecrawl_api_key"
-                placeholder="fc-..."
+                placeholder={t("credentials.integrations.firecrawlPlaceholder")}
                 enabled={credentials.some((c) => c.key === "firecrawl_api_key")}
                 instanceId={id}
                 onSave={async (key, value) => { await saveCredential(key, value); }}
@@ -4258,7 +4258,7 @@ print(resp.choices[0].message.content)`}</pre>
                 description={t("credentials.integrations.facebookDesc")}
                 docsUrl="https://developers.facebook.com/docs/pages/access-tokens"
                 credKey="facebook_page_token"
-                placeholder="EAA..."
+                placeholder={t("credentials.integrations.facebookTokenPlaceholder")}
                 enabled={credentials.some((c) => c.key === "facebook_page_token")}
                 instanceId={id}
                 onSave={async (key, value) => { await saveCredential(key, value); }}
@@ -4270,7 +4270,7 @@ print(resp.choices[0].message.content)`}</pre>
                 description={t("credentials.integrations.facebookPageIdDesc")}
                 docsUrl="https://developers.facebook.com/docs/pages"
                 credKey="facebook_page_id"
-                placeholder="1234567890"
+                placeholder={t("credentials.integrations.facebookPageIdPlaceholder")}
                 enabled={credentials.some((c) => c.key === "facebook_page_id")}
                 instanceId={id}
                 onSave={async (key, value) => { await saveCredential(key, value); }}
@@ -4281,7 +4281,7 @@ print(resp.choices[0].message.content)`}</pre>
                 description={t("credentials.integrations.twitterBearerDesc")}
                 docsUrl="https://developer.twitter.com/en/docs/authentication/oauth-2-0/bearer-tokens"
                 credKey="twitter_bearer_token"
-                placeholder="AAAA..."
+                placeholder={t("credentials.integrations.twitterBearerPlaceholder")}
                 enabled={credentials.some((c) => c.key === "twitter_bearer_token")}
                 instanceId={id}
                 onSave={async (key, value) => { await saveCredential(key, value); }}
@@ -4302,7 +4302,7 @@ print(resp.choices[0].message.content)`}</pre>
                 description={t("credentials.integrations.youtubeDesc")}
                 docsUrl="https://console.cloud.google.com/apis/library/youtube.googleapis.com"
                 credKey="youtube_api_key"
-                placeholder="AIza..."
+                placeholder={t("credentials.integrations.youtubeApiPlaceholder")}
                 enabled={credentials.some((c) => c.key === "youtube_api_key")}
                 instanceId={id}
                 onSave={async (key, value) => { await saveCredential(key, value); }}
@@ -4318,7 +4318,7 @@ print(resp.choices[0].message.content)`}</pre>
                 description={t("credentials.integrations.elevenlabsDesc")}
                 docsUrl="https://elevenlabs.io/docs/api-reference"
                 credKey="elevenlabs_api_key"
-                placeholder="sk_..."
+                placeholder={t("credentials.integrations.elevenlabsPlaceholder")}
                 enabled={credentials.some((c) => c.key === "elevenlabs_api_key")}
                 instanceId={id}
                 onSave={async (key, value) => { await saveCredential(key, value); }}
@@ -4334,7 +4334,7 @@ print(resp.choices[0].message.content)`}</pre>
                 description={t("credentials.integrations.googleMapsDesc")}
                 docsUrl="https://console.cloud.google.com/apis/library/places-backend.googleapis.com"
                 credKey="google_maps_api_key"
-                placeholder="AIza..."
+                placeholder={t("credentials.integrations.googleMapsPlaceholder")}
                 enabled={credentials.some((c) => c.key === "google_maps_api_key")}
                 instanceId={id}
                 onSave={async (key, value) => { await saveCredential(key, value); }}
@@ -4411,8 +4411,8 @@ print(resp.choices[0].message.content)`}</pre>
               <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-2xl leading-none">🦎</span>
-                  <h4 className="text-sm font-semibold text-white">CoinGecko</h4>
-                  <span className="text-xs text-emerald-400 font-medium">✓ Always available</span>
+                  <h4 className="text-sm font-semibold text-white">{t("credentials.integrations.coinGeckoName")}</h4>
+                  <span className="text-xs text-emerald-400 font-medium">{t("credentials.integrations.coinGeckoAlways")}</span>
                   <a href="https://coingecko.com/en/api" target="_blank" rel="noopener noreferrer" className="text-zinc-600 hover:text-zinc-400 ml-auto">
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                   </a>
@@ -4437,7 +4437,7 @@ print(resp.choices[0].message.content)`}</pre>
                 description={t("credentials.integrations.yelpDesc")}
                 docsUrl="https://www.yelp.com/developers/documentation/v3"
                 credKey="yelp_api_key"
-                placeholder="Your Yelp API key"
+                placeholder={t("credentials.integrations.yelpPlaceholder")}
                 enabled={credentials.some((c) => c.key === "yelp_api_key")}
                 instanceId={id}
                 onSave={async (key, value) => { await saveCredential(key, value); }}

@@ -771,7 +771,18 @@
         "facebookPageIdDesc": "Your Facebook Page numeric ID",
         "twitterBearerDesc": "Search and post tweets via the Twitter/X API",
         "youtubeDesc": "Analyze YouTube channels, comments, and search videos",
-        "elevenlabsDesc": "Generate voice responses with ElevenLabs TTS"
+        "elevenlabsDesc": "Generate voice responses with ElevenLabs TTS",
+        "coinGeckoName": "CoinGecko",
+        "coinGeckoAlways": "✓ Always available",
+        "yelpPlaceholder": "Your Yelp API key",
+        "bravePlaceholder": "BSA...",
+        "firecrawlPlaceholder": "fc-...",
+        "facebookTokenPlaceholder": "EAA...",
+        "facebookPageIdPlaceholder": "1234567890",
+        "twitterBearerPlaceholder": "AAAA...",
+        "youtubeApiPlaceholder": "AIza...",
+        "elevenlabsPlaceholder": "sk_...",
+        "googleMapsPlaceholder": "AIza..."
       },
       "syncNow": "Sync Now",
       "connectedChannels": "Connected Channels",
@@ -810,7 +821,9 @@
         "instructions": "Create a Slack app at api.slack.com and copy your App Token and Bot Token.",
         "appTokenPlaceholder": "App Token (xapp-…)",
         "botTokenPlaceholder": "Bot Token (xoxb-…)"
-      }
+      },
+      "dismissChecklist": "Dismiss checklist",
+      "valuePlaceholder": "Enter value…"
     },
     "chat": {
       "tab": "Chat",
@@ -839,7 +852,8 @@
       "sandboxExhausted": "Free messages used up",
       "sandboxExhaustedDesc": "Add your API key to continue chatting",
       "sandboxOutOfCredits": "You've used all 20 free sandbox messages. Please add your API key in the Credentials tab to continue.",
-      "addApiKey": "Add API Key →"
+      "addApiKey": "Add API Key →",
+      "copyResponse": "Copy response"
     },
     "knowledge": {
       "title": "Knowledge Base",
