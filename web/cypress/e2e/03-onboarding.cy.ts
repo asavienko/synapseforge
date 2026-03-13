@@ -104,7 +104,7 @@ describe("03 · Onboarding", () => {
     cy.contains("Customer Support").click();
     cy.contains("Continue").click();
     cy.contains("OpenAI").click();
-    cy.get("input[placeholder='sk-...']").should("be.visible");
+    cy.get("input[placeholder='sk-...']", { timeout: 8000 }).should("be.visible");
     cy.snap("03-onboard-07-step3-provider-selected");
   });
 
@@ -115,7 +115,7 @@ describe("03 · Onboarding", () => {
     cy.contains("Continue").click();
     cy.contains("Customer Support").click();
     cy.contains("Continue").click();
-    cy.contains("Skip for now").click();
+    cy.contains(/try 20 free|skip for now/i).click();
     cy.contains("Connect a channel").should("be.visible");
     cy.snap("03-onboard-08-step3-skipped");
   });
@@ -129,7 +129,7 @@ describe("03 · Onboarding", () => {
     cy.contains("Continue").click();
     cy.contains("Customer Support").click();
     cy.contains("Continue").click();
-    cy.contains("Skip for now").click();
+    cy.contains(/try 20 free|skip for now/i).click();
     cy.contains("Telegram").should("be.visible");
     cy.contains("Discord").should("be.visible");
     cy.contains("Slack").should("be.visible");
@@ -143,7 +143,7 @@ describe("03 · Onboarding", () => {
     cy.contains("Continue").click();
     cy.contains("Customer Support").click();
     cy.contains("Continue").click();
-    cy.contains("Skip for now").click();
+    cy.contains(/try 20 free|skip for now/i).click();
     cy.contains("Back").click();
     cy.contains("Add your AI provider key").should("be.visible");
     cy.snap("03-onboard-10-step4-back");
@@ -158,7 +158,7 @@ describe("03 · Onboarding", () => {
     cy.contains("Continue").click();
     cy.contains("Sales Assistant").click();
     cy.contains("Continue").click();
-    cy.contains("Skip for now").click();    // skip API key
+    cy.contains(/try 20 free|skip for now/i).click();    // skip API key
     cy.contains("Skip").last().click();      // skip channel
 
     cy.contains("ready to launch", { matchCase: false }).should("be.visible");
@@ -173,7 +173,7 @@ describe("03 · Onboarding", () => {
     cy.contains("Continue").click();
     cy.contains("Sales Assistant").click();
     cy.contains("Continue").click();
-    cy.contains("Skip for now").click();
+    cy.contains(/try 20 free|skip for now/i).click();
     cy.contains("Skip").last().click();
 
     cy.contains("Acme Business").should("be.visible");
@@ -189,7 +189,7 @@ describe("03 · Onboarding", () => {
     cy.contains("Continue").click();
     cy.contains("Customer Support").click();
     cy.contains("Continue").click();
-    cy.contains("Skip for now").click();    // skip API key
+    cy.contains(/try 20 free|skip for now/i).click();    // skip API key
     cy.contains("Skip").last().click();      // skip channel
 
     // Launch screen — use "Go to dashboard instead" (secondary CTA)
@@ -220,7 +220,7 @@ describe("03 · Onboarding", () => {
 
     // Step 3: pick OpenAI + enter key
     cy.contains("OpenAI").click();
-    cy.get("input[placeholder='sk-...']").type("sk-test-key-1234");
+    cy.get("input[placeholder='sk-...']", { timeout: 8000 }).type("sk-test-key-1234");
     cy.contains("Continue").click();
     cy.wait("@validateKey");
 

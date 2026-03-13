@@ -152,7 +152,7 @@ describe("19 · Onboarding — 5-step flow", () => {
     cy.contains("Customer Support").click();
     cy.get("button").contains("Continue").click();
 
-    cy.contains("Skip for now").click();
+    cy.contains(/try 20 free|skip for now/i).click();
     cy.contains("Connect a channel").should("be.visible");
     cy.snap("19-onboarding-09-step3-skipped");
   });
@@ -165,7 +165,7 @@ describe("19 · Onboarding — 5-step flow", () => {
     cy.get("button").contains("Continue").click();
     cy.contains("Customer Support").click();
     cy.get("button").contains("Continue").click();
-    cy.contains("Skip for now").click();
+    cy.contains(/try 20 free|skip for now/i).click();
 
     cy.get("button").contains("Telegram").first().click();
     cy.get("input").should("have.attr", "placeholder").and("include", "1234567890");
@@ -185,7 +185,7 @@ describe("19 · Onboarding — 5-step flow", () => {
     cy.get("button").contains("Continue").click();
     cy.contains("Customer Support").click();
     cy.get("button").contains("Continue").click();
-    cy.contains("Skip for now").click(); // skip API key
+    cy.contains(/try 20 free|skip for now/i).click(); // skip API key
 
     // Step 4: finish without channel
     cy.contains("Skip").last().click();
@@ -244,7 +244,7 @@ describe("19 · Onboarding — 5-step flow", () => {
     cy.get("button").contains("Continue").click();
     cy.contains("Customer Support").click();
     cy.get("button").contains("Continue").click();
-    cy.contains("Skip for now").click();
+    cy.contains(/try 20 free|skip for now/i).click();
     cy.contains("Skip").last().click();
 
     cy.wait("@onboardingPost3");
