@@ -756,7 +756,18 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
             </div>
             <div className="divide-y divide-white/5">
               {managers.length === 0 && (
-                <p className="p-5 text-sm text-zinc-500">No managers yet. Add one →</p>
+                <div className="p-5">
+                  <div className="flex items-start gap-3 bg-amber-500/10 border border-amber-500/30 rounded-xl p-4">
+                    <span className="text-amber-400 text-lg shrink-0">⚠️</span>
+                    <div>
+                      <p className="text-sm font-semibold text-amber-300">No managers configured</p>
+                      <p className="text-xs text-amber-400/80 mt-0.5">
+                        New signups won't get a manager or welcome message until you add one.
+                        Click "Add Manager" to create your account — you'll be auto-assigned to all new users.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               )}
               {managers.map((m) => (
                 <div key={m.id} className="p-4 flex items-center gap-3">

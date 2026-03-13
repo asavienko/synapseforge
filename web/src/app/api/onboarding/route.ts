@@ -112,11 +112,22 @@ export async function POST(req: NextRequest) {
     });
   }
 
+  // Resolve manager: use assigned manager, or fall back to first available
+  // This handles users who signed up before DEFAULT_MANAGER_ID was configured.
+  let manager = user.manager;
+  if (!manager) {
+    manager = await prisma.manager.findFirst({ orderBy: { createdAt: "asc" } }) ?? null;
+    // Retroactively assign this manager to the user so they stay connected
+    if (manager) {
+      await prisma.user.update({ where: { id: session.user.id }, data: { managerId: manager.id } });
+    }
+  }
+
   // Notify manager if assigned
-  if (user.manager) {
+  if (manager) {
     email.newUserAlert(
-      user.manager.email,
-      user.manager.name,
+      manager.email,
+      manager.name,
       user.name ?? user.email,
       user.email,
       user.onboardingData ?? undefined
@@ -125,7 +136,7 @@ export async function POST(req: NextRequest) {
     // Send in-app welcome message from manager — only if no prior conversation exists
     try {
       const existing = await prisma.message.findFirst({
-        where: { userId: session.user.id, managerId: user.manager.id },
+        where: { userId: session.user.id, managerId: manager.id },
       });
       if (!existing) {
         const firstName = (user.name ?? "there").split(" ")[0];
@@ -138,7 +149,7 @@ export async function POST(req: NextRequest) {
             body,
             senderType: "manager",
             userId: session.user.id,
-            managerId: user.manager.id,
+            managerId: manager.id,
           },
         });
       }

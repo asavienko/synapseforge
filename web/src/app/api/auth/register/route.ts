@@ -36,11 +36,14 @@ export async function POST(req: NextRequest) {
 
   const hashedPassword = await bcrypt.hash(password, 12);
 
-  // Auto-assign default manager if configured
+  // Auto-assign manager:
+  //   1. Use DEFAULT_MANAGER_ID env var if set (explicit config)
+  //   2. Otherwise fall back to the first Manager in the DB (works without env var)
+  //   This ensures every signup gets a manager as long as one exists.
   const defaultManagerId = process.env.DEFAULT_MANAGER_ID?.trim() || null;
   const defaultManager = defaultManagerId
     ? await prisma.manager.findUnique({ where: { id: defaultManagerId } })
-    : null;
+    : await prisma.manager.findFirst({ orderBy: { createdAt: "asc" } });
 
   const user = await prisma.user.create({
     data: {
