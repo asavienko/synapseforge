@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, MessageCircle, Send, Loader2, X, Shield, Activity, Server, AlertTriangle, ExternalLink, Rocket, ChevronDown, ChevronUp, StickyNote, Trash2 } from "lucide-react";
+import { Users, MessageCircle, Send, Loader2, X, Shield, Activity, Server, AlertTriangle, ExternalLink, Rocket, ChevronDown, ChevronUp, StickyNote, Trash2, Zap } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { STATUS_COLORS, PLANS, formatDate, formatRelativeTime } from "@/lib/utils";
@@ -165,6 +165,27 @@ export function ManagerClient({ manager, clients: initialClients }: {
   const [managerConfigDirty, setManagerConfigDirty] = useState(false);
   const [managerConfigSaving, setManagerConfigSaving] = useState(false);
   const [managerConfigSaved, setManagerConfigSaved] = useState(false);
+
+  // Push config state
+  const [pushing, setPushing] = useState(false);
+  const [toast, setToast] = useState<{ text: string; type?: "success" | "error" } | null>(null);
+
+  function showToast(text: string, type: "success" | "error" = "success") {
+    setToast({ text, type });
+    setTimeout(() => setToast(null), 3000);
+  }
+
+  async function pushConfig(instanceId: string) {
+    setPushing(true);
+    const res = await fetch(`/api/manager/instances/${instanceId}/sync-config`, { method: "POST" });
+    if (res.ok) {
+      showToast(t("configPushed"), "success");
+    } else {
+      const err = await res.json();
+      showToast(err.error ?? t("configPushFailed"), "error");
+    }
+    setPushing(false);
+  }
 
   // Chat log state
   const [chatLogInstanceId, setChatLogInstanceId] = useState<string | null>(null);
@@ -1089,30 +1110,40 @@ export function ManagerClient({ manager, clients: initialClients }: {
                                     />
                                   </div>
 
-                                  {/* Save button */}
-                                  <button
-                                    disabled={!managerConfigDirty || managerConfigSaving}
-                                    onClick={async () => {
-                                      setManagerConfigSaving(true);
-                                      const res = await fetch(`/api/manager/instances/${inst.id}/config`, {
-                                        method: "PATCH",
-                                        headers: { "Content-Type": "application/json" },
-                                        body: JSON.stringify({ config: JSON.stringify(managerConfig) }),
-                                      });
-                                      setManagerConfigSaving(false);
-                                      if (res.ok) {
-                                        setManagerConfigDirty(false);
-                                        setManagerConfigSaved(true);
-                                      }
-                                    }}
-                                    className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 transition-colors px-4 py-2.5 rounded-xl text-sm font-semibold text-white"
-                                  >
-                                    {managerConfigSaving ? (
-                                      <><Loader2 className="w-4 h-4 animate-spin" />{t("saving")}</>
-                                    ) : (
-                                      t("saveConfig")
-                                    )}
-                                  </button>
+                                  {/* Save + Push buttons */}
+                                  <div className="flex flex-wrap items-center gap-3">
+                                    <button
+                                      disabled={!managerConfigDirty || managerConfigSaving}
+                                      onClick={async () => {
+                                        setManagerConfigSaving(true);
+                                        const res = await fetch(`/api/manager/instances/${inst.id}/config`, {
+                                          method: "PATCH",
+                                          headers: { "Content-Type": "application/json" },
+                                          body: JSON.stringify({ config: JSON.stringify(managerConfig) }),
+                                        });
+                                        setManagerConfigSaving(false);
+                                        if (res.ok) {
+                                          setManagerConfigDirty(false);
+                                          setManagerConfigSaved(true);
+                                        }
+                                      }}
+                                      className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 transition-colors px-4 py-2.5 rounded-xl text-sm font-semibold text-white"
+                                    >
+                                      {managerConfigSaving ? (
+                                        <><Loader2 className="w-4 h-4 animate-spin" />{t("saving")}</>
+                                      ) : (
+                                        t("saveConfig")
+                                      )}
+                                    </button>
+                                    <button
+                                      onClick={() => pushConfig(inst.id)}
+                                      disabled={pushing}
+                                      className="flex items-center gap-2 text-sm px-4 py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-xl transition-colors disabled:opacity-50"
+                                    >
+                                      {pushing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
+                                      {t("pushConfig")}
+                                    </button>
+                                  </div>
                                 </div>
                               )}
 
@@ -1259,6 +1290,13 @@ export function ManagerClient({ manager, clients: initialClients }: {
             </>
           )}
         </div>
+      )}
+
+      {/* Toast */}
+      {toast && (
+        <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-xl text-sm font-medium shadow-2xl border ${
+          toast.type === "error" ? "bg-red-600/90 border-red-500 text-white" : "bg-emerald-600/90 border-emerald-500 text-white"
+        }`}>{toast.text}</div>
       )}
 
       {/* Provisioning Wizard */}

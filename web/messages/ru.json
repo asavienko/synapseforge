@@ -774,7 +774,26 @@
         "connected": "WhatsApp через Twilio подключён",
         "saved": "WhatsApp успешно подключён",
         "disconnected": "WhatsApp отключён",
-        "connect": "Подключить WhatsApp"
+        "connect": "Подключить WhatsApp",
+        "wizardStep1": "Введите учётные данные",
+        "wizardStep2": "Проверка подключения",
+        "wizardStep3": "Вы в эфире!",
+        "accountSidLabel": "SID аккаунта Twilio",
+        "authTokenLabel": "Токен авторизации Twilio",
+        "whatsappNumberLabel": "Номер WhatsApp",
+        "getCredentialsHint": "Получите данные на twilio.com/console",
+        "verifying": "Проверка подключения...",
+        "credentialsSaved": "Учётные данные сохранены успешно",
+        "sendTestMessage": "Отправить тестовое сообщение",
+        "testPhonePlaceholder": "+1234567890",
+        "sendTest": "Отправить тест",
+        "testSent": "Тестовое сообщение отправлено! Проверьте WhatsApp.",
+        "liveTitle": "Ваш ИИ работает в WhatsApp!",
+        "liveHint": "Поделитесь этим номером с клиентами",
+        "copyNumber": "Скопировать номер",
+        "testItYourself": "Протестировать самостоятельно",
+        "reconfigure": "Перенастроить",
+        "backToFix": "← Исправить учётные данные"
       },
       "widget": {
         "title": "Веб-виджет",
@@ -1277,7 +1296,10 @@
     "snapshotQueued": "Снимок поставлен в очередь ✓",
     "restore": "Восстановить",
     "confirmRollback": "Подтвердить откат",
-    "cancel": "Отмена"
+    "cancel": "Отмена",
+    "pushConfig": "Отправить на инстанс",
+    "configPushed": "Конфигурация успешно отправлена на инстанс",
+    "configPushFailed": "Не удалось отправить конфигурацию"
   },
   "integrations": {
     "title": "Интеграции",

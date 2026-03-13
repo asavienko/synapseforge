@@ -774,7 +774,26 @@
         "connected": "Twilio WhatsApp connected",
         "saved": "WhatsApp connected successfully",
         "disconnected": "WhatsApp disconnected",
-        "connect": "Connect WhatsApp"
+        "connect": "Connect WhatsApp",
+        "wizardStep1": "Enter Credentials",
+        "wizardStep2": "Verify Connection",
+        "wizardStep3": "You're Live!",
+        "accountSidLabel": "Twilio Account SID",
+        "authTokenLabel": "Twilio Auth Token",
+        "whatsappNumberLabel": "WhatsApp Number",
+        "getCredentialsHint": "Get these from twilio.com/console",
+        "verifying": "Verifying connection...",
+        "credentialsSaved": "Credentials saved successfully",
+        "sendTestMessage": "Send test message",
+        "testPhonePlaceholder": "+1234567890",
+        "sendTest": "Send test",
+        "testSent": "Test message sent! Check your WhatsApp.",
+        "liveTitle": "Your AI is live on WhatsApp!",
+        "liveHint": "Share this number with your customers",
+        "copyNumber": "Copy number",
+        "testItYourself": "Test it yourself",
+        "reconfigure": "Reconfigure",
+        "backToFix": "← Fix credentials"
       },
       "widget": {
         "title": "Web Widget",
@@ -1182,7 +1201,10 @@
     "snapshotQueued": "Snapshot queued ✓",
     "restore": "Restore",
     "confirmRollback": "Confirm rollback",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "pushConfig": "Push to Instance",
+    "configPushed": "Config pushed to instance successfully",
+    "configPushFailed": "Failed to push config"
   },
   "instanceSetup": {
     "title": "Set Up Your AI Instance",
