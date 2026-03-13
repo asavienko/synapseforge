@@ -282,7 +282,8 @@
       "managerPortal": "Portal del Gestor",
       "adminPanel": "Panel de Administración",
       "apiDocs": "Docs de API",
-      "integrations": "Integraciones"
+      "integrations": "Integraciones",
+      "referral": "Referidos"
     },
     "billing": {
       "title": "Facturación y Planes",
@@ -408,7 +409,9 @@
       "saveChanges": "Guardar cambios",
       "profileUpdateSuccess": "Perfil actualizado correctamente.",
       "profileUpdateError": "Algo salió mal."
-    }
+    },
+    "referralTitle": "Invita amigos, gana recompensas",
+    "referralDesc": "Comparte tu enlace de referido y gana comisión por cada registro que se convierte."
   },
   "common": {
     "loading": "Cargando...",

@@ -282,7 +282,8 @@
       "managerPortal": "Manager Portal",
       "adminPanel": "Admin Panel",
       "apiDocs": "API Docs",
-      "integrations": "Integrations"
+      "integrations": "Integrations",
+      "referral": "Referrals"
     },
     "billing": {
       "title": "Billing & Plans",
@@ -408,7 +409,9 @@
       "saveChanges": "Save changes",
       "profileUpdateSuccess": "Profile updated successfully.",
       "profileUpdateError": "Something went wrong."
-    }
+    },
+    "referralTitle": "Invite friends, earn rewards",
+    "referralDesc": "Share your referral link and earn commission on every signup that converts."
   },
   "common": {
     "loading": "Loading...",

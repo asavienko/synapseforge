@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { Bot, Zap, User, ArrowRight, Activity, MessageCircle, MessageSquare, CheckCircle2, Circle, Heart } from "lucide-react";
+import { Bot, Zap, User, ArrowRight, Activity, MessageCircle, MessageSquare, CheckCircle2, Circle, Heart, Gift } from "lucide-react";
 import { PLANS, STATUS_COLORS, formatDate } from "@/lib/utils";
 import { DashboardUpgrade } from "@/components/DashboardUpgrade";
 import { CalBookingButton } from "@/components/CalBookingButton";
@@ -326,6 +326,18 @@ export default async function DashboardPage() {
             </div>
           )}
         </div>
+
+        {/* Referral CTA */}
+        <Link href="/dashboard/referral" className="glow-border rounded-2xl p-5 bg-white/[0.02] flex items-center gap-4 hover:bg-white/[0.04] transition-colors group">
+          <div className="w-10 h-10 rounded-xl bg-violet-600/20 border border-violet-500/20 flex items-center justify-center shrink-0">
+            <Gift className="w-5 h-5 text-violet-400" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-sm font-semibold text-white">{t("referralTitle")}</div>
+            <div className="text-xs text-zinc-500 mt-0.5">{t("referralDesc")}</div>
+          </div>
+          <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-violet-400 transition-colors shrink-0" />
+        </Link>
 
         <div className="glow-border rounded-2xl bg-white/[0.02]">
           <div className="p-5 border-b border-white/5">

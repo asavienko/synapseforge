@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
-import { Zap, LayoutDashboard, Bot, Settings, LogOut, Menu, X, MessageCircle, CreditCard, Shield, Users, BookOpen } from "lucide-react";
+import { Zap, LayoutDashboard, Bot, Settings, LogOut, Menu, X, MessageCircle, CreditCard, Shield, Users, BookOpen, Gift } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
@@ -81,6 +81,7 @@ function SidebarContent({ userName, userEmail, unreadCount, isAdmin, isManager, 
         <NavItem href="/dashboard/messages" icon={MessageCircle} label={t("messages")} badge={unreadCount} onClick={onClose} />
         <NavItem href="/dashboard/billing" icon={CreditCard} label={t("billing")} onClick={onClose} />
         <NavItem href="/dashboard/integrations" icon={Zap} label={t("integrations")} onClick={onClose} />
+        <NavItem href="/dashboard/referral" icon={Gift} label={t("referral")} onClick={onClose} />
         <NavItem href="/dashboard/settings" icon={Settings} label={t("settings")} onClick={onClose} />
         <ExternalNavItem href="/docs" icon={BookOpen} label={t("apiDocs")} />
         {isManager && (
