@@ -58,6 +58,30 @@ describe("29 · Sandbox Mode — free-to-paid funnel", () => {
       expect(inst, "Cypress Agent must exist — run: npx tsx cypress/support/seed.ts").to.exist;
       instanceId = inst!.id;
 
+      // Clear any LLM credentials left by previous spec runs (e.g. spec 16 or a failed spec 29).
+      // If hasLLMCreds=true, the sandbox banner is hidden regardless of sandboxMode.
+      cy.request({
+        method: "DELETE",
+        url: `/api/instances/${inst!.id}/credentials`,
+        body: { key: "openai_api_key" },
+        headers: { "Content-Type": "application/json" },
+        failOnStatusCode: false,
+      });
+      cy.request({
+        method: "DELETE",
+        url: `/api/instances/${inst!.id}/credentials`,
+        body: { key: "anthropic_api_key" },
+        headers: { "Content-Type": "application/json" },
+        failOnStatusCode: false,
+      });
+      cy.request({
+        method: "DELETE",
+        url: `/api/instances/${inst!.id}/credentials`,
+        body: { key: "openrouter_api_key" },
+        headers: { "Content-Type": "application/json" },
+        failOnStatusCode: false,
+      });
+
       // Ensure clean sandbox state (seed already does this, but be safe)
       cy.task("setSandboxState", { instanceId: inst!.id, sandboxMode: true, sandboxUsed: 0 });
     });

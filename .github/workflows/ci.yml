@@ -36,6 +36,7 @@ jobs:
       STRIPE_ENTERPRISE_PRICE_ID: ${{ secrets.STRIPE_ENTERPRISE_PRICE_ID }}
       INTERNAL_API_KEY:         test-internal-key
       ENCRYPTION_KEY:           test-encryption-key-32-chars-ok!
+      SYNAPSEFORGE_OPENAI_KEY:  ${{ secrets.SYNAPSEFORGE_OPENAI_KEY }}
 
     steps:
       - name: Checkout
@@ -74,13 +75,15 @@ jobs:
           browser: chrome
           record: false
         env:
-          DATABASE_URL:       ${{ secrets.DATABASE_URL }}
-          DIRECT_URL:         ${{ secrets.DIRECT_URL }}
-          AUTH_SECRET:        ${{ secrets.AUTH_SECRET }}
-          NEXTAUTH_URL:       http://localhost:3000
-          AUTH_TRUST_HOST:    true
-          DISABLE_RATE_LIMIT: true
-          INTERNAL_API_KEY: test-internal-key
+          DATABASE_URL:            ${{ secrets.DATABASE_URL }}
+          DIRECT_URL:              ${{ secrets.DIRECT_URL }}
+          AUTH_SECRET:             ${{ secrets.AUTH_SECRET }}
+          NEXTAUTH_URL:            http://localhost:3000
+          AUTH_TRUST_HOST:         true
+          DISABLE_RATE_LIMIT:      true
+          INTERNAL_API_KEY:        test-internal-key
+          ENCRYPTION_KEY:          test-encryption-key-32-chars-ok!
+          SYNAPSEFORGE_OPENAI_KEY: ${{ secrets.SYNAPSEFORGE_OPENAI_KEY }}
 
       - name: Upload screenshots
         uses: actions/upload-artifact@v4

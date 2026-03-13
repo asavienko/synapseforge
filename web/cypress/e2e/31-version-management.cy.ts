@@ -232,10 +232,12 @@ it("command queue shows commands with status colors", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Test 5 — Admin versions API returns 401 for non-admin
+// Test 5 — Admin versions API returns 401 for unauthenticated request
 // ---------------------------------------------------------------------------
-it("GET /api/admin/versions returns 401 for non-admin", () => {
-  // The cypress seed user is not in ADMIN_EMAILS, so the endpoint must deny
+it("GET /api/admin/versions returns 401 for unauthenticated request", () => {
+  // Clear cookies so there is no session at all — an unauthenticated request
+  // always returns 401, regardless of what ADMIN_EMAILS contains in CI.
+  cy.clearCookies();
   cy.request({
     url: "/api/admin/versions",
     failOnStatusCode: false,

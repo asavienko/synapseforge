@@ -33,6 +33,22 @@ describe("27 · Managed Instance Journey — happy path", () => {
       headers: { "Content-Type": "application/json" },
       failOnStatusCode: false,
     });
+
+    // Pre-seed a Journey Agent via API so journeyInstanceId is always set
+    // even if the wizard UI (test 01) fails in CI (production build differences).
+    cy.request({
+      method: "POST",
+      url: "/api/instances",
+      body: { name: "Journey Agent", type: "assistant" },
+      headers: { "Content-Type": "application/json" },
+      failOnStatusCode: false,
+    }).then((res) => {
+      cy.log("Pre-seeded Journey Agent response:", JSON.stringify(res.body));
+      expect(res.status, `Pre-seed POST /api/instances failed with ${res.status}: ${JSON.stringify(res.body)}`).to.be.oneOf([200, 201]);
+      journeyInstanceId = res.body.id;
+      expect(journeyInstanceId, "Pre-seeded journeyInstanceId must be set").to.be.a("string");
+      cy.log(`Pre-seeded journeyInstanceId: ${journeyInstanceId}`);
+    });
   });
 
   // ── Cleanup ────────────────────────────────────────────────────────────────
