@@ -6,12 +6,20 @@ import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { EmailVerifyBanner } from "@/components/EmailVerifyBanner";
 import { VerifiedSuccessBanner } from "@/components/VerifiedSuccessBanner";
 
-export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default async function DashboardLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
   const session = await auth();
-  if (!session?.user) redirect("/sign-in");
+  if (!session?.user) redirect(`/${locale}/sign-in`);
 
   const user = await prisma.user.findUnique({ where: { id: session.user.id! } });
-  if (user && !user.onboardingDone) redirect("/onboarding");
+  if (user && !user.onboardingDone) redirect(`/${locale}/onboarding`);
+  if (user && !user.emailVerified) redirect(`/${locale}/verify-email`);
 
   const needsVerification = user && !user.emailVerified;
 
