@@ -23,6 +23,10 @@ export async function sendEmail({
 }
 
 async function send(to: string, subject: string, html: string): Promise<boolean> {
+  if (process.env.DISABLE_EMAILS === "true") {
+    console.log(`[Email DISABLED] To: ${to} | Subject: ${subject}`);
+    return true; // pretend success so callers don't retry
+  }
   if (!resend) {
     console.log(`[Email - no RESEND_API_KEY] To: ${to} | Subject: ${subject}`);
     return false;
