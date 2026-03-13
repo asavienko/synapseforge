@@ -793,7 +793,15 @@
         "copyNumber": "Copiar número",
         "testItYourself": "Pruébalo tú mismo",
         "reconfigure": "Reconfigurar",
-        "backToFix": "← Corregir credenciales"
+        "backToFix": "← Corregir credenciales",
+        "wizardTitle": "Conectar WhatsApp",
+        "nextBtn": "Siguiente →",
+        "saveVerifyBtn": "Guardar y verificar",
+        "skipTest": "Omitir — Lo probaré más tarde",
+        "editCreds": "Editar credenciales",
+        "testNumberPlaceholder": "Tu número de teléfono (ej. +34612345678)",
+        "testSentLive": "¡Mensaje de prueba enviado! Tu IA está activa en WhatsApp.",
+        "saveFailed": "Error al guardar las credenciales"
       },
       "widget": {
         "title": "Widget Web",

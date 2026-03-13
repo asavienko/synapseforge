@@ -793,7 +793,15 @@
         "copyNumber": "Copy number",
         "testItYourself": "Test it yourself",
         "reconfigure": "Reconfigure",
-        "backToFix": "← Fix credentials"
+        "backToFix": "← Fix credentials",
+        "wizardTitle": "Connect WhatsApp",
+        "nextBtn": "Next →",
+        "saveVerifyBtn": "Save & Verify",
+        "skipTest": "Skip — I’ll test later",
+        "editCreds": "Edit credentials",
+        "testNumberPlaceholder": "Your phone number (e.g. +34612345678)",
+        "testSentLive": "Test message sent! Your AI is live on WhatsApp.",
+        "saveFailed": "Failed to save credentials"
       },
       "widget": {
         "title": "Web Widget",
