@@ -67,20 +67,22 @@ describe("27 · Managed Instance Journey — happy path", () => {
     cy.intercept("POST", "/api/instances").as("createInstance");
 
     cy.visit("/en/dashboard/instances");
-    cy.contains("New Instance").click();
+    cy.contains("button", "New Instance").click();
     cy.contains("Set Up Your AI Instance").should("be.visible");
 
-    // Step 1 — select a template and set a name
-    cy.contains(/customer support bot|custom agent/i).first().click();
-    cy.get("input[type='text']").first().clear().type("Journey Agent");
+    // Step 1 — select a template, wait for name field to appear, type name
+    cy.contains("button", "Customer Support Bot").click();
+    // Name input only renders after template is selected
+    cy.get("input[placeholder='My Support Bot']", { timeout: 5000 }).clear().type("Journey Agent");
 
-    cy.contains("button", /next/i).click();
+    // Next must be enabled now
+    cy.contains("button", "Next").should("not.be.disabled").click();
 
-    // Step 2 — AI provider + key
-    cy.contains(/openai/i).first().click();
-    cy.get("input[placeholder*='sk-']").first().type("sk-test-fake-key-for-cy");
+    // Step 2 — AI provider (OpenAI is default) + key
+    cy.contains("button", "openai").click();
+    cy.get("input[placeholder='sk-...']").type("sk-test-fake-key-for-cy");
 
-    cy.contains("button", /next/i).click();
+    cy.contains("button", "Next").should("not.be.disabled").click();
 
     // Step 3 — Channels (skip — no tokens needed)
     cy.contains("button", "Next").click();
