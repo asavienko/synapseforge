@@ -117,6 +117,8 @@ describe("15 · Infrastructure — Health Checks & Backups", () => {
           cy.get("a[href*='/dashboard/instances/']", { timeout: 10000 }).first().click();
         }
       });
+      // Wait for the instance page to fully load (client component fetches data on mount)
+      cy.contains("Cypress Agent", { timeout: 20000 }).should("be.visible");
     });
 
     it("Infrastructure tab is visible", () => {
