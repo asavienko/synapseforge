@@ -288,6 +288,10 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
   // Provision & sync state
   const [provisioningId, setProvisioningId] = useState<string | null>(null);
   const [provisionResult, setProvisionResult] = useState<{ instanceId: string; message: string; ok: boolean } | null>(null);
+  const [pendingProvisionUserId, setPendingProvisionUserId] = useState<string | null>(null);
+  const [pendingProvisionInstanceId, setPendingProvisionInstanceId] = useState<string | null>(null);
+  const [pendingDisconnectInstanceId, setPendingDisconnectInstanceId] = useState<string | null>(null);
+  const [pendingDeleteManagerId, setPendingDeleteManagerId] = useState<string | null>(null);
   const [provisioningUserId, setProvisioningUserId] = useState<string | null>(null);
   const [syncingId, setSyncingId] = useState<string | null>(null);
   const [syncResult, setSyncResult] = useState<SyncResult | null>(null);
@@ -381,7 +385,11 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
   }
 
   async function deleteManager(id: string) {
-    if (!confirm(t("deleteManagerConfirm"))) return;
+    setPendingDeleteManagerId(id);
+  }
+
+  async function doDeleteManager(id: string) {
+    setPendingDeleteManagerId(null);
     await fetch("/api/admin/managers", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
     setManagers((prev) => prev.filter((m) => m.id !== id));
     setUsers((prev) => prev.map((u) => u.managerId === id ? { ...u, managerId: null, managerName: null } : u));
@@ -432,7 +440,11 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
   }
 
   async function provisionVps(instanceId: string) {
-    if (!confirm("This will create a Hetzner VPS (~€5/mo). Proceed?")) return;
+    setPendingProvisionInstanceId(instanceId);
+  }
+
+  async function doProvisionVps(instanceId: string) {
+    setPendingProvisionInstanceId(null);
     setProvisioningId(instanceId);
     setProvisionResult(null);
     const res = await fetch(`/api/admin/instances/${instanceId}/provision`, { method: "POST" });
@@ -459,7 +471,14 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
       setProvisionResult({ instanceId: "", message: "All instances for this user are already provisioned or in progress.", ok: false });
       return;
     }
-    if (!window.confirm(`Provision ${unprovisioned.length} instance${unprovisioned.length !== 1 ? "s" : ""} for ${user.name ?? user.email}? (~€5/mo per instance)`)) return;
+    setPendingProvisionUserId(userId);
+  }
+
+  async function doProvisionAllForUser(userId: string) {
+    setPendingProvisionUserId(null);
+    const user = users.find((u) => u.id === userId);
+    if (!user) return;
+    const unprovisioned = user.instances.filter((i) => !i.hasGateway && !i.provisionStatus);
     setProvisioningUserId(userId);
     const results: string[] = [];
     for (const inst of unprovisioned) {
@@ -530,7 +549,11 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
   }
 
   async function disconnectGateway(instanceId: string) {
-    if (!confirm(t("disconnectVpsConfirm"))) return;
+    setPendingDisconnectInstanceId(instanceId);
+  }
+
+  async function doDisconnectGateway(instanceId: string) {
+    setPendingDisconnectInstanceId(null);
     const res = await fetch(`/api/admin/instances/${instanceId}/gateway`, { method: "DELETE" });
     if (res.ok) {
       setUsers((prev) => prev.map((u) => ({
@@ -1253,6 +1276,69 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
           </div>
         </div>
       )}
+
+      {/* ── Confirm: Provision VPS ── */}
+      {pendingProvisionInstanceId && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#111118] border border-white/10 rounded-2xl p-6 w-full max-w-sm">
+            <h3 className="text-white font-semibold mb-2">Provision VPS?</h3>
+            <p className="text-zinc-400 text-sm mb-5">This will create a Hetzner VPS (~€5/mo). The server will start billing immediately.</p>
+            <div className="flex gap-3 justify-end">
+              <button onClick={() => setPendingProvisionInstanceId(null)} className="px-4 py-2 text-sm text-zinc-400 hover:text-white transition-colors">Cancel</button>
+              <button onClick={() => doProvisionVps(pendingProvisionInstanceId)} className="px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white text-sm font-semibold rounded-xl transition-colors">Confirm</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Confirm: Provision All for User ── */}
+      {pendingProvisionUserId && (() => {
+        const u = users.find((x) => x.id === pendingProvisionUserId);
+        const count = u?.instances.filter((i) => !i.hasGateway && !i.provisionStatus).length ?? 0;
+        return (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-[#111118] border border-white/10 rounded-2xl p-6 w-full max-w-sm">
+              <h3 className="text-white font-semibold mb-2">Provision {count} instance{count !== 1 ? "s" : ""}?</h3>
+              <p className="text-zinc-400 text-sm mb-5">For {u?.name ?? u?.email}. Each server costs ~€5/mo and will start billing immediately.</p>
+              <div className="flex gap-3 justify-end">
+                <button onClick={() => setPendingProvisionUserId(null)} className="px-4 py-2 text-sm text-zinc-400 hover:text-white transition-colors">Cancel</button>
+                <button onClick={() => doProvisionAllForUser(pendingProvisionUserId)} className="px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white text-sm font-semibold rounded-xl transition-colors">Confirm</button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* ── Confirm: Disconnect VPS ── */}
+      {pendingDisconnectInstanceId && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#111118] border border-white/10 rounded-2xl p-6 w-full max-w-sm">
+            <h3 className="text-white font-semibold mb-2">Disconnect VPS?</h3>
+            <p className="text-zinc-400 text-sm mb-5">This will remove the gateway connection. The VPS will keep running but the agent will go offline.</p>
+            <div className="flex gap-3 justify-end">
+              <button onClick={() => setPendingDisconnectInstanceId(null)} className="px-4 py-2 text-sm text-zinc-400 hover:text-white transition-colors">Cancel</button>
+              <button onClick={() => doDisconnectGateway(pendingDisconnectInstanceId)} className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-sm font-semibold rounded-xl transition-colors">Disconnect</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Confirm: Delete Manager ── */}
+      {pendingDeleteManagerId && (() => {
+        const m = managers.find((x) => x.id === pendingDeleteManagerId);
+        return (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-[#111118] border border-white/10 rounded-2xl p-6 w-full max-w-sm">
+              <h3 className="text-white font-semibold mb-2">Delete manager?</h3>
+              <p className="text-zinc-400 text-sm mb-5">{m?.name} will be removed. Their assigned users will lose their manager connection.</p>
+              <div className="flex gap-3 justify-end">
+                <button onClick={() => setPendingDeleteManagerId(null)} className="px-4 py-2 text-sm text-zinc-400 hover:text-white transition-colors">Cancel</button>
+                <button onClick={() => doDeleteManager(pendingDeleteManagerId)} className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-sm font-semibold rounded-xl transition-colors">Delete</button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Create Manager Modal */}
       {showCreateManager && (
