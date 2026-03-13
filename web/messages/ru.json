@@ -897,6 +897,13 @@
     "region": "Регион сервера",
     "tier": "Уровень сервера",
     "confirmProvision": "Подтвердить и развернуть",
-    "cancelProvision": "Отмена"
+    "cancelProvision": "Отмена",
+    "role": "Роль",
+    "noMessages": "Сообщений пока нет",
+    "closePanel": "Закрыть",
+    "selectRegion": "Выбрать регион",
+    "selectTier": "Выбрать уровень",
+    "mostPopular": "Самый популярный",
+    "perMonth": "/мес"
   }
 }

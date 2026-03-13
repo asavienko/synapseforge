@@ -802,7 +802,14 @@
     "region": "Server Region",
     "tier": "Server Tier",
     "confirmProvision": "Confirm & Provision",
-    "cancelProvision": "Cancel"
+    "cancelProvision": "Cancel",
+    "role": "Role",
+    "noMessages": "No messages yet",
+    "closePanel": "Close",
+    "selectRegion": "Select Region",
+    "selectTier": "Select Tier",
+    "mostPopular": "Most popular",
+    "perMonth": "/mo"
   },
   "instanceSetup": {
     "title": "Set Up Your AI Instance",

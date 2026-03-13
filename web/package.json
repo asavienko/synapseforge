@@ -24,6 +24,7 @@
     "@calcom/embed-react": "^1.5.3",
     "@neondatabase/serverless": "^1.0.2",
     "@prisma/client": "^5.22.0",
+    "@scalar/nextjs-api-reference": "^0.10.3",
     "@stripe/stripe-js": "^8.9.0",
     "@tailwindcss/typography": "^0.5.19",
     "@types/zxcvbn": "^4.4.5",

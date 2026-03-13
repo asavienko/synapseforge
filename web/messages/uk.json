@@ -897,6 +897,13 @@
     "region": "Регіон сервера",
     "tier": "Рівень сервера",
     "confirmProvision": "Підтвердити та розгорнути",
-    "cancelProvision": "Скасувати"
+    "cancelProvision": "Скасувати",
+    "role": "Роль",
+    "noMessages": "Повідомлень поки немає",
+    "closePanel": "Закрити",
+    "selectRegion": "Вибрати регіон",
+    "selectTier": "Вибрати рівень",
+    "mostPopular": "Найпопулярніший",
+    "perMonth": "/міс"
   }
 }

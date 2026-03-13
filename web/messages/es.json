@@ -897,6 +897,13 @@
     "region": "Región del servidor",
     "tier": "Nivel del servidor",
     "confirmProvision": "Confirmar y aprovisionar",
-    "cancelProvision": "Cancelar"
+    "cancelProvision": "Cancelar",
+    "role": "Rol",
+    "noMessages": "Aún no hay mensajes",
+    "closePanel": "Cerrar",
+    "selectRegion": "Seleccionar región",
+    "selectTier": "Seleccionar nivel",
+    "mostPopular": "Más popular",
+    "perMonth": "/mes"
   }
 }
