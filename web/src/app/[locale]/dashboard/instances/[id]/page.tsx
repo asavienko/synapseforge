@@ -1460,7 +1460,7 @@ export default function InstanceDetailPage() {
   const typeLabel = INSTANCE_TYPES.find((t) => t.value === instance.type)?.label ?? instance.type;
 
   return (
-    <div className="p-6 md:p-8 max-w-4xl">
+    <div className="p-4 md:p-8 max-w-4xl">
       {/* Toast */}
       {toast && (
         <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-xl text-sm font-medium shadow-2xl border ${
@@ -1489,13 +1489,13 @@ export default function InstanceDetailPage() {
         </div>
         <div className="flex items-center gap-2 shrink-0">
           <button onClick={toggleStatus} disabled={saving}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors disabled:opacity-50 ${
+            className={`flex items-center gap-2 px-3 md:px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors disabled:opacity-50 ${
               instance.status === "running" ? "bg-zinc-700 hover:bg-zinc-600 text-white" : "bg-emerald-600 hover:bg-emerald-500 text-white"
             }`}>
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : instance.status === "running" ? <Square className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-            {instance.status === "running" ? t("stop") : t("start")}
+            <span className="hidden md:inline">{instance.status === "running" ? t("stop") : t("start")}</span>
           </button>
-          <button onClick={deleteInstance} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-red-600/10 hover:bg-red-600/20 text-red-400 border border-red-500/20 transition-colors">
+          <button onClick={deleteInstance} className="flex items-center gap-2 px-3 md:px-4 py-2.5 rounded-xl text-sm font-semibold bg-red-600/10 hover:bg-red-600/20 text-red-400 border border-red-500/20 transition-colors">
             <Trash2 className="w-4 h-4" />
           </button>
         </div>
@@ -1551,8 +1551,10 @@ export default function InstanceDetailPage() {
             );
           })}
         </div>
+        {/* Left fade hint */}
+        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-[#0a0a0f] to-transparent md:hidden" />
         {/* Right fade hint to indicate more tabs are scrollable */}
-        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#0a0a0f] to-transparent" />
+        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#0a0a0f] to-transparent md:hidden" />
       </div>
 
       {/* ── Overview ── */}

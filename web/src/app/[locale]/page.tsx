@@ -1,5 +1,6 @@
 import { Link } from "@/i18n/navigation";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
+import { MobileNav } from "@/components/MobileNav";
 import {
   Zap, Bot, ArrowRight, Check, Shield, RefreshCw,
   MessageSquare, Code2, Activity, Users, Key,
@@ -14,7 +15,7 @@ export default async function LandingPage() {
 
       {/* ── Nav ──────────────────────────────────────────────────────────── */}
       <nav className="border-b border-white/5 backdrop-blur-sm sticky top-0 z-50 bg-[#0a0a0f]/80">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between relative">
           <div className="flex items-center gap-2">
             <Zap className="w-6 h-6 text-violet-400" />
             <span className="font-bold text-lg tracking-tight">SynapseForge</span>
@@ -25,17 +26,24 @@ export default async function LandingPage() {
             <a href="#about" className="hover:text-white transition-colors">{t("nav.about")}</a>
             <Link href="/contact" className="hover:text-white transition-colors">{t("nav.contact")}</Link>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
             <LocaleSwitcher />
-            <Link href="/sign-in" className="text-sm text-zinc-400 hover:text-white transition-colors px-4 py-2">
+            <Link href="/sign-in" className="hidden md:block text-sm text-zinc-400 hover:text-white transition-colors px-4 py-2">
               {t("nav.signIn")}
             </Link>
             <Link
               href="/sign-up"
-              className="text-sm bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2 rounded-lg font-medium"
+              className="text-sm bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2 rounded-lg font-medium whitespace-nowrap"
             >
               {t("nav.getStarted")}
             </Link>
+            <MobileNav labels={{
+              services: t("nav.services"),
+              pricing: t("nav.pricing"),
+              about: t("nav.about"),
+              contact: t("nav.contact"),
+              signIn: t("nav.signIn"),
+            }} />
           </div>
         </div>
       </nav>
