@@ -853,6 +853,13 @@
       "sandboxExhaustedDesc": "Agrega tu clave API para seguir chateando",
       "sandboxOutOfCredits": "Has usado los 20 mensajes gratuitos del sandbox. Por favor agrega tu clave API en la pestaña Credenciales para continuar.",
       "addApiKey": "Agregar clave API →",
+      "bookCall": "Reservar llamada de configuración",
+      "upgradeHeading": "Has usado tus 20 mensajes gratuitos",
+      "upgradeSubtext": "¿Listo para ir más allá? Reserva una llamada de configuración y te ayudaremos a usar tus propias claves API.",
+      "upgradeEmailPlaceholder": "tu@email.com",
+      "upgradeNotifyMe": "Notificarme",
+      "upgradeNotified": "✓ ¡Nos pondremos en contacto!",
+      "upgradeAddKey": "Agregar mi clave API",
       "copyResponse": "Copiar respuesta"
     },
     "knowledge": {

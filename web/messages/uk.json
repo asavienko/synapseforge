@@ -853,6 +853,13 @@
       "sandboxExhaustedDesc": "Додайте ваш API-ключ, щоб продовжити чат",
       "sandboxOutOfCredits": "Ви використали всі 20 безкоштовних повідомлень. Будь ласка, додайте ваш API-ключ на вкладці Облікові дані, щоб продовжити.",
       "addApiKey": "Додати API-ключ →",
+      "bookCall": "Записатися на дзвінок",
+      "upgradeHeading": "Ви використали 20 безкоштовних повідомлень",
+      "upgradeSubtext": "Готові йти далі? Запишіться на дзвінок — ми налаштуємо агента під ваші API-ключі.",
+      "upgradeEmailPlaceholder": "ваш@email.com",
+      "upgradeNotifyMe": "Сповістити мене",
+      "upgradeNotified": "✓ Незабаром зв'яжемося з вами!",
+      "upgradeAddKey": "Додати мій API-ключ",
       "copyResponse": "Копіювати відповідь"
     },
     "knowledge": {

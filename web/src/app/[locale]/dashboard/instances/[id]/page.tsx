@@ -17,6 +17,7 @@ import { AGENT_TEMPLATES } from "@/lib/agent-templates";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { IntegrationCard } from "@/components/IntegrationCard";
+import { SandboxUpgradeCard } from "@/components/SandboxUpgradeCard";
 import { SANDBOX_LIMIT, getSandboxRemaining } from "@/lib/sandbox";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -1597,10 +1598,10 @@ export default function InstanceDetailPage() {
         let errData: { error?: string; missingCredential?: boolean } = {};
         try { errData = await res.json(); } catch { /* ignore */ }
         if (res.status === 402 && errData.error === "sandbox_exhausted") {
-          // Show inline out-of-credits message
+          // Show upgrade card in the message list
           setChatMessages((prev) => [
             ...prev,
-            { role: "assistant", content: t("chat.sandboxOutOfCredits"), isError: true },
+            { role: "assistant", content: "__SANDBOX_EXHAUSTED__", isError: false },
           ]);
           // Refresh instance so the sandbox banner updates
           loadInstance();
@@ -2238,12 +2239,22 @@ export default function InstanceDetailPage() {
                   </p>
                 </div>
                 {sandboxRemaining === 0 && (
-                  <button
-                    onClick={() => { setTab("Credentials"); loadCredentials(); }}
-                    className="text-xs px-3 py-1.5 bg-violet-600 text-white rounded-lg hover:bg-violet-500 transition-colors shrink-0 ml-3"
-                  >
-                    {t("chat.addApiKey")}
-                  </button>
+                  <div className="flex gap-2 shrink-0 ml-3">
+                    <a
+                      href="https://cal.com/synapseforge/setup"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs px-3 py-1.5 bg-violet-600 text-white rounded-lg hover:bg-violet-500 transition-colors"
+                    >
+                      {t("chat.bookCall")}
+                    </a>
+                    <button
+                      onClick={() => { setTab("Credentials"); loadCredentials(); }}
+                      className="text-xs px-3 py-1.5 bg-zinc-700 text-zinc-300 border border-white/10 rounded-lg hover:bg-zinc-600 transition-colors"
+                    >
+                      {t("chat.addApiKey")}
+                    </button>
+                  </div>
                 )}
               </div>
             );
@@ -2359,7 +2370,16 @@ export default function InstanceDetailPage() {
                     <p className="text-zinc-600 text-sm">{t("chat.emptyState")}</p>
                   </div>
                 )}
-                {chatMessages.map((msg, i) => (
+                {chatMessages.map((msg, i) => {
+                  if (msg.content === "__SANDBOX_EXHAUSTED__") {
+                    return (
+                      <SandboxUpgradeCard
+                        key={i}
+                        onAddKey={() => { setTab("Credentials"); loadCredentials(); }}
+                      />
+                    );
+                  }
+                  return (
                   <div key={i} className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse justify-end" : "flex-row"}`}>
                     {msg.role === "assistant" && (
                       <div className="w-7 h-7 rounded-full bg-zinc-700 flex items-center justify-center shrink-0 mt-0.5">
@@ -2408,7 +2428,8 @@ export default function InstanceDetailPage() {
                       )}
                     </div>
                   </div>
-                ))}
+                  );
+                })}
                 <div ref={chatEndRef} />
               </div>
 

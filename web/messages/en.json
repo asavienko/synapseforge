@@ -853,6 +853,13 @@
       "sandboxExhaustedDesc": "Add your API key to continue chatting",
       "sandboxOutOfCredits": "You've used all 20 free sandbox messages. Please add your API key in the Credentials tab to continue.",
       "addApiKey": "Add API Key →",
+      "bookCall": "Book a Setup Call",
+      "upgradeHeading": "You've used your 20 free messages",
+      "upgradeSubtext": "Ready to go further? Book a setup call and we'll get you running on your own API keys.",
+      "upgradeEmailPlaceholder": "your@email.com",
+      "upgradeNotifyMe": "Notify me",
+      "upgradeNotified": "✓ We'll be in touch!",
+      "upgradeAddKey": "Add my API key",
       "copyResponse": "Copy response"
     },
     "knowledge": {

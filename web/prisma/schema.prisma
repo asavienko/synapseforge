@@ -378,3 +378,10 @@ model Webhook {
   instance   AIInstance? @relation(fields: [instanceId], references: [id], onDelete: SetNull)
 }
 
+model WaitlistEntry {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  source    String?
+  createdAt DateTime @default(now())
+}
+
