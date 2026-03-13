@@ -886,6 +886,9 @@ export default function InstanceDetailPage() {
   const [gatewayStatus, setGatewayStatus] = useState<GatewayStatus | null>(null);
   const [checkingGateway, setCheckingGateway] = useState(false);
 
+  // Version info (changelog)
+  const [currentVersionInfo, setCurrentVersionInfo] = useState<{ changelog?: string | null; stable?: boolean } | null>(null);
+
   // Test chat (legacy — infrastructure tab)
   const [chatMessage, setChatMessage] = useState("");
   const [chatSending, setChatSending] = useState(false);
@@ -1193,6 +1196,15 @@ export default function InstanceDetailPage() {
     if (tab === "Chat") loadChatHistory();
     if (tab === "Knowledge") loadKnowledge();
   }, [tab]);
+
+  useEffect(() => {
+    if (instance?.currentVersion) {
+      fetch(`/api/versions/${instance.currentVersion}`)
+        .then((r) => r.json())
+        .then((d) => setCurrentVersionInfo(d.version ?? null))
+        .catch(() => {});
+    }
+  }, [instance?.currentVersion]);
 
   async function toggleStatus() {
     if (!instance) return;

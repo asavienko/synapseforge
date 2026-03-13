@@ -820,7 +820,13 @@
     "versionManagement": "Version Management",
     "noVersions": "No versions published yet",
     "instanceCoverage": "Instance Coverage",
-    "bulkUpdate": "Bulk Update"
+    "bulkUpdate": "Bulk Update",
+    "hetznerSnapshots": "Cloud Snapshots",
+    "takeHetznerSnapshot": "Take Cloud Snapshot",
+    "hetznerSnapshotTaken": "Cloud snapshot triggered",
+    "hetznerRestore": "Restore from Cloud Snapshot",
+    "hetznerRestoreConfirm": "This will rebuild the server from the snapshot. All current data will be lost. Continue?",
+    "noHetznerSnapshots": "No cloud snapshots yet"
   },
   "referral": {
     "pageTitle": "Referral Program",

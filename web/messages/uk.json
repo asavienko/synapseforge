@@ -820,7 +820,13 @@
     "versionManagement": "Керування версіями",
     "noVersions": "Версії ще не опубліковані",
     "instanceCoverage": "Охоплення інстансів",
-    "bulkUpdate": "Масове оновлення"
+    "bulkUpdate": "Масове оновлення",
+    "hetznerSnapshots": "Хмарні знімки",
+    "takeHetznerSnapshot": "Зробити хмарний знімок",
+    "hetznerSnapshotTaken": "Хмарний знімок запущено",
+    "hetznerRestore": "Відновити з хмарного знімка",
+    "hetznerRestoreConfirm": "Це пересоздасть сервер зі знімка. Усі поточні дані будуть втрачені. Продовжити?",
+    "noHetznerSnapshots": "Хмарних знімків поки немає"
   },
   "instanceSetup": {
     "title": "Налаштування екземпляра ШІ",

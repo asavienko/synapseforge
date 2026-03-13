@@ -2,6 +2,7 @@
 // POST { tag, imageRef, changelog, stable } — create new version
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { queueVersionUpdate } from "@/lib/command-queue";
 import { NextRequest, NextResponse } from "next/server";
 
 function isAdmin(email?: string | null) {
@@ -41,6 +42,17 @@ export async function POST(req: NextRequest) {
       stable: stable ?? false,
     },
   });
+
+  // Auto-queue updates for all autoUpdate=true running instances when stable version is published
+  if (stable) {
+    const autoUpdateInstances = await prisma.aIInstance.findMany({
+      where: { autoUpdate: true, status: "running" },
+      select: { id: true },
+    });
+    for (const inst of autoUpdateInstances) {
+      await queueVersionUpdate(inst.id, tag, "auto-update").catch(console.error);
+    }
+  }
 
   return NextResponse.json({ version });
 }

@@ -820,7 +820,13 @@
     "versionManagement": "Gestión de Versiones",
     "noVersions": "No hay versiones publicadas aún",
     "instanceCoverage": "Cobertura de Instancias",
-    "bulkUpdate": "Actualización Masiva"
+    "bulkUpdate": "Actualización Masiva",
+    "hetznerSnapshots": "Instantáneas en la Nube",
+    "takeHetznerSnapshot": "Tomar Instantánea en la Nube",
+    "hetznerSnapshotTaken": "Instantánea en la nube iniciada",
+    "hetznerRestore": "Restaurar desde Instantánea en la Nube",
+    "hetznerRestoreConfirm": "Esto reconstruirá el servidor desde la instantánea. Se perderán todos los datos actuales. ¿Continuar?",
+    "noHetznerSnapshots": "Aún no hay instantáneas en la nube"
   },
   "instanceSetup": {
     "title": "Configura tu Instancia de IA",

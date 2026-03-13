@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Users, Bot, Activity, AlertCircle, Plus, X, Shield, ChevronDown, MessageCircle, Send, Loader2, Server, Link, Unlink, CheckCircle2, Rocket, RefreshCw, Copy, Check, Gift, DollarSign, BarChart2, TrendingUp, Tag } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Users, Bot, Activity, AlertCircle, Plus, X, Shield, ChevronDown, MessageCircle, Send, Loader2, Server, Link, Unlink, CheckCircle2, Rocket, RefreshCw, Copy, Check, Gift, DollarSign, BarChart2, TrendingUp, Tag, Camera, RotateCcw } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { STATUS_COLORS, PLANS, formatDate, formatRelativeTime } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -54,6 +54,133 @@ interface HealthSummary {
   down: number;
   unknown: number;
   issues: HealthIssue[];
+}
+
+interface HetznerSnapshot {
+  id: number;
+  description: string;
+  created: string;
+  disk_size: number;
+}
+
+function HetznerSnapshotPanel({ instanceId }: { instanceId: string }) {
+  const t = useTranslations("admin");
+  const [snapshots, setSnapshots] = useState<HetznerSnapshot[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [taking, setTaking] = useState(false);
+  const [restoringId, setRestoringId] = useState<number | null>(null);
+  const [confirmId, setConfirmId] = useState<number | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/admin/instances/${instanceId}/hetzner-snapshot`);
+      const data = (await res.json()) as { snapshots?: HetznerSnapshot[] };
+      setSnapshots(data.snapshots ?? []);
+    } finally {
+      setLoading(false);
+    }
+  }, [instanceId]);
+
+  useEffect(() => { load(); }, [load]);
+
+  async function takeSnapshot() {
+    setTaking(true);
+    setMessage(null);
+    try {
+      const res = await fetch(`/api/admin/instances/${instanceId}/hetzner-snapshot`, { method: "POST" });
+      if (res.ok) {
+        setMessage(t("hetznerSnapshotTaken"));
+        setTimeout(load, 3000);
+      } else {
+        const d = (await res.json()) as { error?: string };
+        setMessage(`Error: ${d.error ?? "unknown"}`);
+      }
+    } finally {
+      setTaking(false);
+    }
+  }
+
+  async function restore(imageId: number) {
+    setRestoringId(imageId);
+    setConfirmId(null);
+    setMessage(null);
+    try {
+      const res = await fetch(`/api/admin/instances/${instanceId}/hetzner-restore`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageId }),
+      });
+      const d = (await res.json()) as { ok?: boolean; error?: string };
+      setMessage(d.ok ? "Restore triggered. Server is rebuilding." : `Error: ${d.error ?? "unknown"}`);
+    } finally {
+      setRestoringId(null);
+    }
+  }
+
+  return (
+    <div className="mt-2 px-3 py-3 bg-black/20 rounded-xl border border-white/5 text-xs">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-zinc-400 font-medium flex items-center gap-1.5">
+          <Camera className="w-3 h-3" /> {t("hetznerSnapshots")}
+        </span>
+        <div className="flex items-center gap-1.5">
+          {loading && <Loader2 className="w-3 h-3 animate-spin text-zinc-600" />}
+          <button
+            onClick={takeSnapshot}
+            disabled={taking}
+            className="flex items-center gap-1 text-violet-400 hover:text-violet-300 bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/20 px-2 py-0.5 rounded transition-colors disabled:opacity-40"
+          >
+            {taking ? <Loader2 className="w-3 h-3 animate-spin" /> : <Camera className="w-3 h-3" />}
+            {t("takeHetznerSnapshot")}
+          </button>
+        </div>
+      </div>
+      {message && (
+        <p className={`mb-2 text-xs ${message.startsWith("Error") ? "text-red-400" : "text-emerald-400"}`}>
+          {message}
+        </p>
+      )}
+      {snapshots.length === 0 && !loading ? (
+        <p className="text-zinc-600">{t("noHetznerSnapshots")}</p>
+      ) : (
+        <div className="space-y-1">
+          {snapshots.map((snap) => (
+            <div key={snap.id} className="flex items-center justify-between gap-2 py-1 border-b border-white/5 last:border-0">
+              <div className="flex-1 min-w-0">
+                <p className="text-zinc-300 truncate">{snap.description}</p>
+                <p className="text-zinc-600">
+                  {new Date(snap.created).toLocaleString()} · {snap.disk_size} GB
+                </p>
+              </div>
+              {confirmId === snap.id ? (
+                <div className="flex items-center gap-1 shrink-0">
+                  <span className="text-amber-400 text-[11px]">Sure?</span>
+                  <button
+                    onClick={() => restore(snap.id)}
+                    disabled={restoringId !== null}
+                    className="text-red-400 hover:text-red-300 bg-red-500/10 px-2 py-0.5 rounded border border-red-500/20 transition-colors"
+                  >
+                    {restoringId === snap.id ? <Loader2 className="w-3 h-3 animate-spin" /> : "Yes"}
+                  </button>
+                  <button onClick={() => setConfirmId(null)} className="text-zinc-500 hover:text-zinc-300 transition-colors px-1">✕</button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setConfirmId(snap.id)}
+                  className="flex items-center gap-1 text-amber-400 hover:text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 px-2 py-0.5 rounded transition-colors shrink-0"
+                  title={t("hetznerRestoreConfirm")}
+                >
+                  <RotateCcw className="w-3 h-3" /> {t("hetznerRestore")}
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 function HealthDot({ healthStatus }: { healthStatus?: string | null }) {
@@ -165,6 +292,9 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
   const [syncingId, setSyncingId] = useState<string | null>(null);
   const [syncResult, setSyncResult] = useState<SyncResult | null>(null);
   const [copiedSync, setCopiedSync] = useState(false);
+
+  // Hetzner snapshots panel visibility
+  const [snapshotPanelId, setSnapshotPanelId] = useState<string | null>(null);
 
   // Tab navigation
   const [activeTab, setActiveTab] = useState<"overview" | "referrals" | "analytics">("overview");
@@ -778,8 +908,23 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                                   </button>
                                 </>
                               )}
+                              {/* Hetzner Snapshots toggle */}
+                              <button
+                                onClick={() => setSnapshotPanelId(snapshotPanelId === inst.id ? null : inst.id)}
+                                className={`flex items-center gap-1 text-xs px-2 py-0.5 rounded-lg border transition-colors ${
+                                  snapshotPanelId === inst.id
+                                    ? "text-blue-300 bg-blue-500/20 border-blue-500/30"
+                                    : "text-zinc-500 hover:text-blue-300 bg-white/5 hover:bg-blue-500/10 border-white/10 hover:border-blue-500/20"
+                                }`}
+                                title={t("hetznerSnapshots")}
+                              >
+                                <Camera className="w-3 h-3" />
+                              </button>
                             </div>
                           </div>
+                          {snapshotPanelId === inst.id && (
+                            <HetznerSnapshotPanel instanceId={inst.id} />
+                          )}
                         </div>
                       ))}
                     </div>

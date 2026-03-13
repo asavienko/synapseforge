@@ -23,7 +23,7 @@ export async function PATCH(
     return NextResponse.json({ error: "Invalid status" }, { status: 400 });
   }
 
-  await prisma.instanceCommand.update({
+  const command = await prisma.instanceCommand.update({
     where: { id: commandId },
     data: {
       status,
@@ -32,6 +32,32 @@ export async function PATCH(
       completedAt: ["done", "failed"].includes(status) ? new Date() : undefined,
     },
   });
+
+  // Create in-app notification when a version update completes
+  if (command.type === "update_version" && status === "done") {
+    const fullInstance = await prisma.aIInstance.findUnique({
+      where: { id: instanceId },
+      select: { userId: true, name: true },
+    });
+    if (fullInstance?.userId) {
+      let targetVersion: string | undefined;
+      try {
+        const payload = command.payload ? JSON.parse(command.payload as string) : null;
+        targetVersion = payload?.tag ?? payload?.targetVersion;
+      } catch {
+        // ignore parse errors
+      }
+      await prisma.notification.create({
+        data: {
+          userId: fullInstance.userId,
+          title: "Agent updated",
+          body: `${fullInstance.name} was updated to ${targetVersion ?? "new version"}`,
+          type: "info",
+          href: `/dashboard/instances/${instanceId}?tab=infrastructure`,
+        },
+      }).catch(console.error);
+    }
+  }
 
   return NextResponse.json({ ok: true });
 }

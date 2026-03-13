@@ -820,7 +820,13 @@
     "versionManagement": "Управление версиями",
     "noVersions": "Версии ещё не опубликованы",
     "instanceCoverage": "Охват инстансов",
-    "bulkUpdate": "Массовое обновление"
+    "bulkUpdate": "Массовое обновление",
+    "hetznerSnapshots": "Облачные снимки",
+    "takeHetznerSnapshot": "Создать облачный снимок",
+    "hetznerSnapshotTaken": "Облачный снимок запущен",
+    "hetznerRestore": "Восстановить из облачного снимка",
+    "hetznerRestoreConfirm": "Это пересоздаст сервер из снимка. Все текущие данные будут потеряны. Продолжить?",
+    "noHetznerSnapshots": "Облачных снимков пока нет"
   },
   "instanceSetup": {
     "title": "Настройка экземпляра ИИ",
