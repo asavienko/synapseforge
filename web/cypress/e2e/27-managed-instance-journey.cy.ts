@@ -82,8 +82,14 @@ describe("27 · Managed Instance Journey — happy path", () => {
 
     cy.contains("button", /next/i).click();
 
-    // Step 3 — Channels (skip / continue)
-    cy.contains("button", /next|skip|finish|create/i).click();
+    // Step 3 — Channels (skip — no tokens needed)
+    cy.contains("button", "Next").click();
+
+    // Step 4 — Persona (use defaults, just proceed)
+    cy.contains("button", "Next").click();
+
+    // Step 5 — Deploy review — submit the wizard
+    cy.contains("button", "Create Instance").click();
 
     // Wait for the POST and grab the instance ID
     cy.wait("@createInstance", { timeout: 15000 }).then((interception) => {

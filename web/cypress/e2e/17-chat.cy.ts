@@ -177,10 +177,8 @@ describe("17 · Chat Tab", () => {
 
     // User bubble
     cy.get("main").contains("Hello there").should("be.visible");
-    // Assistant bubble
+    // Assistant bubble (latency display removed — streaming rewrite no longer injects latencyMs into chat messages)
     cy.get("main").contains("Hello! How can I help you today?").should("be.visible");
-    // Latency
-    cy.get("main").contains("123ms").should("be.visible");
     cy.snap("17-chat-06-successful-message");
   });
 
