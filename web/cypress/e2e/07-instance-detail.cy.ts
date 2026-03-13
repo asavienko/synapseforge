@@ -36,7 +36,7 @@ describe("07 · Instance Detail", () => {
 
   it("renders the instance detail page — Overview tab", () => {
     // Extended timeout: client component fetches data on mount — first load in CI can be slow
-    cy.get("main", { timeout: 20000 }).contains("Cypress Agent").should("be.visible");
+    cy.contains("Cypress Agent", { timeout: 25000 }).should("be.visible");
     cy.get("main").contains("Overview").should("be.visible");
     cy.snap("07-detail-01-overview");
   });

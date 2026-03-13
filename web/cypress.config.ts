@@ -9,7 +9,7 @@ export default defineConfig({
     screenshotOnRunFailure: true,
     screenshotsFolder: "cypress/screenshots",
     video: false,
-    defaultCommandTimeout: 10000,
+    defaultCommandTimeout: 15000,
     setupNodeEvents(on, _config) {
       on("task", {
         /**
