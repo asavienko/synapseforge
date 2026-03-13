@@ -24,6 +24,15 @@ describe("30 · Public Chat Page + Widget", () => {
       );
       expect(inst, "Cypress Agent instance must exist").to.exist;
       instanceId = inst!.id;
+
+      // Ensure instance is running — production build page.tsx calls notFound() if not
+      cy.request({
+        method: "PATCH",
+        url: `/api/instances/${inst!.id}`,
+        body: { status: "running" },
+        headers: { "Content-Type": "application/json" },
+        failOnStatusCode: false,
+      });
     });
   });
 

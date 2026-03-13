@@ -17,12 +17,13 @@ async function main() {
   const hashed = await bcrypt.hash(password, 12);
 
   // Remove any stale auto-created instances for the seed user (not named "Cypress Agent")
+  // This includes "Journey Agent" left from spec 27 if after() hook didn't clean it up
   const seedUser = await prisma.user.findUnique({ where: { email }, select: { id: true } });
   if (seedUser) {
     const staleInstances = await prisma.aIInstance.deleteMany({
       where: { userId: seedUser.id, name: { not: "Cypress Agent" } },
     });
-    if (staleInstances.count > 0) console.log(`🧹 Removed ${staleInstances.count} stale instance(s)`);
+    if (staleInstances.count > 0) console.log(`🧹 Removed ${staleInstances.count} stale instance(s) (incl. Journey Agent)`);
   }
 
   // Purge all ephemeral test users created by registerFreshUser() across specs
@@ -47,7 +48,7 @@ async function main() {
     where: { email },
     update: {
       name,
-      plan: "free",
+      plan: "pro",  // pro = 3 instances; spec 27 creates a second instance (Journey Agent)
       onboardingDone: true,
       password: hashed,
       emailVerified: new Date(), // Ensure email is verified — avoids banner blocking tests
@@ -56,7 +57,7 @@ async function main() {
       email,
       name,
       password: hashed,
-      plan: "free",
+      plan: "pro",
       onboardingDone: true,
       emailVerified: new Date(),
       onboardingData: JSON.stringify({
