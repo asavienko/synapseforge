@@ -1783,7 +1783,7 @@ export default function InstanceDetailPage() {
               "Knowledge": t("knowledge.tab"),
             };
             return (
-              <button key={tabKey} onClick={() => setTab(tabKey)}
+              <button key={tabKey} data-tab={tabKey} onClick={() => setTab(tabKey)}
                 className={cn("px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px shrink-0 whitespace-nowrap",
                   tab === tabKey ? "border-violet-500 text-white" : "border-transparent text-zinc-500 hover:text-zinc-300"
                 )}>
@@ -2435,6 +2435,7 @@ export default function InstanceDetailPage() {
               {/* Input */}
               <div className="flex gap-3">
                 <textarea
+                  data-testid="chat-input"
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   onKeyDown={(e) => {

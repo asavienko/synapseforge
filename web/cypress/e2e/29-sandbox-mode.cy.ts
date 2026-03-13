@@ -36,8 +36,9 @@ let instanceId: string;
 function openChatTab() {
   cy.visit(`/en/dashboard/instances/${instanceId}`);
   // "Cypress Agent" in the heading confirms the instance loaded
-  cy.contains("Cypress Agent", { timeout: 15000 }).should("be.visible");
-  cy.contains("button", "Chat").click();
+  cy.contains("Cypress Agent", { timeout: 20000 }).should("be.visible");
+  // Use data-tab to avoid matching other "Chat" text in the page
+  cy.get('[data-tab="Chat"]', { timeout: 10000 }).click();
 }
 
 /** Navigate to the instance page (Overview is the default tab). */
@@ -194,7 +195,8 @@ describe("29 · Sandbox Mode — free-to-paid funnel", () => {
 
     // In sandbox mode the textarea is always visible — no credentials gate.
     // The sandbox banner explains the situation; users can still try to send.
-    cy.get('textarea[placeholder*="message"]', { timeout: 15000 }).should("be.visible").type("One more");
+    cy.snap("29-05-after-open-chat-tab");
+    cy.get('[data-testid="chat-input"]', { timeout: 20000 }).should("be.visible").type("One more");
 
     // Send button
     cy.contains("button", /^Send$/).click();
