@@ -462,7 +462,15 @@
     "successTitle": "¡Correo verificado!",
     "successDesc": "Tu correo ha sido confirmado. Redirigiendo al panel…",
     "goToDashboard": "Ir al panel →",
-    "requestNewLink": "Solicitar uno nuevo →"
+    "requestNewLink": "Solicitar uno nuevo →",
+    "checkInboxTitle": "Revisa tu bandeja de entrada",
+    "checkInboxDesc": "Te enviamos un enlace de verificación a tu correo. Haz clic en él para activar tu cuenta.",
+    "resendButton": "Reenviar correo de verificación",
+    "checkSpam": "¿No lo encuentras? Revisa tu carpeta de spam.",
+    "resentTitle": "¡Correo enviado!",
+    "resentDesc": "Un nuevo enlace de verificación está en camino. Puede tardar un minuto en llegar.",
+    "sendAgain": "Enviar de nuevo",
+    "backToSignIn": "Volver al inicio de sesión"
   },
   "privacy": {
     "title": "Política de Privacidad",

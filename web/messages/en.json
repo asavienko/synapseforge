@@ -462,7 +462,15 @@
     "successTitle": "Email verified!",
     "successDesc": "Your email has been confirmed. Redirecting you to the dashboard…",
     "goToDashboard": "Go to Dashboard →",
-    "requestNewLink": "Request a new one →"
+    "requestNewLink": "Request a new one →",
+    "checkInboxTitle": "Check your inbox",
+    "checkInboxDesc": "We sent a verification link to your email address. Click it to activate your account.",
+    "resendButton": "Resend verification email",
+    "checkSpam": "Can't find it? Check your spam folder.",
+    "resentTitle": "Email sent!",
+    "resentDesc": "A new verification link is on its way. It may take a minute to arrive.",
+    "sendAgain": "Send again",
+    "backToSignIn": "Back to sign in"
   },
   "privacy": {
     "title": "Privacy Policy",
