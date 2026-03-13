@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { email } from "@/lib/email";
+import { createNotification } from "@/lib/notifications";
 
 /**
  * POST /api/internal/provision-complete/[instanceId]
@@ -91,6 +92,15 @@ export async function POST(
   });
 
   if (fullInstance?.user) {
+    // In-app notification for the client
+    createNotification({
+      userId: fullInstance.userId,
+      type: "provision.ready",
+      title: `${fullInstance.name} is live!`,
+      body: "Your AI agent is deployed and ready.",
+      href: `/en/dashboard/instances/${fullInstance.id}`,
+    }).catch(console.error);
+
     // Email the client — channels array is empty at provision time
     email
       .instanceReady(

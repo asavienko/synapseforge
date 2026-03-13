@@ -1,4 +1,11 @@
 {
+  "notifications": {
+    "title": "Сповіщення",
+    "bellLabel": "Сповіщення",
+    "empty": "Немає сповіщень",
+    "markAllRead": "Позначити всі прочитаними",
+    "markRead": "Позначити прочитаним"
+  },
   "nav": {
     "services": "Функції",
     "pricing": "Ціни",

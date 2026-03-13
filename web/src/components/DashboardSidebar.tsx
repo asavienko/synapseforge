@@ -6,6 +6,7 @@ import { Zap, LayoutDashboard, Bot, Settings, LogOut, Menu, X, MessageCircle, Cr
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
+import { NotificationCenter } from "@/components/NotificationCenter";
 
 interface SidebarProps {
   userName?: string | null;
@@ -45,16 +46,19 @@ function SidebarContent({ userName, userEmail, unreadCount, isAdmin, isManager, 
 
   return (
     <div className="flex flex-col h-full">
-      <div className="p-6 border-b border-white/5 flex items-center justify-between">
+      <div className="p-4 border-b border-white/5 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2" onClick={onClose}>
           <Zap className="w-5 h-5 text-violet-400" />
           <span className="font-bold text-sm tracking-tight text-white">SynapseForge</span>
         </Link>
-        {onClose && (
-          <button onClick={onClose} className="text-zinc-500 hover:text-white transition-colors md:hidden">
-            <X className="w-5 h-5" />
-          </button>
-        )}
+        <div className="flex items-center gap-1">
+          {!onClose && <NotificationCenter />}
+          {onClose && (
+            <button onClick={onClose} className="text-zinc-500 hover:text-white transition-colors md:hidden">
+              <X className="w-5 h-5" />
+            </button>
+          )}
+        </div>
       </div>
 
       <nav className="flex-1 p-4 space-y-1">
@@ -131,13 +135,9 @@ export function DashboardSidebar({ userName, userEmail, isAdmin, isManager }: Si
           <Zap className="w-5 h-5 text-violet-400" />
           <span className="font-bold text-sm tracking-tight text-white">SynapseForge</span>
         </Link>
-        <div className="flex items-center gap-3">
-          {unreadCount > 0 && (
-            <span className="bg-violet-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
-              {unreadCount}
-            </span>
-          )}
-          <button onClick={() => setMobileOpen(true)} className="text-zinc-400 hover:text-white transition-colors">
+        <div className="flex items-center gap-2">
+          <NotificationCenter />
+          <button onClick={() => setMobileOpen(true)} className="text-zinc-400 hover:text-white transition-colors p-2">
             <Menu className="w-5 h-5" />
           </button>
         </div>

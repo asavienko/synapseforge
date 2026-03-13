@@ -1,4 +1,11 @@
 {
+  "notifications": {
+    "title": "Notificaciones",
+    "bellLabel": "Notificaciones",
+    "empty": "Sin notificaciones",
+    "markAllRead": "Marcar todo como leído",
+    "markRead": "Marcar como leído"
+  },
   "nav": {
     "services": "Funciones",
     "pricing": "Precios",

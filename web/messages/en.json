@@ -1,4 +1,11 @@
 {
+  "notifications": {
+    "title": "Notifications",
+    "bellLabel": "Notifications",
+    "empty": "No notifications yet",
+    "markAllRead": "Mark all read",
+    "markRead": "Mark as read"
+  },
   "nav": {
     "services": "Features",
     "pricing": "Pricing",
