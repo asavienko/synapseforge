@@ -364,7 +364,13 @@
       "allTimeMessages": "чат-сообщений отправлено",
       "bookCall": "Book a call",
       "bookCallDesc": "Prefer a live conversation? Schedule time with your manager.",
-      "scheduleCall": "Schedule a call"
+      "scheduleCall": "Schedule a call",
+      "systemHealth": "Состояние системы",
+      "noHealthData": "Нет данных",
+      "operational": "Работает",
+      "attention": "Требует внимания",
+      "instancesHealthy": "{count} {count, plural, one {экземпляр} few {экземпляра} other {экземпляров}} в норме",
+      "instancesNeedAttention": "{count} {count, plural, one {экземпляр требует} other {экземпляров требуют}} внимания"
     },
     "messages": {
       "title": "Сообщения",

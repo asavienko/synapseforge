@@ -364,7 +364,13 @@
       "allTimeMessages": "chat messages sent",
       "bookCall": "Book a call",
       "bookCallDesc": "Prefer a live conversation? Schedule time with your manager.",
-      "scheduleCall": "Schedule a call"
+      "scheduleCall": "Schedule a call",
+      "systemHealth": "System Health",
+      "noHealthData": "No data yet",
+      "operational": "Operational",
+      "attention": "Attention",
+      "instancesHealthy": "{count} {count, plural, one {instance} other {instances}} healthy",
+      "instancesNeedAttention": "{count} {count, plural, one {instance needs} other {instances need}} attention"
     },
     "messages": {
       "title": "Messages",

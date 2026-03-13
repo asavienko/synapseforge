@@ -5,6 +5,7 @@ import { Bot, Zap, User, ArrowRight, Activity, MessageCircle, MessageSquare, Che
 import { PLANS, STATUS_COLORS, formatDate } from "@/lib/utils";
 import { DashboardUpgrade } from "@/components/DashboardUpgrade";
 import { CalBookingButton } from "@/components/CalBookingButton";
+import { DashboardRefresher } from "@/components/DashboardRefresher";
 import { getTranslations } from "next-intl/server";
 import { captureServerEvent } from "@/lib/posthog-server";
 
@@ -127,6 +128,8 @@ export default async function DashboardPage() {
 
   return (
     <div className="p-6 md:p-8">
+      {/* Live stats — refreshes every 30s and on window focus */}
+      <DashboardRefresher />
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-white">{t("greeting", { name: user.name?.split(" ")[0] ?? "" })}</h1>
         <p className="text-zinc-400 mt-1">{t("subtitle")}</p>
@@ -190,27 +193,27 @@ export default async function DashboardPage() {
         <div className="glow-border rounded-2xl p-5 bg-white/[0.02]">
           <div className="flex items-center gap-3 mb-3">
             <Heart className="w-5 h-5 text-rose-400" />
-            <span className="text-xs text-zinc-500 uppercase tracking-wider">System Health</span>
+            <span className="text-xs text-zinc-500 uppercase tracking-wider">{t("systemHealth")}</span>
           </div>
           {monitoredInstances === 0 ? (
             <>
               <div className="text-2xl font-bold text-zinc-500 mb-1">—</div>
-              <div className="text-xs text-zinc-600">No data yet</div>
+              <div className="text-xs text-zinc-600">{t("noHealthData")}</div>
             </>
           ) : allHealthy ? (
             <>
               <div className="text-lg font-bold text-emerald-400 mb-1 flex items-center gap-1.5">
-                <span>✅</span> Operational
+                <span>✅</span> {t("operational")}
               </div>
-              <div className="text-xs text-zinc-500">{healthyInstances} instance{healthyInstances !== 1 ? "s" : ""} healthy</div>
+              <div className="text-xs text-zinc-500">{t("instancesHealthy", { count: healthyInstances })}</div>
             </>
           ) : (
             <>
               <div className="text-lg font-bold text-amber-400 mb-1 flex items-center gap-1.5">
-                <span>⚠️</span> Attention
+                <span>⚠️</span> {t("attention")}
               </div>
               <div className="text-xs text-zinc-500">
-                {needsAttention} instance{needsAttention !== 1 ? "s" : ""} need{needsAttention === 1 ? "s" : ""} attention
+                {t("instancesNeedAttention", { count: needsAttention })}
               </div>
             </>
           )}
