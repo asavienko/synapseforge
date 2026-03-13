@@ -1464,5 +1464,32 @@
       "q6": "¿Son privados mis datos?",
       "a6": "Sí. Las conversaciones se almacenan cifradas solo en tu cuenta. Nunca usamos tus datos para entrenar modelos ni los compartimos con terceros."
     }
+  },
+  "setupKey": {
+    "title": "Obtén tu clave de IA en 3 pasos",
+    "subtitle": "Tarda unos 2 minutos. Solo lo harás una vez.",
+    "step1": {
+      "title": "Crea una cuenta en OpenAI",
+      "desc": "Ve a platform.openai.com y regístrate gratis. Las nuevas cuentas reciben $5 en créditos — suficiente para meses de uso empresarial normal.",
+      "cta": "Abrir la plataforma de OpenAI"
+    },
+    "step2": {
+      "title": "Crea una clave API",
+      "desc": "Una vez dentro: API Keys en la barra lateral → Crear nueva clave secreta → nómbrala 'SynapseForge' → Crear. Cópiala de inmediato — no la verás de nuevo.",
+      "link": "Ir directamente a las claves API"
+    },
+    "step3": {
+      "title": "Pega tu clave aquí abajo",
+      "desc": "Cifrada y almacenada de forma segura. Nunca compartida."
+    },
+    "providerOpenAI": "OpenAI",
+    "providerAnthropic": "Anthropic",
+    "providerOpenRouter": "OpenRouter",
+    "save": "Guardar y activar",
+    "saving": "Guardando...",
+    "saved": "¡Clave guardada! Activando tu agente...",
+    "error": "Clave inválida o error al guardar. Por favor, inténtalo de nuevo.",
+    "back": "Volver al panel",
+    "altProviders": "O usa Anthropic u OpenRouter en su lugar"
   }
 }

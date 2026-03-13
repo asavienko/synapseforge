@@ -1464,5 +1464,32 @@
       "q6": "Is my data private?",
       "a6": "Yes. Conversations are stored encrypted in your account only. We never use your data to train models or share it with third parties."
     }
+  },
+  "setupKey": {
+    "title": "Get your AI key in 3 steps",
+    "subtitle": "Takes about 2 minutes. You'll only do this once.",
+    "step1": {
+      "title": "Create an OpenAI account",
+      "desc": "Go to platform.openai.com and sign up for free. New accounts get $5 in free credits — enough for months of normal business use.",
+      "cta": "Open OpenAI Platform"
+    },
+    "step2": {
+      "title": "Create an API key",
+      "desc": "Once logged in: API Keys in the left sidebar → Create new secret key → name it 'SynapseForge' → Create. Copy it immediately — you won't see it again.",
+      "link": "Go directly to API Keys"
+    },
+    "step3": {
+      "title": "Paste your key below",
+      "desc": "Encrypted and stored securely. Never shared."
+    },
+    "providerOpenAI": "OpenAI",
+    "providerAnthropic": "Anthropic",
+    "providerOpenRouter": "OpenRouter",
+    "save": "Save & Activate",
+    "saving": "Saving...",
+    "saved": "Key saved! Activating your agent...",
+    "error": "Invalid key or save failed. Please try again.",
+    "back": "Back to dashboard",
+    "altProviders": "Or use Anthropic or OpenRouter instead"
   }
 }
