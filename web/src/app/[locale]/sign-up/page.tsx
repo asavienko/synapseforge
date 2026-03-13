@@ -7,6 +7,7 @@ import { Zap, Loader2, Check, Gift } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { GoogleButton } from "@/components/GoogleButton";
+import zxcvbn from "zxcvbn";
 
 /** Read referral code: prefer URL ?ref=, fallback to cookie */
 function getReferralCode(): string | null {
@@ -23,6 +24,8 @@ export default function SignUpPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [referralCode, setReferralCode] = useState<string | null>(null);
+  const [passwordStrength, setPasswordStrength] = useState<0 | 1 | 2 | 3 | 4>(0);
+  const [emailError, setEmailError] = useState("");
 
   useEffect(() => {
     // Prefer URL param; fall back to cookie
@@ -64,6 +67,18 @@ export default function SignUpPage() {
       router.push("/onboarding");
     }
   }
+
+  const isAlreadyRegistered =
+    error &&
+    (error.toLowerCase().includes("already") || error.toLowerCase().includes("exists"));
+
+  const strengthLabels: Array<"tooWeak" | "weak" | "fair" | "strong" | "veryStrong"> = [
+    "tooWeak",
+    "weak",
+    "fair",
+    "strong",
+    "veryStrong",
+  ];
 
   return (
     <div className="min-h-screen bg-[#0a0a0f] grid-bg flex items-center justify-center px-4">
@@ -133,27 +148,90 @@ export default function SignUpPage() {
                 type="email"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
+                onBlur={(e) => {
+                  const val = e.target.value;
+                  if (val && !val.includes("@")) {
+                    setEmailError(t("invalidEmail"));
+                  } else {
+                    setEmailError("");
+                  }
+                }}
                 required
                 placeholder="you@company.com"
                 className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
               />
+              {emailError && (
+                <p className="text-xs text-red-400 mt-1">{emailError}</p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-zinc-300 mb-1.5">{t("password")}</label>
               <input
                 type="password"
                 value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                onChange={(e) => {
+                  setForm({ ...form, password: e.target.value });
+                  if (e.target.value) {
+                    setPasswordStrength(zxcvbn(e.target.value).score as 0 | 1 | 2 | 3 | 4);
+                  } else {
+                    setPasswordStrength(0);
+                  }
+                }}
                 required
                 minLength={8}
                 placeholder={t("passwordHint")}
                 className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
               />
+              {form.password && (
+                <div className="mt-2">
+                  <div className="flex gap-1 mb-1">
+                    {[0, 1, 2, 3].map((i) => (
+                      <div
+                        key={i}
+                        className={`h-1 flex-1 rounded-full transition-colors ${
+                          i < passwordStrength
+                            ? passwordStrength <= 1
+                              ? "bg-red-500"
+                              : passwordStrength === 2
+                              ? "bg-amber-500"
+                              : passwordStrength === 3
+                              ? "bg-blue-500"
+                              : "bg-emerald-500"
+                            : "bg-white/10"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <p
+                    className={`text-xs ${
+                      passwordStrength <= 1
+                        ? "text-red-400"
+                        : passwordStrength === 2
+                        ? "text-amber-400"
+                        : passwordStrength === 3
+                        ? "text-blue-400"
+                        : "text-emerald-400"
+                    }`}
+                  >
+                    {t(`passwordStrength.${strengthLabels[passwordStrength]}`)}
+                  </p>
+                </div>
+              )}
             </div>
             {error && (
-              <div className="text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-4 py-3">
-                {error}
-              </div>
+              isAlreadyRegistered ? (
+                <div className="text-sm bg-amber-400/10 border border-amber-400/20 rounded-lg px-4 py-3">
+                  <span className="text-amber-300">{t("alreadyRegistered")}</span>
+                  {" → "}
+                  <Link href="/sign-in" className="text-violet-400 hover:text-violet-300 font-semibold transition-colors">
+                    {t("signInInstead")}
+                  </Link>
+                </div>
+              ) : (
+                <div className="text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-4 py-3">
+                  {error}
+                </div>
+              )
             )}
             <button
               type="submit"
