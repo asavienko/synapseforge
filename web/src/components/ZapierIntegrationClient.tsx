@@ -5,33 +5,13 @@ import { useState } from "react";
 import { ExternalLink, Zap, Check, Copy } from "lucide-react";
 
 const ZAPIER_TRIGGERS = [
-  {
-    key: "new_message",
-    icon: "💬",
-    name: "New chat message",
-    description: "Fires when your AI agent receives a new message",
-  },
-  {
-    key: "instance_deployed",
-    icon: "🚀",
-    name: "Agent deployed",
-    description: "Fires when an instance is successfully deployed",
-  },
-  {
-    key: "instance_down",
-    icon: "🔴",
-    name: "Agent went down",
-    description: "Fires when an instance stops responding",
-  },
+  { key: "new_message", icon: "💬", nameKey: "newMessageName", descKey: "newMessageDesc" },
+  { key: "instance_deployed", icon: "🚀", nameKey: "instanceDeployedName", descKey: "instanceDeployedDesc" },
+  { key: "instance_down", icon: "🔴", nameKey: "instanceDownName", descKey: "instanceDownDesc" },
 ];
 
 const ZAPIER_ACTIONS = [
-  {
-    key: "send_message",
-    icon: "📨",
-    name: "Send message to agent",
-    description: "Send a message to any of your AI agents",
-  },
+  { key: "send_message", icon: "📨", nameKey: "sendMessageName", descKey: "sendMessageDesc" },
 ];
 
 export function ZapierIntegrationClient() {
@@ -83,8 +63,8 @@ export function ZapierIntegrationClient() {
               >
                 <span className="text-xl leading-none mt-0.5">{trigger.icon}</span>
                 <div>
-                  <p className="text-sm text-white font-medium">{trigger.name}</p>
-                  <p className="text-xs text-zinc-500">{trigger.description}</p>
+                  <p className="text-sm text-white font-medium">{t(`zapier.${trigger.nameKey}`)}</p>
+                  <p className="text-xs text-zinc-500">{t(`zapier.${trigger.descKey}`)}</p>
                 </div>
               </div>
             ))}
@@ -104,8 +84,8 @@ export function ZapierIntegrationClient() {
               >
                 <span className="text-xl leading-none mt-0.5">{action.icon}</span>
                 <div>
-                  <p className="text-sm text-white font-medium">{action.name}</p>
-                  <p className="text-xs text-zinc-500">{action.description}</p>
+                  <p className="text-sm text-white font-medium">{t(`zapier.${action.nameKey}`)}</p>
+                  <p className="text-xs text-zinc-500">{t(`zapier.${action.descKey}`)}</p>
                 </div>
               </div>
             ))}

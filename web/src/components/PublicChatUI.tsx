@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Send, Bot, Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface Message {
   role: "user" | "assistant";
@@ -23,6 +24,7 @@ interface Props {
 }
 
 export function PublicChatUI({ instanceId, branding }: Props) {
+  const t = useTranslations("share");
   const [messages, setMessages] = useState<Message[]>([
     { role: "assistant", content: branding.welcomeMessage },
   ]);
@@ -57,7 +59,7 @@ export function PublicChatUI({ instanceId, branding }: Props) {
           ...prev,
           {
             role: "assistant",
-            content: data.error || "Something went wrong. Please try again.",
+            content: data.error || t("somethingWentWrong"),
             error: true,
           },
         ]);
@@ -72,8 +74,7 @@ export function PublicChatUI({ instanceId, branding }: Props) {
         ...prev,
         {
           role: "assistant",
-          content:
-            "Connection error. Please check your connection and try again.",
+          content: t("connectionError"),
           error: true,
         },
       ]);
@@ -108,12 +109,12 @@ export function PublicChatUI({ instanceId, branding }: Props) {
           <p className="font-semibold text-white text-sm">{branding.agentName}</p>
           <div className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-            <span className="text-xs text-zinc-500">Online</span>
+            <span className="text-xs text-zinc-500">{t("online")}</span>
           </div>
         </div>
         {!branding.hidePoweredBy && (
           <div className="ml-auto">
-            <span className="text-xs text-zinc-600">Powered by SynapseForge</span>
+            <span className="text-xs text-zinc-600">{t("poweredBy")}</span>
           </div>
         )}
       </div>
@@ -193,7 +194,7 @@ export function PublicChatUI({ instanceId, branding }: Props) {
             onKeyDown={(e) =>
               e.key === "Enter" && !e.shiftKey && void send()
             }
-            placeholder="Type a message…"
+            placeholder={t("typeMessage")}
             disabled={sending}
             className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500/50 transition-colors disabled:opacity-50"
           />

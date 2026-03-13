@@ -2,19 +2,21 @@
 
 import { useState } from "react";
 import { Zap } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface SandboxUpgradeCardProps {
   onAddKey: () => void;
 }
 
 export function SandboxUpgradeCard({ onAddKey }: SandboxUpgradeCardProps) {
+  const t = useTranslations("sandbox");
   const [email, setEmail] = useState("");
   const [notifyState, setNotifyState] = useState<"idle" | "loading" | "done">("idle");
   const [notifyError, setNotifyError] = useState("");
 
   const handleNotify = async () => {
     if (!email || !email.includes("@")) {
-      setNotifyError("Please enter a valid email address.");
+      setNotifyError(t("invalidEmail"));
       return;
     }
     setNotifyState("loading");
@@ -29,7 +31,7 @@ export function SandboxUpgradeCard({ onAddKey }: SandboxUpgradeCardProps) {
       setNotifyState("done");
     } catch {
       setNotifyState("idle");
-      setNotifyError("Something went wrong. Please try again.");
+      setNotifyError(t("notifyError"));
     }
   };
 
@@ -41,14 +43,13 @@ export function SandboxUpgradeCard({ onAddKey }: SandboxUpgradeCardProps) {
           <Zap className="w-4.5 h-4.5 text-violet-400" />
         </div>
         <h3 className="text-sm font-semibold text-white leading-snug">
-          You&apos;ve used your 20 free messages
+          {t("usedFreeMessages")}
         </h3>
       </div>
 
       {/* Subtext */}
       <p className="text-xs text-zinc-400 leading-relaxed mb-4">
-        Ready to go beyond the sandbox? Book a setup call — we&apos;ll configure your AI agent and get
-        you running on your own API keys.
+        {t("upgradeDesc")}
       </p>
 
       {/* CTAs */}
@@ -59,19 +60,19 @@ export function SandboxUpgradeCard({ onAddKey }: SandboxUpgradeCardProps) {
           rel="noopener noreferrer"
           className="w-full text-center text-sm font-semibold px-4 py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-xl transition-colors"
         >
-          Book a Setup Call
+          {t("bookCall")}
         </a>
         <button
           onClick={onAddKey}
           className="w-full text-center text-sm px-4 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-white/10 rounded-xl transition-colors"
         >
-          Add my API key
+          {t("addApiKey")}
         </button>
       </div>
 
       {/* Email capture */}
       {notifyState === "done" ? (
-        <p className="text-xs text-emerald-400 text-center mt-1">✓ We&apos;ll be in touch!</p>
+        <p className="text-xs text-emerald-400 text-center mt-1">{t("notifySuccess")}</p>
       ) : (
         <div className="flex gap-2 mt-1">
           <input
@@ -79,7 +80,7 @@ export function SandboxUpgradeCard({ onAddKey }: SandboxUpgradeCardProps) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleNotify()}
-            placeholder="your@email.com"
+            placeholder={t("emailPlaceholder")}
             className="flex-1 text-xs bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors"
           />
           <button
@@ -87,7 +88,7 @@ export function SandboxUpgradeCard({ onAddKey }: SandboxUpgradeCardProps) {
             disabled={notifyState === "loading"}
             className="text-xs px-3 py-2 bg-zinc-700 hover:bg-zinc-600 disabled:opacity-50 text-zinc-300 border border-white/10 rounded-lg transition-colors shrink-0"
           >
-            {notifyState === "loading" ? "…" : "Notify me"}
+            {notifyState === "loading" ? "…" : t("notifyMe")}
           </button>
         </div>
       )}

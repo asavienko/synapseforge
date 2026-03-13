@@ -89,8 +89,8 @@ export default function ReferralPage() {
           <h1 className="text-2xl font-bold text-white">{t("pageTitle")}</h1>
         </div>
         <p className="text-zinc-400 text-sm">
-          Earn <span className="text-violet-300 font-semibold">10% of every subscription</span> you refer for 6 months.
-          Your referred friends get <span className="text-emerald-300 font-semibold">1 free month</span> when they upgrade.
+          {t("earnDesc", { percent: "10%", months: "6" })}{" "}
+          {t("friendsGet", { period: "1 free month" })}
         </p>
       </div>
 
@@ -174,8 +174,8 @@ export default function ReferralPage() {
       {/* Conversions table */}
       <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
         <div className="p-5 border-b border-white/5">
-          <h2 className="font-semibold text-white">Referred Users</h2>
-          <p className="text-xs text-zinc-500 mt-0.5">Emails are partially masked for privacy.</p>
+          <h2 className="font-semibold text-white">{t("referredUsersTitle")}</h2>
+          <p className="text-xs text-zinc-500 mt-0.5">{t("referredUsersSubtitle")}</p>
         </div>
 
         {conversions.length === 0 ? (
@@ -189,11 +189,11 @@ export default function ReferralPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-zinc-500 text-xs uppercase tracking-wider border-b border-white/5">
-                  <th className="px-5 py-3 text-left font-medium">User</th>
-                  <th className="px-5 py-3 text-left font-medium">Plan</th>
-                  <th className="px-5 py-3 text-left font-medium">Status</th>
-                  <th className="px-5 py-3 text-left font-medium">Commission</th>
-                  <th className="px-5 py-3 text-left font-medium">Date</th>
+                  <th className="px-5 py-3 text-left font-medium">{t("tableUser")}</th>
+                  <th className="px-5 py-3 text-left font-medium">{t("tablePlan")}</th>
+                  <th className="px-5 py-3 text-left font-medium">{t("tableStatus")}</th>
+                  <th className="px-5 py-3 text-left font-medium">{t("tableCommission")}</th>
+                  <th className="px-5 py-3 text-left font-medium">{t("tableDate")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">

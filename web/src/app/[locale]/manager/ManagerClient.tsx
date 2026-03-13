@@ -953,7 +953,7 @@ export function ManagerClient({ manager, clients: initialClients }: {
                                     </button>
                                   </div>
 
-                                  <div className="grid grid-cols-2 gap-4">
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {/* Region picker */}
                                     <div>
                                       <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-1.5">

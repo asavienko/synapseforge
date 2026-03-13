@@ -1896,7 +1896,7 @@ export default function InstanceDetailPage() {
                 <p className="text-zinc-300 text-sm">{instance.description}</p>
               </div>
             )}
-            <div className="p-5 grid grid-cols-2 gap-5">
+            <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-5">
               {[
                 { label: t("overview.created"), value: formatDate(instance.createdAt) },
                 { label: t("overview.lastUpdated"), value: formatDate(instance.updatedAt) },
@@ -1915,7 +1915,7 @@ export default function InstanceDetailPage() {
                 return (
                   <div className="p-5">
                     <div className="text-xs text-zinc-500 uppercase tracking-wider mb-3">{t("overview.activeConfiguration")}</div>
-                    <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                       {c.agentTemplateName && (
                         <div className="col-span-2 flex items-center gap-2">
                           <span className="text-zinc-500">{t("overview.configTemplate")}</span>
@@ -1963,7 +1963,7 @@ export default function InstanceDetailPage() {
             </div>
             <div className="p-5 space-y-5">
               {/* Message counts */}
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <div className="text-xs text-zinc-500 uppercase tracking-wider mb-1">{t("usage.allTime")}</div>
                   <div className="text-2xl font-bold text-white">{usageData?.totalMessages ?? "—"}</div>
@@ -1983,7 +1983,7 @@ export default function InstanceDetailPage() {
 
               {/* Token counts + cost estimate */}
               {usageData && usageData.totalTokens > 0 && (
-                <div className="grid grid-cols-2 gap-4 pt-1 border-t border-white/5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1 border-t border-white/5">
                   <div>
                     <div className="text-xs text-zinc-500 uppercase tracking-wider mb-1">{t("usage.tokensAllTime")}</div>
                     <div className="text-lg font-bold text-sky-400">
@@ -2677,7 +2677,7 @@ export default function InstanceDetailPage() {
               <h3 className="text-sm font-semibold text-white">{t("config.aiModelSection")}</h3>
             </div>
             <div className="p-5">
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {[
                   { value: "openai/gpt-4o", label: "GPT-4o", sub: t("config.modelBestQuality"), badge: "⚡" },
                   { value: "anthropic/claude-sonnet-4-6", label: "Claude Sonnet", sub: t("config.modelCreative"), badge: "✦" },

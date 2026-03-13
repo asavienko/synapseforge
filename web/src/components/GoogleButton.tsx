@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { Loader2 } from "lucide-react";
 import { analytics } from "@/lib/analytics";
+import { useTranslations } from "next-intl";
 
 const GoogleIcon = () => (
   <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
@@ -21,6 +22,7 @@ interface GoogleButtonProps {
 }
 
 export function GoogleButton({ callbackUrl = "/dashboard", referralCode }: GoogleButtonProps) {
+  const t = useTranslations("auth");
   const [loading, setLoading] = useState(false);
 
   async function handleClick() {
@@ -45,7 +47,7 @@ export function GoogleButton({ callbackUrl = "/dashboard", referralCode }: Googl
       className="w-full flex items-center justify-center gap-3 bg-white hover:bg-zinc-100 disabled:opacity-50 transition-colors py-3 rounded-xl text-sm font-semibold text-zinc-800 border border-zinc-200"
     >
       {loading ? <Loader2 className="w-4 h-4 animate-spin text-zinc-600" /> : <GoogleIcon />}
-      Continue with Google
+      {t("continueWithGoogle")}
     </button>
   );
 }

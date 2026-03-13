@@ -4,7 +4,11 @@
     "bellLabel": "Уведомления",
     "empty": "Нет уведомлений",
     "markAllRead": "Отметить все прочитанными",
-    "markRead": "Отметить прочитанным"
+    "markRead": "Отметить прочитанным",
+    "relativeJustNow": "только что",
+    "relativeMin": "{count} мин. назад",
+    "relativeHour": "{count} ч. назад",
+    "relativeDay": "{count} д. назад"
   },
   "nav": {
     "services": "Функции",
@@ -166,8 +170,12 @@
       "subtitle": "Мы отправили ссылку для подтверждения на вашу почту.",
       "resend": "Отправить письмо повторно",
       "backToSignIn": "Вернуться ко входу",
-      "successMsg": "Письмо отправлено! Проверьте почту."
-    }
+      "successMsg": "Письмо отправлено! Проверьте почту.",
+      "bannerText": "Пожалуйста, подтвердите ваш адрес электронной почты. Проверьте входящие письма.",
+      "resendBtn": "Отправить повторно",
+      "resentConfirm": "Отправлено!"
+    },
+    "continueWithGoogle": "Продолжить с Google"
   },
   "onboarding": {
     "step1Title": "Расскажите о вашем бизнесе",
@@ -305,7 +313,9 @@
       },
       "cancelFeedbackPlaceholder": "Любые другие отзывы? (необязательно)",
       "cancelSubmit": "Продолжить отмену",
-      "cancelKeepPlan": "Сохранить план"
+      "cancelKeepPlan": "Сохранить план",
+      "subscriptionExpired": "Подписка истекла",
+      "subscriptionExpiredDesc": "Ваша подписка {plan} истекла {date}. Экземпляры, превышающие лимит бесплатного плана, приостановлены. Обновите подписку для восстановления доступа."
     },
     "settings": {
       "title": "Настройки",
@@ -383,7 +393,15 @@
       "tierLabel": "уровень {tier}",
       "managerWillBeAssigned": "Менеджер будет назначен скоро. После назначения вы можете запросить повышение здесь или написать на",
       "nameFieldLabel": "Имя",
-      "emailFieldLabel": "Электронная почта"
+      "emailFieldLabel": "Электронная почта",
+      "fullName": "Полное имя",
+      "emailLabel": "Электронная почта",
+      "changePassword": "Изменить пароль",
+      "currentPassword": "Текущий пароль",
+      "newPasswordPlaceholder": "Новый пароль (мин. 8 символов)",
+      "saveChanges": "Сохранить изменения",
+      "profileUpdateSuccess": "Профиль успешно обновлён.",
+      "profileUpdateError": "Что-то пошло не так."
     }
   },
   "common": {
@@ -399,7 +417,12 @@
     "copied": "Скопировано!",
     "upgrade": "Улучшить план",
     "learnMore": "Узнать больше",
-    "synapseforge": "SynapseForge"
+    "synapseforge": "SynapseForge",
+    "emailVerifiedSuccess": "Email успешно подтверждён! Ваш аккаунт полностью активирован.",
+    "upgradeRequestSent": "Запрос на улучшение отправлен!",
+    "requestUpgradePro": "Запросить переход на Pro",
+    "sendingUpgrade": "Отправка…",
+    "upgradeRequestError": "Не удалось отправить запрос"
   },
   "contact": {
     "title": "Связаться с нами",
@@ -412,22 +435,28 @@
     "goDashboard": "Перейти в панель →",
     "errors": {
       "missing": {
-        "title": "Недействительная ссылка",
-        "body": "В ссылке для подтверждения отсутствует токен. Используйте ссылку из письма."
+        "title": "Неверная ссылка",
+        "body": "Ссылка для подтверждения отсутствует или повреждена."
       },
       "invalid": {
         "title": "Ссылка не найдена",
-        "body": "Эта ссылка для подтверждения недействительна или уже использована."
+        "body": "Эта ссылка не найдена или уже была использована."
       },
       "expired": {
-        "title": "Ссылка устарела",
-        "body": "Эта ссылка для подтверждения истекла. Запросите новую из вашей панели."
+        "title": "Срок ссылки истёк",
+        "body": "Ссылки для подтверждения действительны 24 часа."
       },
       "default": {
         "title": "Что-то пошло не так",
         "body": "Не удалось подтвердить ваш email."
       }
-    }
+    },
+    "verifyTitle": "Подтверждение email…",
+    "verifyDesc": "Подождите немного.",
+    "successTitle": "Email подтверждён!",
+    "successDesc": "Ваш email подтверждён. Перенаправляем в панель управления…",
+    "goToDashboard": "Перейти в панель →",
+    "requestNewLink": "Запросить новую ссылку →"
   },
   "privacy": {
     "title": "Политика конфиденциальности",
@@ -1037,7 +1066,16 @@
     "hetznerRestore": "Восстановить из облачного снимка",
     "hetznerRestoreConfirm": "Это пересоздаст сервер из снимка. Все текущие данные будут потеряны. Продолжить?",
     "noHetznerSnapshots": "Облачных снимков пока нет",
-    "autoUpdateQueued": "Автообновление поставлено в очередь для {{count}} экземпляров"
+    "autoUpdateQueued": "Автообновление поставлено в очередь для {{count}} экземпляров",
+    "stableLabel": "✓ Стабильная",
+    "deprecatedLabel": "⚠ Устаревшая",
+    "unmarkStable": "Снять метку стабильной",
+    "undeprecate": "Снять метку устаревшей",
+    "instanceCount": "{count} экземпляров",
+    "tagPlaceholder": "Тег, напр. 2026.3.3",
+    "imageRefPlaceholder": "Ссылка на образ, напр. ghcr.io/openclaw/openclaw:2026.3.3",
+    "changelogPlaceholder": "Список изменений (markdown)",
+    "selectVersion": "Выбрать версию"
   },
   "instanceSetup": {
     "title": "Настройка экземпляра ИИ",
@@ -1153,7 +1191,16 @@
     "theySignUp": "Они регистрируются",
     "theySignUpDesc": "Когда они регистрируются с вашим кодом, они становятся вашим рефералом.",
     "earnCommissions": "Зарабатывайте комиссии",
-    "earnCommissionsDesc": "Когда они переходят на Pro или Enterprise, вы получаете 10% от их подписки в течение 6 месяцев."
+    "earnCommissionsDesc": "Когда они переходят на Pro или Enterprise, вы получаете 10% от их подписки в течение 6 месяцев.",
+    "referredUsersTitle": "Привлечённые пользователи",
+    "referredUsersSubtitle": "Адреса электронной почты частично скрыты в целях конфиденциальности.",
+    "tableUser": "Пользователь",
+    "tablePlan": "План",
+    "tableStatus": "Статус",
+    "tableCommission": "Комиссия",
+    "tableDate": "Дата",
+    "earnDesc": "Зарабатывайте {percent} с каждой подписки в течение {months} месяцев.",
+    "friendsGet": "Привлечённые друзья получают {period} при переходе на платный план."
   },
   "share": {
     "somethingWentWrong": "Что-то пошло не так",
@@ -1163,7 +1210,11 @@
     "copyWebChatLink": "Копировать ссылку веб-чата",
     "sayHello": "Напишите что-нибудь своему агенту…",
     "send": "Отправить →",
-    "sending": "…"
+    "sending": "…",
+    "online": "В сети",
+    "poweredBy": "Разработано на SynapseForge",
+    "typeMessage": "Введите сообщение…",
+    "connectionError": "Ошибка соединения. Проверьте подключение к интернету и попробуйте снова."
   },
   "manager": {
     "portalLabel": "Портал менеджера",
@@ -1231,7 +1282,15 @@
       "subtitle": "Автоматизируйте рабочие процессы с 6 000+ приложениями",
       "openZapier": "Открыть Zapier",
       "triggers": "Триггеры",
-      "actions": "Действия"
+      "actions": "Действия",
+      "newMessageName": "Новое сообщение в чате",
+      "newMessageDesc": "Срабатывает, когда ИИ-агент получает новое сообщение",
+      "instanceDeployedName": "Агент развёрнут",
+      "instanceDeployedDesc": "Срабатывает при успешном развёртывании экземпляра",
+      "instanceDownName": "Агент недоступен",
+      "instanceDownDesc": "Срабатывает, когда экземпляр перестаёт отвечать",
+      "sendMessageName": "Отправить сообщение агенту",
+      "sendMessageDesc": "Отправьте сообщение любому из ваших ИИ-агентов"
     },
     "apiEndpoint": {
       "title": "Прямой API",
@@ -1282,5 +1341,42 @@
     "updateKey": "Обновить ключ...",
     "save": "Сохранить",
     "testConnection": "Проверить подключение"
+  },
+  "sandbox": {
+    "usedFreeMessages": "Вы использовали все 20 бесплатных сообщений",
+    "upgradeDesc": "Готовы выйти за пределы песочницы? Забронируйте звонок — мы настроим вашего ИИ-агента и запустим его на ваших собственных API-ключах.",
+    "bookCall": "Забронировать звонок",
+    "addApiKey": "Добавить мой API-ключ",
+    "emailPlaceholder": "ваш@email.com",
+    "notifyMe": "Уведомить меня",
+    "notifySuccess": "✓ Мы свяжемся с вами!",
+    "invalidEmail": "Пожалуйста, введите корректный адрес электронной почты.",
+    "notifyError": "Что-то пошло не так. Пожалуйста, попробуйте снова."
+  },
+  "provisioningWizard": {
+    "title": "Развернуть VPS",
+    "serverTier": "Уровень сервера",
+    "region": "Регион",
+    "estimatedCost": "Примерная стоимость: {cost} для уровня {tier}. Выставляется счёт от Hetzner.",
+    "cancel": "Отмена",
+    "starting": "Запуск...",
+    "provisionNow": "Развернуть сейчас",
+    "inProgressTitle": "Развёртывание сервера...",
+    "inProgressDesc": "Это займёт 3–8 минут. Вы можете закрыть это окно.",
+    "pollingNote": "Проверка статуса каждые 5 секунд...",
+    "successTitle": "Ваш ИИ запущен!",
+    "successDesc": "Сервер развёрнут и OpenClaw работает.",
+    "ipAddress": "IP-адрес",
+    "tier": "Уровень",
+    "gateway": "Шлюз",
+    "goToDashboard": "Перейти к панели",
+    "failedTitle": "Ошибка развёртывания",
+    "failedDesc": "Что-то пошло не так при настройке сервера.",
+    "contactSupport": "Связаться с поддержкой",
+    "tryAgain": "Попробовать снова",
+    "creatingServer": "Создание сервера...",
+    "installingDocker": "Установка Docker...",
+    "startingOpenClaw": "Запуск OpenClaw...",
+    "runningHealthCheck": "Проверка работоспособности..."
   }
 }

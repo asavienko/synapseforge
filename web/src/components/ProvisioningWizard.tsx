@@ -20,6 +20,7 @@ import {
   TIER_LABEL,
   TIER_COST,
 } from "@/lib/provisioning";
+import { useTranslations } from "next-intl";
 
 type ProvisionStatus = "pending" | "provisioning" | "ready" | "failed";
 
@@ -39,20 +40,20 @@ interface ProvisioningWizardProps {
 
 type WizardStep = "configure" | "in-progress" | "success" | "failed";
 
-const PROVISION_STEPS = [
-  { label: "Creating server...", maxSec: 15 },
-  { label: "Installing Docker...", maxSec: 60 },
-  { label: "Starting OpenClaw...", maxSec: 300 },
-  { label: "Running health check...", maxSec: 480 },
-];
+const PROVISION_STEP_KEYS = [
+  { key: "creatingServer", maxSec: 15 },
+  { key: "installingDocker", maxSec: 60 },
+  { key: "startingOpenClaw", maxSec: 300 },
+  { key: "runningHealthCheck", maxSec: 480 },
+] as const;
 
 function getProgressStep(elapsedSec: number): number {
   let cumulative = 0;
-  for (let i = 0; i < PROVISION_STEPS.length; i++) {
-    cumulative += PROVISION_STEPS[i].maxSec;
+  for (let i = 0; i < PROVISION_STEP_KEYS.length; i++) {
+    cumulative += PROVISION_STEP_KEYS[i].maxSec;
     if (elapsedSec < cumulative) return i;
   }
-  return PROVISION_STEPS.length - 1;
+  return PROVISION_STEP_KEYS.length - 1;
 }
 
 export function ProvisioningWizard({
@@ -65,6 +66,7 @@ export function ProvisioningWizard({
   onClose,
   onDone,
 }: ProvisioningWizardProps) {
+  const t = useTranslations("provisioningWizard");
   const apiEndpoint =
     provisionEndpoint ?? `/api/admin/instances/${instanceId}/provision`;
 
@@ -184,7 +186,7 @@ export function ProvisioningWizard({
               <Rocket className="w-4 h-4 text-violet-400" />
             </div>
             <div>
-              <h2 className="font-semibold text-white text-sm">Provision VPS</h2>
+              <h2 className="font-semibold text-white text-sm">{t("title")}</h2>
               <p className="text-xs text-zinc-500 mt-0.5 truncate max-w-[200px]">{instanceName}</p>
             </div>
           </div>
@@ -199,7 +201,7 @@ export function ProvisioningWizard({
             {/* Tier display */}
             <div>
               <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-2">
-                Server Tier
+                {t("serverTier")}
               </label>
               <div className="flex items-center gap-3 bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3">
                 <Server className="w-4 h-4 text-violet-400 shrink-0" />
@@ -219,7 +221,7 @@ export function ProvisioningWizard({
             <div>
               <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-2">
                 <Globe className="w-3 h-3 inline-block mr-1 -mt-0.5" />
-                Region
+                {t("region")}
               </label>
               <select
                 value={region}
@@ -239,8 +241,7 @@ export function ProvisioningWizard({
               <div className="flex items-center gap-2 bg-violet-500/5 border border-violet-500/20 rounded-xl px-4 py-3 text-xs text-violet-300">
                 <AlertCircle className="w-3.5 h-3.5 shrink-0 text-violet-400" />
                 <span>
-                  Estimated cost: <strong>{tierCost}</strong> for{" "}
-                  <strong className="capitalize">{tier}</strong> tier. Billed by Hetzner.
+                  {t("estimatedCost", { cost: tierCost, tier })}
                 </span>
               </div>
             )}
@@ -257,7 +258,7 @@ export function ProvisioningWizard({
                 onClick={onClose}
                 className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors px-4 py-3 rounded-xl text-sm font-semibold text-zinc-300"
               >
-                Cancel
+                {t("cancel")}
               </button>
               <button
                 onClick={handleProvision}
@@ -269,7 +270,7 @@ export function ProvisioningWizard({
                 ) : (
                   <Rocket className="w-4 h-4" />
                 )}
-                {provisioning ? "Starting..." : "Provision Now"}
+                {provisioning ? t("starting") : t("provisionNow")}
               </button>
             </div>
           </div>
@@ -282,13 +283,13 @@ export function ProvisioningWizard({
               <div className="w-16 h-16 rounded-2xl bg-violet-600/20 flex items-center justify-center mx-auto mb-4">
                 <Loader2 className="w-7 h-7 text-violet-400 animate-spin" />
               </div>
-              <h3 className="font-semibold text-white">Provisioning your server...</h3>
-              <p className="text-xs text-zinc-500 mt-1">This takes 3–8 minutes. You can close this window.</p>
+              <h3 className="font-semibold text-white">{t("inProgressTitle")}</h3>
+              <p className="text-xs text-zinc-500 mt-1">{t("inProgressDesc")}</p>
             </div>
 
             {/* Steps list */}
             <div className="space-y-3">
-              {PROVISION_STEPS.map((s, i) => {
+              {PROVISION_STEP_KEYS.map((s, i) => {
                 const isDone = i < currentProgressStep;
                 const isActive = i === currentProgressStep;
                 return (
@@ -324,7 +325,7 @@ export function ProvisioningWizard({
                           : "text-zinc-600"
                       )}
                     >
-                      {s.label}
+                      {t(s.key)}
                     </span>
                     {isActive && (
                       <span className="ml-auto text-xs text-zinc-600 font-mono">
@@ -337,7 +338,7 @@ export function ProvisioningWizard({
             </div>
 
             <p className="text-xs text-zinc-600 text-center">
-              Polling for status every 5s...
+              {t("pollingNote")}
             </p>
           </div>
         )}
@@ -349,9 +350,9 @@ export function ProvisioningWizard({
               <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
                 <CheckCircle2 className="w-8 h-8 text-emerald-400" />
               </div>
-              <h3 className="font-bold text-white text-lg">✅ Your AI is live!</h3>
+              <h3 className="font-bold text-white text-lg">✅ {t("successTitle")}</h3>
               <p className="text-sm text-zinc-400 mt-1">
-                Server provisioned and OpenClaw is running.
+                {t("successDesc")}
               </p>
             </div>
 
@@ -359,19 +360,19 @@ export function ProvisioningWizard({
               {vpsIp && (
                 <div className="flex items-center gap-3 px-4 py-3 text-sm">
                   <Server className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
-                  <span className="text-zinc-400">IP Address</span>
+                  <span className="text-zinc-400">{t("ipAddress")}</span>
                   <span className="ml-auto font-mono text-white text-xs">{vpsIp}</span>
                 </div>
               )}
               <div className="flex items-center gap-3 px-4 py-3 text-sm">
                 <Globe className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
-                <span className="text-zinc-400">Tier</span>
+                <span className="text-zinc-400">{t("tier")}</span>
                 <span className="ml-auto text-white text-xs capitalize">{tier}</span>
               </div>
               {vpsUrl && (
                 <div className="flex items-center gap-3 px-4 py-3 text-sm">
                   <ExternalLink className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
-                  <span className="text-zinc-400">Gateway</span>
+                  <span className="text-zinc-400">{t("gateway")}</span>
                   <a
                     href={vpsUrl}
                     target="_blank"
@@ -389,7 +390,7 @@ export function ProvisioningWizard({
                 onClick={onClose}
                 className="flex-1 flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-3 rounded-xl text-sm font-semibold"
               >
-                Go to Dashboard <ArrowRight className="w-4 h-4" />
+                {t("goToDashboard")} <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -402,8 +403,8 @@ export function ProvisioningWizard({
               <div className="w-16 h-16 rounded-2xl bg-red-500/20 flex items-center justify-center mx-auto mb-4">
                 <XCircle className="w-8 h-8 text-red-400" />
               </div>
-              <h3 className="font-bold text-white text-lg">❌ Provisioning failed</h3>
-              <p className="text-sm text-zinc-400 mt-1">Something went wrong during server setup.</p>
+              <h3 className="font-bold text-white text-lg">❌ {t("failedTitle")}</h3>
+              <p className="text-sm text-zinc-400 mt-1">{t("failedDesc")}</p>
             </div>
 
             {error && (
@@ -417,13 +418,13 @@ export function ProvisioningWizard({
                 href="mailto:support@synapseforge.ai"
                 className="flex-1 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors px-4 py-3 rounded-xl text-sm font-semibold text-zinc-300"
               >
-                Contact Support
+                {t("contactSupport")}
               </a>
               <button
                 onClick={handleRetry}
                 className="flex-1 flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-3 rounded-xl text-sm font-semibold"
               >
-                <Rocket className="w-4 h-4" /> Try Again
+                <Rocket className="w-4 h-4" /> {t("tryAgain")}
               </button>
             </div>
           </div>

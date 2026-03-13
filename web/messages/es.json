@@ -4,7 +4,11 @@
     "bellLabel": "Notificaciones",
     "empty": "Sin notificaciones",
     "markAllRead": "Marcar todo como leído",
-    "markRead": "Marcar como leído"
+    "markRead": "Marcar como leído",
+    "relativeJustNow": "ahora mismo",
+    "relativeMin": "hace {count}m",
+    "relativeHour": "hace {count}h",
+    "relativeDay": "hace {count}d"
   },
   "nav": {
     "services": "Funciones",
@@ -166,8 +170,12 @@
       "subtitle": "Te hemos enviado un enlace de verificación.",
       "resend": "Reenviar email de verificación",
       "backToSignIn": "Volver a iniciar sesión",
-      "successMsg": "¡Email de verificación enviado! Revisa tu bandeja de entrada."
-    }
+      "successMsg": "¡Email de verificación enviado! Revisa tu bandeja de entrada.",
+      "bannerText": "Por favor verifica tu dirección de correo electrónico. Revisa tu bandeja de entrada para encontrar el enlace de verificación.",
+      "resendBtn": "Reenviar",
+      "resentConfirm": "¡Enviado!"
+    },
+    "continueWithGoogle": "Continuar con Google"
   },
   "onboarding": {
     "step1Title": "Cuéntanos sobre tu negocio",
@@ -305,7 +313,9 @@
       },
       "cancelFeedbackPlaceholder": "¿Algún otro comentario? (opcional)",
       "cancelSubmit": "Continuar con la cancelación",
-      "cancelKeepPlan": "Conservar mi plan"
+      "cancelKeepPlan": "Conservar mi plan",
+      "subscriptionExpired": "Suscripción expirada",
+      "subscriptionExpiredDesc": "Tu suscripción de {plan} expiró el {date}. Las instancias que superan el límite del plan gratuito han sido pausadas. Renueva para restaurar el acceso."
     },
     "settings": {
       "title": "Configuración",
@@ -383,7 +393,15 @@
       "tierLabel": "nivel {tier}",
       "managerWillBeAssigned": "Se asignará un manager pronto. Una vez asignado, puedes solicitar una actualización aquí o por correo",
       "nameFieldLabel": "Nombre",
-      "emailFieldLabel": "Correo electrónico"
+      "emailFieldLabel": "Correo electrónico",
+      "fullName": "Nombre completo",
+      "emailLabel": "Correo electrónico",
+      "changePassword": "Cambiar contraseña",
+      "currentPassword": "Contraseña actual",
+      "newPasswordPlaceholder": "Nueva contraseña (mín. 8 caracteres)",
+      "saveChanges": "Guardar cambios",
+      "profileUpdateSuccess": "Perfil actualizado correctamente.",
+      "profileUpdateError": "Algo salió mal."
     }
   },
   "common": {
@@ -399,7 +417,12 @@
     "copied": "¡Copiado!",
     "upgrade": "Mejorar plan",
     "learnMore": "Más información",
-    "synapseforge": "SynapseForge"
+    "synapseforge": "SynapseForge",
+    "emailVerifiedSuccess": "¡Correo verificado correctamente! Tu cuenta está completamente activada.",
+    "upgradeRequestSent": "¡Solicitud de mejora enviada!",
+    "requestUpgradePro": "Solicitar mejora a Pro",
+    "sendingUpgrade": "Enviando…",
+    "upgradeRequestError": "Error al enviar la solicitud"
   },
   "contact": {
     "title": "Contáctanos",
@@ -413,21 +436,27 @@
     "errors": {
       "missing": {
         "title": "Enlace inválido",
-        "body": "Al enlace de verificación le falta un token. Usa el enlace de tu correo electrónico."
+        "body": "El enlace de verificación está mal formado o es incorrecto."
       },
       "invalid": {
         "title": "Enlace no encontrado",
-        "body": "Este enlace de verificación es inválido o ya fue utilizado."
+        "body": "Este enlace no se encontró o ya fue usado."
       },
       "expired": {
-        "title": "Enlace expirado",
-        "body": "Este enlace de verificación ha expirado. Solicita uno nuevo desde tu panel."
+        "title": "Este enlace ha expirado",
+        "body": "Los enlaces de verificación expiran después de 24 horas."
       },
       "default": {
         "title": "Algo salió mal",
         "body": "No se pudo verificar tu correo electrónico."
       }
-    }
+    },
+    "verifyTitle": "Verificando tu correo…",
+    "verifyDesc": "Espera un momento.",
+    "successTitle": "¡Correo verificado!",
+    "successDesc": "Tu correo ha sido confirmado. Redirigiendo al panel…",
+    "goToDashboard": "Ir al panel →",
+    "requestNewLink": "Solicitar uno nuevo →"
   },
   "privacy": {
     "title": "Política de Privacidad",
@@ -1037,7 +1066,16 @@
     "hetznerRestore": "Restaurar desde Instantánea en la Nube",
     "hetznerRestoreConfirm": "Esto reconstruirá el servidor desde la instantánea. Se perderán todos los datos actuales. ¿Continuar?",
     "noHetznerSnapshots": "Aún no hay instantáneas en la nube",
-    "autoUpdateQueued": "Actualización automática en cola para {{count}} instancias"
+    "autoUpdateQueued": "Actualización automática en cola para {{count}} instancias",
+    "stableLabel": "✓ Estable",
+    "deprecatedLabel": "⚠ Obsoleto",
+    "unmarkStable": "Desmarcar estable",
+    "undeprecate": "Desmarcar obsoleto",
+    "instanceCount": "{count} instancias",
+    "tagPlaceholder": "Etiqueta, ej. 2026.3.3",
+    "imageRefPlaceholder": "Ref. imagen ej. ghcr.io/openclaw/openclaw:2026.3.3",
+    "changelogPlaceholder": "Registro de cambios (markdown)",
+    "selectVersion": "Seleccionar versión"
   },
   "instanceSetup": {
     "title": "Configura tu Instancia de IA",
@@ -1153,7 +1191,16 @@
     "theySignUp": "Se registran",
     "theySignUpDesc": "Cuando se registran con tu código, quedan como tu referido.",
     "earnCommissions": "Gana comisiones",
-    "earnCommissionsDesc": "Cuando suben a Pro o Enterprise, ganas el 10% de su suscripción durante 6 meses."
+    "earnCommissionsDesc": "Cuando suben a Pro o Enterprise, ganas el 10% de su suscripción durante 6 meses.",
+    "referredUsersTitle": "Usuarios referidos",
+    "referredUsersSubtitle": "Los correos están parcialmente ocultos por privacidad.",
+    "tableUser": "Usuario",
+    "tablePlan": "Plan",
+    "tableStatus": "Estado",
+    "tableCommission": "Comisión",
+    "tableDate": "Fecha",
+    "earnDesc": "Gana {percent} de cada suscripción que refieras durante {months} meses.",
+    "friendsGet": "Tus amigos referidos obtienen {period} al actualizar."
   },
   "share": {
     "somethingWentWrong": "Algo salió mal",
@@ -1163,7 +1210,11 @@
     "copyWebChatLink": "Copiar enlace del chat web",
     "sayHello": "Di algo a tu agente…",
     "send": "Enviar →",
-    "sending": "…"
+    "sending": "…",
+    "online": "En línea",
+    "poweredBy": "Desarrollado por SynapseForge",
+    "typeMessage": "Escribe un mensaje…",
+    "connectionError": "Error de conexión. Por favor, verifica tu conexión e inténtalo de nuevo."
   },
   "manager": {
     "portalLabel": "Portal del Gestor",
@@ -1231,7 +1282,15 @@
       "subtitle": "Automatiza flujos de trabajo con más de 6.000 aplicaciones",
       "openZapier": "Abrir Zapier",
       "triggers": "Disparadores",
-      "actions": "Acciones"
+      "actions": "Acciones",
+      "newMessageName": "Nuevo mensaje de chat",
+      "newMessageDesc": "Se activa cuando tu agente de IA recibe un nuevo mensaje",
+      "instanceDeployedName": "Agente desplegado",
+      "instanceDeployedDesc": "Se activa cuando una instancia se despliega correctamente",
+      "instanceDownName": "Agente caído",
+      "instanceDownDesc": "Se activa cuando una instancia deja de responder",
+      "sendMessageName": "Enviar mensaje al agente",
+      "sendMessageDesc": "Envía un mensaje a cualquiera de tus agentes de IA"
     },
     "apiEndpoint": {
       "title": "API Directa",
@@ -1282,5 +1341,42 @@
     "updateKey": "Actualizar clave...",
     "save": "Guardar",
     "testConnection": "Probar conexión"
+  },
+  "sandbox": {
+    "usedFreeMessages": "Has usado tus 20 mensajes gratuitos",
+    "upgradeDesc": "¿Listo para ir más allá del sandbox? Reserva una llamada de configuración — configuraremos tu agente de IA y te pondremos en marcha con tus propias claves API.",
+    "bookCall": "Reservar una llamada de configuración",
+    "addApiKey": "Añadir mi clave API",
+    "emailPlaceholder": "tu@email.com",
+    "notifyMe": "Notificarme",
+    "notifySuccess": "✓ ¡Nos pondremos en contacto!",
+    "invalidEmail": "Por favor, introduce una dirección de correo válida.",
+    "notifyError": "Algo salió mal. Por favor, inténtalo de nuevo."
+  },
+  "provisioningWizard": {
+    "title": "Aprovisionar VPS",
+    "serverTier": "Nivel del servidor",
+    "region": "Región",
+    "estimatedCost": "Coste estimado: {cost} para el nivel {tier}. Facturado por Hetzner.",
+    "cancel": "Cancelar",
+    "starting": "Iniciando...",
+    "provisionNow": "Aprovisionar ahora",
+    "inProgressTitle": "Aprovisionando tu servidor...",
+    "inProgressDesc": "Esto tarda 3–8 minutos. Puedes cerrar esta ventana.",
+    "pollingNote": "Comprobando estado cada 5 segundos...",
+    "successTitle": "¡Tu IA está en vivo!",
+    "successDesc": "Servidor aprovisionado y OpenClaw en ejecución.",
+    "ipAddress": "Dirección IP",
+    "tier": "Nivel",
+    "gateway": "Puerta de enlace",
+    "goToDashboard": "Ir al panel",
+    "failedTitle": "Aprovisionamiento fallido",
+    "failedDesc": "Algo salió mal durante la configuración del servidor.",
+    "contactSupport": "Contactar soporte",
+    "tryAgain": "Intentar de nuevo",
+    "creatingServer": "Creando servidor...",
+    "installingDocker": "Instalando Docker...",
+    "startingOpenClaw": "Iniciando OpenClaw...",
+    "runningHealthCheck": "Ejecutando comprobación de salud..."
   }
 }

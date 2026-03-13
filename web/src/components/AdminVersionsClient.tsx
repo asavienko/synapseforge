@@ -113,9 +113,9 @@ export function AdminVersionsClient() {
         <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
           <Plus className="w-4 h-4" /> {t("publishVersion")}
         </h2>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <input
-            placeholder="Tag e.g. 2026.3.3"
+            placeholder={t("tagPlaceholder")}
             value={publishForm.tag}
             onChange={(e) =>
               setPublishForm((p) => ({ ...p, tag: e.target.value }))
@@ -123,21 +123,21 @@ export function AdminVersionsClient() {
             className="bg-black/40 border border-white/8 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500/50"
           />
           <input
-            placeholder="Image ref e.g. ghcr.io/openclaw/openclaw:2026.3.3"
+            placeholder={t("imageRefPlaceholder")}
             value={publishForm.imageRef}
             onChange={(e) =>
               setPublishForm((p) => ({ ...p, imageRef: e.target.value }))
             }
-            className="bg-black/40 border border-white/8 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500/50 col-span-2"
+            className="bg-black/40 border border-white/8 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500/50 sm:col-span-2"
           />
           <textarea
-            placeholder="Changelog (markdown)"
+            placeholder={t("changelogPlaceholder")}
             value={publishForm.changelog}
             onChange={(e) =>
               setPublishForm((p) => ({ ...p, changelog: e.target.value }))
             }
             rows={3}
-            className="bg-black/40 border border-white/8 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500/50 col-span-2 resize-none"
+            className="bg-black/40 border border-white/8 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500/50 sm:col-span-2 resize-none"
           />
           <div className="flex items-center gap-2">
             <input
@@ -182,17 +182,17 @@ export function AdminVersionsClient() {
                   <span className="font-mono text-white text-sm">{v.tag}</span>
                   {v.stable && (
                     <span className="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                      ✓ Stable
+                      {t("stableLabel")}
                     </span>
                   )}
                   {v.deprecated && (
                     <span className="text-xs bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded-full border border-amber-500/20">
-                      ⚠ Deprecated
+                      {t("deprecatedLabel")}
                     </span>
                   )}
                   <span className="text-xs text-zinc-600 font-mono">
                     {versionGroups[v.tag]
-                      ? `${versionGroups[v.tag]} instances`
+                      ? t("instanceCount", { count: versionGroups[v.tag] })
                       : ""}
                   </span>
                 </div>
@@ -205,7 +205,7 @@ export function AdminVersionsClient() {
                         : "border-white/10 text-zinc-500 hover:border-emerald-500/30 hover:text-emerald-400"
                     }`}
                   >
-                    {v.stable ? "Unmark stable" : t("markStable")}
+                    {v.stable ? t("unmarkStable") : t("markStable")}
                   </button>
                   <button
                     onClick={() =>
@@ -217,7 +217,7 @@ export function AdminVersionsClient() {
                         : "border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
                     }`}
                   >
-                    {v.deprecated ? "Undeprecate" : t("markDeprecated")}
+                    {v.deprecated ? t("undeprecate") : t("markDeprecated")}
                   </button>
                 </div>
               </div>
@@ -237,7 +237,7 @@ export function AdminVersionsClient() {
                 onChange={(e) => setBulkUpdateTag(e.target.value)}
                 className="bg-black/40 border border-white/8 rounded-lg px-2 py-1.5 text-sm text-white"
               >
-                <option value="">Select version</option>
+                <option value="">{t("selectVersion")}</option>
                 {versions
                   .filter((v) => v.stable)
                   .map((v) => (

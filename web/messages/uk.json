@@ -4,7 +4,11 @@
     "bellLabel": "Сповіщення",
     "empty": "Немає сповіщень",
     "markAllRead": "Позначити всі прочитаними",
-    "markRead": "Позначити прочитаним"
+    "markRead": "Позначити прочитаним",
+    "relativeJustNow": "щойно",
+    "relativeMin": "{count} хв. тому",
+    "relativeHour": "{count} год. тому",
+    "relativeDay": "{count} д. тому"
   },
   "nav": {
     "services": "Функції",
@@ -166,8 +170,12 @@
       "subtitle": "Ми надіслали посилання для підтвердження на вашу пошту.",
       "resend": "Надіслати листа повторно",
       "backToSignIn": "Повернутись до входу",
-      "successMsg": "Лист надіслано! Перевірте пошту."
-    }
+      "successMsg": "Лист надіслано! Перевірте пошту.",
+      "bannerText": "Будь ласка, підтвердьте вашу адресу електронної пошти. Перевірте вхідні листи.",
+      "resendBtn": "Надіслати повторно",
+      "resentConfirm": "Надіслано!"
+    },
+    "continueWithGoogle": "Продовжити з Google"
   },
   "onboarding": {
     "step1Title": "Розкажіть про ваш бізнес",
@@ -305,7 +313,9 @@
       },
       "cancelFeedbackPlaceholder": "Будь-які інші відгуки? (необов'язково)",
       "cancelSubmit": "Продовжити скасування",
-      "cancelKeepPlan": "Зберегти план"
+      "cancelKeepPlan": "Зберегти план",
+      "subscriptionExpired": "Підписка закінчилася",
+      "subscriptionExpiredDesc": "Ваша підписка {plan} закінчилася {date}. Екземпляри, що перевищують ліміт безкоштовного плану, призупинено. Поновіть підписку для відновлення доступу."
     },
     "settings": {
       "title": "Налаштування",
@@ -383,7 +393,15 @@
       "tierLabel": "рівень {tier}",
       "managerWillBeAssigned": "Менеджер буде призначений незабаром. Після призначення ви можете запросити підвищення тут або написати на",
       "nameFieldLabel": "Ім'я",
-      "emailFieldLabel": "Електронна пошта"
+      "emailFieldLabel": "Електронна пошта",
+      "fullName": "Повне ім'я",
+      "emailLabel": "Електронна пошта",
+      "changePassword": "Змінити пароль",
+      "currentPassword": "Поточний пароль",
+      "newPasswordPlaceholder": "Новий пароль (мін. 8 символів)",
+      "saveChanges": "Зберегти зміни",
+      "profileUpdateSuccess": "Профіль успішно оновлено.",
+      "profileUpdateError": "Щось пішло не так."
     }
   },
   "common": {
@@ -399,7 +417,12 @@
     "copied": "Скопійовано!",
     "upgrade": "Оновити план",
     "learnMore": "Дізнатись більше",
-    "synapseforge": "SynapseForge"
+    "synapseforge": "SynapseForge",
+    "emailVerifiedSuccess": "Email успішно підтверджено! Ваш акаунт повністю активовано.",
+    "upgradeRequestSent": "Запит на оновлення надіслано!",
+    "requestUpgradePro": "Запросити перехід на Pro",
+    "sendingUpgrade": "Надсилання…",
+    "upgradeRequestError": "Не вдалося надіслати запит"
   },
   "contact": {
     "title": "Зв'яжіться з нами",
@@ -413,21 +436,27 @@
     "errors": {
       "missing": {
         "title": "Недійсне посилання",
-        "body": "У посиланні для підтвердження відсутній токен. Використайте посилання з вашого листа."
+        "body": "Посилання для підтвердження відсутнє або пошкоджено."
       },
       "invalid": {
         "title": "Посилання не знайдено",
-        "body": "Це посилання для підтвердження недійсне або вже використане."
+        "body": "Це посилання не знайдено або вже було використано."
       },
       "expired": {
-        "title": "Посилання застаріло",
-        "body": "Це посилання для підтвердження закінчилось. Запросіть нове з вашої панелі."
+        "title": "Посилання прострочено",
+        "body": "Посилання для підтвердження діє 24 години."
       },
       "default": {
         "title": "Щось пішло не так",
         "body": "Не вдалося підтвердити вашу електронну пошту."
       }
-    }
+    },
+    "verifyTitle": "Підтвердження email…",
+    "verifyDesc": "Зачекайте хвилинку.",
+    "successTitle": "Email підтверджено!",
+    "successDesc": "Ваш email підтверджено. Перенаправляємо до панелі…",
+    "goToDashboard": "Перейти до панелі →",
+    "requestNewLink": "Запросити нове посилання →"
   },
   "privacy": {
     "title": "Політика конфіденційності",
@@ -1037,7 +1066,16 @@
     "hetznerRestore": "Відновити з хмарного знімка",
     "hetznerRestoreConfirm": "Це пересоздасть сервер зі знімка. Усі поточні дані будуть втрачені. Продовжити?",
     "noHetznerSnapshots": "Хмарних знімків поки немає",
-    "autoUpdateQueued": "Автооновлення в черзі для {{count}} екземплярів"
+    "autoUpdateQueued": "Автооновлення в черзі для {{count}} екземплярів",
+    "stableLabel": "✓ Стабільна",
+    "deprecatedLabel": "⚠ Застаріла",
+    "unmarkStable": "Зняти позначку стабільної",
+    "undeprecate": "Зняти позначку застарілої",
+    "instanceCount": "{count} екземплярів",
+    "tagPlaceholder": "Тег, напр. 2026.3.3",
+    "imageRefPlaceholder": "Посилання на образ, напр. ghcr.io/openclaw/openclaw:2026.3.3",
+    "changelogPlaceholder": "Журнал змін (markdown)",
+    "selectVersion": "Вибрати версію"
   },
   "instanceSetup": {
     "title": "Налаштування екземпляра ШІ",
@@ -1153,7 +1191,16 @@
     "theySignUp": "Вони реєструються",
     "theySignUpDesc": "Коли вони реєструються з вашим кодом, вони стають вашим рефералом.",
     "earnCommissions": "Заробляйте комісії",
-    "earnCommissionsDesc": "Коли вони переходять на Pro або Enterprise, ви отримуєте 10% від їхньої підписки протягом 6 місяців."
+    "earnCommissionsDesc": "Коли вони переходять на Pro або Enterprise, ви отримуєте 10% від їхньої підписки протягом 6 місяців.",
+    "referredUsersTitle": "Залучені користувачі",
+    "referredUsersSubtitle": "Адреси електронної пошти частково приховано з міркувань конфіденційності.",
+    "tableUser": "Користувач",
+    "tablePlan": "План",
+    "tableStatus": "Статус",
+    "tableCommission": "Комісія",
+    "tableDate": "Дата",
+    "earnDesc": "Заробляйте {percent} від кожної підписки протягом {months} місяців.",
+    "friendsGet": "Ваші залучені друзі отримують {period} при переході на платний план."
   },
   "share": {
     "somethingWentWrong": "Щось пішло не так",
@@ -1163,7 +1210,11 @@
     "copyWebChatLink": "Копіювати посилання веб-чату",
     "sayHello": "Напишіть щось своєму агенту…",
     "send": "Надіслати →",
-    "sending": "…"
+    "sending": "…",
+    "online": "В мережі",
+    "poweredBy": "Розроблено на SynapseForge",
+    "typeMessage": "Введіть повідомлення…",
+    "connectionError": "Помилка з'єднання. Перевірте підключення та спробуйте знову."
   },
   "manager": {
     "portalLabel": "Портал менеджера",
@@ -1231,7 +1282,15 @@
       "subtitle": "Автоматизуйте робочі процеси з 6 000+ застосунками",
       "openZapier": "Відкрити Zapier",
       "triggers": "Тригери",
-      "actions": "Дії"
+      "actions": "Дії",
+      "newMessageName": "Нове повідомлення в чаті",
+      "newMessageDesc": "Спрацьовує, коли ШІ-агент отримує нове повідомлення",
+      "instanceDeployedName": "Агент розгорнуто",
+      "instanceDeployedDesc": "Спрацьовує при успішному розгортанні екземпляра",
+      "instanceDownName": "Агент недоступний",
+      "instanceDownDesc": "Спрацьовує, коли екземпляр перестає відповідати",
+      "sendMessageName": "Надіслати повідомлення агенту",
+      "sendMessageDesc": "Надішліть повідомлення будь-якому з ваших ШІ-агентів"
     },
     "apiEndpoint": {
       "title": "Прямий API",
@@ -1282,5 +1341,42 @@
     "updateKey": "Оновити ключ...",
     "save": "Зберегти",
     "testConnection": "Перевірити підключення"
+  },
+  "sandbox": {
+    "usedFreeMessages": "Ви використали всі 20 безкоштовних повідомлень",
+    "upgradeDesc": "Готові вийти за межі пісочниці? Забронюйте дзвінок — ми налаштуємо вашого ШІ-агента та запустимо його на ваших API-ключах.",
+    "bookCall": "Забронювати дзвінок",
+    "addApiKey": "Додати мій API-ключ",
+    "emailPlaceholder": "ваш@email.com",
+    "notifyMe": "Сповістити мене",
+    "notifySuccess": "✓ Ми зв'яжемося з вами!",
+    "invalidEmail": "Будь ласка, введіть коректну адресу електронної пошти.",
+    "notifyError": "Щось пішло не так. Будь ласка, спробуйте ще раз."
+  },
+  "provisioningWizard": {
+    "title": "Розгорнути VPS",
+    "serverTier": "Рівень сервера",
+    "region": "Регіон",
+    "estimatedCost": "Орієнтовна вартість: {cost} для рівня {tier}. Рахунок від Hetzner.",
+    "cancel": "Скасувати",
+    "starting": "Запуск...",
+    "provisionNow": "Розгорнути зараз",
+    "inProgressTitle": "Розгортання сервера...",
+    "inProgressDesc": "Це займе 3–8 хвилин. Ви можете закрити це вікно.",
+    "pollingNote": "Перевірка статусу кожні 5 секунд...",
+    "successTitle": "Ваш ШІ запущено!",
+    "successDesc": "Сервер розгорнуто та OpenClaw працює.",
+    "ipAddress": "IP-адреса",
+    "tier": "Рівень",
+    "gateway": "Шлюз",
+    "goToDashboard": "Перейти до панелі",
+    "failedTitle": "Помилка розгортання",
+    "failedDesc": "Щось пішло не так під час налаштування сервера.",
+    "contactSupport": "Зв'язатися з підтримкою",
+    "tryAgain": "Спробувати знову",
+    "creatingServer": "Створення сервера...",
+    "installingDocker": "Встановлення Docker...",
+    "startingOpenClaw": "Запуск OpenClaw...",
+    "runningHealthCheck": "Перевірка стану..."
   }
 }

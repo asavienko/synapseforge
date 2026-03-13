@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { CheckCircle2, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export function VerifiedSuccessBanner() {
+  const t = useTranslations("common");
   const params = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -26,7 +28,7 @@ export function VerifiedSuccessBanner() {
     <div className="bg-emerald-500/10 border-b border-emerald-500/20 px-4 py-2.5 flex items-center gap-3">
       <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
       <p className="text-sm text-emerald-200 flex-1">
-        🎉 Email verified successfully! Your account is fully activated.
+        🎉 {t("emailVerifiedSuccess")}
       </p>
       <button
         onClick={() => setShow(false)}

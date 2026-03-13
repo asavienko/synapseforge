@@ -351,7 +351,7 @@ export default async function LandingPage() {
 
         <div className="bg-zinc-900 border border-white/5 rounded-2xl p-8 md:p-12 max-w-4xl mx-auto">
           {/* Metrics row */}
-          <div className="grid grid-cols-3 gap-6 mb-8 pb-8 border-b border-white/5">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8 pb-8 border-b border-white/5">
             <div className="text-center">
               <div className="text-3xl font-bold text-violet-400 mb-1">{t("caseStudy.metric1value")}</div>
               <div className="text-xs text-zinc-500">{t("caseStudy.metric1label")}</div>

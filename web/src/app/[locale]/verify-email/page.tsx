@@ -4,10 +4,12 @@ import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Zap, Loader2, CheckCircle2, AlertCircle, RefreshCcw } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 type State = "loading" | "success" | "error";
 
 function VerifyContent() {
+  const t = useTranslations("verifyEmail");
   const params = useSearchParams();
   const router = useRouter();
   const [state, setState] = useState<State>("loading");
@@ -53,8 +55,8 @@ function VerifyContent() {
     return (
       <div className="glow-border rounded-2xl p-8 bg-white/[0.02] text-center">
         <Loader2 className="w-12 h-12 text-violet-400 mx-auto mb-4 animate-spin" />
-        <h2 className="text-xl font-semibold text-white mb-2">Verifying your email…</h2>
-        <p className="text-zinc-400 text-sm">Please wait a moment.</p>
+        <h2 className="text-xl font-semibold text-white mb-2">{t("verifyTitle")}</h2>
+        <p className="text-zinc-400 text-sm">{t("verifyDesc")}</p>
       </div>
     );
   }
@@ -63,35 +65,33 @@ function VerifyContent() {
     return (
       <div className="glow-border rounded-2xl p-8 bg-white/[0.02] text-center">
         <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto mb-4" />
-        <h2 className="text-xl font-semibold text-white mb-2">Email verified! ✅</h2>
-        <p className="text-zinc-400 text-sm mb-6">
-          Your email has been confirmed. Redirecting you to the dashboard…
-        </p>
+        <h2 className="text-xl font-semibold text-white mb-2">✅ {t("successTitle")}</h2>
+        <p className="text-zinc-400 text-sm mb-6">{t("successDesc")}</p>
         <Link
           href="/dashboard"
           className="inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-5 py-2.5 rounded-xl text-sm font-semibold text-white"
         >
-          Go to Dashboard →
+          {t("goToDashboard")}
         </Link>
       </div>
     );
   }
 
-  // Error state
-  const isExpired = errorType === "expired";
-  const isMissing = errorType === "missing";
+  // Error state — use errorType to look up translated error messages
+  const errorKey = (["expired", "missing", "invalid", "default"].includes(errorType) ? errorType : "default") as
+    | "expired"
+    | "missing"
+    | "invalid"
+    | "default";
+
   return (
     <div className="glow-border rounded-2xl p-8 bg-white/[0.02] text-center">
       <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
       <h2 className="text-xl font-semibold text-white mb-2">
-        {isExpired ? "This link has expired" : isMissing ? "Invalid link" : "Link not found"}
+        {t(`errors.${errorKey}.title`)}
       </h2>
       <p className="text-zinc-400 text-sm mb-6">
-        {isExpired
-          ? "Verification links expire after 24 hours."
-          : isMissing
-          ? "The verification link is missing or malformed."
-          : "This link was not found or has already been used."}
+        {t(`errors.${errorKey}.body`)}
       </p>
       <div className="flex flex-col items-center gap-3">
         <Link
@@ -99,13 +99,13 @@ function VerifyContent() {
           className="inline-flex items-center gap-2 text-violet-400 hover:text-violet-300 text-sm transition-colors"
         >
           <RefreshCcw className="w-3.5 h-3.5" />
-          Request a new one →
+          {t("requestNewLink")}
         </Link>
         <Link
           href="/dashboard"
           className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
         >
-          Go to dashboard →
+          {t("goDashboard")}
         </Link>
       </div>
     </div>
@@ -113,6 +113,7 @@ function VerifyContent() {
 }
 
 export default function VerifyEmailPage() {
+  const t = useTranslations("verifyEmail");
   return (
     <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center px-4">
       <div className="w-full max-w-md">
@@ -126,7 +127,7 @@ export default function VerifyEmailPage() {
           fallback={
             <div className="glow-border rounded-2xl p-8 bg-white/[0.02] text-center">
               <Loader2 className="w-12 h-12 text-violet-400 mx-auto mb-4 animate-spin" />
-              <p className="text-zinc-400 text-sm">Loading…</p>
+              <p className="text-zinc-400 text-sm">{t("loading")}</p>
             </div>
           }
         >

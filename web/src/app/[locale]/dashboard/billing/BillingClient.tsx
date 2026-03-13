@@ -189,10 +189,9 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
         <div className="flex items-start gap-3 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 mb-6">
           <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm font-medium text-red-300">Subscription expired</p>
+            <p className="text-sm font-medium text-red-300">{tb("subscriptionExpired")}</p>
             <p className="text-xs text-red-400/80 mt-0.5">
-              Your {plan} subscription expired on {new Date(periodEnd).toLocaleDateString()}.
-              Instances exceeding the free plan limit have been paused. Renew to restore access.
+              {tb("subscriptionExpiredDesc", { plan, date: new Date(periodEnd).toLocaleDateString() })}
             </p>
           </div>
         </div>

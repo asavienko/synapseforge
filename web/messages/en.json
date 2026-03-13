@@ -4,7 +4,11 @@
     "bellLabel": "Notifications",
     "empty": "No notifications yet",
     "markAllRead": "Mark all read",
-    "markRead": "Mark as read"
+    "markRead": "Mark as read",
+    "relativeJustNow": "just now",
+    "relativeMin": "{count}m ago",
+    "relativeHour": "{count}h ago",
+    "relativeDay": "{count}d ago"
   },
   "nav": {
     "services": "Features",
@@ -166,8 +170,12 @@
       "subtitle": "We sent a verification link to your email.",
       "resend": "Resend verification email",
       "backToSignIn": "Back to sign in",
-      "successMsg": "Verification email sent! Check your inbox."
-    }
+      "successMsg": "Verification email sent! Check your inbox.",
+      "bannerText": "Please verify your email address. Check your inbox for a verification link.",
+      "resendBtn": "Resend",
+      "resentConfirm": "Sent!"
+    },
+    "continueWithGoogle": "Continue with Google"
   },
   "onboarding": {
     "step1Title": "Tell us about your business",
@@ -305,7 +313,9 @@
       },
       "cancelFeedbackPlaceholder": "Any other feedback? (optional)",
       "cancelSubmit": "Continue cancelling",
-      "cancelKeepPlan": "Keep my plan"
+      "cancelKeepPlan": "Keep my plan",
+      "subscriptionExpired": "Subscription expired",
+      "subscriptionExpiredDesc": "Your {plan} subscription expired on {date}. Instances exceeding the free plan limit have been paused. Renew to restore access."
     },
     "settings": {
       "title": "Settings",
@@ -383,7 +393,15 @@
       "tierLabel": "{tier} tier",
       "managerWillBeAssigned": "A manager will be assigned soon. Once assigned, you can request an upgrade here or email",
       "nameFieldLabel": "Name",
-      "emailFieldLabel": "Email"
+      "emailFieldLabel": "Email",
+      "fullName": "Full Name",
+      "emailLabel": "Email",
+      "changePassword": "Change Password",
+      "currentPassword": "Current password",
+      "newPasswordPlaceholder": "New password (min. 8 characters)",
+      "saveChanges": "Save changes",
+      "profileUpdateSuccess": "Profile updated successfully.",
+      "profileUpdateError": "Something went wrong."
     }
   },
   "common": {
@@ -399,7 +417,12 @@
     "copied": "Copied!",
     "upgrade": "Upgrade plan",
     "learnMore": "Learn more",
-    "synapseforge": "SynapseForge"
+    "synapseforge": "SynapseForge",
+    "emailVerifiedSuccess": "Email verified successfully! Your account is fully activated.",
+    "upgradeRequestSent": "Upgrade request sent!",
+    "requestUpgradePro": "Request upgrade to Pro",
+    "sendingUpgrade": "Sending…",
+    "upgradeRequestError": "Failed to send request"
   },
   "contact": {
     "title": "Contact Us",
@@ -413,21 +436,27 @@
     "errors": {
       "missing": {
         "title": "Invalid link",
-        "body": "The verification link is missing a token. Please use the link from your email."
+        "body": "The verification link is missing or malformed."
       },
       "invalid": {
         "title": "Link not found",
-        "body": "This verification link is invalid or has already been used."
+        "body": "This link was not found or has already been used."
       },
       "expired": {
-        "title": "Link expired",
-        "body": "This verification link has expired. Request a new one from your dashboard."
+        "title": "This link has expired",
+        "body": "Verification links expire after 24 hours."
       },
       "default": {
         "title": "Something went wrong",
         "body": "Unable to verify your email."
       }
-    }
+    },
+    "verifyTitle": "Verifying your email…",
+    "verifyDesc": "Please wait a moment.",
+    "successTitle": "Email verified!",
+    "successDesc": "Your email has been confirmed. Redirecting you to the dashboard…",
+    "goToDashboard": "Go to Dashboard →",
+    "requestNewLink": "Request a new one →"
   },
   "privacy": {
     "title": "Privacy Policy",
@@ -1037,7 +1066,16 @@
     "hetznerRestore": "Restore from Cloud Snapshot",
     "hetznerRestoreConfirm": "This will rebuild the server from the snapshot. All current data will be lost. Continue?",
     "noHetznerSnapshots": "No cloud snapshots yet",
-    "autoUpdateQueued": "Auto-update queued for {{count}} instances"
+    "autoUpdateQueued": "Auto-update queued for {{count}} instances",
+    "stableLabel": "✓ Stable",
+    "deprecatedLabel": "⚠ Deprecated",
+    "unmarkStable": "Unmark stable",
+    "undeprecate": "Undeprecate",
+    "instanceCount": "{count} instances",
+    "tagPlaceholder": "Tag e.g. 2026.3.3",
+    "imageRefPlaceholder": "Image ref e.g. ghcr.io/openclaw/openclaw:2026.3.3",
+    "changelogPlaceholder": "Changelog (markdown)",
+    "selectVersion": "Select version"
   },
   "referral": {
     "pageTitle": "Referral Program",
@@ -1058,7 +1096,16 @@
     "theySignUp": "They sign up",
     "theySignUpDesc": "When they register with your code, they're tracked as your referral.",
     "earnCommissions": "Earn commissions",
-    "earnCommissionsDesc": "When they upgrade to Pro or Enterprise, you earn 10% of their subscription for 6 months."
+    "earnCommissionsDesc": "When they upgrade to Pro or Enterprise, you earn 10% of their subscription for 6 months.",
+    "referredUsersTitle": "Referred Users",
+    "referredUsersSubtitle": "Emails are partially masked for privacy.",
+    "tableUser": "User",
+    "tablePlan": "Plan",
+    "tableStatus": "Status",
+    "tableCommission": "Commission",
+    "tableDate": "Date",
+    "earnDesc": "Earn {percent} of every subscription you refer for {months} months.",
+    "friendsGet": "Your referred friends get {period} when they upgrade."
   },
   "share": {
     "somethingWentWrong": "Something went wrong",
@@ -1068,7 +1115,11 @@
     "copyWebChatLink": "Copy web chat link",
     "sayHello": "Say something to your agent…",
     "send": "Send →",
-    "sending": "…"
+    "sending": "…",
+    "online": "Online",
+    "poweredBy": "Powered by SynapseForge",
+    "typeMessage": "Type a message…",
+    "connectionError": "Connection error. Please check your connection and try again."
   },
   "manager": {
     "portalLabel": "Manager Portal",
@@ -1231,7 +1282,15 @@
       "subtitle": "Automate workflows with 6,000+ apps",
       "openZapier": "Open Zapier",
       "triggers": "Triggers",
-      "actions": "Actions"
+      "actions": "Actions",
+      "newMessageName": "New chat message",
+      "newMessageDesc": "Fires when your AI agent receives a new message",
+      "instanceDeployedName": "Agent deployed",
+      "instanceDeployedDesc": "Fires when an instance is successfully deployed",
+      "instanceDownName": "Agent went down",
+      "instanceDownDesc": "Fires when an instance stops responding",
+      "sendMessageName": "Send message to agent",
+      "sendMessageDesc": "Send a message to any of your AI agents"
     },
     "apiEndpoint": {
       "title": "Direct API",
@@ -1282,5 +1341,42 @@
     "agencyRequired": "Agency plan required",
     "save": "Save Changes",
     "saved": "Changes saved"
+  },
+  "sandbox": {
+    "usedFreeMessages": "You've used your 20 free messages",
+    "upgradeDesc": "Ready to go beyond the sandbox? Book a setup call — we'll configure your AI agent and get you running on your own API keys.",
+    "bookCall": "Book a Setup Call",
+    "addApiKey": "Add my API key",
+    "emailPlaceholder": "your@email.com",
+    "notifyMe": "Notify me",
+    "notifySuccess": "✓ We'll be in touch!",
+    "invalidEmail": "Please enter a valid email address.",
+    "notifyError": "Something went wrong. Please try again."
+  },
+  "provisioningWizard": {
+    "title": "Provision VPS",
+    "serverTier": "Server Tier",
+    "region": "Region",
+    "estimatedCost": "Estimated cost: {cost} for {tier} tier. Billed by Hetzner.",
+    "cancel": "Cancel",
+    "starting": "Starting...",
+    "provisionNow": "Provision Now",
+    "inProgressTitle": "Provisioning your server...",
+    "inProgressDesc": "This takes 3–8 minutes. You can close this window.",
+    "pollingNote": "Polling for status every 5s...",
+    "successTitle": "Your AI is live!",
+    "successDesc": "Server provisioned and OpenClaw is running.",
+    "ipAddress": "IP Address",
+    "tier": "Tier",
+    "gateway": "Gateway",
+    "goToDashboard": "Go to Dashboard",
+    "failedTitle": "Provisioning failed",
+    "failedDesc": "Something went wrong during server setup.",
+    "contactSupport": "Contact Support",
+    "tryAgain": "Try Again",
+    "creatingServer": "Creating server...",
+    "installingDocker": "Installing Docker...",
+    "startingOpenClaw": "Starting OpenClaw...",
+    "runningHealthCheck": "Running health check..."
   }
 }

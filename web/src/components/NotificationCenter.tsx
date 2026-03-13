@@ -23,18 +23,18 @@ const TYPE_ICONS: Record<string, string> = {
   "instance.deployed": "🚀",
 };
 
-function relativeTime(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const mins = Math.floor(diff / 60_000);
-  if (mins < 1) return "just now";
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  return `${Math.floor(hrs / 24)}d ago`;
-}
-
 export function NotificationCenter() {
   const t = useTranslations("notifications");
+
+  function relativeTime(dateStr: string): string {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const mins = Math.floor(diff / 60_000);
+    if (mins < 1) return t("relativeJustNow");
+    if (mins < 60) return t("relativeMin", { count: mins });
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return t("relativeHour", { count: hrs });
+    return t("relativeDay", { count: Math.floor(hrs / 24) });
+  }
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -125,7 +125,7 @@ export function NotificationCenter() {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-80 z-50 bg-[#13131a] border border-white/10 rounded-xl shadow-2xl overflow-hidden">
+        <div className="absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] z-50 bg-[#13131a] border border-white/10 rounded-xl shadow-2xl overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
             <span className="text-sm font-semibold text-white">{t("title")}</span>
