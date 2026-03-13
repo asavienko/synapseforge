@@ -9,8 +9,12 @@ export const maxDuration = 60;
 const APP_URL = process.env.NEXTAUTH_URL ?? "https://synapseforge.ai";
 
 export async function GET(req: Request) {
-  const authHeader = req.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  // Allow Vercel Cron invocations (x-vercel-cron: 1) OR explicit Bearer CRON_SECRET
+  const isVercelCron = req.headers.get("x-vercel-cron") === "1";
+  const authHeader = req.headers.get("authorization") ?? "";
+  const cronSecret = process.env.CRON_SECRET;
+  const isAuthorized = isVercelCron || (cronSecret && authHeader === `Bearer ${cronSecret}`);
+  if (!isAuthorized) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

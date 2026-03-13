@@ -23,8 +23,12 @@ const WINDOW_MIN_HOURS = 20; // don't email too early
 const WINDOW_MAX_HOURS = 52; // don't email too late (already handled by inactivity nudge at 7d)
 
 export async function GET(req: Request) {
-  const authHeader = req.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  // Allow Vercel Cron invocations (x-vercel-cron: 1) OR explicit Bearer CRON_SECRET
+  const isVercelCron = req.headers.get("x-vercel-cron") === "1";
+  const authHeader = req.headers.get("authorization") ?? "";
+  const cronSecret = process.env.CRON_SECRET;
+  const isAuthorized = isVercelCron || (cronSecret && authHeader === `Bearer ${cronSecret}`);
+  if (!isAuthorized) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
