@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { email } from "@/lib/email";
 import { encrypt } from "@/lib/crypto";
+import { getTemplateForUseCase } from "@/lib/agent-templates";
 
 const ALLOWED_CRED_KEYS = [
   "openai_api_key",
@@ -57,6 +58,57 @@ export async function POST(req: NextRequest) {
     await prisma.aIInstance.update({
       where: { id: instance.id },
       data: { configSynced: false },
+    });
+  }
+
+  // Apply use-case template to instance config
+  if (instance) {
+    const template = getTemplateForUseCase((data.useCase as string) ?? "custom");
+
+    // Personalize with business name and industry
+    const businessName = (data.business as string)?.trim() ?? "";
+    const industry = (data.industry as string)?.trim() ?? "";
+
+    // Build personalized agent name
+    const agentName = businessName
+      ? `${businessName} ${template.agentName}`
+      : template.agentName;
+
+    // Inject business context into system prompt
+    let systemPrompt = template.systemPrompt;
+    if (businessName) {
+      systemPrompt = `You are working for ${businessName}${industry ? `, a ${industry} business` : ""}.\n\n${systemPrompt}`;
+    }
+
+    // Build config JSON matching the dashboard Config shape
+    const config = JSON.stringify({
+      model: template.model,
+      systemPrompt,
+      temperature: template.temperature,
+      maxTokens: template.maxTokens,
+      agentName,
+      businessName,
+      businessContext: industry ? `${industry} industry` : "",
+      role: "",
+      traits: [],
+      customInstructions: "",
+      memoryEnabled: true,
+      thinking: "adaptive",
+      language: "English",
+    });
+
+    // Update instance: apply config and rename from default if still untouched
+    const updateData: { config: string; name?: string; configSynced: boolean } = {
+      config,
+      configSynced: false,
+    };
+    if (instance.name === "My First Agent") {
+      updateData.name = agentName;
+    }
+
+    await prisma.aIInstance.update({
+      where: { id: instance.id },
+      data: updateData,
     });
   }
 
