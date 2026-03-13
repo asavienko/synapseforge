@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, Bot, Activity, AlertCircle, Plus, X, Shield, ChevronDown, MessageCircle, Send, Loader2, Server, Link, Unlink, CheckCircle2, Rocket, RefreshCw, Copy, Check, Gift, DollarSign, BarChart2, TrendingUp } from "lucide-react";
+import { Users, Bot, Activity, AlertCircle, Plus, X, Shield, ChevronDown, MessageCircle, Send, Loader2, Server, Link, Unlink, CheckCircle2, Rocket, RefreshCw, Copy, Check, Gift, DollarSign, BarChart2, TrendingUp, Tag } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { STATUS_COLORS, PLANS, formatDate, formatRelativeTime } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { ProvisioningWizard } from "@/components/ProvisioningWizard";
+import NextLink from "next/link";
 
 interface UserRow {
   id: string;
@@ -444,7 +445,7 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
         </div>
 
         {/* Tab switcher */}
-        <div className="flex gap-2 mb-6">
+        <div className="flex gap-2 mb-6 flex-wrap">
           {([
             { key: "overview" as const, label: t("tabOverview"), icon: undefined },
             { key: "referrals" as const, label: t("tabReferrals"), icon: Gift },
@@ -464,6 +465,13 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
               {tab.label}
             </button>
           ))}
+          <NextLink
+            href="/admin/versions"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors text-zinc-400 hover:text-white hover:bg-white/5 border border-transparent"
+          >
+            <Tag className="w-4 h-4" />
+            {t("versions")}
+          </NextLink>
         </div>
 
         {/* ─── Referrals Tab ─────────────────────────────────────────────── */}
