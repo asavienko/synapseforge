@@ -14,6 +14,8 @@ import { STATUS_COLORS, INSTANCE_TYPES, formatDate, formatRelativeTime } from "@
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { AGENT_TEMPLATES } from "@/lib/agent-templates";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -1909,7 +1911,11 @@ export default function InstanceDetailPage() {
                         <span className="text-xs text-zinc-600">{overviewTestResponse.latencyMs}ms</span>
                       )}
                     </div>
-                    <p className="text-sm text-zinc-200 whitespace-pre-wrap leading-relaxed">{overviewTestResponse.text}</p>
+                    <div className="text-sm text-zinc-200 leading-relaxed prose prose-invert prose-sm max-w-none prose-p:my-1 prose-headings:text-white prose-code:text-violet-300 prose-code:bg-white/10 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-xs prose-code:font-mono prose-pre:bg-white/5 prose-pre:border prose-pre:border-white/10 prose-pre:rounded-xl prose-li:text-zinc-300 prose-strong:text-white prose-a:text-violet-400">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {overviewTestResponse.text}
+                      </ReactMarkdown>
+                    </div>
                     <button
                       onClick={() => { setOverviewTestInput(""); setOverviewTestResponse(null); }}
                       className="mt-2 text-xs text-zinc-600 hover:text-zinc-400 transition-colors"
@@ -2117,7 +2123,15 @@ export default function InstanceDetailPage() {
                           ? "bg-red-500/10 border border-red-500/20 rounded-2xl rounded-bl-sm text-red-300"
                           : "bg-white/5 border border-white/10 rounded-2xl rounded-bl-sm text-zinc-200"
                     }`}>
-                      <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                      {msg.role === "user" || msg.isError ? (
+                        <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                      ) : (
+                        <div className="text-sm text-zinc-200 leading-relaxed prose prose-invert prose-sm max-w-none prose-p:my-1 prose-headings:text-white prose-code:text-violet-300 prose-code:bg-white/10 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-xs prose-code:font-mono prose-pre:bg-white/5 prose-pre:border prose-pre:border-white/10 prose-pre:rounded-xl prose-li:text-zinc-300 prose-strong:text-white prose-a:text-violet-400">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {msg.content}
+                          </ReactMarkdown>
+                        </div>
+                      )}
                       {(msg.latencyMs != null || msg.source === "openclaw") && (
                         <p className="text-xs text-zinc-600 mt-1 flex items-center gap-2">
                           {msg.latencyMs != null && <span>{msg.latencyMs}ms</span>}
@@ -2127,6 +2141,11 @@ export default function InstanceDetailPage() {
                             </span>
                           )}
                         </p>
+                      )}
+                      {"createdAt" in msg && msg.createdAt && (
+                        <span className="text-xs text-zinc-700 group-hover:text-zinc-500 transition-colors">
+                          {new Date(msg.createdAt as string).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                        </span>
                       )}
                       {msg.role === "assistant" && !msg.isError && (
                         <button
@@ -2221,6 +2240,35 @@ export default function InstanceDetailPage() {
       {/* ── Configuration ── */}
       {tab === "Configuration" && (
         <div className="space-y-5">
+
+          {/* ── Template Picker ── */}
+          <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+            <div className="p-4 border-b border-white/5">
+              <h3 className="text-sm font-semibold text-white">{t("config.templateTitle")}</h3>
+              <p className="text-xs text-zinc-500 mt-0.5">{t("config.templateDesc")}</p>
+            </div>
+            <div className="p-4 grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {AGENT_TEMPLATES.map((tmpl) => (
+                <button
+                  key={tmpl.id}
+                  onClick={() => {
+                    setConfig(prev => ({
+                      ...prev,
+                      agentName: tmpl.defaultAgentName ?? prev.agentName,
+                      systemPrompt: tmpl.systemPrompt ?? prev.systemPrompt,
+                    }));
+                    setConfigDirty(true);
+                    showToast(t("config.templateApplied", { name: tmpl.name }));
+                  }}
+                  className="flex flex-col gap-1.5 p-3 rounded-xl border border-white/10 hover:border-violet-500/40 bg-white/[0.02] hover:bg-violet-500/5 transition-colors text-left"
+                >
+                  <span className="text-lg leading-none">{tmpl.icon ?? "🤖"}</span>
+                  <span className="text-sm font-medium text-zinc-200">{tmpl.name}</span>
+                  <span className="text-xs text-zinc-500 line-clamp-2">{tmpl.description}</span>
+                </button>
+              ))}
+            </div>
+          </div>
 
           {/* ── Section 1: Agent Identity ── */}
           <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
@@ -3622,6 +3670,83 @@ print(resp.choices[0].message.content)`}</pre>
               )}
             </div>
           </div>
+
+          {/* ── WhatsApp via Twilio Card ── */}
+          {(() => {
+            const hasWhatsapp = credentials.some((c) => c.key === "twilio_account_sid");
+            return (
+              <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+                <div className="p-4 border-b border-white/5 flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-600/20 border border-emerald-500/20 flex items-center justify-center text-lg">
+                    💬
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-sm font-semibold text-white">{t("credentials.whatsapp.title")}</h3>
+                    <p className="text-xs text-zinc-500">{t("credentials.whatsapp.desc")}</p>
+                  </div>
+                  {hasWhatsapp && (
+                    <span className="text-xs px-2 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
+                      {t("credentials.connected")}
+                    </span>
+                  )}
+                </div>
+
+                {hasWhatsapp ? (
+                  <div className="p-4 flex items-center justify-between">
+                    <span className="text-sm text-zinc-400">{t("credentials.whatsapp.connected")}</span>
+                    <button
+                      onClick={async () => {
+                        await fetch(`/api/instances/${id}/setup-whatsapp`, { method: "DELETE" });
+                        showToast(t("credentials.whatsapp.disconnected"));
+                        loadCredentials();
+                      }}
+                      className="text-xs text-red-400 hover:text-red-300 bg-red-500/10 px-3 py-1.5 rounded-lg transition-colors"
+                    >
+                      {t("credentials.disconnect")}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="p-4 space-y-3">
+                    <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl px-3 py-2 text-xs text-amber-300">
+                      {t("credentials.whatsapp.twilioNote")}
+                    </div>
+                    <input
+                      type="text"
+                      value={whatsappForm.accountSid}
+                      onChange={(e) => setWhatsappForm(f => ({ ...f, accountSid: e.target.value }))}
+                      placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors font-mono"
+                    />
+                    <input
+                      type="password"
+                      value={whatsappForm.authToken}
+                      onChange={(e) => setWhatsappForm(f => ({ ...f, authToken: e.target.value }))}
+                      placeholder={t("credentials.whatsapp.authTokenPlaceholder")}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors"
+                    />
+                    <input
+                      type="text"
+                      value={whatsappForm.number}
+                      onChange={(e) => setWhatsappForm(f => ({ ...f, number: e.target.value }))}
+                      placeholder="+14155238886"
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors font-mono"
+                    />
+                    {whatsappError && (
+                      <p className="text-xs text-red-400">{whatsappError}</p>
+                    )}
+                    <button
+                      onClick={saveWhatsapp}
+                      disabled={whatsappSaving || !whatsappForm.accountSid || !whatsappForm.authToken || !whatsappForm.number}
+                      className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 transition-colors px-4 py-2.5 rounded-xl text-sm font-semibold text-white"
+                    >
+                      {whatsappSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                      {whatsappSaving ? t("credentials.saving") : t("credentials.whatsapp.connect")}
+                    </button>
+                  </div>
+                )}
+              </div>
+            );
+          })()}
         </div>
       )}
     </div>

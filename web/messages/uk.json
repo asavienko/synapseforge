@@ -512,7 +512,10 @@
       "saving": "Збереження...",
       "save": "Зберегти конфігурацію",
       "saved": "Збережено",
-      "systemPromptPlaceholder": "Ви корисний AI-асистент..."
+      "systemPromptPlaceholder": "Ви корисний AI-асистент...",
+      "templateTitle": "Почати з шаблону",
+      "templateDesc": "Готові персонажі для поширених сценаріїв. Після застосування можна змінити всі налаштування.",
+      "templateApplied": "Шаблон застосовано — перегляньте та збережіть конфігурацію"
     },
     "apiKeys": {
       "generateTitle": "Згенерувати новий API-ключ",
@@ -609,6 +612,23 @@
         "slack_app_token": "Токен додатку Slack",
         "slack_bot_token": "Токен бота Slack",
         "gateway_token": "Токен шлюзу"
+      },
+      "connected": "Підключено",
+      "notConnected": "Не підключено",
+      "notSetUp": "Не налаштовано",
+      "disconnect": "Відключити",
+      "saving": "Збереження...",
+      "saveFailed": "Помилка збереження. Будь ласка, спробуйте ще раз.",
+      "whatsapp": {
+        "title": "WhatsApp",
+        "desc": "Підключіться через Twilio — спілкуйтесь з клієнтами у WhatsApp",
+        "twilioNote": "Потрібен обліковий запис Twilio з увімкненою пісочницею WhatsApp або Business API.",
+        "accountSidPlaceholder": "SID облікового запису Twilio",
+        "authTokenPlaceholder": "Токен автентифікації Twilio",
+        "connected": "WhatsApp через Twilio підключено",
+        "saved": "WhatsApp успішно підключено",
+        "disconnected": "WhatsApp відключено",
+        "connect": "Підключити WhatsApp"
       }
     },
     "chat": {
@@ -836,6 +856,24 @@
     "provisionVpsTitle": "Розгорнути VPS для цього інстансу",
     "provision": "Розгорнути",
     "noClients": "Клієнтів поки не призначено.",
-    "noClientsDesc": "Адміністратор призначає клієнтів."
+    "noClientsDesc": "Адміністратор призначає клієнтів.",
+    "configEditor": "Редагувати конфіг агента",
+    "agentName": "Ім'я агента",
+    "systemPrompt": "Системний промпт",
+    "agentRole": "Роль",
+    "agentRolePlaceholder": "наприклад, Фахівець з підтримки клієнтів",
+    "saveConfig": "Зберегти конфіг",
+    "saving": "Збереження...",
+    "editConfig": "Редагувати конфіг",
+    "configSaved": "Конфіг збережено",
+    "chatLog": "Останні розмови",
+    "readOnly": "Тільки для читання",
+    "noChatMessages": "Розмов поки немає",
+    "viewChatLog": "Журнал чату",
+    "provisionOptions": "Параметри розгортання",
+    "region": "Регіон сервера",
+    "tier": "Рівень сервера",
+    "confirmProvision": "Підтвердити та розгорнути",
+    "cancelProvision": "Скасувати"
   }
 }

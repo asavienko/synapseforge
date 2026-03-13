@@ -512,7 +512,10 @@
       "saving": "Сохранение...",
       "save": "Сохранить конфигурацию",
       "saved": "Сохранено",
-      "systemPromptPlaceholder": "Вы полезный AI-ассистент..."
+      "systemPromptPlaceholder": "Вы полезный AI-ассистент...",
+      "templateTitle": "Начать с шаблона",
+      "templateDesc": "Готовые персонажи для распространённых сценариев. После применения можно изменить всё.",
+      "templateApplied": "Шаблон применён — проверьте и сохраните настройки"
     },
     "apiKeys": {
       "generateTitle": "Сгенерировать новый API-ключ",
@@ -609,6 +612,23 @@
         "slack_app_token": "Токен приложения Slack",
         "slack_bot_token": "Токен бота Slack",
         "gateway_token": "Токен шлюза"
+      },
+      "connected": "Подключено",
+      "notConnected": "Не подключено",
+      "notSetUp": "Не настроено",
+      "disconnect": "Отключить",
+      "saving": "Сохранение...",
+      "saveFailed": "Ошибка сохранения. Попробуйте ещё раз.",
+      "whatsapp": {
+        "title": "WhatsApp",
+        "desc": "Подключитесь через Twilio — общайтесь с клиентами в WhatsApp",
+        "twilioNote": "Требуется аккаунт Twilio с включённой песочницей WhatsApp или Business API.",
+        "accountSidPlaceholder": "SID аккаунта Twilio",
+        "authTokenPlaceholder": "Токен авторизации Twilio",
+        "connected": "WhatsApp через Twilio подключён",
+        "saved": "WhatsApp успешно подключён",
+        "disconnected": "WhatsApp отключён",
+        "connect": "Подключить WhatsApp"
       }
     },
     "chat": {
@@ -836,6 +856,24 @@
     "provisionVpsTitle": "Развернуть VPS для этого инстанса",
     "provision": "Развернуть",
     "noClients": "Клиенты пока не назначены.",
-    "noClientsDesc": "Администратор назначает клиентов."
+    "noClientsDesc": "Администратор назначает клиентов.",
+    "configEditor": "Редактировать конфиг агента",
+    "agentName": "Имя агента",
+    "systemPrompt": "Системный промпт",
+    "agentRole": "Роль",
+    "agentRolePlaceholder": "например, Специалист по поддержке клиентов",
+    "saveConfig": "Сохранить конфиг",
+    "saving": "Сохранение...",
+    "editConfig": "Редактировать конфиг",
+    "configSaved": "Конфиг сохранён",
+    "chatLog": "Последние разговоры",
+    "readOnly": "Только для чтения",
+    "noChatMessages": "Разговоров пока нет",
+    "viewChatLog": "Журнал чата",
+    "provisionOptions": "Параметры развёртывания",
+    "region": "Регион сервера",
+    "tier": "Уровень сервера",
+    "confirmProvision": "Подтвердить и развернуть",
+    "cancelProvision": "Отмена"
   }
 }

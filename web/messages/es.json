@@ -512,7 +512,10 @@
       "saving": "Guardando...",
       "save": "Guardar configuración",
       "saved": "Guardado",
-      "systemPromptPlaceholder": "Eres un asistente de IA útil..."
+      "systemPromptPlaceholder": "Eres un asistente de IA útil...",
+      "templateTitle": "Empezar desde una plantilla",
+      "templateDesc": "Personas predefinidas para casos de uso comunes. Puedes personalizar todo después de aplicar.",
+      "templateApplied": "Plantilla aplicada — revisa y guarda tu configuración"
     },
     "apiKeys": {
       "generateTitle": "Generar nueva clave API",
@@ -609,6 +612,23 @@
         "slack_app_token": "Token de App de Slack",
         "slack_bot_token": "Token de Bot de Slack",
         "gateway_token": "Token de Gateway"
+      },
+      "connected": "Conectado",
+      "notConnected": "No conectado",
+      "notSetUp": "No configurado",
+      "disconnect": "Desconectar",
+      "saving": "Guardando...",
+      "saveFailed": "Error al guardar. Por favor, inténtalo de nuevo.",
+      "whatsapp": {
+        "title": "WhatsApp",
+        "desc": "Conecta a través de Twilio — llega a tus clientes por WhatsApp",
+        "twilioNote": "Requiere una cuenta de Twilio con el sandbox de WhatsApp o la API Business habilitada.",
+        "accountSidPlaceholder": "SID de cuenta de Twilio",
+        "authTokenPlaceholder": "Token de autenticación de Twilio",
+        "connected": "WhatsApp de Twilio conectado",
+        "saved": "WhatsApp conectado exitosamente",
+        "disconnected": "WhatsApp desconectado",
+        "connect": "Conectar WhatsApp"
       }
     },
     "chat": {
@@ -836,6 +856,24 @@
     "provisionVpsTitle": "Aprovisionar VPS para esta instancia",
     "provision": "Aprovisionar",
     "noClients": "No hay clientes asignados aún.",
-    "noClientsDesc": "El administrador te asigna los clientes."
+    "noClientsDesc": "El administrador te asigna los clientes.",
+    "configEditor": "Editar configuración del agente",
+    "agentName": "Nombre del agente",
+    "systemPrompt": "Prompt del sistema",
+    "agentRole": "Rol",
+    "agentRolePlaceholder": "p. ej. Especialista en soporte al cliente",
+    "saveConfig": "Guardar configuración",
+    "saving": "Guardando...",
+    "editConfig": "Editar configuración",
+    "configSaved": "Configuración guardada",
+    "chatLog": "Conversaciones recientes",
+    "readOnly": "Vista de solo lectura",
+    "noChatMessages": "Sin conversaciones aún",
+    "viewChatLog": "Registro de chat",
+    "provisionOptions": "Opciones de aprovisionamiento",
+    "region": "Región del servidor",
+    "tier": "Nivel del servidor",
+    "confirmProvision": "Confirmar y aprovisionar",
+    "cancelProvision": "Cancelar"
   }
 }
