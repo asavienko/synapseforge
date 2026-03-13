@@ -17,6 +17,7 @@ import { AGENT_TEMPLATES } from "@/lib/agent-templates";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { IntegrationCard } from "@/components/IntegrationCard";
+import { SANDBOX_LIMIT, getSandboxRemaining } from "@/lib/sandbox";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -44,6 +45,8 @@ interface Instance {
   slackTeamName?: string | null;
   currentVersion?: string | null;
   autoUpdate?: boolean;
+  sandboxMode?: boolean;
+  sandboxUsed?: number;
 }
 
 interface CredentialRow {
@@ -1579,7 +1582,15 @@ export default function InstanceDetailPage() {
         setChatMessages((prev) => prev.filter((m) => m.id !== streamingId));
         let errData: { error?: string; missingCredential?: boolean } = {};
         try { errData = await res.json(); } catch { /* ignore */ }
-        if (errData.missingCredential) {
+        if (res.status === 402 && errData.error === "sandbox_exhausted") {
+          // Show inline out-of-credits message
+          setChatMessages((prev) => [
+            ...prev,
+            { role: "assistant", content: t("chat.sandboxOutOfCredits"), isError: true },
+          ]);
+          // Refresh instance so the sandbox banner updates
+          loadInstance();
+        } else if (errData.missingCredential) {
           setChatNoCredentials(true);
           setChatMessages([]); // clear all messages so the full no-creds state is shown
         } else {
@@ -1905,6 +1916,27 @@ export default function InstanceDetailPage() {
               } catch { return null; }
             })()}
           </div>
+          {/* Sandbox status widget */}
+          {instance.sandboxMode && (
+            <div className="p-4 bg-violet-500/5 border border-violet-500/15 rounded-xl">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-violet-300">
+                  {t("overview.sandboxMode")}
+                </span>
+                <span className="text-xs text-zinc-500">
+                  {instance.sandboxUsed ?? 0}/{SANDBOX_LIMIT} {t("overview.messagesUsed")}
+                </span>
+              </div>
+              <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-violet-500 rounded-full transition-all"
+                  style={{ width: `${Math.min(100, ((instance.sandboxUsed ?? 0) / SANDBOX_LIMIT) * 100)}%` }}
+                />
+              </div>
+              <p className="text-xs text-zinc-600 mt-2">{t("overview.sandboxHint")}</p>
+            </div>
+          )}
+
           {/* Usage Stats Panel */}
           <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden" data-testid="usage-panel">
             <div className="p-5 border-b border-white/5 flex items-center justify-between">
@@ -2163,6 +2195,45 @@ export default function InstanceDetailPage() {
               </button>
             )}
           </div>
+
+          {/* Sandbox mode banner */}
+          {(() => {
+            const hasLLMCreds = credentials.some((c) =>
+              ["openai_api_key", "anthropic_api_key", "openrouter_api_key"].includes(c.key)
+            );
+            const sandboxRemaining = getSandboxRemaining(instance.sandboxUsed ?? 0);
+            if (!instance.sandboxMode || hasLLMCreds) return null;
+            return (
+              <div className={`mb-3 rounded-xl px-4 py-3 border flex items-center justify-between ${
+                sandboxRemaining === 0
+                  ? "bg-red-500/10 border-red-500/20 text-red-400"
+                  : sandboxRemaining <= 5
+                  ? "bg-amber-500/10 border-amber-500/20 text-amber-400"
+                  : "bg-violet-500/10 border-violet-500/20 text-violet-400"
+              }`}>
+                <div>
+                  <p className="text-sm font-semibold">
+                    {sandboxRemaining === 0
+                      ? t("chat.sandboxExhausted")
+                      : t("chat.sandboxActive", { remaining: String(sandboxRemaining) })}
+                  </p>
+                  <p className="text-xs opacity-70 mt-0.5">
+                    {sandboxRemaining === 0
+                      ? t("chat.sandboxExhaustedDesc")
+                      : t("chat.sandboxDesc")}
+                  </p>
+                </div>
+                {sandboxRemaining === 0 && (
+                  <button
+                    onClick={() => { setTab("Credentials"); loadCredentials(); }}
+                    className="text-xs px-3 py-1.5 bg-violet-600 text-white rounded-lg hover:bg-violet-500 transition-colors shrink-0 ml-3"
+                  >
+                    {t("chat.addApiKey")}
+                  </button>
+                )}
+              </div>
+            );
+          })()}
 
           {/* Instance stopped state */}
           {instance.status !== "running" && (

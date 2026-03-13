@@ -6,6 +6,7 @@ import { callOpenClawVps } from "@/lib/openclaw-proxy";
 import { retrieveContext } from "@/lib/rag";
 import { dashboardChatLimiter, rateLimitHeaders, getRateLimitKey } from "@/lib/rate-limit";
 import { deliverWebhook } from "@/lib/webhooks";
+import { isSandboxExhausted } from "@/lib/sandbox";
 
 // LLM calls can take 30-60s
 export const maxDuration = 60;
@@ -96,6 +97,46 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   const instanceConfig = parseInstanceConfig(instance.config);
 
+  // ── Sandbox / credential resolution ───────────────────────────────────────
+  const hasOwnCredentials = await prisma.instanceCredential.findFirst({
+    where: {
+      instanceId: id,
+      key: { in: ["openai_api_key", "anthropic_api_key", "openrouter_api_key"] },
+    },
+  });
+
+  let sandboxActive = false;
+  let sandboxApiKey: string | null = null;
+
+  if (!hasOwnCredentials) {
+    if (instance.sandboxMode && !isSandboxExhausted(instance.sandboxUsed)) {
+      // Use platform key in sandbox mode
+      const platformKey = process.env.SYNAPSEFORGE_OPENAI_KEY || process.env.OPENAI_API_KEY;
+      if (!platformKey) {
+        return NextResponse.json(
+          { error: "Sandbox unavailable — please add your own API key in Credentials" },
+          { status: 503 }
+        );
+      }
+      sandboxActive = true;
+      sandboxApiKey = platformKey;
+    } else if (isSandboxExhausted(instance.sandboxUsed)) {
+      return NextResponse.json(
+        {
+          error: "sandbox_exhausted",
+          message:
+            "Your 20 free messages have been used. Please add your API key in the Credentials tab to continue.",
+        },
+        { status: 402 }
+      );
+    } else {
+      return NextResponse.json(
+        { error: "No API key configured. Please add credentials in the Credentials tab." },
+        { status: 400 }
+      );
+    }
+  }
+
   // ── RAG: inject knowledge base context into system prompt ──────────────────
   const kbContext = await retrieveContext(id, userContent).catch(() => "");
   if (kbContext) {
@@ -164,11 +205,24 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   }
 
   // ── Direct LLM streaming via Vercel AI SDK ─────────────────────────────────
-  const credResult = await resolveCredentials(id, instanceConfig);
-  if (!credResult.ok) {
-    return NextResponse.json(credResult.error, { status: 400 });
+  let resolvedProvider: "openai" | "anthropic" | "openrouter";
+  let resolvedModelId: string;
+  let resolvedApiKey: string;
+
+  if (sandboxActive && sandboxApiKey) {
+    // Sandbox: always use OpenAI gpt-4o-mini for cost efficiency
+    resolvedProvider = "openai";
+    resolvedModelId = "gpt-4o-mini";
+    resolvedApiKey = sandboxApiKey;
+  } else {
+    const credResult = await resolveCredentials(id, instanceConfig);
+    if (!credResult.ok) {
+      return NextResponse.json(credResult.error, { status: 400 });
+    }
+    resolvedProvider = credResult.resolvedProvider;
+    resolvedModelId = credResult.resolvedModelId;
+    resolvedApiKey = credResult.resolvedApiKey;
   }
-  const { resolvedProvider, resolvedModelId, resolvedApiKey } = credResult;
 
   const startTime = Date.now();
 
@@ -195,6 +249,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
             source: "dashboard",
           },
         });
+
+        // Increment sandbox usage counter if we used the platform key
+        if (sandboxActive) {
+          prisma.aIInstance
+            .update({ where: { id }, data: { sandboxUsed: { increment: 1 } } })
+            .catch(console.error);
+        }
         prisma.activityLog
           .create({
             data: {

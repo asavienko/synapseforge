@@ -168,6 +168,8 @@ model AIInstance {
   targetVersion      String?   // Desired version (set by admin or auto-update)
   autoUpdate         Boolean   @default(false) // Auto-update to latest stable
   versionLockedAt    DateTime? // When version was locked/pinned
+  sandboxMode        Boolean   @default(true)  // true = use platform key, false = use own key
+  sandboxUsed        Int       @default(0)      // messages used in sandbox
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

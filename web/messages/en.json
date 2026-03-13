@@ -512,7 +512,10 @@
       "tier": "Tier",
       "status": "Status",
       "created": "Created",
-      "lastUpdated": "Last updated"
+      "lastUpdated": "Last updated",
+      "sandboxMode": "Sandbox Mode",
+      "messagesUsed": "messages used",
+      "sandboxHint": "Add your API key in Credentials to use unlimited messages"
     },
     "config": {
       "aiModel": "AI Model",
@@ -713,7 +716,13 @@
       "inlineKeyStart": "Start",
       "inlineKeyGetKey": "Get a free API key →",
       "inlineKeyAdvanced": "Advanced setup",
-      "stop": "Stop"
+      "stop": "Stop",
+      "sandboxActive": "Sandbox mode — {remaining} free messages remaining",
+      "sandboxDesc": "Add your own API key in Credentials to remove this limit",
+      "sandboxExhausted": "Free messages used up",
+      "sandboxExhaustedDesc": "Add your API key to continue chatting",
+      "sandboxOutOfCredits": "You've used all 20 free sandbox messages. Please add your API key in the Credentials tab to continue.",
+      "addApiKey": "Add API Key →"
     },
     "knowledge": {
       "title": "Knowledge Base",
@@ -807,7 +816,11 @@
     "versions": "Versions",
     "publishVersion": "Publish Version",
     "markStable": "Mark Stable",
-    "markDeprecated": "Mark Deprecated"
+    "markDeprecated": "Mark Deprecated",
+    "versionManagement": "Version Management",
+    "noVersions": "No versions published yet",
+    "instanceCoverage": "Instance Coverage",
+    "bulkUpdate": "Bulk Update"
   },
   "referral": {
     "pageTitle": "Referral Program",

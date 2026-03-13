@@ -24,6 +24,8 @@ export async function GET() {
       versionLockedAt: true,
       status: true,
       provisionStatus: true,
+      userId: true,
+      user: { select: { email: true } },
     },
     orderBy: { createdAt: "desc" },
   });

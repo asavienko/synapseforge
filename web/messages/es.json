@@ -512,7 +512,10 @@
       "tier": "Nivel",
       "status": "Estado",
       "created": "Creado",
-      "lastUpdated": "Última actualización"
+      "lastUpdated": "Última actualización",
+      "sandboxMode": "Modo Sandbox",
+      "messagesUsed": "mensajes usados",
+      "sandboxHint": "Agrega tu clave API en Credenciales para usar mensajes ilimitados"
     },
     "config": {
       "aiModel": "Modelo de IA",
@@ -713,7 +716,13 @@
       "inlineKeyStart": "Iniciar",
       "inlineKeyGetKey": "Obtener una clave API gratuita →",
       "inlineKeyAdvanced": "Configuración avanzada",
-      "stop": "Detener"
+      "stop": "Detener",
+      "sandboxActive": "Modo sandbox — {remaining} mensajes gratuitos restantes",
+      "sandboxDesc": "Agrega tu propia clave API en Credenciales para eliminar este límite",
+      "sandboxExhausted": "Mensajes gratuitos agotados",
+      "sandboxExhaustedDesc": "Agrega tu clave API para seguir chateando",
+      "sandboxOutOfCredits": "Has usado los 20 mensajes gratuitos del sandbox. Por favor agrega tu clave API en la pestaña Credenciales para continuar.",
+      "addApiKey": "Agregar clave API →"
     },
     "knowledge": {
       "title": "Base de conocimiento",
@@ -807,7 +816,11 @@
     "versions": "Versiones",
     "publishVersion": "Publicar versión",
     "markStable": "Marcar como estable",
-    "markDeprecated": "Marcar como obsoleto"
+    "markDeprecated": "Marcar como obsoleto",
+    "versionManagement": "Gestión de Versiones",
+    "noVersions": "No hay versiones publicadas aún",
+    "instanceCoverage": "Cobertura de Instancias",
+    "bulkUpdate": "Actualización Masiva"
   },
   "instanceSetup": {
     "title": "Configura tu Instancia de IA",
