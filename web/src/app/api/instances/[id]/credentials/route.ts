@@ -238,5 +238,61 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     });
   }
 
+  // Flip sandboxMode off when user saves their own LLM key
+  const LLM_KEYS = ["openai_api_key", "anthropic_api_key", "openrouter_api_key"];
+  if (LLM_KEYS.includes(key)) {
+    await prisma.aIInstance.update({
+      where: { id },
+      data: { sandboxMode: false },
+    }).catch(console.error);
+  }
+
   return NextResponse.json({ ok: true, maskedValue: maskValue(value) });
+}
+
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const session = await auth();
+  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const { id } = await params;
+  const instance = await prisma.aIInstance.findFirst({
+    where: { id, userId: session.user.id },
+  });
+  if (!instance) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  const body = await req.json();
+  const { key: keyToDelete } = body as { key: string };
+
+  if (!keyToDelete || !isAllowedKey(keyToDelete)) {
+    return NextResponse.json({ error: "Invalid or missing key" }, { status: 400 });
+  }
+
+  await prisma.instanceCredential.deleteMany({
+    where: { instanceId: id, key: keyToDelete },
+  });
+
+  // If the deleted key was an LLM key and no LLM keys remain, re-enable sandbox mode
+  const LLM_KEYS = ["openai_api_key", "anthropic_api_key", "openrouter_api_key"];
+  if (LLM_KEYS.includes(keyToDelete)) {
+    const remainingLlmCreds = await prisma.instanceCredential.count({
+      where: {
+        instanceId: id,
+        key: { in: LLM_KEYS },
+      },
+    });
+    if (remainingLlmCreds === 0) {
+      await prisma.aIInstance.update({
+        where: { id },
+        data: { sandboxMode: true },
+      }).catch(console.error);
+    }
+  }
+
+  // Mark configSynced = false since credentials changed
+  await prisma.aIInstance.update({
+    where: { id },
+    data: { configSynced: false },
+  });
+
+  return NextResponse.json({ ok: true });
 }

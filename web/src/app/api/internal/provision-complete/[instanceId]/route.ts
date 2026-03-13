@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { email } from "@/lib/email";
 import { createNotification } from "@/lib/notifications";
+import { queueCommand } from "@/lib/command-queue";
 
 /**
  * POST /api/internal/provision-complete/[instanceId]
@@ -62,6 +63,9 @@ export async function POST(
   if (body.ip && !instance.vpsUrl) {
     updateData.vpsUrl = `http://${body.ip}:18789`;
   }
+  if (body.openclaw_version) {
+    updateData.currentVersion = body.openclaw_version;
+  }
 
   await prisma.$transaction([
     prisma.aIInstance.update({
@@ -76,6 +80,11 @@ export async function POST(
       },
     }),
   ]);
+
+  // Queue an initial snapshot as a rollback baseline
+  if (body.openclaw_version) {
+    await queueCommand(instanceId, "take_restic_snapshot", {}, "system", "initial post-provision snapshot").catch(console.error);
+  }
 
   // Notify client and manager that the instance is live
   const fullInstance = await prisma.aIInstance.findUnique({
