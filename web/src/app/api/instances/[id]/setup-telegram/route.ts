@@ -103,28 +103,43 @@ export async function POST(
     },
   });
 
-  // ── Optionally register webhook ───────────────────────────────────────────
-  let webhookSet = false;
-  if (setWebhook && instance.vpsUrl) {
-    const webhookUrl = `${instance.vpsUrl}/telegram`;
-    try {
-      const webhookRes = await fetch(
-        `https://api.telegram.org/bot${token.trim()}/setWebhook`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url: webhookUrl }),
-          signal: AbortSignal.timeout(8000),
-        }
-      );
-      const webhookData = (await webhookRes.json()) as TelegramSetWebhookResult;
-      webhookSet = webhookData.ok === true;
-    } catch {
-      // Non-fatal: token saved, webhook can be registered later
-    }
+  // ── Generate gateway token for webhook secret (if not already set) ─────────
+  let { gatewayToken } = instance;
+  if (!gatewayToken) {
+    const { randomBytes } = await import("crypto");
+    gatewayToken = randomBytes(32).toString("hex");
+    await prisma.aIInstance.update({
+      where: { id },
+      data: { gatewayToken },
+    });
   }
 
-  // Notify VPS of credential change (fire & forget)
+  // ── Register Vercel webhook (serverless bot — no VPS needed) ─────────────
+  const appUrl = process.env.NEXTAUTH_URL ?? process.env.APP_URL ?? "https://synapseforge-mu.vercel.app";
+  const webhookUrl = `${appUrl}/api/telegram/${id}`;
+  let webhookSet = false;
+  try {
+    const webhookRes = await fetch(
+      `https://api.telegram.org/bot${token.trim()}/setWebhook`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          url: webhookUrl,
+          secret_token: gatewayToken,
+          allowed_updates: ["message", "edited_message"],
+          drop_pending_updates: true,
+        }),
+        signal: AbortSignal.timeout(8000),
+      }
+    );
+    const webhookData = (await webhookRes.json()) as TelegramSetWebhookResult;
+    webhookSet = webhookData.ok === true;
+  } catch {
+    // Non-fatal: token saved, webhook can be retried
+  }
+
+  // ── Also notify VPS if provisioned (belt-and-suspenders) ────────────────
   if (instance.vpsUrl && instance.gatewayToken) {
     fetch(`${instance.vpsUrl}/hooks/wake`, {
       method: "POST",
@@ -142,5 +157,6 @@ export async function POST(
     botUsername,
     botName: bot.first_name,
     webhookSet,
+    webhookUrl: webhookSet ? webhookUrl : undefined,
   });
 }

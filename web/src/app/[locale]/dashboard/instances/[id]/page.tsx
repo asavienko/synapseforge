@@ -1404,7 +1404,7 @@ export default function InstanceDetailPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token: token.trim(), setWebhook: true }),
     });
-    const data = await res.json() as { ok?: boolean; botUsername?: string; botName?: string; error?: string };
+    const data = await res.json() as { ok?: boolean; botUsername?: string; botName?: string; error?: string; webhookSet?: boolean; webhookUrl?: string };
 
     if (!res.ok || !data.ok) {
       setTelegramError(data.error ?? t("credentials.telegram.connect"));
@@ -1413,7 +1413,10 @@ export default function InstanceDetailPage() {
       setTelegramTokenInput("");
       await loadCredentials();
       await loadInstance();
-      showToast(`Telegram connected: ${data.botUsername}`);
+      const toastMsg = data.webhookSet
+        ? `✅ ${data.botUsername} is live on Telegram! Your bot is ready to receive messages.`
+        : `Telegram connected: ${data.botUsername}`;
+      showToast(toastMsg);
     }
     setTelegramConnecting(false);
   }
