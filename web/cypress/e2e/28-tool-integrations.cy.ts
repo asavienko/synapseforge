@@ -1,7 +1,7 @@
-describe("Tool Integrations", () => {
+describe("28 — Agent Tool Integrations", () => {
   beforeEach(() => {
     cy.session("user", () => {
-      cy.visit("/sign-in");
+      cy.visit("/en/sign-in");
       cy.get('input[type="email"]').type("cypress@synapseforge.ai");
       cy.get('input[type="password"]').type("cypress123");
       cy.get('button[type="submit"]').click();
@@ -9,57 +9,63 @@ describe("Tool Integrations", () => {
     });
   });
 
-  it("GET /api/instances/:id/tools returns tool list", () => {
-    // Get the instance id from the list
+  it("GET /api/instances/:id/tools returns tool list with utility + crypto tools", () => {
     cy.request("GET", "/api/instances").then((res) => {
-      const instance = res.body.instances?.[0];
-      if (!instance) return;
-
-      cy.request("GET", `/api/instances/${instance.id}/tools`).then((toolsRes) => {
-        expect(toolsRes.status).to.eq(200);
-        expect(toolsRes.body.tools).to.be.an("array");
-        // Utility tools always present (no credential needed)
-        const toolNames = toolsRes.body.tools.map((t: { name: string }) => t.name);
-        expect(toolNames).to.include("get_current_time");
-        expect(toolNames).to.include("calculate");
-      });
-    });
-  });
-
-  it("calculate tool executes correctly via test endpoint", () => {
-    cy.request("GET", "/api/instances").then((res) => {
-      const instance = res.body.instances?.[0];
-      if (!instance) return;
-
-      cy.request("POST", `/api/instances/${instance.id}/tools/test`, {
-        toolName: "calculate",
-        args: { expression: "150 * 0.85" },
-      }).then((r) => {
+      const id = res.body.instances?.[0]?.id;
+      if (!id) return cy.log("No instances found");
+      cy.request("GET", `/api/instances/${id}/tools`).then((r) => {
         expect(r.status).to.eq(200);
-        expect(r.body.result).to.eq("127.5");
+        expect(r.body.tools).to.be.an("array");
+        const names = r.body.tools.map((t: { name: string }) => t.name);
+        expect(names).to.include("get_current_time");
+        expect(names).to.include("calculate");
+        expect(names).to.include("crypto_price");
+        expect(names).to.include("crypto_chart");
       });
     });
   });
 
-  it("Integrations section visible in Credentials tab", () => {
-    cy.visit("/dashboard/instances");
+  it("calculate tool returns correct result", () => {
+    cy.request("GET", "/api/instances").then((res) => {
+      const id = res.body.instances?.[0]?.id;
+      if (!id) return;
+      cy.request("POST", `/api/instances/${id}/tools/test`, { toolName: "calculate", args: { expression: "42 * 100" } })
+        .then((r) => { expect(r.status).to.eq(200); expect(r.body.result).to.eq("4200"); });
+    });
+  });
+
+  it("get_current_time returns a string", () => {
+    cy.request("GET", "/api/instances").then((res) => {
+      const id = res.body.instances?.[0]?.id;
+      if (!id) return;
+      cy.request("POST", `/api/instances/${id}/tools/test`, { toolName: "get_current_time", args: { timezone: "UTC" } })
+        .then((r) => { expect(r.status).to.eq(200); expect(r.body.result).to.be.a("string").and.not.be.empty; });
+    });
+  });
+
+  it("crypto_price tool works without API key", () => {
+    cy.request("GET", "/api/instances").then((res) => {
+      const id = res.body.instances?.[0]?.id;
+      if (!id) return;
+      cy.request("POST", `/api/instances/${id}/tools/test`, { toolName: "crypto_price", args: { coins: "bitcoin" } })
+        .then((r) => { expect(r.status).to.eq(200); expect(r.body.result).to.contain("BITCOIN"); });
+    });
+  });
+
+  it("Credentials tab shows Integrations section", () => {
+    cy.visit("/en/dashboard/instances");
     cy.contains("Cypress Agent").click();
     cy.contains("Credentials").click();
-    cy.contains("Tavily Search").should("exist");
+    cy.contains("Tavily").should("exist");
     cy.contains("Firecrawl").should("exist");
+    cy.contains("GitHub").should("exist");
+    cy.contains("CoinGecko").should("exist");
   });
 
-  it("chat tool call flow works with mocked Tavily response", () => {
+  it("web_search with mocked Tavily API", () => {
     cy.intercept("POST", "https://api.tavily.com/search", {
-      statusCode: 200,
-      body: {
-        answer: "Madrid weather: 22°C, sunny",
-        results: [{ title: "Weather Madrid", url: "https://weather.com", content: "22°C sunny today" }],
-      },
-    }).as("tavilySearch");
-
-    // Note: this test only verifies the structure — actual tool calling
-    // requires the instance to have a tavily_api_key credential set
-    cy.log("Tool calling framework verified via API tests above");
+      body: { answer: "Mock answer", results: [{ title: "Test", url: "https://example.com", content: "Test" }] },
+    }).as("tavily");
+    cy.log("Tavily mock ready — requires tavily_api_key credential to activate tool");
   });
 });

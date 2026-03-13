@@ -10,6 +10,9 @@ import { googleMapsTools } from "./google-maps";
 import { hunterTools } from "./hunter";
 import { apolloTools } from "./apollo";
 import { apifyTools } from "./apify";
+import { githubTools } from "./github";
+import { coingeckoTools } from "./coingecko";
+import { yelpTools } from "./yelp";
 
 export const ALL_TOOLS: AgentTool[] = [
   ...utilityTools,
@@ -24,6 +27,9 @@ export const ALL_TOOLS: AgentTool[] = [
   ...hunterTools,
   ...apolloTools,
   ...apifyTools,
+  ...githubTools,
+  ...coingeckoTools,
+  ...yelpTools,
 ];
 
 export function getEnabledTools(credentials: Record<string, string>): AgentTool[] {

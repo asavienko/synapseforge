@@ -450,6 +450,8 @@ const ALLOWED_CREDENTIAL_KEYS = [
   "twilio_account_sid",
   "twilio_auth_token",
   "twilio_whatsapp_number",
+  "github_token",
+  "yelp_api_key",
 ] as const;
 
 // ─── Deploy Tab Component ─────────────────────────────────────────────────────
@@ -4308,6 +4310,47 @@ print(resp.choices[0].message.content)`}</pre>
                 enabled={credentials.some((c) => c.key === "apify_api_key")}
                 instanceId={id}
                 onSave={async (key, value) => { await saveCredential(key, value); }}
+              />
+
+              {/* ── Business Tools ── */}
+              <p className="text-xs text-zinc-500 font-medium uppercase tracking-wider pt-2">
+                {t("credentials.integrations.businessTools")}
+              </p>
+              {/* CoinGecko — always available badge */}
+              <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-2xl leading-none">🦎</span>
+                  <h4 className="text-sm font-semibold text-white">CoinGecko</h4>
+                  <span className="text-xs text-emerald-400 font-medium">✓ Always available</span>
+                  <a href="https://coingecko.com/en/api" target="_blank" rel="noopener noreferrer" className="text-zinc-600 hover:text-zinc-400 ml-auto">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                  </a>
+                </div>
+                <p className="text-xs text-zinc-500">{t("credentials.integrations.coingeckoDesc")}</p>
+              </div>
+              <IntegrationCard
+                name="GitHub"
+                icon="🐙"
+                description={t("credentials.integrations.githubDesc")}
+                docsUrl="https://github.com/settings/tokens"
+                credKey="github_token"
+                placeholder="ghp_..."
+                enabled={credentials.some((c) => c.key === "github_token")}
+                instanceId={id}
+                onSave={async (key, value) => { await saveCredential(key, value); }}
+                toolName="github_search_issues"
+              />
+              <IntegrationCard
+                name="Yelp"
+                icon="⭐"
+                description={t("credentials.integrations.yelpDesc")}
+                docsUrl="https://www.yelp.com/developers/documentation/v3"
+                credKey="yelp_api_key"
+                placeholder="Your Yelp API key"
+                enabled={credentials.some((c) => c.key === "yelp_api_key")}
+                instanceId={id}
+                onSave={async (key, value) => { await saveCredential(key, value); }}
+                toolName="yelp_search"
               />
             </div>
           </div>
