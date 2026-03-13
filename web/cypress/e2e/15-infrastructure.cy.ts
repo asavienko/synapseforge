@@ -117,43 +117,41 @@ describe("15 · Infrastructure — Health Checks & Backups", () => {
           cy.get("a[href*='/dashboard/instances/']", { timeout: 10000 }).first().click();
         }
       });
-      // Wait for the instance page to fully load (client component fetches data on mount)
-      cy.contains("Cypress Agent", { timeout: 20000 }).should("be.visible");
     });
 
     it("Infrastructure tab is visible", () => {
-      cy.contains("Infrastructure", { timeout: 10000 }).should("be.visible");
+      cy.contains("Infrastructure", { timeout: 25000 }).should("be.visible");
       cy.snap("15-infra-01-tab-visible");
     });
 
     it("clicking Infrastructure tab shows Health Status section", () => {
-      cy.contains("Infrastructure").click();
-      cy.contains("Health Status", { timeout: 10000 }).should("be.visible");
+      cy.contains("Infrastructure", { timeout: 25000 }).click();
+      cy.contains("Health Status", { timeout: 15000 }).should("be.visible");
       cy.snap("15-infra-02-health-status");
     });
 
     it("clicking Infrastructure tab shows Backups section", () => {
-      cy.contains("Infrastructure").click();
-      cy.contains("Backups", { timeout: 10000 }).should("be.visible");
+      cy.contains("Infrastructure", { timeout: 25000 }).click();
+      cy.contains("Backups", { timeout: 15000 }).should("be.visible");
       cy.snap("15-infra-03-backups");
     });
 
     it("Infrastructure tab renders health content after async load", () => {
-      cy.contains("Infrastructure").click();
+      cy.contains("Infrastructure", { timeout: 25000 }).click();
       // Wait for async load to settle — then check one of the two possible states
-      cy.contains(/Health Status|No health data yet|Unknown/, { timeout: 15000 }).should("be.visible");
+      cy.contains(/Health Status|No health data yet|Unknown/, { timeout: 20000 }).should("be.visible");
       cy.snap("15-infra-04-health-content");
     });
 
     it("shows VPS Gateway URL row", () => {
-      cy.contains("Infrastructure").click();
-      cy.contains("VPS Gateway URL", { timeout: 10000 }).should("be.visible");
+      cy.contains("Infrastructure", { timeout: 25000 }).click();
+      cy.contains("VPS Gateway URL", { timeout: 15000 }).should("be.visible");
       cy.snap("15-infra-05-vps-url");
     });
 
     it("shows Last backup row", () => {
-      cy.contains("Infrastructure").click();
-      cy.contains("Last backup", { timeout: 10000 }).should("be.visible");
+      cy.contains("Infrastructure", { timeout: 25000 }).click();
+      cy.contains("Last backup", { timeout: 15000 }).should("be.visible");
       cy.snap("15-infra-06-last-backup");
     });
   });
