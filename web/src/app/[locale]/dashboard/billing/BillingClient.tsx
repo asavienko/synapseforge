@@ -14,6 +14,7 @@ import {
   Mail,
   AlertCircle,
   X,
+  AlertTriangle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -82,6 +83,7 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
   const success = params.get("success") === "1" || params.get("success") === "true";
   const cancelled = params.get("cancelled") === "1";
   const [loading, setLoading] = useState<string | null>(null);
+  const [billingError, setBillingError] = useState<string | null>(null);
 
   // Cancellation survey state
   const [showCancelSurvey, setShowCancelSurvey] = useState(false);
@@ -93,6 +95,7 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
   const tp = useTranslations("pricing");
 
   async function handleUpgrade(planKey: string) {
+    setBillingError(null);
     setLoading(planKey);
     const res = await fetch("/api/billing/checkout", {
       method: "POST",
@@ -104,7 +107,7 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
       window.location.href = data.url;
     } else {
       setLoading(null);
-      alert(data.error || "Something went wrong.");
+      setBillingError(data.error || "Something went wrong. Please try again.");
     }
   }
 
@@ -118,6 +121,7 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
   }
 
   async function openPortal() {
+    setBillingError(null);
     setLoading("portal");
     const res = await fetch("/api/billing/portal", { method: "POST" });
     const data = await res.json();
@@ -125,7 +129,7 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
       window.location.href = data.url;
     } else {
       setLoading(null);
-      alert(data.error || "Something went wrong.");
+      setBillingError(data.error || "Something went wrong. Please try again.");
     }
   }
 
@@ -153,6 +157,17 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
         <h1 className="text-2xl font-bold text-white">{tb("title")}</h1>
         <p className="text-zinc-400 mt-1">{tb("subtitle")}</p>
       </div>
+
+      {/* Billing error banner — replaces the browser alert() */}
+      {billingError && (
+        <div className="flex items-start gap-3 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 mb-6">
+          <AlertTriangle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+          <p className="text-sm text-red-300 flex-1">{billingError}</p>
+          <button onClick={() => setBillingError(null)} className="text-zinc-500 hover:text-zinc-300 transition-colors shrink-0">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       {/* Rich upgrade success banner */}
       {success && (

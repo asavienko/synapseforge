@@ -456,10 +456,10 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
     if (!user) return;
     const unprovisioned = user.instances.filter((i) => !i.hasGateway && !i.provisionStatus);
     if (unprovisioned.length === 0) {
-      alert("All instances for this user are already provisioned or in progress.");
+      setProvisionResult({ instanceId: "", message: "All instances for this user are already provisioned or in progress.", ok: false });
       return;
     }
-    if (!confirm(`Provision ${unprovisioned.length} instance${unprovisioned.length !== 1 ? "s" : ""} for ${user.name ?? user.email}? (~€5/mo per instance)`)) return;
+    if (!window.confirm(`Provision ${unprovisioned.length} instance${unprovisioned.length !== 1 ? "s" : ""} for ${user.name ?? user.email}? (~€5/mo per instance)`)) return;
     setProvisioningUserId(userId);
     const results: string[] = [];
     for (const inst of unprovisioned) {
