@@ -7,6 +7,7 @@ import { useRouter } from "@/i18n/navigation";
 import { TEMPLATE_PROMPTS, MODEL_OPTIONS, generateOpenClawConfig, type InstanceTemplate, type LLMProvider, type CredentialMap, type InstanceConfig } from "@/lib/openclaw-config";
 import { maskValue } from "@/lib/crypto";
 import { cn } from "@/lib/utils";
+import { analytics } from "@/lib/analytics";
 
 // ─── Agent Templates ──────────────────────────────────────────────────────────
 
@@ -280,6 +281,7 @@ export function InstanceSetupWizard({ onClose, onCreated }: WizardProps) {
       const instance = await instanceRes.json();
       const instanceId = instance.id;
       setCreatedInstanceId(instanceId);
+      analytics.instanceCreated(state.instanceType);
 
       // 2. Save credentials
       const apiKeyField = state.llmProvider === "openai"

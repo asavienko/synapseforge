@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { callLLM, ChatMessage, LLMResult, parseInstanceConfig } from "@/lib/llm";
+import { streamLLM, resolveCredentials, ChatMessage, parseInstanceConfig } from "@/lib/llm";
 import { callOpenClawVps } from "@/lib/openclaw-proxy";
 import { dashboardChatLimiter, rateLimitHeaders, getRateLimitKey } from "@/lib/rate-limit";
 
-// LLM calls can take 30-60s — extend Vercel's default 10s limit
+// LLM calls can take 30-60s
 export const maxDuration = 60;
 
 const HISTORY_LIMIT = 50;
@@ -50,7 +50,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 
 /**
  * POST /api/instances/:id/chat
- * Send a message. Persists both the user message and the assistant reply.
+ * Send a message. Returns a streaming plain-text response via AI SDK streamText.
  */
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -86,17 +86,15 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: "messages or message is required" }, { status: 400 });
   }
 
-  // Persist the user message (the last one in the array)
-  const userContent = messages[messages.length - 1]?.content ?? "";
+  // Persist the user message
+  const userContent = messages.filter((m) => m.role === "user").pop()?.content ?? "";
   await prisma.chatMessage.create({
     data: { instanceId: id, role: "user", content: userContent, source: "dashboard" },
   });
 
-  // ── Routing: prefer the client's real OpenClaw VPS when provisioned ──────────
-  let result: LLMResult | Awaited<ReturnType<typeof callLLM>>;
-  let routedViaVps = false;
-  let fallbackNote = "";
+  const instanceConfig = parseInstanceConfig(instance.config);
 
+  // ── VPS routing: if instance has a live VPS, try it first ──────────────────
   const hasVps =
     instance.vpsUrl &&
     instance.provisionStatus === "ready" &&
@@ -104,95 +102,120 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   if (hasVps) {
     try {
-      const instanceConfig = parseInstanceConfig(instance.config);
-      result = await callOpenClawVps(
+      const vpsResult = await callOpenClawVps(
         { vpsUrl: instance.vpsUrl!, gatewayToken: instance.gatewayToken! },
         messages,
         instanceConfig
       );
-      routedViaVps = true;
-    } catch (vpsErr) {
-      // VPS unreachable — fall back to direct LLM silently
-      console.error("[openclaw-proxy] VPS call failed, falling back:", vpsErr);
-      fallbackNote = "[Routed via SynapseForge fallback]";
-      result = await callLLM(id, messages);
-    }
-  } else {
-    result = await callLLM(id, messages);
-  }
-  // ─────────────────────────────────────────────────────────────────────────────
+      if (!("error" in vpsResult)) {
+        // VPS succeeded — persist and stream back as plain text
+        await prisma.chatMessage.create({
+          data: {
+            instanceId: id,
+            role: "assistant",
+            content: vpsResult.response,
+            latencyMs: vpsResult.latencyMs,
+            provider: vpsResult.provider,
+            model: vpsResult.model,
+            inputTokens: vpsResult.inputTokens ?? null,
+            outputTokens: vpsResult.outputTokens ?? null,
+            source: "openclaw",
+          },
+        });
+        prisma.activityLog
+          .create({
+            data: {
+              instanceId: id,
+              event: "chat_message",
+              details: `VPS routed, model: ${vpsResult.model}`,
+            },
+          })
+          .catch(console.error);
 
-  if ("error" in result) {
-    // Persist the error as an assistant message so the UI can show it after reload
-    await prisma.chatMessage.create({
-      data: {
-        instanceId: id,
-        role: "assistant",
-        content: result.error,
-        isError: true,
-        source: "dashboard",
+        const encoder = new TextEncoder();
+        const stream = new ReadableStream({
+          start(controller) {
+            controller.enqueue(encoder.encode(vpsResult.response));
+            controller.close();
+          },
+        });
+        return new Response(stream, {
+          headers: { "Content-Type": "text/plain; charset=utf-8" },
+        });
+      }
+      // VPS returned an error — fall through to direct LLM
+    } catch (e) {
+      console.error("[openclaw-proxy] VPS failed, falling back to direct LLM:", e);
+    }
+  }
+
+  // ── Direct LLM streaming via Vercel AI SDK ─────────────────────────────────
+  const credResult = await resolveCredentials(id, instanceConfig);
+  if (!credResult.ok) {
+    return NextResponse.json(credResult.error, { status: 400 });
+  }
+  const { resolvedProvider, resolvedModelId, resolvedApiKey } = credResult;
+
+  const startTime = Date.now();
+
+  try {
+    const result = streamLLM({
+      instanceId: id,
+      messages,
+      config: instanceConfig,
+      apiKey: resolvedApiKey,
+      provider: resolvedProvider,
+      modelId: resolvedModelId,
+      onFinish: async ({ text, inputTokens, outputTokens }) => {
+        const latencyMs = Date.now() - startTime;
+        await prisma.chatMessage.create({
+          data: {
+            instanceId: id,
+            role: "assistant",
+            content: text,
+            latencyMs,
+            provider: resolvedProvider,
+            model: resolvedModelId,
+            inputTokens: inputTokens || null,
+            outputTokens: outputTokens || null,
+            source: "dashboard",
+          },
+        });
+        prisma.activityLog
+          .create({
+            data: {
+              instanceId: id,
+              event: "chat_message",
+              details: `Model: ${resolvedModelId}, provider: ${resolvedProvider}, latency: ${latencyMs}ms, tokens: ${inputTokens}in/${outputTokens}out`,
+            },
+          })
+          .catch(console.error);
+
+        // Trim old messages — keep at most 200 per instance
+        prisma.chatMessage
+          .findMany({
+            where: { instanceId: id },
+            orderBy: { createdAt: "desc" },
+            skip: 200,
+            select: { id: true },
+          })
+          .then((old) => {
+            if (old.length > 0) {
+              prisma.chatMessage
+                .deleteMany({ where: { id: { in: old.map((m) => m.id) } } })
+                .catch(() => {});
+            }
+          })
+          .catch(() => {});
       },
     });
-    const status = result.missingCredential ? 400 : 502;
-    return NextResponse.json(result, { status });
+
+    // Return a plain text stream — client reads chunks directly
+    return result.toTextStreamResponse();
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "LLM call failed";
+    return NextResponse.json({ error: message }, { status: 502 });
   }
-
-  // If the fallback was used, append a metadata note to the response
-  if (fallbackNote) {
-    (result as LLMResult).response = (result as LLMResult).response
-      ? `${(result as LLMResult).response}\n\n_${fallbackNote}_`
-      : fallbackNote;
-  }
-
-  const messageSource = routedViaVps ? "openclaw" : "direct";
-
-  // Persist the assistant reply — now including token counts
-  await prisma.chatMessage.create({
-    data: {
-      instanceId: id,
-      role: "assistant",
-      content: (result as LLMResult).response,
-      latencyMs: (result as LLMResult).latencyMs,
-      provider: (result as LLMResult).provider,
-      model: (result as LLMResult).model,
-      inputTokens: (result as LLMResult).inputTokens ?? null,
-      outputTokens: (result as LLMResult).outputTokens ?? null,
-      source: messageSource,
-    },
-  });
-
-  // Log to activity with token info (fire-and-forget)
-  const llmResult = result as LLMResult;
-  const tokenNote = (llmResult.inputTokens != null && llmResult.outputTokens != null)
-    ? `, tokens: ${llmResult.inputTokens}in/${llmResult.outputTokens}out`
-    : "";
-  const routeNote = routedViaVps ? ", source: openclaw-vps" : "";
-  prisma.activityLog.create({
-    data: {
-      instanceId: id,
-      event: "chat_message",
-      details: `Model: ${llmResult.model}, provider: ${llmResult.provider}, latency: ${llmResult.latencyMs}ms${tokenNote}${routeNote}`,
-    },
-  }).catch(console.error);
-
-  // Trim old messages — keep at most 200 per instance to avoid unbounded growth
-  prisma.chatMessage.findMany({
-    where: { instanceId: id },
-    orderBy: { createdAt: "desc" },
-    skip: 200,
-    select: { id: true },
-  }).then((old) => {
-    if (old.length > 0) {
-      prisma.chatMessage.deleteMany({ where: { id: { in: old.map((m) => m.id) } } }).catch(() => {});
-    }
-  }).catch(() => {});
-
-  return NextResponse.json({
-    ...llmResult,
-    inputTokens: llmResult.inputTokens ?? undefined,
-    outputTokens: llmResult.outputTokens ?? undefined,
-    source: messageSource,
-  });
 }
 
 /**

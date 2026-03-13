@@ -3,7 +3,7 @@ import { generateCloudInit } from "@/lib/cloud-init";
 import { encrypt } from "@/lib/crypto";
 import { randomBytes, generateKeyPairSync, createPublicKey } from "crypto";
 
-export type HetznerRegion = "nbg1" | "fsn1" | "hel1" | "ash" | "hil";
+export type HetznerRegion = "nbg1" | "fsn1" | "hel1" | "ash" | "hil" | "sin";
 
 export const REGION_LABELS: Record<HetznerRegion, string> = {
   nbg1: "Nuremberg, EU 🇩🇪",
@@ -11,6 +11,7 @@ export const REGION_LABELS: Record<HetznerRegion, string> = {
   hel1: "Helsinki, EU 🇫🇮",
   ash: "Ashburn, US 🇺🇸",
   hil: "Hillsboro, US 🇺🇸",
+  sin: "Singapore, APAC 🇸🇬",
 };
 
 export const TIER_TO_SERVER: Record<string, string> = {

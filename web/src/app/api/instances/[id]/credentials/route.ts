@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { encrypt, decrypt, maskValue } from "@/lib/crypto";
 import { sshSyncConfig } from "@/lib/ssh-sync";
+import { captureServerEvent } from "@/lib/posthog-server";
 
 export const ALLOWED_CREDENTIAL_KEYS = [
   "openai_api_key",
@@ -141,6 +142,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     create: { instanceId: id, key, value: encrypted },
     update: { value: encrypted },
   });
+
+  // Track credential addition in PostHog (fire-and-forget)
+  captureServerEvent(session.user.id, "credential_added", { provider: key }).catch(() => {});
 
   // Mark configSynced = false since credentials changed
   const updatedInstance = await prisma.aIInstance.update({

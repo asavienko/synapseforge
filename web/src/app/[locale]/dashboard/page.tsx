@@ -6,11 +6,14 @@ import { PLANS, STATUS_COLORS, formatDate } from "@/lib/utils";
 import { DashboardUpgrade } from "@/components/DashboardUpgrade";
 import { CalBookingButton } from "@/components/CalBookingButton";
 import { getTranslations } from "next-intl/server";
+import { captureServerEvent } from "@/lib/posthog-server";
 
 export default async function DashboardPage() {
   const session = await auth();
   const userId = session!.user!.id!;
   const t = await getTranslations("dashboard.overview");
+
+  captureServerEvent(userId, "dashboard_visited").catch(() => {});
 
   const user = await prisma.user.findUnique({
     where: { id: userId },

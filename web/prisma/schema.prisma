@@ -23,6 +23,8 @@ model User {
   stripeSubscriptionId String?  @unique
   stripePriceId        String?
   stripeCurrentPeriodEnd DateTime?
+  activatedAt   DateTime?    // Set when first real chat message sent
+  healthScore   Int?         // 0-100, computed by cron daily
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 
@@ -37,6 +39,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   messages      Message[]
+  notifications Notification[]
 }
 
 model Referral {
@@ -92,6 +95,18 @@ model Message {
   managerId   String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   manager     Manager  @relation(fields: [managerId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   // "instance.down" | "manager.message" | "milestone" | "provision.ready" | "instance.deployed"
+  title     String
+  body      String?
+  href      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model AIInstance {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, MessageCircle, Bot, Send, Loader2, X, Shield, Activity, Server, AlertTriangle, ExternalLink, Rocket } from "lucide-react";
+import { Users, MessageCircle, Bot, Send, Loader2, X, Shield, Activity, Server, AlertTriangle, ExternalLink, Rocket, ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { STATUS_COLORS, PLANS, formatDate, formatRelativeTime } from "@/lib/utils";
@@ -45,6 +45,14 @@ interface ClientWithInstances {
   instances: ManagedInstance[];
 }
 
+interface ChatLogMessage {
+  id: string;
+  role: string;
+  content: string;
+  createdAt: string;
+  model?: string;
+}
+
 function HealthDot({ healthStatus, hasVps }: { healthStatus: string | null; hasVps: boolean }) {
   if (!hasVps) return <span className="w-2.5 h-2.5 rounded-full bg-zinc-600 inline-block" title="No VPS" />;
   if (healthStatus === "healthy") return <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block" title="Healthy" />;
@@ -54,6 +62,19 @@ function HealthDot({ healthStatus, hasVps }: { healthStatus: string | null; hasV
 }
 
 type TabType = "clients" | "instances";
+
+const REGIONS = [
+  { value: "nbg1", label: "Nuremberg, EU" },
+  { value: "fsn1", label: "Falkenstein, EU" },
+  { value: "ash", label: "Ashburn, US" },
+  { value: "sin", label: "Singapore, APAC" },
+] as const;
+
+const TIERS = [
+  { value: "minimal", label: "Minimal — 2 vCPU, 4 GB" },
+  { value: "standard", label: "Standard — 4 vCPU, 8 GB" },
+  { value: "pro", label: "Pro — 8 vCPU, 16 GB" },
+] as const;
 
 export function ManagerClient({ manager, clients: initialClients }: {
   manager: { id: string; name: string; email: string };
@@ -78,15 +99,36 @@ export function ManagerClient({ manager, clients: initialClients }: {
     instanceName: string;
     tier: string;
     provisionStatus: string | null;
+    defaultRegion?: string;
   }
   const [wizardState, setWizardState] = useState<WizardState | null>(null);
 
-  function openWizard(inst: ManagedInstance) {
+  // Provision options (inline region + tier picker)
+  const [provisionOptions, setProvisionOptions] = useState<{
+    instanceId: string | null;
+    region: string;
+    tier: string;
+  }>({ instanceId: null, region: "nbg1", tier: "minimal" });
+
+  // Config editor state
+  const [editingConfigForInstance, setEditingConfigForInstance] = useState<string | null>(null);
+  const [managerConfig, setManagerConfig] = useState<Record<string, unknown>>({});
+  const [managerConfigDirty, setManagerConfigDirty] = useState(false);
+  const [managerConfigSaving, setManagerConfigSaving] = useState(false);
+  const [managerConfigSaved, setManagerConfigSaved] = useState(false);
+
+  // Chat log state
+  const [chatLogInstanceId, setChatLogInstanceId] = useState<string | null>(null);
+  const [chatLog, setChatLog] = useState<ChatLogMessage[]>([]);
+  const [chatLogLoading, setChatLogLoading] = useState(false);
+
+  function openWizard(inst: ManagedInstance, region?: string) {
     setWizardState({
       instanceId: inst.id,
       instanceName: inst.name,
       tier: inst.tier,
       provisionStatus: inst.provisionStatus ?? null,
+      defaultRegion: region,
     });
   }
 
@@ -102,6 +144,29 @@ export function ManagerClient({ manager, clients: initialClients }: {
       );
     }
     setWizardState(null);
+  }
+
+  async function loadInstanceConfig(instanceId: string) {
+    const res = await fetch(`/api/manager/instances/${instanceId}/config`);
+    if (res.ok) {
+      const data = await res.json();
+      try {
+        setManagerConfig(JSON.parse(data.config ?? "{}"));
+      } catch {
+        setManagerConfig({});
+      }
+      setEditingConfigForInstance(instanceId);
+      setManagerConfigDirty(false);
+      setManagerConfigSaved(false);
+    }
+  }
+
+  async function loadChatLog(instanceId: string) {
+    setChatLogLoading(true);
+    setChatLogInstanceId(instanceId);
+    const res = await fetch(`/api/manager/instances/${instanceId}/chat-log`);
+    if (res.ok) setChatLog(await res.json());
+    setChatLogLoading(false);
   }
 
   const totalUnread = clients.reduce((s, c) => s + c.unreadMessages, 0);
@@ -137,7 +202,6 @@ export function ManagerClient({ manager, clients: initialClients }: {
     const res = await fetch(`/api/messages?userId=${client.id}`);
     if (res.ok) setMessages(await res.json());
     setThreadLoading(false);
-    // Clear unread
     setClients((prev) => prev.map((c) => c.id === client.id ? { ...c, unreadMessages: 0 } : c));
   }
 
@@ -495,39 +559,320 @@ export function ManagerClient({ manager, clients: initialClients }: {
                       ) : (
                         <div className="divide-y divide-white/5">
                           {client.instances.map((inst) => (
-                            <div key={inst.id} className="px-5 py-3 flex items-center gap-3 text-sm">
-                              <HealthDot healthStatus={inst.healthStatus} hasVps={inst.hasGateway} />
-                              <span className="font-medium text-white">{inst.name}</span>
-                              <span className={cn(
-                                "text-xs px-2 py-0.5 rounded-full font-medium",
-                                STATUS_COLORS[inst.status] ?? "text-zinc-400 bg-zinc-400/10"
-                              )}>
-                                {inst.status}
-                              </span>
-                              <span className="text-xs text-zinc-500 capitalize">{inst.tier}</span>
-                              {inst.vpsUrl && (
-                                <span className="text-xs text-zinc-600 font-mono truncate max-w-[160px]">
-                                  {inst.vpsUrl}
+                            <div key={inst.id} className="px-5 py-3">
+                              {/* Instance row */}
+                              <div className="flex items-center gap-3 text-sm">
+                                <HealthDot healthStatus={inst.healthStatus} hasVps={inst.hasGateway} />
+                                <span className="font-medium text-white">{inst.name}</span>
+                                <span className={cn(
+                                  "text-xs px-2 py-0.5 rounded-full font-medium",
+                                  STATUS_COLORS[inst.status] ?? "text-zinc-400 bg-zinc-400/10"
+                                )}>
+                                  {inst.status}
                                 </span>
-                              )}
-                              <div className="ml-auto flex items-center gap-2 shrink-0">
-                                {!inst.hasGateway && (
-                                  <button
-                                    onClick={() => openWizard(inst)}
-                                    className="flex items-center gap-1 text-xs text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 px-2 py-1 rounded-lg transition-colors"
-                                    title={t("provisionVpsTitle")}
-                                  >
-                                    <Rocket className="w-3 h-3" />
-                                    {inst.provisionStatus ? inst.provisionStatus : t("provision")}
-                                  </button>
+                                <span className="text-xs text-zinc-500 capitalize">{inst.tier}</span>
+                                {inst.vpsUrl && (
+                                  <span className="text-xs text-zinc-600 font-mono truncate max-w-[160px]">
+                                    {inst.vpsUrl}
+                                  </span>
                                 )}
-                                <a
-                                  href={`/admin#instance-${inst.id}`}
-                                  className="text-xs text-violet-400 hover:text-violet-300 flex items-center gap-1"
-                                >
-                                  View <ExternalLink className="w-3 h-3" />
-                                </a>
+                                <div className="ml-auto flex items-center gap-2 shrink-0">
+                                  {/* Edit Config button */}
+                                  <button
+                                    onClick={() => {
+                                      if (editingConfigForInstance === inst.id) {
+                                        setEditingConfigForInstance(null);
+                                      } else {
+                                        setChatLogInstanceId(null);
+                                        setProvisionOptions(p => ({ ...p, instanceId: null }));
+                                        loadInstanceConfig(inst.id);
+                                      }
+                                    }}
+                                    className={cn(
+                                      "text-xs px-3 py-1.5 rounded-lg transition-colors",
+                                      editingConfigForInstance === inst.id
+                                        ? "text-violet-300 bg-violet-500/20 border border-violet-500/30"
+                                        : "text-violet-400 hover:text-violet-300 bg-violet-500/10"
+                                    )}
+                                  >
+                                    {t("editConfig")}
+                                  </button>
+
+                                  {/* Chat Log button */}
+                                  <button
+                                    onClick={() => {
+                                      if (chatLogInstanceId === inst.id) {
+                                        setChatLogInstanceId(null);
+                                      } else {
+                                        setEditingConfigForInstance(null);
+                                        setProvisionOptions(p => ({ ...p, instanceId: null }));
+                                        loadChatLog(inst.id);
+                                      }
+                                    }}
+                                    className={cn(
+                                      "text-xs px-3 py-1.5 rounded-lg transition-colors",
+                                      chatLogInstanceId === inst.id
+                                        ? "text-blue-300 bg-blue-500/20 border border-blue-500/30"
+                                        : "text-blue-400 hover:text-blue-300 bg-blue-500/10"
+                                    )}
+                                  >
+                                    {t("viewChatLog")}
+                                  </button>
+
+                                  {/* Provision button */}
+                                  {!inst.hasGateway && (
+                                    <button
+                                      onClick={() => {
+                                        setEditingConfigForInstance(null);
+                                        setChatLogInstanceId(null);
+                                        if (provisionOptions.instanceId === inst.id) {
+                                          setProvisionOptions(p => ({ ...p, instanceId: null }));
+                                        } else {
+                                          setProvisionOptions({ instanceId: inst.id, region: "nbg1", tier: inst.tier || "minimal" });
+                                        }
+                                      }}
+                                      className={cn(
+                                        "flex items-center gap-1 text-xs border px-2 py-1 rounded-lg transition-colors",
+                                        provisionOptions.instanceId === inst.id
+                                          ? "text-emerald-300 bg-emerald-500/20 border-emerald-500/30"
+                                          : "text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 border-emerald-500/20"
+                                      )}
+                                      title={t("provisionVpsTitle")}
+                                    >
+                                      <Rocket className="w-3 h-3" />
+                                      {inst.provisionStatus ? inst.provisionStatus : t("provision")}
+                                    </button>
+                                  )}
+                                  <a
+                                    href={`/admin#instance-${inst.id}`}
+                                    className="text-xs text-violet-400 hover:text-violet-300 flex items-center gap-1"
+                                  >
+                                    View <ExternalLink className="w-3 h-3" />
+                                  </a>
+                                </div>
                               </div>
+
+                              {/* ── Provision Options Panel ── */}
+                              {provisionOptions.instanceId === inst.id && (
+                                <div className="mt-3 p-4 bg-white/[0.03] border border-white/10 rounded-xl space-y-4">
+                                  <div className="flex items-center justify-between">
+                                    <h4 className="text-sm font-semibold text-white">{t("provisionOptions")}</h4>
+                                    <button
+                                      onClick={() => setProvisionOptions(p => ({ ...p, instanceId: null }))}
+                                      className="text-zinc-600 hover:text-white transition-colors"
+                                    >
+                                      <X className="w-4 h-4" />
+                                    </button>
+                                  </div>
+
+                                  <div className="grid grid-cols-2 gap-4">
+                                    {/* Region picker */}
+                                    <div>
+                                      <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-1.5">
+                                        {t("region")}
+                                      </label>
+                                      <div className="relative">
+                                        <select
+                                          value={provisionOptions.region}
+                                          onChange={(e) => setProvisionOptions(p => ({ ...p, region: e.target.value }))}
+                                          className="w-full appearance-none bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-zinc-200 focus:outline-none focus:border-violet-500 transition-colors pr-8"
+                                        >
+                                          {REGIONS.map((r) => (
+                                            <option key={r.value} value={r.value} className="bg-zinc-900">
+                                              {r.label}
+                                            </option>
+                                          ))}
+                                        </select>
+                                        <ChevronDown className="w-4 h-4 text-zinc-500 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                                      </div>
+                                    </div>
+
+                                    {/* Tier picker */}
+                                    <div>
+                                      <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-1.5">
+                                        {t("tier")}
+                                      </label>
+                                      <div className="relative">
+                                        <select
+                                          value={provisionOptions.tier}
+                                          onChange={(e) => setProvisionOptions(p => ({ ...p, tier: e.target.value }))}
+                                          className="w-full appearance-none bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-zinc-200 focus:outline-none focus:border-violet-500 transition-colors pr-8"
+                                        >
+                                          {TIERS.map((tier) => (
+                                            <option key={tier.value} value={tier.value} className="bg-zinc-900">
+                                              {tier.label}
+                                            </option>
+                                          ))}
+                                        </select>
+                                        <ChevronDown className="w-4 h-4 text-zinc-500 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div className="flex items-center gap-3">
+                                    <button
+                                      onClick={() => {
+                                        const selectedRegion = provisionOptions.region;
+                                        setProvisionOptions(p => ({ ...p, instanceId: null }));
+                                        openWizard(inst, selectedRegion);
+                                      }}
+                                      className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 transition-colors px-4 py-2.5 rounded-xl text-sm font-semibold text-white"
+                                    >
+                                      <Rocket className="w-4 h-4" />
+                                      {t("confirmProvision")}
+                                    </button>
+                                    <button
+                                      onClick={() => setProvisionOptions(p => ({ ...p, instanceId: null }))}
+                                      className="px-4 py-2.5 rounded-xl text-sm text-zinc-400 hover:text-white transition-colors"
+                                    >
+                                      {t("cancelProvision")}
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* ── Config Editor Panel ── */}
+                              {editingConfigForInstance === inst.id && (
+                                <div className="mt-3 p-4 bg-white/[0.03] border border-white/10 rounded-xl space-y-4">
+                                  <div className="flex items-center justify-between">
+                                    <h4 className="text-sm font-semibold text-white">{t("configEditor")}</h4>
+                                    <div className="flex items-center gap-3">
+                                      {managerConfigSaved && (
+                                        <span className="text-xs text-emerald-400">{t("configSaved")}</span>
+                                      )}
+                                      <button
+                                        onClick={() => setEditingConfigForInstance(null)}
+                                        className="text-zinc-600 hover:text-white transition-colors"
+                                      >
+                                        <X className="w-4 h-4" />
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                  {/* Agent Name */}
+                                  <div>
+                                    <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-1.5">
+                                      {t("agentName")}
+                                    </label>
+                                    <input
+                                      type="text"
+                                      value={(managerConfig.agentName as string) ?? ""}
+                                      onChange={(e) => {
+                                        setManagerConfig(p => ({ ...p, agentName: e.target.value }));
+                                        setManagerConfigDirty(true);
+                                        setManagerConfigSaved(false);
+                                      }}
+                                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-zinc-200 focus:outline-none focus:border-violet-500 transition-colors"
+                                    />
+                                  </div>
+
+                                  {/* System Prompt */}
+                                  <div>
+                                    <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-1.5">
+                                      {t("systemPrompt")}
+                                    </label>
+                                    <textarea
+                                      value={(managerConfig.systemPrompt as string) ?? ""}
+                                      onChange={(e) => {
+                                        setManagerConfig(p => ({ ...p, systemPrompt: e.target.value }));
+                                        setManagerConfigDirty(true);
+                                        setManagerConfigSaved(false);
+                                      }}
+                                      rows={4}
+                                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-zinc-200 focus:outline-none focus:border-violet-500 transition-colors resize-none"
+                                    />
+                                  </div>
+
+                                  {/* Role */}
+                                  <div>
+                                    <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-1.5">
+                                      {t("agentRole")}
+                                    </label>
+                                    <input
+                                      type="text"
+                                      value={(managerConfig.role as string) ?? ""}
+                                      onChange={(e) => {
+                                        setManagerConfig(p => ({ ...p, role: e.target.value }));
+                                        setManagerConfigDirty(true);
+                                        setManagerConfigSaved(false);
+                                      }}
+                                      placeholder={t("agentRolePlaceholder")}
+                                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-zinc-200 focus:outline-none focus:border-violet-500 transition-colors"
+                                    />
+                                  </div>
+
+                                  {/* Save button */}
+                                  <button
+                                    disabled={!managerConfigDirty || managerConfigSaving}
+                                    onClick={async () => {
+                                      setManagerConfigSaving(true);
+                                      const res = await fetch(`/api/manager/instances/${inst.id}/config`, {
+                                        method: "PATCH",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({ config: JSON.stringify(managerConfig) }),
+                                      });
+                                      setManagerConfigSaving(false);
+                                      if (res.ok) {
+                                        setManagerConfigDirty(false);
+                                        setManagerConfigSaved(true);
+                                      }
+                                    }}
+                                    className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 transition-colors px-4 py-2.5 rounded-xl text-sm font-semibold text-white"
+                                  >
+                                    {managerConfigSaving ? (
+                                      <><Loader2 className="w-4 h-4 animate-spin" />{t("saving")}</>
+                                    ) : (
+                                      t("saveConfig")
+                                    )}
+                                  </button>
+                                </div>
+                              )}
+
+                              {/* ── Chat Log Panel ── */}
+                              {chatLogInstanceId === inst.id && (
+                                <div className="mt-3 p-4 bg-white/[0.03] border border-white/10 rounded-xl">
+                                  <div className="flex items-center justify-between mb-3">
+                                    <h4 className="text-sm font-semibold text-white">{t("chatLog")}</h4>
+                                    <div className="flex items-center gap-3">
+                                      <span className="text-xs text-zinc-500">{t("readOnly")}</span>
+                                      <button
+                                        onClick={() => setChatLogInstanceId(null)}
+                                        className="text-zinc-600 hover:text-white transition-colors"
+                                      >
+                                        <X className="w-4 h-4" />
+                                      </button>
+                                    </div>
+                                  </div>
+                                  {chatLogLoading ? (
+                                    <div className="flex justify-center py-6">
+                                      <Loader2 className="w-5 h-5 text-zinc-500 animate-spin" />
+                                    </div>
+                                  ) : chatLog.length === 0 ? (
+                                    <p className="text-sm text-zinc-500 text-center py-6">{t("noChatMessages")}</p>
+                                  ) : (
+                                    <div className="space-y-3 max-h-96 overflow-y-auto">
+                                      {chatLog.map((msg) => (
+                                        <div
+                                          key={msg.id}
+                                          className={cn("flex gap-2", msg.role === "user" ? "justify-end" : "justify-start")}
+                                        >
+                                          <div className={cn(
+                                            "max-w-[80%] px-3 py-2 rounded-xl text-sm",
+                                            msg.role === "user"
+                                              ? "bg-violet-600/20 border border-violet-500/20 text-violet-100"
+                                              : "bg-white/5 border border-white/10 text-zinc-200"
+                                          )}>
+                                            <p className="whitespace-pre-wrap">{msg.content}</p>
+                                            <p className="text-xs text-zinc-600 mt-1">
+                                              {new Date(msg.createdAt).toLocaleTimeString()}
+                                            </p>
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
+                              )}
                             </div>
                           ))}
                         </div>
@@ -549,6 +894,7 @@ export function ManagerClient({ manager, clients: initialClients }: {
           tier={wizardState.tier}
           provisionStatus={wizardState.provisionStatus}
           provisionEndpoint={`/api/manager/instances/${wizardState.instanceId}/provision`}
+          defaultRegion={wizardState.defaultRegion as import("@/lib/provisioning").HetznerRegion | undefined}
           onClose={() => closeWizard()}
           onDone={(status) => closeWizard(wizardState.instanceId, status)}
         />

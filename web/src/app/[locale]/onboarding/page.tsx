@@ -7,6 +7,7 @@ import {
   Key, MessageSquare, Bot, Eye, EyeOff,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { analytics } from "@/lib/analytics";
 
 const TOTAL_STEPS = 5;
 
@@ -182,6 +183,7 @@ export default function OnboardingPage() {
       const data = await res.json() as { valid: boolean; error?: string };
       if (data.valid) {
         setLlmValidState("valid");
+        analytics.onboardingStep(3);
         setTimeout(() => setStep(4), 600);
       } else {
         setLlmValidState("invalid");
@@ -203,6 +205,9 @@ export default function OnboardingPage() {
     if (llmProvider && llmKey.trim()) credentials[llmProvider] = llmKey.trim();
     if (channelProvider && channelKey.trim()) credentials[channelProvider] = channelKey.trim();
 
+    const hasLLMKey = !!(llmProvider && llmKey.trim());
+    const hasChannel = !!(channelProvider && channelKey.trim());
+
     const res = await fetch("/api/onboarding", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -212,6 +217,10 @@ export default function OnboardingPage() {
     const data = await res.json();
     const id: string | null = data.instanceId ?? null;
     setInstanceId(id);
+
+    analytics.onboardingStep(4);
+    analytics.onboardingCompleted({ hasLLMKey, hasChannel });
+
     setStep(5);
     setLoading(false);
   }
@@ -277,7 +286,7 @@ export default function OnboardingPage() {
               </div>
             </div>
             <button
-              onClick={() => setStep(2)}
+              onClick={() => { analytics.onboardingStep(1); setStep(2); }}
               disabled={!business.trim() || !industry}
               className="mt-6 w-full flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 transition-colors py-3 rounded-xl text-sm font-semibold text-white"
             >
@@ -321,7 +330,7 @@ export default function OnboardingPage() {
             <div className="flex gap-3 mt-6">
               <button onClick={() => setStep(1)} className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors py-3 rounded-xl text-sm font-semibold text-zinc-300">Back</button>
               <button
-                onClick={() => setStep(3)}
+                onClick={() => { analytics.onboardingStep(2); setStep(3); }}
                 disabled={!useCase}
                 className="flex-1 flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 transition-colors py-3 rounded-xl text-sm font-semibold text-white"
               >
@@ -433,7 +442,7 @@ export default function OnboardingPage() {
               </button>
             </div>
             <button
-              onClick={() => setStep(4)}
+              onClick={() => { analytics.onboardingStep(3, true); setStep(4); }}
               className="w-full mt-2 text-xs text-zinc-600 hover:text-zinc-400 transition-colors py-2"
             >
               Skip for now — I&apos;ll add this later

@@ -1438,6 +1438,7 @@ export default function InstanceDetailPage() {
 
   async function sendChat() {
     if (!chatInput.trim() || chatLoading) return;
+
     const userMsg: ChatMsg = { role: "user", content: chatInput.trim() };
     const updatedMessages = [...chatMessages, userMsg];
     setChatMessages(updatedMessages);
@@ -1445,35 +1446,81 @@ export default function InstanceDetailPage() {
     setChatLoading(true);
     setChatNoCredentials(false);
 
-    const res = await fetch(`/api/instances/${id}/chat`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        messages: updatedMessages.map((m) => ({ role: m.role, content: m.content })),
-      }),
-    });
-    const data = await res.json();
+    // Optimistically add a placeholder for the streaming assistant reply
+    const streamingId = `streaming-${Date.now()}`;
+    setChatMessages((prev) => [...prev, { id: streamingId, role: "assistant", content: "" }]);
 
-    if (!res.ok) {
-      if (data.missingCredential) {
-        setChatNoCredentials(true);
-        setChatMessages([]); // clear all messages so the full no-creds state is shown
-      } else {
-        setChatMessages((prev) => [
-          ...prev,
-          { role: "assistant", content: data.error ?? "Something went wrong", isError: true },
-        ]);
+    try {
+      const res = await fetch(`/api/instances/${id}/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: updatedMessages.map((m) => ({ role: m.role, content: m.content })),
+        }),
+      });
+
+      if (!res.ok) {
+        // Remove placeholder before handling the error
+        setChatMessages((prev) => prev.filter((m) => m.id !== streamingId));
+        let errData: { error?: string; missingCredential?: boolean } = {};
+        try { errData = await res.json(); } catch { /* ignore */ }
+        if (errData.missingCredential) {
+          setChatNoCredentials(true);
+          setChatMessages([]); // clear all messages so the full no-creds state is shown
+        } else {
+          setChatMessages((prev) => [
+            ...prev,
+            { role: "assistant", content: errData.error ?? "Something went wrong", isError: true },
+          ]);
+        }
+        return;
       }
-    } else {
-      setChatProvider(data.provider ?? null);
+
+      // Stream the response — server sends plain text via toTextStreamResponse()
+      const reader = res.body?.getReader();
+      if (!reader) {
+        setChatMessages((prev) => prev.filter((m) => m.id !== streamingId));
+        return;
+      }
+
+      const decoder = new TextDecoder();
+      let fullText = "";
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          fullText += decoder.decode(value, { stream: true });
+          setChatMessages((prev) =>
+            prev.map((m) => (m.id === streamingId ? { ...m, content: fullText } : m))
+          );
+        }
+        // Flush any remaining bytes
+        fullText += decoder.decode();
+      } finally {
+        reader.releaseLock();
+      }
+
+      // Finalise: strip the temp id from the completed message
+      setChatMessages((prev) =>
+        prev.map((m) =>
+          m.id === streamingId ? { role: "assistant" as const, content: fullText } : m
+        )
+      );
+    } catch (err) {
+      setChatMessages((prev) => prev.filter((m) => m.id !== streamingId));
       setChatMessages((prev) => [
         ...prev,
-        { role: "assistant", content: data.response, latencyMs: data.latencyMs, source: data.source },
+        {
+          role: "assistant",
+          content: err instanceof Error ? err.message : "Something went wrong",
+          isError: true,
+        },
       ]);
+    } finally {
+      setChatLoading(false);
     }
-    setChatLoading(false);
   }
-
   async function saveInlineKey() {
     if (!inlineKeyValue.trim()) return;
     setInlineKeySaving(true);
@@ -2031,8 +2078,8 @@ export default function InstanceDetailPage() {
                     <Zap className="w-5 h-5 text-violet-400" />
                   </div>
                   <div>
-                    <h3 className="text-white font-semibold text-sm">One step to start chatting</h3>
-                    <p className="text-zinc-500 text-xs">Add your AI API key — stays private, never shared</p>
+                    <h3 className="text-white font-semibold text-sm">{t("chat.inlineKeyTitle")}</h3>
+                    <p className="text-zinc-500 text-xs">{t("chat.inlineKeyDesc")}</p>
                   </div>
                 </div>
 
@@ -2072,7 +2119,7 @@ export default function InstanceDetailPage() {
                     className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 transition-colors px-4 py-3 rounded-xl text-sm font-semibold text-white shrink-0"
                   >
                     {inlineKeySaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-                    {inlineKeySaving ? "Saving…" : "Start"}
+                    {inlineKeySaving ? t("chat.inlineKeySaving") : t("chat.inlineKeyStart")}
                   </button>
                 </div>
                 {inlineKeyError && (
@@ -2089,7 +2136,7 @@ export default function InstanceDetailPage() {
                     rel="noopener noreferrer"
                     className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors"
                   >
-                    Get a free API key →
+                    {t("chat.inlineKeyGetKey")}
                   </a>
                   <button
                     onClick={() => setTab("Credentials")}
