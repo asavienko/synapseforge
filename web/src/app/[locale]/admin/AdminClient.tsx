@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Users, Bot, Activity, AlertCircle, Plus, X, Shield, ChevronDown, MessageCircle, Send, Loader2, Server, Link, Unlink, CheckCircle2, Rocket, RefreshCw, Copy, Check, Gift, DollarSign, BarChart2, TrendingUp } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { STATUS_COLORS, PLANS, formatDate, formatRelativeTime } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { ProvisioningWizard } from "@/components/ProvisioningWizard";
@@ -111,6 +112,7 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
   stats: Stats;
   healthSummary: HealthSummary;
 }) {
+  const t = useTranslations("admin");
   const [users, setUsers] = useState(initialUsers);
   const [managers, setManagers] = useState(initialManagers);
 
@@ -248,7 +250,7 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
   }
 
   async function deleteManager(id: string) {
-    if (!confirm("Delete this manager? Their users will become unassigned.")) return;
+    if (!confirm(t("deleteManagerConfirm"))) return;
     await fetch("/api/admin/managers", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
     setManagers((prev) => prev.filter((m) => m.id !== id));
     setUsers((prev) => prev.map((u) => u.managerId === id ? { ...u, managerId: null, managerName: null } : u));
@@ -392,12 +394,12 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
       })));
       setGatewayModal(null);
     } else {
-      setGatewayModal((m) => m ? { ...m, saving: false, result: { ok: false, message: data.error ?? "Connection failed" } } : m);
+      setGatewayModal((m) => m ? { ...m, saving: false, result: { ok: false, message: data.error ?? t("connectionFailed") } } : m);
     }
   }
 
   async function disconnectGateway(instanceId: string) {
-    if (!confirm("Disconnect this VPS? The gateway config will be cleared.")) return;
+    if (!confirm(t("disconnectVpsConfirm"))) return;
     const res = await fetch(`/api/admin/instances/${instanceId}/gateway`, { method: "DELETE" });
     if (res.ok) {
       setUsers((prev) => prev.map((u) => ({
@@ -414,7 +416,7 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold mb-1">Admin Panel</h1>
+            <h1 className="text-2xl font-bold mb-1">{t("adminPanel")}</h1>
             <p className="text-zinc-400 text-sm">Manage users, managers, and messages.</p>
           </div>
           <button
@@ -444,9 +446,9 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
         {/* Tab switcher */}
         <div className="flex gap-2 mb-6">
           {([
-            { key: "overview" as const, label: "Overview", icon: undefined },
-            { key: "referrals" as const, label: "Referrals", icon: Gift },
-            { key: "analytics" as const, label: "Analytics", icon: BarChart2 },
+            { key: "overview" as const, label: t("tabOverview"), icon: undefined },
+            { key: "referrals" as const, label: t("tabReferrals"), icon: Gift },
+            { key: "analytics" as const, label: t("tabAnalytics"), icon: BarChart2 },
           ]).map((tab) => (
             <button
               key={tab.key}
@@ -670,7 +672,7 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                         <button
                           onClick={() => provisionAllForUser(user.id)}
                           disabled={provisioningUserId === user.id}
-                          title="Provision all undeployed instances for this user"
+                          title={t("provisionAllTitle")}
                           className="flex items-center gap-1.5 text-xs text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
                         >
                           {provisioningUserId === user.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Rocket className="w-3.5 h-3.5" />}
@@ -734,7 +736,7 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                                   <button
                                     onClick={() => disconnectGateway(inst.id)}
                                     className="ml-1 text-zinc-600 hover:text-red-400 transition-colors"
-                                    title="Disconnect VPS"
+                                    title={t("disconnectVpsTitle")}
                                   >
                                     <Unlink className="w-3 h-3" />
                                   </button>
@@ -743,7 +745,7 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                                       onClick={() => syncConfig(inst.id)}
                                       disabled={syncingId === inst.id}
                                       className="flex items-center gap-1 text-xs text-amber-400 hover:text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 px-2 py-0.5 rounded-lg transition-colors"
-                                      title="Sync config to VPS"
+                                      title={t("syncConfigToVpsTitle")}
                                     >
                                       {syncingId === inst.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
                                       Sync Config
@@ -761,10 +763,10 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                                   <button
                                     onClick={() => openWizard(inst.id, inst.name, inst.tier, inst.provisionStatus ?? null)}
                                     className="flex items-center gap-1 text-xs text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 px-2 py-0.5 rounded-lg transition-colors"
-                                    title="Provision Hetzner VPS"
+                                    title={t("provisionHetznerTitle")}
                                   >
                                     <Rocket className="w-3 h-3" />
-                                    {inst.provisionStatus ? `VPS (${inst.provisionStatus})` : "Provision VPS"}
+                                    {inst.provisionStatus ? `VPS (${inst.provisionStatus})` : t("provisionVps")}
                                   </button>
                                 </>
                               )}
@@ -804,7 +806,7 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                       color: "text-violet-400",
                       bg: "bg-violet-500/10",
                       value: analyticsData.totalUsers,
-                      label: "Total Users",
+                      label: t("totalUsers"),
                       sub: `+${analyticsData.newThisWeek} this week`,
                       subColor: analyticsData.newThisWeek > 0 ? "text-emerald-400" : "text-zinc-600",
                     },
@@ -813,7 +815,7 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                       color: "text-emerald-400",
                       bg: "bg-emerald-500/10",
                       value: `$${analyticsData.mrr.toLocaleString()}`,
-                      label: "Est. MRR",
+                      label: t("estMrr"),
                       sub: `${analyticsData.planCounts.pro} pro · ${analyticsData.planCounts.enterprise} enterprise`,
                       subColor: "text-zinc-500",
                     },
@@ -822,7 +824,7 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                       color: "text-blue-400",
                       bg: "bg-blue-500/10",
                       value: analyticsData.activeInstances,
-                      label: "Active Instances",
+                      label: t("activeInstances"),
                       sub: "status = running",
                       subColor: "text-zinc-600",
                     },
@@ -831,7 +833,7 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                       color: "text-amber-400",
                       bg: "bg-amber-500/10",
                       value: analyticsData.provisionedVps,
-                      label: "Provisioned VPS",
+                      label: t("provisionedVps"),
                       sub: "with gateway",
                       subColor: "text-zinc-600",
                     },

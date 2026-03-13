@@ -325,9 +325,12 @@
       "noMessagesYet": "Повідомлень ще немає. Привітайте вашого менеджера!",
       "messagePlaceholder": "Введіть повідомлення...",
       "failedSend": "Не вдалося надіслати повідомлення.",
-      "bookCall": "Book a call",
-      "bookCallDesc": "Prefer a live conversation? Schedule time with your manager.",
-      "scheduleCall": "Schedule a call"
+      "bookCall": "Забронювати дзвінок",
+      "bookCallDesc": "Бажаєте живого спілкування? Заплануйте час з вашим менеджером.",
+      "scheduleCall": "Запланувати дзвінок",
+      "connecting": "Підключення...",
+      "liveUpdates": "Оновлення в реальному часі активні",
+      "newMessage": "Нове повідомлення"
     },
     "settingsPage": {
       "title": "Налаштування",

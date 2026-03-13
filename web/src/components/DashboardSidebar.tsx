@@ -65,12 +65,12 @@ function SidebarContent({ userName, userEmail, unreadCount, isAdmin, isManager, 
         <NavItem href="/dashboard/settings" icon={Settings} label={t("settings")} onClick={onClose} />
         {isManager && (
           <div className="pt-2 mt-2 border-t border-white/5">
-            <NavItem href="/manager" icon={Users} label="Manager Portal" onClick={onClose} />
+            <NavItem href="/manager" icon={Users} label={t("managerPortal")} onClick={onClose} />
           </div>
         )}
         {isAdmin && (
           <div className={isManager ? "mt-1" : "pt-2 mt-2 border-t border-white/5"}>
-            <NavItem href="/admin" icon={Shield} label="Admin Panel" onClick={onClose} />
+            <NavItem href="/admin" icon={Shield} label={t("adminPanel")} onClick={onClose} />
           </div>
         )}
       </nav>
@@ -102,16 +102,25 @@ export function DashboardSidebar({ userName, userEmail, isAdmin, isManager }: Si
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
-    async function fetchUnread() {
-      const res = await fetch("/api/messages/unread");
-      if (res.ok) {
-        const data = await res.json();
-        setUnreadCount(data.count ?? 0);
+    // Initial fetch of unread count
+    fetch("/api/messages/unread")
+      .then((r) => r.json())
+      .then((d) => setUnreadCount(d.count ?? 0))
+      .catch(() => {});
+
+    // SSE: increment badge on new manager messages in real-time
+    const es = new EventSource("/api/messages/stream");
+    es.addEventListener("message", (event) => {
+      try {
+        const msg = JSON.parse(event.data);
+        if (msg.senderType === "manager") {
+          setUnreadCount((c) => c + 1);
+        }
+      } catch {
+        // ignore parse errors
       }
-    }
-    fetchUnread();
-    const interval = setInterval(fetchUnread, 15000);
-    return () => clearInterval(interval);
+    });
+    return () => es.close();
   }, []);
 
   return (

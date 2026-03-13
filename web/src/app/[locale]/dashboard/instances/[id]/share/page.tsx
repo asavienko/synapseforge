@@ -7,6 +7,7 @@ import {
   MessageSquare, Share2, Zap,
 } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 interface Instance {
   id: string;
@@ -45,6 +46,7 @@ function formatRelativeTime(date: string): string {
 }
 
 export default function ShareAgentPage() {
+  const t = useTranslations("share");
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
 
@@ -117,7 +119,7 @@ export default function ShareAgentPage() {
       ...prev,
       {
         role: "assistant",
-        content: res.ok ? (data.response ?? "…") : (data.error ?? "Something went wrong"),
+        content: res.ok ? (data.response ?? "…") : (data.error ?? t("somethingWentWrong")),
         isError: !res.ok,
         latencyMs: data.latencyMs,
       },
@@ -220,7 +222,7 @@ export default function ShareAgentPage() {
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={telegramQrUrl}
-                      alt="Telegram QR Code"
+                      alt={t("telegramQrCode")}
                       width={100}
                       height={100}
                       className="rounded-lg"
@@ -308,7 +310,7 @@ export default function ShareAgentPage() {
                 className="inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors text-white text-sm font-semibold px-4 py-2 rounded-xl"
               >
                 {copiedItem === "webchat-btn" ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
-                {copiedItem === "webchat-btn" ? "Copied!" : "Copy web chat link"}
+                {copiedItem === "webchat-btn" ? t("copied") : t("copyWebChatLink")}
               </button>
             </div>
           </div>
@@ -415,7 +417,7 @@ export default function ShareAgentPage() {
               value={testInput}
               onChange={(e) => setTestInput(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter") sendTestMessage(); }}
-              placeholder="Say something to your agent…"
+              placeholder={t("sayHello")}
               disabled={testLoading}
               className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors disabled:opacity-50"
             />
@@ -425,7 +427,7 @@ export default function ShareAgentPage() {
               className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 transition-colors px-4 py-3 rounded-xl text-sm font-semibold text-white shrink-0"
             >
               {testLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-              {testLoading ? "…" : "Send →"}
+              {testLoading ? t("sending") : t("send")}
             </button>
           </div>
           {testMessages.length === 0 && (
@@ -454,7 +456,7 @@ export default function ShareAgentPage() {
               className="flex items-center gap-1.5 text-xs bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 px-3 py-2 rounded-xl transition-colors shrink-0"
             >
               {copiedItem === "share-webchat" ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-              {copiedItem === "share-webchat" ? "Copied!" : "Copy"}
+              {copiedItem === "share-webchat" ? t("copied") : t("copy")}
             </button>
           </div>
 
@@ -470,7 +472,7 @@ export default function ShareAgentPage() {
                 className="flex items-center gap-1.5 text-xs bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 px-3 py-2 rounded-xl transition-colors shrink-0"
               >
                 {copiedItem === "share-telegram" ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                {copiedItem === "share-telegram" ? "Copied!" : "Copy"}
+                {copiedItem === "share-telegram" ? t("copied") : t("copy")}
               </button>
             </div>
           )}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Users, MessageCircle, Bot, Send, Loader2, X, Shield, Activity, Server, AlertTriangle, ExternalLink, Rocket } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { STATUS_COLORS, PLANS, formatDate, formatRelativeTime } from "@/lib/utils";
 import { ProvisioningWizard } from "@/components/ProvisioningWizard";
@@ -58,6 +59,7 @@ export function ManagerClient({ manager, clients: initialClients }: {
   manager: { id: string; name: string; email: string };
   clients: Client[];
 }) {
+  const t = useTranslations("manager");
   const [clients, setClients] = useState(initialClients);
   const [activeClient, setActiveClient] = useState<Client | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -165,7 +167,7 @@ export function ManagerClient({ manager, clients: initialClients }: {
           </div>
           <div>
             <div className="font-semibold text-white">{manager.name}</div>
-            <div className="text-xs text-zinc-500">Manager Portal</div>
+            <div className="text-xs text-zinc-500">{t("portalLabel")}</div>
           </div>
         </div>
         <div className="flex items-center gap-4 text-sm text-zinc-400">
@@ -228,8 +230,8 @@ export function ManagerClient({ manager, clients: initialClients }: {
             {clients.length === 0 ? (
               <div className="p-8 text-center">
                 <Users className="w-8 h-8 text-zinc-700 mx-auto mb-3" />
-                <p className="text-zinc-500 text-sm">No clients assigned yet.</p>
-                <p className="text-zinc-600 text-xs mt-1">Admin assigns clients to you.</p>
+                <p className="text-zinc-500 text-sm">{t("noClients")}</p>
+                <p className="text-zinc-600 text-xs mt-1">{t("noClientsDesc")}</p>
               </div>
             ) : (
               clients.map((client) => {
@@ -342,7 +344,7 @@ export function ManagerClient({ manager, clients: initialClients }: {
                           : "bg-white/[0.05] border border-white/10 text-zinc-200 rounded-tl-sm"
                       )}>
                         <div className="text-xs font-medium mb-1 opacity-60">
-                          {isManager ? "You" : activeClient.name ?? "Client"}
+                          {isManager ? t("you") : activeClient.name ?? t("client")}
                         </div>
                         {msg.body}
                       </div>
@@ -513,10 +515,10 @@ export function ManagerClient({ manager, clients: initialClients }: {
                                   <button
                                     onClick={() => openWizard(inst)}
                                     className="flex items-center gap-1 text-xs text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 px-2 py-1 rounded-lg transition-colors"
-                                    title="Provision VPS for this instance"
+                                    title={t("provisionVpsTitle")}
                                   >
                                     <Rocket className="w-3 h-3" />
-                                    {inst.provisionStatus ? inst.provisionStatus : "Provision"}
+                                    {inst.provisionStatus ? inst.provisionStatus : t("provision")}
                                   </button>
                                 )}
                                 <a

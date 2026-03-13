@@ -325,9 +325,12 @@
       "noMessagesYet": "Aún no hay mensajes. ¡Saluda a tu manager!",
       "messagePlaceholder": "Escribe un mensaje...",
       "failedSend": "Error al enviar el mensaje.",
-      "bookCall": "Book a call",
-      "bookCallDesc": "Prefer a live conversation? Schedule time with your manager.",
-      "scheduleCall": "Schedule a call"
+      "bookCall": "Reservar una llamada",
+      "bookCallDesc": "¿Prefieres una conversación en vivo? Agenda tiempo con tu manager.",
+      "scheduleCall": "Programar una llamada",
+      "connecting": "Conectando...",
+      "liveUpdates": "Actualizaciones en tiempo real activas",
+      "newMessage": "Nuevo mensaje"
     },
     "settingsPage": {
       "title": "Configuración",

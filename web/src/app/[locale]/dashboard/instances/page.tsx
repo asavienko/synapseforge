@@ -21,9 +21,10 @@ interface Instance {
 }
 
 function HealthDot({ healthStatus, lastCheckedAt }: { healthStatus?: string | null; lastCheckedAt?: string | null }) {
+  const t = useTranslations("dashboard.instances");
   const tooltip = lastCheckedAt
     ? `Last checked: ${formatRelativeTime(lastCheckedAt)}`
-    : "No health data yet";
+    : t("noHealthData");
 
   if (healthStatus === "healthy") {
     return (

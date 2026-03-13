@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Copy, Check, Twitter, Gift, Users, DollarSign, TrendingUp, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 interface ReferralStats {
   signups: number;
@@ -35,6 +36,7 @@ const STATUS_BADGE: Record<string, string> = {
 };
 
 export default function ReferralPage() {
+  const t = useTranslations("referral");
   const [data, setData] = useState<ReferralData | null>(null);
   const [loading, setLoading] = useState(true);
   const [copiedCode, setCopiedCode] = useState(false);
@@ -84,7 +86,7 @@ export default function ReferralPage() {
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
           <Gift className="w-6 h-6 text-violet-400" />
-          <h1 className="text-2xl font-bold text-white">Referral Program</h1>
+          <h1 className="text-2xl font-bold text-white">{t("pageTitle")}</h1>
         </div>
         <p className="text-zinc-400 text-sm">
           Earn <span className="text-violet-300 font-semibold">10% of every subscription</span> you refer for 6 months.
@@ -94,7 +96,7 @@ export default function ReferralPage() {
 
       {/* Referral code + link */}
       <div className="glow-border rounded-2xl p-6 bg-white/[0.02] mb-6">
-        <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-4">Your Referral Link</h2>
+        <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-4">{t("yourReferralLink")}</h2>
 
         <div className="flex flex-col sm:flex-row gap-3 mb-4">
           {/* Code */}
@@ -103,7 +105,7 @@ export default function ReferralPage() {
             <button
               onClick={() => copyText(code, "code")}
               className="ml-auto text-zinc-500 hover:text-violet-400 transition-colors"
-              title="Copy code"
+              title={t("copyCode")}
             >
               {copiedCode ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
             </button>
@@ -116,7 +118,7 @@ export default function ReferralPage() {
           <button
             onClick={() => copyText(link, "link")}
             className="text-zinc-500 hover:text-violet-400 transition-colors shrink-0"
-            title="Copy link"
+            title={t("copyLink")}
           >
             {copiedLink ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
           </button>
@@ -131,14 +133,14 @@ export default function ReferralPage() {
             className="flex items-center gap-2 bg-[#1d9bf0]/10 hover:bg-[#1d9bf0]/20 border border-[#1d9bf0]/20 text-[#1d9bf0] rounded-xl px-4 py-2.5 text-sm font-medium transition-colors"
           >
             <Twitter className="w-4 h-4" />
-            Share on X
+            {t("shareOnX")}
           </a>
           <button
             onClick={() => copyText(link, "link")}
             className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors"
           >
             {copiedLink ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
-            Copy Link
+            {t("copyLinkBtn")}
           </button>
         </div>
       </div>
@@ -146,17 +148,17 @@ export default function ReferralPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         {[
-          { icon: Users, label: "Sign-ups", value: stats.signups, color: "text-violet-400" },
-          { icon: TrendingUp, label: "Conversions", value: stats.conversions, color: "text-blue-400" },
+          { icon: Users, label: t("signUps"), value: stats.signups, color: "text-violet-400" },
+          { icon: TrendingUp, label: t("conversions"), value: stats.conversions, color: "text-blue-400" },
           {
             icon: DollarSign,
-            label: "Pending earnings",
+            label: t("pendingEarnings"),
             value: `$${stats.pendingCommissionUsd.toFixed(2)}`,
             color: "text-yellow-400",
           },
           {
             icon: DollarSign,
-            label: "Paid out",
+            label: t("paidOut"),
             value: `$${stats.earnedCommissionUsd.toFixed(2)}`,
             color: "text-emerald-400",
           },
@@ -179,8 +181,8 @@ export default function ReferralPage() {
         {conversions.length === 0 ? (
           <div className="p-8 text-center">
             <Gift className="w-10 h-10 text-zinc-700 mx-auto mb-3" />
-            <p className="text-zinc-400 font-medium mb-1">No referrals yet</p>
-            <p className="text-zinc-600 text-sm">Share your link to start earning.</p>
+            <p className="text-zinc-400 font-medium mb-1">{t("noReferralsYet")}</p>
+            <p className="text-zinc-600 text-sm">{t("noReferralsDesc")}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -227,12 +229,12 @@ export default function ReferralPage() {
 
       {/* How it works */}
       <div className="mt-6 glow-border rounded-2xl p-6 bg-white/[0.02]">
-        <h2 className="font-semibold text-white mb-4">How it works</h2>
+        <h2 className="font-semibold text-white mb-4">{t("howItWorks")}</h2>
         <div className="grid sm:grid-cols-3 gap-4">
           {[
-            { step: "1", title: "Share your link", desc: "Send your unique referral link to friends or post it online." },
-            { step: "2", title: "They sign up", desc: "When they register with your code, they're tracked as your referral." },
-            { step: "3", title: "Earn commissions", desc: "When they upgrade to Pro or Enterprise, you earn 10% of their subscription for 6 months." },
+            { step: "1", title: t("shareYourLink"), desc: t("shareDesc") },
+            { step: "2", title: t("theySignUp"), desc: t("theySignUpDesc") },
+            { step: "3", title: t("earnCommissions"), desc: t("earnCommissionsDesc") },
           ].map((s) => (
             <div key={s.step} className="flex gap-3">
               <div className="w-7 h-7 rounded-full bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-xs font-bold text-violet-400 shrink-0">

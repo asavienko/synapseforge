@@ -51,8 +51,29 @@ export default function MessagesPage() {
 
   useEffect(() => {
     loadMessages();
-    const interval = setInterval(loadMessages, 10000);
-    return () => clearInterval(interval);
+
+    // Mark manager messages as read when page opens
+    fetch("/api/messages/read-all", { method: "PATCH" }).catch(() => {});
+
+    // SSE for real-time updates — replaces the 10s polling interval
+    const es = new EventSource("/api/messages/stream");
+
+    es.addEventListener("message", (event) => {
+      const msg = JSON.parse(event.data) as Message;
+      setMessages((prev) => {
+        // Only add if not already in list (avoid duplicates)
+        if (prev.some((m) => m.id === msg.id)) return prev;
+        return [...prev, msg];
+      });
+    });
+
+    es.addEventListener("error", () => {
+      // SSE error — connection will retry automatically
+    });
+
+    return () => {
+      es.close();
+    };
   }, []);
 
   useEffect(() => {
@@ -142,7 +163,7 @@ export default function MessagesPage() {
                 )}
                 <div className={cn("max-w-[70%]", isUser ? "items-end" : "items-start", "flex flex-col gap-1")}>
                   <div className={cn(
-                    "px-4 py-3 rounded-2xl text-sm leading-relaxed",
+                    "px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap",
                     isUser
                       ? "bg-violet-600 text-white rounded-tr-sm"
                       : "bg-white/[0.05] border border-white/10 text-zinc-200 rounded-tl-sm"

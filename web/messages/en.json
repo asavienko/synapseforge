@@ -218,6 +218,7 @@
       "emptyDesc": "Create your first AI instance to get started.",
       "createInstance": "Create Instance",
       "createdSuccess": "Instance created successfully.",
+      "noHealthData": "No health data yet",
       "modal": {
         "title": "New AI Instance",
         "nameLabel": "Name",
@@ -252,7 +253,9 @@
       "messages": "Messages",
       "billing": "Billing",
       "settings": "Settings",
-      "signOut": "Sign out"
+      "signOut": "Sign out",
+      "managerPortal": "Manager Portal",
+      "adminPanel": "Admin Panel"
     },
     "billing": {
       "title": "Billing & Plans",
@@ -327,7 +330,10 @@
       "failedSend": "Failed to send message.",
       "bookCall": "Book a call",
       "bookCallDesc": "Prefer a live conversation? Schedule time with your manager.",
-      "scheduleCall": "Schedule a call"
+      "scheduleCall": "Schedule a call",
+      "connecting": "Connecting...",
+      "liveUpdates": "Live updates active",
+      "newMessage": "New message"
     },
     "settingsPage": {
       "title": "Settings",
@@ -653,7 +659,62 @@
     "gatewayToken": "Gateway Token",
     "testAndSave": "Test & Save",
     "connectionSuccess": "Connected successfully",
-    "connectionFailed": "Connection failed"
+    "connectionFailed": "Connection failed",
+    "deleteManagerConfirm": "Delete this manager? Their users will become unassigned.",
+    "disconnectVpsConfirm": "Disconnect this VPS? The gateway config will be cleared.",
+    "tabOverview": "Overview",
+    "tabReferrals": "Referrals",
+    "tabAnalytics": "Analytics",
+    "provisionAllTitle": "Provision all undeployed instances for this user",
+    "disconnectVpsTitle": "Disconnect VPS",
+    "syncConfigToVpsTitle": "Sync config to VPS",
+    "provisionHetznerTitle": "Provision Hetzner VPS",
+    "provisionVps": "Provision VPS",
+    "totalUsers": "Total Users",
+    "estMrr": "Est. MRR",
+    "activeInstances": "Active Instances",
+    "provisionedVps": "Provisioned VPS",
+    "adminPanel": "Admin Panel"
+  },
+  "referral": {
+    "pageTitle": "Referral Program",
+    "yourReferralLink": "Your Referral Link",
+    "copyCode": "Copy code",
+    "copyLink": "Copy link",
+    "copyLinkBtn": "Copy Link",
+    "shareOnX": "Share on X",
+    "signUps": "Sign-ups",
+    "conversions": "Conversions",
+    "pendingEarnings": "Pending earnings",
+    "paidOut": "Paid out",
+    "noReferralsYet": "No referrals yet",
+    "noReferralsDesc": "Share your link to start earning.",
+    "howItWorks": "How it works",
+    "shareYourLink": "Share your link",
+    "shareDesc": "Send your unique referral link to friends or post it online.",
+    "theySignUp": "They sign up",
+    "theySignUpDesc": "When they register with your code, they're tracked as your referral.",
+    "earnCommissions": "Earn commissions",
+    "earnCommissionsDesc": "When they upgrade to Pro or Enterprise, you earn 10% of their subscription for 6 months."
+  },
+  "share": {
+    "somethingWentWrong": "Something went wrong",
+    "telegramQrCode": "Telegram QR Code",
+    "copied": "Copied!",
+    "copy": "Copy",
+    "copyWebChatLink": "Copy web chat link",
+    "sayHello": "Say something to your agent\u2026",
+    "send": "Send \u2192",
+    "sending": "\u2026"
+  },
+  "manager": {
+    "portalLabel": "Manager Portal",
+    "you": "You",
+    "client": "Client",
+    "provisionVpsTitle": "Provision VPS for this instance",
+    "provision": "Provision",
+    "noClients": "No clients assigned yet.",
+    "noClientsDesc": "Admin assigns clients to you."
   },
   "instanceSetup": {
     "title": "Set Up Your AI Instance",

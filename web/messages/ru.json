@@ -325,9 +325,12 @@
       "noMessagesYet": "Сообщений пока нет. Поприветствуйте вашего менеджера!",
       "messagePlaceholder": "Введите сообщение...",
       "failedSend": "Не удалось отправить сообщение.",
-      "bookCall": "Book a call",
-      "bookCallDesc": "Prefer a live conversation? Schedule time with your manager.",
-      "scheduleCall": "Schedule a call"
+      "bookCall": "Записаться на звонок",
+      "bookCallDesc": "Предпочитаете живое общение? Запланируйте время с вашим менеджером.",
+      "scheduleCall": "Запланировать звонок",
+      "connecting": "Подключение...",
+      "liveUpdates": "Обновления в реальном времени активны",
+      "newMessage": "Новое сообщение"
     },
     "settingsPage": {
       "title": "Настройки",
