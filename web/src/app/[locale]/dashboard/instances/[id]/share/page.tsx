@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
   ArrowLeft, Bot, Copy, Check, Send, Loader2, ExternalLink,
-  MessageSquare, Share2, Zap,
+  MessageSquare, Share2, Zap, Code2,
 } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -59,6 +59,9 @@ export default function ShareAgentPage() {
   const [testInput, setTestInput] = useState("");
   const [testMessages, setTestMessages] = useState<ChatMsg[]>([]);
   const [testLoading, setTestLoading] = useState(false);
+
+  // Embed snippet tab
+  const [embedTab, setEmbedTab] = useState<"iframe" | "widget" | "link">("iframe");
 
   const loadData = useCallback(async () => {
     const [instanceRes, credsRes] = await Promise.all([
@@ -434,6 +437,132 @@ export default function ShareAgentPage() {
             <p className="text-xs text-zinc-600 mt-2 text-center">
               Send a message to see how your agent responds
             </p>
+          )}
+        </div>
+      </div>
+
+      {/* ── Embed on your website ── */}
+      <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden mb-6">
+        <div className="p-5 border-b border-white/5 flex items-center gap-2">
+          <Code2 className="w-4 h-4 text-violet-400" />
+          <h2 className="text-sm font-semibold text-white">Embed on your website</h2>
+        </div>
+        <div className="p-5">
+          {/* Tabs */}
+          <div className="flex gap-1 mb-4 bg-white/[0.03] border border-white/[0.06] rounded-xl p-1">
+            {(["iframe", "widget", "link"] as const).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setEmbedTab(tab)}
+                className={`flex-1 text-xs font-medium py-2 rounded-lg transition-colors ${
+                  embedTab === tab
+                    ? "bg-violet-600 text-white"
+                    : "text-zinc-500 hover:text-zinc-300"
+                }`}
+              >
+                {tab === "iframe" ? "iFrame" : tab === "widget" ? "Widget" : "Direct Link"}
+              </button>
+            ))}
+          </div>
+
+          {/* Iframe snippet */}
+          {embedTab === "iframe" && (
+            <div>
+              <p className="text-xs text-zinc-500 mb-2">
+                Embed the chat directly in your page at any size.
+              </p>
+              <div className="relative bg-black/40 border border-white/10 rounded-xl p-4">
+                <pre className="text-xs text-zinc-300 overflow-x-auto whitespace-pre">{`<iframe
+  src="${shareLinks.webChat}"
+  width="400"
+  height="600"
+  style="border:none;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.3);"
+  allow="clipboard-write"
+></iframe>`}</pre>
+                <button
+                  onClick={() =>
+                    copyToClipboard(
+                      `<iframe\n  src="${shareLinks.webChat}"\n  width="400"\n  height="600"\n  style="border:none;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.3);"\n  allow="clipboard-write"\n></iframe>`,
+                      "embed-iframe"
+                    )
+                  }
+                  className="absolute top-3 right-3 flex items-center gap-1.5 text-xs bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 px-2.5 py-1.5 rounded-lg transition-colors"
+                >
+                  {copiedItem === "embed-iframe" ? (
+                    <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  ) : (
+                    <Copy className="w-3.5 h-3.5" />
+                  )}
+                  {copiedItem === "embed-iframe" ? t("copied") : t("copy")}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Widget snippet */}
+          {embedTab === "widget" && (
+            <div>
+              <p className="text-xs text-zinc-500 mb-2">
+                A floating chat bubble in the bottom-right corner. Paste before{" "}
+                <code className="text-violet-300 bg-violet-500/10 px-1 rounded">&lt;/body&gt;</code>.
+              </p>
+              <div className="relative bg-black/40 border border-white/10 rounded-xl p-4">
+                <pre className="text-xs text-zinc-300 overflow-x-auto whitespace-pre">{`<script>
+  window.SynapseForge = { instanceId: "${id}" };
+</script>
+<script src="https://app.synapseforge.ai/widget.js" async></script>`}</pre>
+                <button
+                  onClick={() =>
+                    copyToClipboard(
+                      `<script>\n  window.SynapseForge = { instanceId: "${id}" };\n</script>\n<script src="https://app.synapseforge.ai/widget.js" async></script>`,
+                      "embed-widget"
+                    )
+                  }
+                  className="absolute top-3 right-3 flex items-center gap-1.5 text-xs bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 px-2.5 py-1.5 rounded-lg transition-colors"
+                >
+                  {copiedItem === "embed-widget" ? (
+                    <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  ) : (
+                    <Copy className="w-3.5 h-3.5" />
+                  )}
+                  {copiedItem === "embed-widget" ? t("copied") : t("copy")}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Direct link */}
+          {embedTab === "link" && (
+            <div>
+              <p className="text-xs text-zinc-500 mb-2">
+                Share this URL directly — anyone with the link can chat with your agent.
+              </p>
+              <div className="relative bg-black/40 border border-white/10 rounded-xl p-4 flex items-center gap-2">
+                <span className="flex-1 text-xs text-zinc-300 font-mono truncate">
+                  {shareLinks.webChat}
+                </span>
+                <button
+                  onClick={() => copyToClipboard(shareLinks.webChat, "embed-link")}
+                  className="flex items-center gap-1.5 text-xs bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 px-2.5 py-1.5 rounded-lg transition-colors shrink-0"
+                >
+                  {copiedItem === "embed-link" ? (
+                    <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  ) : (
+                    <Copy className="w-3.5 h-3.5" />
+                  )}
+                  {copiedItem === "embed-link" ? t("copied") : t("copy")}
+                </button>
+              </div>
+              <a
+                href={shareLinks.webChat}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 mt-3 text-xs text-violet-400 hover:text-violet-300 transition-colors"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                Open in new tab
+              </a>
+            </div>
           )}
         </div>
       </div>
