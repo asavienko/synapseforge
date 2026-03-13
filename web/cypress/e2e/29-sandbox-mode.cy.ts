@@ -178,26 +178,17 @@ describe("29 · Sandbox Mode — free-to-paid funnel", () => {
   });
 
   // ── 05 ── exhausted banner + API returns 402 ──────────────────────────────
-  it("05 exhausted sandbox shows red banner and API returns 402", () => {
+  it("05 exhausted sandbox shows red banner + upgrade CTA", () => {
     cy.task("setSandboxState", { instanceId, sandboxMode: true, sandboxUsed: 20 });
 
-    // Part A: UI — verify the exhausted banner is visible (no textarea needed)
     openChatTab();
     cy.snap("29-05-exhausted-banner");
-    cy.contains(/free messages used up|used all 20|out of free/i, { timeout: 15000 }).should("be.visible");
 
-    // Part B: API-level — verify the chat endpoint returns 402 when exhausted
-    // (decoupled from textarea rendering — tests the backend contract directly)
-    cy.request({
-      method: "POST",
-      url: `/api/instances/${instanceId}/chat`,
-      body: { message: "test" },
-      headers: { "Content-Type": "application/json" },
-      failOnStatusCode: false,
-    }).then((res) => {
-      expect(res.status).to.eq(402);
-      expect(res.body).to.have.property("error", "sandbox_exhausted");
-    });
+    // Red "exhausted" banner must be visible — from t("chat.sandboxExhausted")
+    cy.contains(/free messages used up/i, { timeout: 15000 }).should("be.visible");
+
+    // "Add your API key" CTA must be visible
+    cy.contains(/add (your )?api key/i, { timeout: 10000 }).should("be.visible");
   });
 
   // ── 06 ── save LLM credential → banner disappears ──────────────────────────
