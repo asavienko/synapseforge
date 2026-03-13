@@ -617,7 +617,10 @@
         "commandPending": "Pending",
         "commandRunning": "Running",
         "commandDone": "Done",
-        "commandFailed": "Failed"
+        "commandFailed": "Failed",
+        "changelog": "What's new in this version",
+        "updateAvailable": "Update available",
+        "upToDate": "Up to date"
       }
     },
     "credentials": {
@@ -826,7 +829,8 @@
     "hetznerSnapshotTaken": "Cloud snapshot triggered",
     "hetznerRestore": "Restore from Cloud Snapshot",
     "hetznerRestoreConfirm": "This will rebuild the server from the snapshot. All current data will be lost. Continue?",
-    "noHetznerSnapshots": "No cloud snapshots yet"
+    "noHetznerSnapshots": "No cloud snapshots yet",
+    "autoUpdateQueued": "Auto-update queued for {{count}} instances"
   },
   "referral": {
     "pageTitle": "Referral Program",

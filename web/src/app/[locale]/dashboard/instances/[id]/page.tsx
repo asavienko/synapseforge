@@ -3259,6 +3259,12 @@ print(resp.choices[0].message.content)`}</pre>
                         </button>
                       </div>
                     </div>
+                    {currentVersionInfo?.changelog && (
+                      <div className="mt-3 p-3 bg-white/3 rounded-lg border border-white/5">
+                        <p className="text-xs text-zinc-500 mb-1">{t("infrastructure.version.changelog")}</p>
+                        <p className="text-xs text-zinc-400 whitespace-pre-line">{currentVersionInfo.changelog}</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

@@ -617,7 +617,10 @@
         "commandPending": "Очікує",
         "commandRunning": "Виконується",
         "commandDone": "Виконано",
-        "commandFailed": "Помилка"
+        "commandFailed": "Помилка",
+        "changelog": "Що нового в цій версії",
+        "updateAvailable": "Доступне оновлення",
+        "upToDate": "Актуальна версія"
       }
     },
     "credentials": {
@@ -826,7 +829,8 @@
     "hetznerSnapshotTaken": "Хмарний знімок запущено",
     "hetznerRestore": "Відновити з хмарного знімка",
     "hetznerRestoreConfirm": "Це пересоздасть сервер зі знімка. Усі поточні дані будуть втрачені. Продовжити?",
-    "noHetznerSnapshots": "Хмарних знімків поки немає"
+    "noHetznerSnapshots": "Хмарних знімків поки немає",
+    "autoUpdateQueued": "Автооновлення в черзі для {{count}} екземплярів"
   },
   "instanceSetup": {
     "title": "Налаштування екземпляра ШІ",

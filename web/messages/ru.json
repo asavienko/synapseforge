@@ -617,7 +617,10 @@
         "commandPending": "Ожидает",
         "commandRunning": "Выполняется",
         "commandDone": "Выполнено",
-        "commandFailed": "Ошибка"
+        "commandFailed": "Ошибка",
+        "changelog": "Что нового в этой версии",
+        "updateAvailable": "Доступно обновление",
+        "upToDate": "Актуальная версия"
       }
     },
     "credentials": {
@@ -826,7 +829,8 @@
     "hetznerSnapshotTaken": "Облачный снимок запущен",
     "hetznerRestore": "Восстановить из облачного снимка",
     "hetznerRestoreConfirm": "Это пересоздаст сервер из снимка. Все текущие данные будут потеряны. Продолжить?",
-    "noHetznerSnapshots": "Облачных снимков пока нет"
+    "noHetznerSnapshots": "Облачных снимков пока нет",
+    "autoUpdateQueued": "Автообновление поставлено в очередь для {{count}} экземпляров"
   },
   "instanceSetup": {
     "title": "Настройка экземпляра ИИ",

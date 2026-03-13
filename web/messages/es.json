@@ -617,7 +617,10 @@
         "commandPending": "Pendiente",
         "commandRunning": "En ejecución",
         "commandDone": "Completado",
-        "commandFailed": "Fallido"
+        "commandFailed": "Fallido",
+        "changelog": "Novedades en esta versión",
+        "updateAvailable": "Actualización disponible",
+        "upToDate": "Al día"
       }
     },
     "credentials": {
@@ -826,7 +829,8 @@
     "hetznerSnapshotTaken": "Instantánea en la nube iniciada",
     "hetznerRestore": "Restaurar desde Instantánea en la Nube",
     "hetznerRestoreConfirm": "Esto reconstruirá el servidor desde la instantánea. Se perderán todos los datos actuales. ¿Continuar?",
-    "noHetznerSnapshots": "Aún no hay instantáneas en la nube"
+    "noHetznerSnapshots": "Aún no hay instantáneas en la nube",
+    "autoUpdateQueued": "Actualización automática en cola para {{count}} instancias"
   },
   "instanceSetup": {
     "title": "Configura tu Instancia de IA",
