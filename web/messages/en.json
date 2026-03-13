@@ -515,7 +515,26 @@
       "lastUpdated": "Last updated",
       "sandboxMode": "Sandbox Mode",
       "messagesUsed": "messages used",
-      "sandboxHint": "Add your API key in Credentials to use unlimited messages"
+      "sandboxHint": "Add your API key in Credentials to use unlimited messages",
+      "shareAgent": "🚀 Share Your Agent →",
+      "step1": "Step 1: Add your AI API key →",
+      "step2": "Step 2: Launch your agent →",
+      "step3": "Step 3: Connect a channel (Telegram, Discord, Slack) →",
+      "description": "Description",
+      "activeConfiguration": "Active Configuration",
+      "configTemplate": "Template",
+      "configModel": "Model",
+      "configTemp": "Temperature",
+      "configMaxTokens": "Max Tokens",
+      "quickTest": "Quick test",
+      "quickTestHint": "One message, instant feedback",
+      "quickTestPlaceholder": "Say something to your agent…",
+      "sendBtn": "Send →",
+      "agentResponse": "Agent response",
+      "tryAnother": "Try another →",
+      "recentActivity": "Recent Activity",
+      "seeAll": "See all →",
+      "upgradeHint": "Need a tier upgrade or custom integration? Contact your manager — they handle it for you."
     },
     "config": {
       "aiModel": "AI Model",
@@ -527,7 +546,41 @@
       "systemPromptPlaceholder": "You are a helpful AI assistant...",
       "templateTitle": "Start from a template",
       "templateDesc": "Pre-built personas for common use cases. You can customize anything after applying.",
-      "templateApplied": "Template applied — review and save your config"
+      "templateApplied": "Template applied — review and save your config",
+      "agentIdentity": "Agent Identity",
+      "agentIdentityDesc": "Who is your agent? Maps to SOUL.md",
+      "agentNameLabel": "Agent Name",
+      "agentNamePlaceholder": "Customer Support Bot",
+      "roleLabel": "Role",
+      "rolePlaceholder": "I help customers resolve issues quickly",
+      "traitsLabel": "Personality Traits",
+      "traitsHint": "(pick up to 3)",
+      "customInstructionsLabel": "Custom Instructions",
+      "optional": "(optional)",
+      "customInstructionsPlaceholder": "Always ask for order number before looking up a case. Keep responses under 3 sentences.",
+      "businessContextTitle": "Business Context",
+      "businessContextDesc": "What should your agent always know? Maps to MEMORY.md",
+      "businessNameLabel": "Business Name",
+      "businessNamePlaceholder": "Acme Corp",
+      "industryLabel": "Industry",
+      "selectIndustry": "Select industry…",
+      "keyInfoLabel": "Key information your agent should always know",
+      "aiModelSection": "AI Model",
+      "modelBestQuality": "Best quality",
+      "modelCreative": "Creative",
+      "modelFreeTier": "Free tier",
+      "capabilities": "Capabilities",
+      "memoryCapability": "Memory",
+      "memoryDesc": "Remembers past conversations",
+      "smartThinking": "Smart Thinking",
+      "smartThinkingDesc": "Better for complex questions (uses more tokens)",
+      "languageLabel": "Language",
+      "languageDesc": "Primary language for responses",
+      "hideAdvanced": "Hide advanced settings",
+      "showAdvanced": "Show advanced settings (temperature, tokens)",
+      "temperatureHint": "(0 = deterministic, 1 = creative)",
+      "maxTokensLabel": "Max Tokens",
+      "maxTokensHint": "(max response length)"
     },
     "apiKeys": {
       "generateTitle": "Generate new API key",
@@ -540,7 +593,15 @@
       "usageTitle": "Usage example",
       "revokeConfirm": "Revoke this API key? This cannot be undone.",
       "createdAt": "Created",
-      "lastUsed": "Last used"
+      "lastUsed": "Last used",
+      "activeKeys": "Active keys",
+      "usageExamples": "Usage examples",
+      "apiDocs": "API docs ↗",
+      "simpleChatLabel": "Simple chat (SynapseForge API)",
+      "openaiCompatLabel": "OpenAI-compatible (drop-in replacement)",
+      "pythonLabel": "Python (OpenAI SDK)",
+      "createdLabel": "Created",
+      "usedLabel": "Used"
     },
     "activity": {
       "title": "Event history",
@@ -548,7 +609,9 @@
       "configSaved": "Configuration saved.",
       "configFailed": "Failed to save config.",
       "keyCreated": "API key created. Copy it now — it won't be shown again.",
-      "keyRevoked": "API key revoked."
+      "keyRevoked": "API key revoked.",
+      "autoRefresh": "Auto-refreshes every 30s",
+      "refresh": "Refresh"
     },
     "infrastructure": {
       "tab": "Infrastructure",
@@ -597,7 +660,8 @@
         "latency": "Latency",
         "ms": "ms",
         "gatewayError": "Gateway error",
-        "dismiss": "Dismiss"
+        "dismiss": "Dismiss",
+        "noGatewayHint": "Contact your manager to connect a VPS gateway to this instance."
       },
       "testChat": {
         "title": "Test Chat",
@@ -621,7 +685,19 @@
         "changelog": "What's new in this version",
         "updateAvailable": "Update available",
         "upToDate": "Up to date"
-      }
+      },
+      "vpsProvisioning": "VPS Provisioning",
+      "resyncConfig": "Re-sync Config",
+      "status": "Status",
+      "provisioning": "Provisioning…",
+      "ready": "Ready",
+      "failed": "Failed",
+      "vpsUrlLabel": "VPS URL",
+      "config": "Config",
+      "outOfSync": "Out of sync — VPS will auto-sync within 5 min",
+      "lastCheck": "Last Check",
+      "unreachable": "Unreachable",
+      "configManagerSync": "Contact your manager to sync config"
     },
     "credentials": {
       "tab": "Credentials",
@@ -696,6 +772,44 @@
         "twitterBearerDesc": "Search and post tweets via the Twitter/X API",
         "youtubeDesc": "Analyze YouTube channels, comments, and search videos",
         "elevenlabsDesc": "Generate voice responses with ElevenLabs TTS"
+      },
+      "syncNow": "Sync Now",
+      "connectedChannels": "Connected Channels",
+      "tokenSaved": "Token saved",
+      "live": "Live",
+      "fullConfigManager": "Full configuration in manager portal",
+      "openclawConfig": "OpenClaw Config",
+      "hideConfig": "Hide",
+      "validationFailed": "Key validation failed — check that it's correct and has the right permissions.",
+      "validationSuccess": "✓ Key validated and saved successfully.",
+      "replaceToken": "Replace token",
+      "connecting": "Connecting…",
+      "testingCredential": "Testing…",
+      "testAndSave": "Test & Save",
+      "telegram": {
+        "header": "Telegram",
+        "connect": "Connect Telegram Bot",
+        "connectBtn": "Connect",
+        "tokenHint": "Make sure the token is correct and was copied from @BotFather.",
+        "live": "Your Telegram bot is live. Users can message it directly.",
+        "instructions": "Create a bot via @BotFather, then paste the token here."
+      },
+      "discord": {
+        "header": "Discord",
+        "connect": "Connect Discord Bot",
+        "connectBtn": "Connect",
+        "inviteToServer": "Invite to Server →",
+        "live": "Your Discord bot is live and ready to be invited to servers.",
+        "botTokenPlaceholder": "Bot token…"
+      },
+      "slack": {
+        "header": "Slack",
+        "connect": "Connect Slack",
+        "connectBtn": "Connect to Slack",
+        "live": "Your Slack bot is live in the workspace.",
+        "instructions": "Create a Slack app at api.slack.com and copy your App Token and Bot Token.",
+        "appTokenPlaceholder": "App Token (xapp-…)",
+        "botTokenPlaceholder": "Bot Token (xoxb-…)"
       }
     },
     "chat": {
@@ -738,7 +852,9 @@
       "error": "Error",
       "delete": "Delete",
       "deleteConfirm": "Remove this document?",
-      "uploading": "Uploading..."
+      "uploading": "Uploading...",
+      "uploadFailed": "Upload failed",
+      "deleteFailed": "Delete failed"
     },
     "deploy": {
       "tab": "Deploy",
@@ -769,7 +885,33 @@
       "channelTelegram": "Telegram",
       "channelDiscord": "Discord",
       "channelSlack": "Slack",
-      "chatAvailable": "Chat available in the Chat tab"
+      "chatAvailable": "Chat available in the Chat tab",
+      "addKey": "Add key",
+      "checkLLMHint": "OpenAI, Anthropic or OpenRouter key required",
+      "checkChannelHint": "Add Telegram, Discord or Slack tokens to reach users on those platforms",
+      "addChannel": "Add channel",
+      "noneConfigured": "None configured",
+      "liveStatus": "Live",
+      "connectedIntegrations": "Connected integrations",
+      "activeStatus": "Active",
+      "connectAction": "Connect",
+      "whatHappensTitle": "What happens when you deploy",
+      "step1Text": "A dedicated cloud server is provisioned in under 3 minutes",
+      "step2Text": "OpenClaw is installed and configured with your credentials",
+      "step3Text": "Your AI agent goes live on all configured channels (Telegram, Discord, Slack)",
+      "step4Text": "When you update credentials, config syncs automatically within 5 minutes",
+      "provStep1Label": "Provisioning cloud server",
+      "provStep1Sub": "Allocating your dedicated VPS",
+      "provStep2Label": "Installing OpenClaw runtime",
+      "provStep2Sub": "Setting up the AI agent engine",
+      "provStep3Label": "Configuring your agent",
+      "provStep3Sub": "Applying your credentials and settings",
+      "provStep4Label": "Going live",
+      "provStep4Sub": "Your agent will start responding on connected channels",
+      "autoUpdateHint": "This page will update automatically when your agent is ready.",
+      "channelTelegramDesc": "Users can message your bot on Telegram",
+      "channelDiscordDesc": "Bot joins your Discord server",
+      "channelSlackDesc": "Bot connects to your Slack workspace"
     },
     "usage": {
       "title": "Usage Analytics",
@@ -780,7 +922,51 @@
       "topModel": "Top Model",
       "avgLatency": "Avg Latency",
       "last14Days": "Last 14 Days",
-      "noMessages": "No messages yet — send your first chat message to see stats here."
+      "noMessages": "No messages yet — send your first chat message to see stats here.",
+      "tokensAllTime": "Tokens (all time)",
+      "estCostThisMonth": "Est. cost this month",
+      "sources": "Sources",
+      "dashboardSource": "Dashboard",
+      "apiSource": "API"
+    },
+    "backToInstances": "Back to instances",
+    "agentLive": "🎉 Your AI agent is live!",
+    "tierSuffix": "tier",
+    "confirmDelete": "Delete this instance? This cannot be undone.",
+    "somethingWentWrong": "Something went wrong",
+    "failedToUpdateStatus": "Failed to update status",
+    "configSyncTriggered": "Config sync triggered — VPS will pick up changes within 5 minutes.",
+    "syncFailed": "Sync failed",
+    "failedAutoUpdate": "Failed to update auto-update setting",
+    "provisioning": {
+      "bannerTitle": "Your server is being provisioned — this takes 3–8 minutes.",
+      "failedTitle": "Provisioning failed",
+      "failedDesc": "Something went wrong setting up your server. Please contact your manager.",
+      "step1": "Creating server…",
+      "step2": "Installing Docker…",
+      "step3": "Starting OpenClaw…",
+      "step4": "Running health check…"
+    },
+    "checklist": {
+      "title": "Setup Checklist",
+      "complete": "complete",
+      "aiModel": "AI model connected",
+      "apiKeySaved": "API key saved",
+      "addApiKey": "Add an API key",
+      "addApiKeyAction": "Add API key →",
+      "channel": "Channel connected",
+      "channelSaved": "Channel token saved",
+      "connectChannel": "Connect a channel",
+      "connectAction": "Connect →",
+      "agentDeployed": "Agent deployed",
+      "notYetDeployed": "Not yet deployed",
+      "launchAction": "Launch →",
+      "agentHealthy": "Agent is healthy",
+      "online": "Online",
+      "waitingHealthCheck": "Waiting for first health check"
+    },
+    "common": {
+      "cancel": "Cancel"
     }
   },
   "admin": {
