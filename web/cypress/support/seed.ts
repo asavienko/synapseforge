@@ -100,6 +100,9 @@ async function main() {
         vpsUrl: null,
         vpsServerId: null,
         configSynced: true,
+        // Reset sandbox state so spec 29 always starts from a clean slate
+        sandboxMode: true,
+        sandboxUsed: 0,
       },
     });
 

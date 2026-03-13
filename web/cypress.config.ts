@@ -10,7 +10,37 @@ export default defineConfig({
     screenshotsFolder: "cypress/screenshots",
     video: false,
     defaultCommandTimeout: 10000,
-    setupNodeEvents(_on, _config) {},
+    setupNodeEvents(on, _config) {
+      on("task", {
+        /**
+         * Directly set sandbox state on an instance via Prisma.
+         * Used by spec 29 to simulate amber / red / exhausted states
+         * without sending real messages.
+         */
+        async setSandboxState({
+          instanceId,
+          sandboxUsed,
+          sandboxMode,
+        }: {
+          instanceId: string;
+          sandboxUsed?: number;
+          sandboxMode?: boolean;
+        }) {
+          // Dynamic import to avoid top-level require issues in ESM config
+          const { PrismaClient } = await import("@prisma/client");
+          const prisma = new PrismaClient();
+          try {
+            const data: Record<string, unknown> = {};
+            if (sandboxUsed !== undefined) data.sandboxUsed = sandboxUsed;
+            if (sandboxMode !== undefined) data.sandboxMode = sandboxMode;
+            await prisma.aIInstance.update({ where: { id: instanceId }, data });
+            return { ok: true };
+          } finally {
+            await prisma.$disconnect();
+          }
+        },
+      });
+    },
     reporter: "cypress-multi-reporters",
     reporterOptions: {
       reporterEnabled: "spec, mocha-junit-reporter",
