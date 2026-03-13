@@ -164,6 +164,10 @@ model AIInstance {
   slackBotName        String?  // Slack bot display name — set after successful Slack setup
   slackTeamName       String?  // Slack workspace name — set after successful Slack setup
   sshPrivateKey      String?   // Encrypted ED25519 private key for config updates
+  currentVersion     String?   // Currently running OpenClaw version tag
+  targetVersion      String?   // Desired version (set by admin or auto-update)
+  autoUpdate         Boolean   @default(false) // Auto-update to latest stable
+  versionLockedAt    DateTime? // When version was locked/pinned
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -173,6 +177,8 @@ model AIInstance {
   logs          ActivityLog[]
   healthChecks  HealthCheck[]
   snapshots     Snapshot[]
+  machineSnapshots MachineSnapshot[]
+  commands      InstanceCommand[]
   credentials   InstanceCredential[]
   chatMessages  ChatMessage[]
   webhooks      Webhook[]
@@ -233,13 +239,55 @@ model HealthCheck {
 }
 
 model Snapshot {
-  id         String     @id @default(cuid())
-  instanceId String
-  snapshotId String     // Restic snapshot short ID
-  sizeBytes  Int?       // size in bytes
-  healthy    Boolean    @default(true) // was the instance healthy at snapshot time?
-  createdAt  DateTime   @default(now())
-  instance   AIInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+  id          String     @id @default(cuid())
+  instanceId  String
+  snapshotId  String     // Restic snapshot short ID
+  sizeBytes   Int?       // size in bytes
+  healthy     Boolean    @default(true) // was the instance healthy at snapshot time?
+  label       String?
+  tag         String?
+  triggeredBy String?
+  createdAt   DateTime   @default(now())
+  instance    AIInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+}
+
+model InstanceCommand {
+  id          String    @id @default(cuid())
+  instanceId  String
+  type        String    // "update_version" | "rollback_restic" | "take_restic_snapshot" | "rollback_machine" | "restart"
+  payload     String?   // JSON
+  status      String    @default("pending") // "pending" | "running" | "done" | "failed"
+  requestedBy String?
+  note        String?
+  createdAt   DateTime  @default(now())
+  startedAt   DateTime?
+  completedAt DateTime?
+  errorMsg    String?
+  instance    AIInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+
+  @@index([instanceId, status])
+}
+
+model MachineSnapshot {
+  id            String    @id @default(cuid())
+  instanceId    String
+  hetznerImageId String
+  sizeGb        Float?
+  status        String    @default("creating") // "creating" | "ready" | "failed"
+  label         String?
+  createdAt     DateTime  @default(now())
+  instance      AIInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+}
+
+model OpenClawVersion {
+  id          String    @id @default(cuid())
+  tag         String    @unique
+  imageRef    String
+  changelog   String?
+  stable      Boolean   @default(false)
+  deprecated  Boolean   @default(false)
+  publishedAt DateTime  @default(now())
+  createdAt   DateTime  @default(now())
 }
 
 model ApiKey {
