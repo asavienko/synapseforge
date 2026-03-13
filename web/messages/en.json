@@ -1249,6 +1249,28 @@
     "save": "Save",
     "testConnection": "Test connection"
   },
+  "trust": {
+    "businessesRunning": "businesses running AI agents",
+    "alwaysOn": "always-on support",
+    "setupTime": "average setup time",
+    "startFree": "to start",
+    "noCard": "No credit card required"
+  },
+  "caseStudy": {
+    "badge": "Real customer story",
+    "title": "From overwhelmed to automated",
+    "subtitle": "How Lumina Wellness Studio went from drowning in WhatsApp messages to instant AI-powered responses — in one afternoon.",
+    "metric1value": "4h → instant",
+    "metric1label": "Response time",
+    "metric2value": "3h/day",
+    "metric2label": "Admin time saved",
+    "metric3value": "€1,400/mo",
+    "metric3label": "Hiring cost avoided",
+    "quote": "I didn't know what to expect. I thought it would be another chatbot that frustrates clients with 'I didn't understand that.' Luna actually handles conversations. She sounds like us. And Carlos — I forget he's not on my payroll. He just takes care of things.",
+    "name": "Elena Martínez",
+    "role": "Owner, Lumina Wellness Studio · Valencia",
+    "webWidget": "Web Widget"
+  },
   "whiteLabel": {
     "title": "White Label",
     "subtitle": "Customize the branding for your clients",

@@ -93,6 +93,38 @@ export default async function LandingPage() {
         </div>
       </section>
 
+      {/* ── Trust Signal Bar ─────────────────────────────────────────────── */}
+      <section className="border-y border-white/5 bg-zinc-900/50 py-4 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex flex-wrap items-center justify-center gap-8 text-sm text-zinc-500">
+            <div className="flex items-center gap-2">
+              <span className="text-violet-400 font-bold">12+</span>
+              <span>{t("trust.businessesRunning")}</span>
+            </div>
+            <div className="hidden sm:block w-px h-4 bg-white/10" />
+            <div className="flex items-center gap-2">
+              <span className="text-violet-400 font-bold">24/7</span>
+              <span>{t("trust.alwaysOn")}</span>
+            </div>
+            <div className="hidden sm:block w-px h-4 bg-white/10" />
+            <div className="flex items-center gap-2">
+              <span className="text-violet-400 font-bold">{"<3min"}</span>
+              <span>{t("trust.setupTime")}</span>
+            </div>
+            <div className="hidden sm:block w-px h-4 bg-white/10" />
+            <div className="flex items-center gap-2">
+              <span className="text-violet-400 font-bold">€0</span>
+              <span>{t("trust.startFree")}</span>
+            </div>
+            <div className="hidden sm:block w-px h-4 bg-white/10" />
+            <div className="flex items-center gap-2">
+              <span className="text-emerald-400">✓</span>
+              <span>{t("trust.noCard")}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── How it works ─────────────────────────────────────────────────── */}
       <section id="how" className="max-w-7xl mx-auto px-6 py-20">
         <div className="text-center mb-14">
@@ -303,6 +335,54 @@ export default async function LandingPage() {
               <p className="text-zinc-400 text-sm leading-relaxed">{f.desc}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ── Case Study ──────────────────────────────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-6 py-20">
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 text-xs text-violet-400 bg-violet-500/10 border border-violet-500/20 rounded-full px-3 py-1 mb-4">
+            <span>★</span>
+            <span>{t("caseStudy.badge")}</span>
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">{t("caseStudy.title")}</h2>
+          <p className="text-zinc-400 max-w-xl mx-auto">{t("caseStudy.subtitle")}</p>
+        </div>
+
+        <div className="bg-zinc-900 border border-white/5 rounded-2xl p-8 md:p-12 max-w-4xl mx-auto">
+          {/* Metrics row */}
+          <div className="grid grid-cols-3 gap-6 mb-8 pb-8 border-b border-white/5">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-violet-400 mb-1">{t("caseStudy.metric1value")}</div>
+              <div className="text-xs text-zinc-500">{t("caseStudy.metric1label")}</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-emerald-400 mb-1">{t("caseStudy.metric2value")}</div>
+              <div className="text-xs text-zinc-500">{t("caseStudy.metric2label")}</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-amber-400 mb-1">{t("caseStudy.metric3value")}</div>
+              <div className="text-xs text-zinc-500">{t("caseStudy.metric3label")}</div>
+            </div>
+          </div>
+
+          {/* Quote */}
+          <blockquote className="text-lg text-zinc-300 italic mb-6 leading-relaxed">
+            &ldquo;{t("caseStudy.quote")}&rdquo;
+          </blockquote>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-violet-500/20 flex items-center justify-center text-violet-400 font-bold text-sm">EM</div>
+            <div>
+              <div className="text-white font-medium text-sm">{t("caseStudy.name")}</div>
+              <div className="text-zinc-500 text-xs">{t("caseStudy.role")}</div>
+            </div>
+            <div className="ml-auto flex gap-2">
+              {/* Channel badges */}
+              <span className="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded-full border border-emerald-500/20">WhatsApp</span>
+              <span className="text-xs bg-pink-500/10 text-pink-400 px-2 py-1 rounded-full border border-pink-500/20">Instagram</span>
+              <span className="hidden sm:block text-xs bg-violet-500/10 text-violet-400 px-2 py-1 rounded-full border border-violet-500/20">{t("caseStudy.webWidget")}</span>
+            </div>
+          </div>
         </div>
       </section>
 

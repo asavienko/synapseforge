@@ -1243,6 +1243,28 @@
       "subtitle": "Automatización visual con más de 1.000 conectores de aplicaciones"
     }
   },
+  "trust": {
+    "businessesRunning": "empresas ejecutando agentes de IA",
+    "alwaysOn": "soporte siempre activo",
+    "setupTime": "tiempo medio de configuración",
+    "startFree": "para empezar",
+    "noCard": "Sin tarjeta de crédito"
+  },
+  "caseStudy": {
+    "badge": "Historia real de cliente",
+    "title": "De saturada a automatizada",
+    "subtitle": "Cómo Lumina Wellness Studio pasó de ahogarse en mensajes de WhatsApp a respuestas instantáneas con IA — en una tarde.",
+    "metric1value": "4h → instantáneo",
+    "metric1label": "Tiempo de respuesta",
+    "metric2value": "3h/día",
+    "metric2label": "Tiempo admin ahorrado",
+    "metric3value": "€1.400/mes",
+    "metric3label": "Coste de contratación evitado",
+    "quote": "No sabía qué esperar. Pensé que sería otro chatbot que frustra a los clientes con 'No entendí eso.' Luna realmente gestiona conversaciones. Suena como nosotros. Y Carlos — olvido que no está en mi nómina. Simplemente se encarga de las cosas.",
+    "name": "Elena Martínez",
+    "role": "Propietaria, Lumina Wellness Studio · Valencia",
+    "webWidget": "Widget Web"
+  },
   "whiteLabel": {
     "title": "Marca Blanca",
     "subtitle": "Personaliza la marca para tus clientes",
