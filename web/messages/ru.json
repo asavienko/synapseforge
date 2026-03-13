@@ -666,6 +666,26 @@
         "copied": "Код встраивания скопирован!",
         "linkCopied": "Ссылка скопирована!",
         "directLink": "Прямая ссылка"
+      },
+      "integrations": {
+        "title": "Интеграции",
+        "subtitle": "Дайте суперспособности своему агенту",
+        "webIntelligence": "Веб-аналитика",
+        "leadGeneration": "Генерация лидов",
+        "tavilyDesc": "Дайте агенту поиск в интернете в реальном времени",
+        "braveDesc": "Альтернативный API веб-поиска",
+        "firecrawlDesc": "Позвольте агенту читать любой URL",
+        "googleMapsDesc": "Поиск местных компаний и генерация лидов из Google Maps",
+        "hunterDesc": "Поиск профессиональных email-адресов для B2B",
+        "apolloDesc": "Доступ к 200M+ B2B-контактам с обогащением данных компании",
+        "apifyDesc": "Парсинг любых сайтов — Google Maps, Amazon, LinkedIn, TripAdvisor",
+        "socialMedia": "Социальные сети",
+        "voiceIO": "Голосовой ввод/вывод",
+        "facebookDesc": "Подключите свою страницу Facebook для мониторинга и публикации контента",
+        "facebookPageIdDesc": "Числовой ID вашей страницы Facebook",
+        "twitterBearerDesc": "Поиск и публикация твитов через API Twitter/X",
+        "youtubeDesc": "Анализ YouTube-каналов, комментариев и поиск видео",
+        "elevenlabsDesc": "Генерируйте голосовые ответы с ElevenLabs TTS"
       }
     },
     "chat": {
@@ -958,7 +978,15 @@
     "deleteNote": "Удалить",
     "notePlaceholder": "Добавить заметку об этом клиенте...",
     "capacity": "Вместимость",
-    "clients": "клиентов"
+    "clients": "клиентов",
+    "snapshots": "Снимки",
+    "snapshotsPanel": "Снимки",
+    "noSnapshots": "Снимков пока нет",
+    "takeSnapshot": "Создать снимок",
+    "snapshotQueued": "Снимок поставлен в очередь ✓",
+    "restore": "Восстановить",
+    "confirmRollback": "Подтвердить откат",
+    "cancel": "Отмена"
   },
   "integrations": {
     "title": "Интеграции",
@@ -992,5 +1020,11 @@
     "agencyRequired": "Требуется план агентства",
     "save": "Сохранить изменения",
     "saved": "Изменения сохранены"
+  },
+  "integrationCard": {
+    "connected": "Подключено",
+    "updateKey": "Обновить ключ...",
+    "save": "Сохранить",
+    "testConnection": "Проверить подключение"
   }
 }

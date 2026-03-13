@@ -666,6 +666,26 @@
         "copied": "¡Código de inserción copiado!",
         "linkCopied": "¡Enlace copiado!",
         "directLink": "Enlace directo"
+      },
+      "integrations": {
+        "title": "Integraciones",
+        "subtitle": "Dale superpoderes a tu agente",
+        "webIntelligence": "Inteligencia Web",
+        "leadGeneration": "Generación de Leads",
+        "tavilyDesc": "Dale a tu agente búsqueda web en tiempo real",
+        "braveDesc": "API de búsqueda web alternativa",
+        "firecrawlDesc": "Permite a tu agente leer cualquier URL",
+        "googleMapsDesc": "Encuentra negocios locales y genera leads desde Google Maps",
+        "hunterDesc": "Encuentra emails profesionales para prospección B2B",
+        "apolloDesc": "Accede a 200M+ contactos B2B con enriquecimiento de empresa",
+        "apifyDesc": "Extrae datos de cualquier web — Google Maps, Amazon, LinkedIn, TripAdvisor",
+        "socialMedia": "Redes Sociales",
+        "voiceIO": "Voz E/S",
+        "facebookDesc": "Conecta tu Página de Facebook para monitorear y publicar contenido",
+        "facebookPageIdDesc": "El ID numérico de tu Página de Facebook",
+        "twitterBearerDesc": "Busca y publica tweets a través de la API de Twitter/X",
+        "youtubeDesc": "Analiza canales de YouTube, comentarios y busca videos",
+        "elevenlabsDesc": "Genera respuestas de voz con ElevenLabs TTS"
       }
     },
     "chat": {
@@ -1000,5 +1020,11 @@
     "agencyRequired": "Plan de agencia requerido",
     "save": "Guardar cambios",
     "saved": "Cambios guardados"
+  },
+  "integrationCard": {
+    "connected": "Conectado",
+    "updateKey": "Actualizar clave...",
+    "save": "Guardar",
+    "testConnection": "Probar conexión"
   }
 }

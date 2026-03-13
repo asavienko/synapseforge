@@ -666,6 +666,26 @@
         "copied": "Код вбудовування скопійовано!",
         "linkCopied": "Посилання скопійовано!",
         "directLink": "Пряме посилання"
+      },
+      "integrations": {
+        "title": "Інтеграції",
+        "subtitle": "Надайте суперздібності своєму агенту",
+        "webIntelligence": "Веб-аналітика",
+        "leadGeneration": "Генерація лідів",
+        "tavilyDesc": "Надайте агенту пошук у реальному часі",
+        "braveDesc": "Альтернативний API веб-пошуку",
+        "firecrawlDesc": "Дозвольте агенту читати будь-який URL",
+        "googleMapsDesc": "Знаходьте місцеві бізнеси та генеруйте ліди з Google Maps",
+        "hunterDesc": "Знаходьте професійні email-адреси для B2B",
+        "apolloDesc": "Доступ до 200M+ B2B-контактів зі збагаченням даних компанії",
+        "apifyDesc": "Скрапінг будь-яких сайтів — Google Maps, Amazon, LinkedIn, TripAdvisor",
+        "socialMedia": "Соціальні мережі",
+        "voiceIO": "Голосовий ввід/вивід",
+        "facebookDesc": "Підключіть свою Сторінку Facebook для моніторингу та публікації контенту",
+        "facebookPageIdDesc": "Числовий ID вашої Сторінки Facebook",
+        "twitterBearerDesc": "Пошук і публікація твітів через API Twitter/X",
+        "youtubeDesc": "Аналіз YouTube-каналів, коментарів та пошук відео",
+        "elevenlabsDesc": "Генеруйте голосові відповіді за допомогою ElevenLabs TTS"
       }
     },
     "chat": {
@@ -958,7 +978,15 @@
     "deleteNote": "Видалити",
     "notePlaceholder": "Додати нотатку про цього клієнта...",
     "capacity": "Місткість",
-    "clients": "клієнтів"
+    "clients": "клієнтів",
+    "snapshots": "Знімки",
+    "snapshotsPanel": "Знімки",
+    "noSnapshots": "Знімків ще немає",
+    "takeSnapshot": "Зробити знімок",
+    "snapshotQueued": "Знімок поставлено в чергу ✓",
+    "restore": "Відновити",
+    "confirmRollback": "Підтвердити відкат",
+    "cancel": "Скасувати"
   },
   "integrations": {
     "title": "Інтеграції",
@@ -992,5 +1020,11 @@
     "agencyRequired": "Потрібен план агентства",
     "save": "Зберегти зміни",
     "saved": "Зміни збережено"
+  },
+  "integrationCard": {
+    "connected": "Підключено",
+    "updateKey": "Оновити ключ...",
+    "save": "Зберегти",
+    "testConnection": "Перевірити підключення"
   }
 }

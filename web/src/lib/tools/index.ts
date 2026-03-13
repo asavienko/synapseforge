@@ -6,6 +6,10 @@ import { facebookTools } from "./facebook";
 import { twitterTools } from "./twitter";
 import { youtubeTools } from "./youtube";
 import { voiceTools } from "./voice";
+import { googleMapsTools } from "./google-maps";
+import { hunterTools } from "./hunter";
+import { apolloTools } from "./apollo";
+import { apifyTools } from "./apify";
 
 export const ALL_TOOLS: AgentTool[] = [
   ...utilityTools,
@@ -16,6 +20,10 @@ export const ALL_TOOLS: AgentTool[] = [
   ...twitterTools,
   ...youtubeTools,
   ...voiceTools,
+  ...googleMapsTools,
+  ...hunterTools,
+  ...apolloTools,
+  ...apifyTools,
 ];
 
 export function getEnabledTools(credentials: Record<string, string>): AgentTool[] {

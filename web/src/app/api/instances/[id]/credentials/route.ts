@@ -13,6 +13,10 @@ export const ALLOWED_CREDENTIAL_KEYS = [
   "discord_bot_token",
   "slack_app_token",
   "slack_bot_token",
+  "google_maps_api_key",
+  "hunter_api_key",
+  "apollo_api_key",
+  "apify_api_key",
 ] as const;
 
 type AllowedKey = (typeof ALLOWED_CREDENTIAL_KEYS)[number];

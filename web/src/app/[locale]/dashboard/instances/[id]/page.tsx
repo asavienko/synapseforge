@@ -16,6 +16,7 @@ import { useTranslations } from "next-intl";
 import { AGENT_TEMPLATES } from "@/lib/agent-templates";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { IntegrationCard } from "@/components/IntegrationCard";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -4095,6 +4096,221 @@ print(resp.choices[0].message.content)`}</pre>
               </div>
             );
           })()}
+
+          {/* ── Integrations Section ── */}
+          <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+            <div className="p-4 border-b border-white/5">
+              <h3 className="text-xs text-zinc-500 uppercase tracking-wider">
+                {t("credentials.integrations.title")}
+              </h3>
+              <p className="text-xs text-zinc-600 mt-0.5">{t("credentials.integrations.subtitle")}</p>
+            </div>
+            <div className="p-4 space-y-3">
+              <p className="text-xs text-zinc-500 font-medium uppercase tracking-wider">
+                {t("credentials.integrations.webIntelligence")}
+              </p>
+              <IntegrationCard
+                name="Tavily Search"
+                icon="🔍"
+                description={t("credentials.integrations.tavilyDesc")}
+                docsUrl="https://tavily.com"
+                credKey="tavily_api_key"
+                placeholder="tvly-..."
+                enabled={credentials.some((c) => c.key === "tavily_api_key")}
+                instanceId={id}
+                onSave={async (key, value) => { await saveCredential(key, value); }}
+                onTest={async (toolName) => {
+                  const res = await fetch(`/api/instances/${id}/tools/test`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ toolName, args: { query: "test" } }),
+                  });
+                  const data = await res.json();
+                  return data.result ?? data.error ?? "Unknown result";
+                }}
+                toolName="web_search"
+              />
+              <IntegrationCard
+                name="Brave Search"
+                icon="🦁"
+                description={t("credentials.integrations.braveDesc")}
+                docsUrl="https://brave.com/search/api/"
+                credKey="brave_api_key"
+                placeholder="BSA..."
+                enabled={credentials.some((c) => c.key === "brave_api_key")}
+                instanceId={id}
+                onSave={async (key, value) => { await saveCredential(key, value); }}
+                toolName="brave_search"
+              />
+              <IntegrationCard
+                name="Firecrawl"
+                icon="🔥"
+                description={t("credentials.integrations.firecrawlDesc")}
+                docsUrl="https://firecrawl.dev"
+                credKey="firecrawl_api_key"
+                placeholder="fc-..."
+                enabled={credentials.some((c) => c.key === "firecrawl_api_key")}
+                instanceId={id}
+                onSave={async (key, value) => { await saveCredential(key, value); }}
+                toolName="read_url"
+              />
+
+              {/* ── Social Media ── */}
+              <p className="text-xs text-zinc-500 font-medium uppercase tracking-wider pt-2">
+                {t("credentials.integrations.socialMedia")}
+              </p>
+              <IntegrationCard
+                name="Facebook Page Token"
+                icon="📘"
+                description={t("credentials.integrations.facebookDesc")}
+                docsUrl="https://developers.facebook.com/docs/pages/access-tokens"
+                credKey="facebook_page_token"
+                placeholder="EAA..."
+                enabled={credentials.some((c) => c.key === "facebook_page_token")}
+                instanceId={id}
+                onSave={async (key, value) => { await saveCredential(key, value); }}
+                toolName="facebook_get_comments"
+              />
+              <IntegrationCard
+                name="Facebook Page ID"
+                icon="🔢"
+                description={t("credentials.integrations.facebookPageIdDesc")}
+                docsUrl="https://developers.facebook.com/docs/pages"
+                credKey="facebook_page_id"
+                placeholder="1234567890"
+                enabled={credentials.some((c) => c.key === "facebook_page_id")}
+                instanceId={id}
+                onSave={async (key, value) => { await saveCredential(key, value); }}
+              />
+              <IntegrationCard
+                name="Twitter/X Bearer Token"
+                icon="🐦"
+                description={t("credentials.integrations.twitterBearerDesc")}
+                docsUrl="https://developer.twitter.com/en/docs/authentication/oauth-2-0/bearer-tokens"
+                credKey="twitter_bearer_token"
+                placeholder="AAAA..."
+                enabled={credentials.some((c) => c.key === "twitter_bearer_token")}
+                instanceId={id}
+                onSave={async (key, value) => { await saveCredential(key, value); }}
+                onTest={async (toolName) => {
+                  const res = await fetch(`/api/instances/${id}/tools/test`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ toolName, args: { query: "test" } }),
+                  });
+                  const data = await res.json();
+                  return data.result ?? data.error ?? "Unknown result";
+                }}
+                toolName="twitter_search"
+              />
+              <IntegrationCard
+                name="YouTube API Key"
+                icon="▶️"
+                description={t("credentials.integrations.youtubeDesc")}
+                docsUrl="https://console.cloud.google.com/apis/library/youtube.googleapis.com"
+                credKey="youtube_api_key"
+                placeholder="AIza..."
+                enabled={credentials.some((c) => c.key === "youtube_api_key")}
+                instanceId={id}
+                onSave={async (key, value) => { await saveCredential(key, value); }}
+              />
+
+              {/* ── Voice I/O ── */}
+              <p className="text-xs text-zinc-500 font-medium uppercase tracking-wider pt-2">
+                {t("credentials.integrations.voiceIO")}
+              </p>
+              <IntegrationCard
+                name="ElevenLabs"
+                icon="🎙️"
+                description={t("credentials.integrations.elevenlabsDesc")}
+                docsUrl="https://elevenlabs.io/docs/api-reference"
+                credKey="elevenlabs_api_key"
+                placeholder="sk_..."
+                enabled={credentials.some((c) => c.key === "elevenlabs_api_key")}
+                instanceId={id}
+                onSave={async (key, value) => { await saveCredential(key, value); }}
+              />
+
+              {/* ── Lead Generation ── */}
+              <p className="text-xs text-zinc-500 font-medium uppercase tracking-wider pt-2">
+                {t("credentials.integrations.leadGeneration")}
+              </p>
+              <IntegrationCard
+                name="Google Maps"
+                icon="🗺️"
+                description={t("credentials.integrations.googleMapsDesc")}
+                docsUrl="https://console.cloud.google.com/apis/library/places-backend.googleapis.com"
+                credKey="google_maps_api_key"
+                placeholder="AIza..."
+                enabled={credentials.some((c) => c.key === "google_maps_api_key")}
+                instanceId={id}
+                onSave={async (key, value) => { await saveCredential(key, value); }}
+                onTest={async (toolName) => {
+                  const res = await fetch(`/api/instances/${id}/tools/test`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ toolName, args: { query: "coffee shops" } }),
+                  });
+                  const data = await res.json();
+                  return data.result ?? data.error ?? "Unknown result";
+                }}
+                toolName="find_places"
+              />
+              <IntegrationCard
+                name="Hunter.io"
+                icon="🎯"
+                description={t("credentials.integrations.hunterDesc")}
+                docsUrl="https://hunter.io/api"
+                credKey="hunter_api_key"
+                placeholder="hunter_..."
+                enabled={credentials.some((c) => c.key === "hunter_api_key")}
+                instanceId={id}
+                onSave={async (key, value) => { await saveCredential(key, value); }}
+                onTest={async (toolName) => {
+                  const res = await fetch(`/api/instances/${id}/tools/test`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ toolName, args: { domain: "stripe.com" } }),
+                  });
+                  const data = await res.json();
+                  return data.result ?? data.error ?? "Unknown result";
+                }}
+                toolName="find_domain_emails"
+              />
+              <IntegrationCard
+                name="Apollo.io"
+                icon="🚀"
+                description={t("credentials.integrations.apolloDesc")}
+                docsUrl="https://developer.apollo.io"
+                credKey="apollo_api_key"
+                placeholder="..."
+                enabled={credentials.some((c) => c.key === "apollo_api_key")}
+                instanceId={id}
+                onSave={async (key, value) => { await saveCredential(key, value); }}
+                onTest={async (toolName) => {
+                  const res = await fetch(`/api/instances/${id}/tools/test`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ toolName, args: { title: "CEO", max_results: "1" } }),
+                  });
+                  const data = await res.json();
+                  return data.result ?? data.error ?? "Unknown result";
+                }}
+                toolName="search_contacts"
+              />
+              <IntegrationCard
+                name="Apify"
+                icon="🕷️"
+                description={t("credentials.integrations.apifyDesc")}
+                docsUrl="https://apify.com/account/integrations"
+                credKey="apify_api_key"
+                placeholder="apify_api_..."
+                enabled={credentials.some((c) => c.key === "apify_api_key")}
+                instanceId={id}
+                onSave={async (key, value) => { await saveCredential(key, value); }}
+              />
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -666,6 +666,26 @@
         "copied": "Embed code copied!",
         "linkCopied": "Link copied!",
         "directLink": "Direct link"
+      },
+      "integrations": {
+        "title": "Integrations",
+        "subtitle": "Give your agent superpowers",
+        "webIntelligence": "Web Intelligence",
+        "leadGeneration": "Lead Generation",
+        "tavilyDesc": "Give your agent real-time web search",
+        "braveDesc": "Alternative web search API",
+        "firecrawlDesc": "Let your agent read any URL",
+        "googleMapsDesc": "Find local businesses and generate leads from Google Maps",
+        "hunterDesc": "Find professional email addresses for B2B outreach",
+        "apolloDesc": "Access 200M+ B2B contacts with company enrichment",
+        "apifyDesc": "Scrape any website — Google Maps, Amazon, LinkedIn, TripAdvisor",
+        "socialMedia": "Social Media",
+        "voiceIO": "Voice I/O",
+        "facebookDesc": "Connect your Facebook Page to monitor and post content",
+        "facebookPageIdDesc": "Your Facebook Page numeric ID",
+        "twitterBearerDesc": "Search and post tweets via the Twitter/X API",
+        "youtubeDesc": "Analyze YouTube channels, comments, and search videos",
+        "elevenlabsDesc": "Generate voice responses with ElevenLabs TTS"
       }
     },
     "chat": {
@@ -988,6 +1008,12 @@
       "title": "Make (Integromat)",
       "subtitle": "Visual automation with 1,000+ app connectors"
     }
+  },
+  "integrationCard": {
+    "connected": "Connected",
+    "updateKey": "Update key",
+    "save": "Save",
+    "testConnection": "Test connection"
   },
   "whiteLabel": {
     "title": "White Label",
