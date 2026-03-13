@@ -471,4 +471,42 @@ export const email = {
       )
     );
   },
+
+  // ── Sandbox re-engagement ─────────────────────────────────────────────────
+
+  async sandboxNudge(
+    to: string,
+    name: string,
+    instanceName: string,
+    instanceId: string,
+    sandboxUsed: number,
+    sandboxLimit: number,
+  ) {
+    const remaining = sandboxLimit - sandboxUsed;
+    const pct = Math.round((sandboxUsed / sandboxLimit) * 100);
+    const progressBar = `
+      <div style="background:rgba(255,255,255,0.05);border-radius:8px;height:8px;overflow:hidden;margin:12px 0;">
+        <div style="background:#7c3aed;height:100%;width:${pct}%;border-radius:8px;"></div>
+      </div>`;
+
+    return send(
+      to,
+      `${remaining} free messages left — your AI is waiting`,
+      base(
+        `Your AI agent is ready, ${name.split(" ")[0]} 🤖`,
+        `<p>You set up <strong style="color:#e4e4e7">${instanceName}</strong> and have been exploring — great start.</p>
+         <p>You've used <strong style="color:#a78bfa">${sandboxUsed} of ${sandboxLimit}</strong> free sandbox messages.</p>
+         ${progressBar}
+         <p style="color:#71717a;font-size:13px;">${remaining} free messages remaining before your agent is ready to go live.</p>
+         <p>Here are a few things to try:</p>
+         <ul style="padding-left:20px;margin:16px 0;color:#a1a1aa">
+           <li style="margin-bottom:8px">Ask your agent a question your customers frequently ask</li>
+           <li style="margin-bottom:8px">Try updating the system prompt in the <strong style="color:#e4e4e7">Configuration</strong> tab</li>
+           <li style="margin-bottom:8px">Test the public chat page to see what your customers see</li>
+         </ul>
+         <p style="color:#71717a;font-size:13px;">Once you're happy with the responses, add your own API key and your agent goes live — no usage limits.</p>`,
+        { href: `${APP_URL}/dashboard/instances/${instanceId}`, label: "Continue testing →" }
+      )
+    );
+  },
 };
