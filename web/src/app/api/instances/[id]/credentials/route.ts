@@ -6,17 +6,42 @@ import { sshSyncConfig } from "@/lib/ssh-sync";
 import { captureServerEvent } from "@/lib/posthog-server";
 
 export const ALLOWED_CREDENTIAL_KEYS = [
+  // LLM providers
   "openai_api_key",
   "anthropic_api_key",
   "openrouter_api_key",
+  // Messaging channels
   "telegram_bot_token",
   "discord_bot_token",
   "slack_app_token",
   "slack_bot_token",
+  "twilio_account_sid",
+  "twilio_auth_token",
+  "twilio_whatsapp_number",
+  // Web intelligence
+  "tavily_api_key",
+  "brave_api_key",
+  "firecrawl_api_key",
+  // Lead generation / places
   "google_maps_api_key",
   "hunter_api_key",
   "apollo_api_key",
   "apify_api_key",
+  // Social media
+  "facebook_page_token",
+  "facebook_page_id",
+  "twitter_bearer_token",
+  "twitter_api_key",
+  "twitter_api_secret",
+  "twitter_access_token",
+  "twitter_access_secret",
+  "youtube_api_key",
+  // Voice I/O
+  "elevenlabs_api_key",
+  // Business tools
+  "github_token",
+  "yelp_api_key",
+  "coingecko_api_key",
 ] as const;
 
 type AllowedKey = (typeof ALLOWED_CREDENTIAL_KEYS)[number];
