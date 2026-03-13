@@ -915,6 +915,7 @@ export default function InstanceDetailPage() {
   const [inlineKeyProvider, setInlineKeyProvider] = useState<"openai" | "anthropic" | "openrouter">("openai");
   const [inlineKeySaving, setInlineKeySaving] = useState(false);
   const [inlineKeyError, setInlineKeyError] = useState("");
+  const [showQuickKeyModal, setShowQuickKeyModal] = useState(false);
   const [chatHistoryLoaded, setChatHistoryLoaded] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -1698,6 +1699,7 @@ export default function InstanceDetailPage() {
   const typeLabel = INSTANCE_TYPES.find((t) => t.value === instance.type)?.label ?? instance.type;
 
   return (
+    <>
     <div className="p-4 md:p-8 max-w-4xl">
       {/* Toast */}
       {toast && (
@@ -2347,7 +2349,7 @@ export default function InstanceDetailPage() {
                     return (
                       <SandboxUpgradeCard
                         key={i}
-                        onAddKey={() => { setTab("Credentials"); loadCredentials(); }}
+                        onAddKey={() => { setInlineKeyValue(""); setInlineKeyError(""); setShowQuickKeyModal(true); }}
                       />
                     );
                   }
@@ -4375,5 +4377,86 @@ print(resp.choices[0].message.content)`}</pre>
         </div>
       )}
     </div>
+
+    {/* ── Quick API Key Modal ── shown when user clicks "Add my API key" from upgrade card */}
+      {showQuickKeyModal && (
+        <div
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4"
+          onClick={(e) => e.target === e.currentTarget && setShowQuickKeyModal(false)}
+        >
+          <div className="bg-[#111118] border border-white/10 rounded-2xl p-6 w-full max-w-md">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-xl bg-violet-600/20 border border-violet-500/20 flex items-center justify-center shrink-0">
+                <Zap className="w-5 h-5 text-violet-400" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-white font-semibold text-sm">{t("chat.inlineKeyTitle")}</h3>
+                <p className="text-zinc-500 text-xs mt-0.5">{t("chat.inlineKeyDesc")}</p>
+              </div>
+              <button onClick={() => setShowQuickKeyModal(false)} className="text-zinc-600 hover:text-zinc-300 text-lg leading-none transition-colors">✕</button>
+            </div>
+
+            {/* Provider tabs */}
+            <div className="flex gap-1 p-1 bg-white/5 rounded-xl mb-3">
+              {(["openai", "anthropic", "openrouter"] as const).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setInlineKeyProvider(p)}
+                  className={`flex-1 text-xs py-1.5 rounded-lg font-medium transition-colors ${
+                    inlineKeyProvider === p ? "bg-violet-600 text-white" : "text-zinc-500 hover:text-zinc-300"
+                  }`}
+                >
+                  {p === "openai" ? "OpenAI" : p === "anthropic" ? "Anthropic" : "OpenRouter"}
+                </button>
+              ))}
+            </div>
+
+            {/* Key input */}
+            <div className="flex gap-2 mb-2">
+              <input
+                autoFocus
+                type="password"
+                value={inlineKeyValue}
+                onChange={(e) => setInlineKeyValue(e.target.value)}
+                onKeyDown={async (e) => {
+                  if (e.key === "Enter") { await saveInlineKey(); if (!inlineKeyError) setShowQuickKeyModal(false); }
+                }}
+                placeholder={inlineKeyProvider === "openai" ? "sk-..." : inlineKeyProvider === "anthropic" ? "sk-ant-..." : "sk-or-..."}
+                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors"
+              />
+              <button
+                onClick={async () => { await saveInlineKey(); if (!inlineKeyError) setShowQuickKeyModal(false); }}
+                disabled={inlineKeySaving || !inlineKeyValue.trim()}
+                className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 transition-colors px-4 py-3 rounded-xl text-sm font-semibold text-white shrink-0"
+              >
+                {inlineKeySaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                {inlineKeySaving ? t("chat.inlineKeySaving") : t("chat.inlineKeyStart")}
+              </button>
+            </div>
+            {inlineKeyError && <p className="text-red-400 text-xs mb-2">{inlineKeyError}</p>}
+
+            <div className="flex items-center justify-between mt-1">
+              <a
+                href={
+                  inlineKeyProvider === "openai" ? "https://platform.openai.com/api-keys" :
+                  inlineKeyProvider === "anthropic" ? "https://console.anthropic.com/settings/keys" :
+                  "https://openrouter.ai/keys"
+                }
+                target="_blank" rel="noopener noreferrer"
+                className="text-xs text-violet-400 hover:text-violet-300 transition-colors"
+              >
+                {t("chat.inlineKeyGetKey")} ↗
+              </a>
+              <button
+                onClick={() => { setShowQuickKeyModal(false); setTab("Credentials"); loadCredentials(); }}
+                className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors"
+              >
+                {t("chat.inlineKeyAdvanced")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
