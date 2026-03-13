@@ -119,7 +119,17 @@
       "terms": "By signing up, you agree to our",
       "termsLink": "Terms of Service",
       "and": "and",
-      "privacyLink": "Privacy Policy"
+      "privacyLink": "Privacy Policy",
+      "passwordStrength": {
+        "tooWeak": "Too weak",
+        "weak": "Weak",
+        "fair": "Fair",
+        "strong": "Strong",
+        "veryStrong": "Very strong"
+      },
+      "invalidEmail": "Please enter a valid email address",
+      "alreadyRegistered": "That email is already registered",
+      "signInInstead": "Sign in instead?"
     },
     "forgotPassword": {
       "title": "Forgot your password?",
@@ -269,7 +279,24 @@
       "annualNoteEmail": "hello@synapseforge.ai",
       "annualNoteSetup": "to set up.",
       "success": "Payment successful! Your plan has been upgraded.",
-      "cancelled": "Checkout was cancelled. No charges were made."
+      "cancelled": "Checkout was cancelled. No charges were made.",
+      "upgradeSuccess": "Welcome to Pro! 🎉",
+      "upgradeSuccessDesc": "Your plan has been upgraded. Here's what's now unlocked:",
+      "unlockInstances": "Up to 3 AI agents",
+      "unlockPriority": "Priority support",
+      "unlockSupport": "Dedicated manager",
+      "cancelTitle": "Before you go...",
+      "cancelDesc": "Help us improve — what made you cancel?",
+      "cancelReasons": {
+        "tooExpensive": "Too expensive",
+        "missingFeature": "Missing a feature I need",
+        "notUsing": "Not using it enough",
+        "betterSolution": "Found a better solution",
+        "justTesting": "Just testing / exploring"
+      },
+      "cancelFeedbackPlaceholder": "Any other feedback? (optional)",
+      "cancelSubmit": "Continue cancelling",
+      "cancelKeepPlan": "Keep my plan"
     },
     "settings": {
       "title": "Settings",
@@ -703,9 +730,9 @@
     "copied": "Copied!",
     "copy": "Copy",
     "copyWebChatLink": "Copy web chat link",
-    "sayHello": "Say something to your agent\u2026",
-    "send": "Send \u2192",
-    "sending": "\u2026"
+    "sayHello": "Say something to your agent…",
+    "send": "Send →",
+    "sending": "…"
   },
   "manager": {
     "portalLabel": "Manager Portal",

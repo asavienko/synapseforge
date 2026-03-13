@@ -119,7 +119,17 @@
       "terms": "Регистрируясь, вы соглашаетесь с нашими",
       "termsLink": "Условиями использования",
       "and": "и",
-      "privacyLink": "Политикой конфиденциальности"
+      "privacyLink": "Политикой конфиденциальности",
+      "passwordStrength": {
+        "tooWeak": "Очень слабый",
+        "weak": "Слабый",
+        "fair": "Средний",
+        "strong": "Сильный",
+        "veryStrong": "Очень сильный"
+      },
+      "invalidEmail": "Введите корректный адрес электронной почты",
+      "alreadyRegistered": "Этот email уже зарегистрирован",
+      "signInInstead": "Войти?"
     },
     "forgotPassword": {
       "title": "Забыли пароль?",
@@ -269,7 +279,24 @@
       "annualNoteEmail": "hello@synapseforge.ai",
       "annualNoteSetup": "для настройки.",
       "success": "Оплата прошла успешно! Ваш план обновлён.",
-      "cancelled": "Оплата отменена. Средства не списаны."
+      "cancelled": "Оплата отменена. Средства не списаны.",
+      "upgradeSuccess": "Добро пожаловать в Pro! 🎉",
+      "upgradeSuccessDesc": "Ваш план обновлён. Теперь вам доступно:",
+      "unlockInstances": "До 3 ИИ-агентов",
+      "unlockPriority": "Приоритетная поддержка",
+      "unlockSupport": "Персональный менеджер",
+      "cancelTitle": "Подождите...",
+      "cancelDesc": "Помогите нам стать лучше — почему вы отменяете подписку?",
+      "cancelReasons": {
+        "tooExpensive": "Слишком дорого",
+        "missingFeature": "Не хватает нужной функции",
+        "notUsing": "Использую недостаточно часто",
+        "betterSolution": "Нашёл лучшее решение",
+        "justTesting": "Просто тестировал"
+      },
+      "cancelFeedbackPlaceholder": "Любые другие отзывы? (необязательно)",
+      "cancelSubmit": "Продолжить отмену",
+      "cancelKeepPlan": "Сохранить план"
     },
     "settings": {
       "title": "Настройки",

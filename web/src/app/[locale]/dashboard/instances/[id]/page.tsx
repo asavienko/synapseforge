@@ -13,6 +13,7 @@ import Link from "next/link";
 import { STATUS_COLORS, INSTANCE_TYPES, formatDate, formatRelativeTime } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
+import { AGENT_TEMPLATES } from "@/lib/agent-templates";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -426,6 +427,9 @@ const ALLOWED_CREDENTIAL_KEYS = [
   "discord_bot_token",
   "slack_app_token",
   "slack_bot_token",
+  "twilio_account_sid",
+  "twilio_auth_token",
+  "twilio_whatsapp_number",
 ] as const;
 
 // ─── Deploy Tab Component ─────────────────────────────────────────────────────
@@ -911,6 +915,11 @@ export default function InstanceDetailPage() {
   const [slackError, setSlackError] = useState<string | null>(null);
   const [slackConnected, setSlackConnected] = useState<{ botName: string; teamName: string } | null>(null);
 
+  // WhatsApp (Twilio) state
+  const [whatsappForm, setWhatsappForm] = useState({ accountSid: "", authToken: "", number: "" });
+  const [whatsappSaving, setWhatsappSaving] = useState(false);
+  const [whatsappError, setWhatsappError] = useState<string | null>(null);
+
   // Sync request state
   const [syncRequesting, setSyncRequesting] = useState(false);
 
@@ -1322,6 +1331,30 @@ export default function InstanceDetailPage() {
       showToast(`Slack connected: ${data.botName} in ${data.teamName}`);
     }
     setSlackConnecting(false);
+  }
+
+  async function saveWhatsapp() {
+    if (!whatsappForm.accountSid || !whatsappForm.authToken || !whatsappForm.number) return;
+    setWhatsappSaving(true);
+    setWhatsappError(null);
+    const res = await fetch(`/api/instances/${id}/setup-whatsapp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        accountSid: whatsappForm.accountSid,
+        authToken: whatsappForm.authToken,
+        whatsappNumber: whatsappForm.number,
+      }),
+    });
+    const data = await res.json() as { ok?: boolean; error?: string };
+    setWhatsappSaving(false);
+    if (!res.ok) {
+      setWhatsappError(data.error ?? t("credentials.saveFailed"));
+    } else {
+      showToast(t("credentials.whatsapp.saved"));
+      loadCredentials();
+      setWhatsappForm({ accountSid: "", authToken: "", number: "" });
+    }
   }
 
   async function requestSync() {
@@ -3110,6 +3143,28 @@ print(resp.choices[0].message.content)`}</pre>
                       <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-lg">Live</span>
                     ) : (
                       <span className="text-xs text-zinc-600 bg-white/5 px-2 py-1 rounded-lg">Not set up</span>
+                    )}
+                  </div>
+                );
+              })()}
+              {/* WhatsApp */}
+              {(() => {
+                const hasWhatsapp = credentials.some((c) => c.key === "twilio_account_sid");
+                return (
+                  <div className="flex items-center gap-3 p-4">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-base shrink-0">💬</div>
+                    <div className="flex-1">
+                      <div className="text-sm font-medium text-white">{t("credentials.whatsapp.title")}</div>
+                      {hasWhatsapp ? (
+                        <div className="text-xs text-emerald-400 mt-0.5 flex items-center gap-1"><Check className="w-3 h-3" /> {t("credentials.whatsapp.connected")}</div>
+                      ) : (
+                        <div className="text-xs text-zinc-500 mt-0.5">{t("credentials.notConnected")}</div>
+                      )}
+                    </div>
+                    {hasWhatsapp ? (
+                      <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-lg">{t("credentials.connected")}</span>
+                    ) : (
+                      <span className="text-xs text-zinc-600 bg-white/5 px-2 py-1 rounded-lg">{t("credentials.notSetUp")}</span>
                     )}
                   </div>
                 );

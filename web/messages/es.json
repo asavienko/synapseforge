@@ -119,7 +119,17 @@
       "terms": "Al registrarte, aceptas nuestros",
       "termsLink": "Términos de Servicio",
       "and": "y",
-      "privacyLink": "Política de Privacidad"
+      "privacyLink": "Política de Privacidad",
+      "passwordStrength": {
+        "tooWeak": "Demasiado débil",
+        "weak": "Débil",
+        "fair": "Regular",
+        "strong": "Fuerte",
+        "veryStrong": "Muy fuerte"
+      },
+      "invalidEmail": "Por favor, introduce una dirección de correo válida",
+      "alreadyRegistered": "Ese correo ya está registrado",
+      "signInInstead": "¿Iniciar sesión?"
     },
     "forgotPassword": {
       "title": "¿Olvidaste tu contraseña?",
@@ -269,7 +279,24 @@
       "annualNoteEmail": "hello@synapseforge.ai",
       "annualNoteSetup": "para configurarlo.",
       "success": "¡Pago exitoso! Tu plan ha sido actualizado.",
-      "cancelled": "El pago fue cancelado. No se realizaron cargos."
+      "cancelled": "El pago fue cancelado. No se realizaron cargos.",
+      "upgradeSuccess": "¡Bienvenido a Pro! 🎉",
+      "upgradeSuccessDesc": "Tu plan ha sido actualizado. Esto es lo que ahora tienes disponible:",
+      "unlockInstances": "Hasta 3 agentes de IA",
+      "unlockPriority": "Soporte prioritario",
+      "unlockSupport": "Manager dedicado",
+      "cancelTitle": "Antes de irte...",
+      "cancelDesc": "Ayúdanos a mejorar — ¿por qué cancelas?",
+      "cancelReasons": {
+        "tooExpensive": "Es demasiado caro",
+        "missingFeature": "Me falta una función que necesito",
+        "notUsing": "No lo uso suficiente",
+        "betterSolution": "Encontré una mejor solución",
+        "justTesting": "Solo estaba explorando"
+      },
+      "cancelFeedbackPlaceholder": "¿Algún otro comentario? (opcional)",
+      "cancelSubmit": "Continuar con la cancelación",
+      "cancelKeepPlan": "Conservar mi plan"
     },
     "settings": {
       "title": "Configuración",

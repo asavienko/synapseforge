@@ -119,7 +119,17 @@
       "terms": "Реєструючись, ви погоджуєтесь з нашими",
       "termsLink": "Умовами використання",
       "and": "та",
-      "privacyLink": "Політикою конфіденційності"
+      "privacyLink": "Політикою конфіденційності",
+      "passwordStrength": {
+        "tooWeak": "Дуже слабкий",
+        "weak": "Слабкий",
+        "fair": "Середній",
+        "strong": "Сильний",
+        "veryStrong": "Дуже сильний"
+      },
+      "invalidEmail": "Будь ласка, введіть дійсну адресу електронної пошти",
+      "alreadyRegistered": "Цей email вже зареєстровано",
+      "signInInstead": "Увійти?"
     },
     "forgotPassword": {
       "title": "Забули пароль?",
@@ -269,7 +279,24 @@
       "annualNoteEmail": "hello@synapseforge.ai",
       "annualNoteSetup": "для налаштування.",
       "success": "Оплата успішна! Ваш план оновлено.",
-      "cancelled": "Оплата скасована. Кошти не списані."
+      "cancelled": "Оплата скасована. Кошти не списані.",
+      "upgradeSuccess": "Ласкаво просимо до Pro! 🎉",
+      "upgradeSuccessDesc": "Ваш план оновлено. Ось що тепер доступно:",
+      "unlockInstances": "До 3 ШІ-агентів",
+      "unlockPriority": "Пріоритетна підтримка",
+      "unlockSupport": "Персональний менеджер",
+      "cancelTitle": "Почекайте...",
+      "cancelDesc": "Допоможіть нам стати кращими — чому ви скасовуєте?",
+      "cancelReasons": {
+        "tooExpensive": "Занадто дорого",
+        "missingFeature": "Бракує потрібної функції",
+        "notUsing": "Використовую недостатньо часто",
+        "betterSolution": "Знайшов краще рішення",
+        "justTesting": "Просто тестував"
+      },
+      "cancelFeedbackPlaceholder": "Будь-які інші відгуки? (необов'язково)",
+      "cancelSubmit": "Продовжити скасування",
+      "cancelKeepPlan": "Зберегти план"
     },
     "settings": {
       "title": "Налаштування",

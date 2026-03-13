@@ -3,7 +3,18 @@
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Zap, CreditCard, CheckCircle2, Loader2, ArrowUpRight, Shield, Clock, Mail, AlertCircle } from "lucide-react";
+import {
+  Zap,
+  CreditCard,
+  CheckCircle2,
+  Loader2,
+  ArrowUpRight,
+  Shield,
+  Clock,
+  Mail,
+  AlertCircle,
+  X,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const PLANS = [
@@ -51,11 +62,32 @@ interface Props {
   periodEnd: string | null;
 }
 
+type CancelReasonKey =
+  | "tooExpensive"
+  | "missingFeature"
+  | "notUsing"
+  | "betterSolution"
+  | "justTesting";
+
+const CANCEL_REASON_KEYS: CancelReasonKey[] = [
+  "tooExpensive",
+  "missingFeature",
+  "notUsing",
+  "betterSolution",
+  "justTesting",
+];
+
 export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
   const params = useSearchParams();
-  const success = params.get("success") === "1";
+  const success = params.get("success") === "1" || params.get("success") === "true";
   const cancelled = params.get("cancelled") === "1";
   const [loading, setLoading] = useState<string | null>(null);
+
+  // Cancellation survey state
+  const [showCancelSurvey, setShowCancelSurvey] = useState(false);
+  const [cancelReason, setCancelReason] = useState<CancelReasonKey | "">("");
+  const [cancelFeedback, setCancelFeedback] = useState("");
+  const [surveySubmitting, setSurveySubmitting] = useState(false);
 
   const tb = useTranslations("dashboard.billing");
   const tp = useTranslations("pricing");
@@ -77,6 +109,15 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
   }
 
   async function handlePortal() {
+    // If user is on a paid plan and clicking manage, intercept with survey first
+    if (plan !== "free" && hasSubscription) {
+      setShowCancelSurvey(true);
+      return;
+    }
+    await openPortal();
+  }
+
+  async function openPortal() {
     setLoading("portal");
     const res = await fetch("/api/billing/portal", { method: "POST" });
     const data = await res.json();
@@ -88,6 +129,23 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
     }
   }
 
+  async function handleSurveySubmit() {
+    if (!cancelReason) return;
+    setSurveySubmitting(true);
+    try {
+      await fetch("/api/feedback/cancel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reason: cancelReason, feedback: cancelFeedback }),
+      });
+    } catch {
+      // Don't block even if this fails
+    }
+    setSurveySubmitting(false);
+    setShowCancelSurvey(false);
+    await openPortal();
+  }
+
   return (
     <div className="p-6 md:p-8 max-w-5xl">
       {/* Header */}
@@ -96,13 +154,30 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
         <p className="text-zinc-400 mt-1">{tb("subtitle")}</p>
       </div>
 
-      {/* Success / cancel banners */}
+      {/* Rich upgrade success banner */}
       {success && (
-        <div className="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-4 py-3 mb-6">
-          <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-          <p className="text-sm text-emerald-300">{tb("success")}</p>
+        <div className="mb-6 glow-border rounded-2xl bg-emerald-500/10 border border-emerald-500/30 p-6 flex items-start gap-4">
+          <div className="text-3xl">🎉</div>
+          <div>
+            <h3 className="text-lg font-semibold text-white mb-1">{tb("upgradeSuccess")}</h3>
+            <p className="text-sm text-zinc-400">{tb("upgradeSuccessDesc")}</p>
+            <div className="flex flex-wrap gap-3 mt-4">
+              {([tb("unlockInstances"), tb("unlockPriority"), tb("unlockSupport")] as string[]).map(
+                (feature) => (
+                  <div
+                    key={feature}
+                    className="flex items-center gap-1.5 text-sm text-emerald-300"
+                  >
+                    <span>✓</span> {feature}
+                  </div>
+                )
+              )}
+            </div>
+          </div>
         </div>
       )}
+
+      {/* Cancel banner */}
       {cancelled && (
         <div className="flex items-center gap-3 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 mb-6">
           <p className="text-sm text-zinc-400">{tb("cancelled")}</p>
@@ -116,7 +191,7 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
           <div>
             <p className="text-sm font-medium text-red-300">Subscription expired</p>
             <p className="text-xs text-red-400/80 mt-0.5">
-              Your {plan} subscription expired on {new Date(periodEnd).toLocaleDateString()}. 
+              Your {plan} subscription expired on {new Date(periodEnd).toLocaleDateString()}.
               Instances exceeding the free plan limit have been paused. Renew to restore access.
             </p>
           </div>
@@ -136,7 +211,12 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
               <div className="flex items-center gap-1.5 mt-1">
                 <Clock className="w-3.5 h-3.5 text-zinc-500" />
                 <span className="text-sm text-zinc-400">
-                  {tb("renews")} {new Date(periodEnd).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+                  {tb("renews")}{" "}
+                  {new Date(periodEnd).toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
                 </span>
               </div>
             )}
@@ -147,7 +227,11 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
               disabled={loading === "portal"}
               className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors px-4 py-2 rounded-xl text-sm font-medium text-zinc-300 disabled:opacity-50"
             >
-              {loading === "portal" ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowUpRight className="w-4 h-4" />}
+              {loading === "portal" ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <ArrowUpRight className="w-4 h-4" />
+              )}
               {tb("manageSubscription")}
             </button>
           )}
@@ -205,9 +289,12 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
                   <Shield className="w-4 h-4" /> {tb("currentPlan")}
                 </div>
               ) : p.key === "free" ? (
-                <div className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-white/10 text-sm text-zinc-600 font-medium">
+                <button
+                  onClick={() => setShowCancelSurvey(true)}
+                  className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-white/10 text-sm text-zinc-600 font-medium hover:text-zinc-400 hover:border-white/20 transition-colors"
+                >
                   {tb("downgradeViaSupport")}
-                </div>
+                </button>
               ) : p.key === "enterprise" ? (
                 <a
                   href="mailto:hello@synapseforge.ai"
@@ -242,11 +329,83 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
       {/* Annual note */}
       <p className="text-xs text-zinc-600 mt-6 text-center">
         {tb("annualNote")}{" "}
-        <a href={`mailto:${tb("annualNoteEmail")}`} className="text-violet-400 hover:text-violet-300 transition-colors">
+        <a
+          href={`mailto:${tb("annualNoteEmail")}`}
+          className="text-violet-400 hover:text-violet-300 transition-colors"
+        >
           {tb("annualNoteEmail")}
         </a>{" "}
         {tb("annualNoteSetup")}
       </p>
+
+      {/* Cancellation survey modal */}
+      {showCancelSurvey && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
+          <div className="w-full max-w-md glow-border rounded-2xl bg-[#111113] p-6">
+            <div className="flex items-start justify-between mb-4">
+              <div>
+                <h2 className="text-lg font-semibold text-white">{tb("cancelTitle")}</h2>
+                <p className="text-sm text-zinc-400 mt-1">{tb("cancelDesc")}</p>
+              </div>
+              <button
+                onClick={() => setShowCancelSurvey(false)}
+                className="text-zinc-500 hover:text-zinc-300 transition-colors ml-4 shrink-0"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-2 mb-4">
+              {CANCEL_REASON_KEYS.map((key) => (
+                <label
+                  key={key}
+                  className={cn(
+                    "flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors",
+                    cancelReason === key
+                      ? "border-violet-500/50 bg-violet-500/10"
+                      : "border-white/10 bg-white/[0.02] hover:bg-white/5"
+                  )}
+                >
+                  <input
+                    type="radio"
+                    name="cancelReason"
+                    value={key}
+                    checked={cancelReason === key}
+                    onChange={() => setCancelReason(key)}
+                    className="accent-violet-500"
+                  />
+                  <span className="text-sm text-zinc-300">{tb(`cancelReasons.${key}` as Parameters<typeof tb>[0])}</span>
+                </label>
+              ))}
+            </div>
+
+            <textarea
+              value={cancelFeedback}
+              onChange={(e) => setCancelFeedback(e.target.value)}
+              placeholder={tb("cancelFeedbackPlaceholder")}
+              rows={3}
+              className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors text-sm resize-none mb-4"
+            />
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowCancelSurvey(false)}
+                className="flex-1 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-sm font-medium text-zinc-300 transition-colors"
+              >
+                {tb("cancelKeepPlan")}
+              </button>
+              <button
+                onClick={handleSurveySubmit}
+                disabled={!cancelReason || surveySubmitting}
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-red-600/80 hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium text-white transition-colors"
+              >
+                {surveySubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                {tb("cancelSubmit")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
