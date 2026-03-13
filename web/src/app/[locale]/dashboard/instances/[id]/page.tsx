@@ -916,6 +916,9 @@ export default function InstanceDetailPage() {
   const [inlineKeySaving, setInlineKeySaving] = useState(false);
   const [inlineKeyError, setInlineKeyError] = useState("");
   const [showQuickKeyModal, setShowQuickKeyModal] = useState(false);
+
+  // Generic inline confirmation modal — replaces all window.confirm() calls
+  const [pendingConfirm, setPendingConfirm] = useState<{ message: string; onConfirm: () => void } | null>(null);
   const [chatHistoryLoaded, setChatHistoryLoaded] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -1016,15 +1019,19 @@ export default function InstanceDetailPage() {
     }
   }
 
-  async function handleKnowledgeDelete(docId: string, filename: string) {
-    if (!confirm(t("knowledge.deleteConfirm"))) return;
-    const res = await fetch(`/api/instances/${id}/knowledge/${docId}`, { method: "DELETE" });
-    if (res.ok) {
-      setKnowledgeDocs((prev) => prev.filter((d) => d.id !== docId));
-      showToast(filename + " removed", "success");
-    } else {
-      showToast(t("knowledge.deleteFailed"), "error");
-    }
+  function handleKnowledgeDelete(docId: string, filename: string) {
+    setPendingConfirm({
+      message: t("knowledge.deleteConfirm"),
+      onConfirm: async () => {
+        const res = await fetch(`/api/instances/${id}/knowledge/${docId}`, { method: "DELETE" });
+        if (res.ok) {
+          setKnowledgeDocs((prev) => prev.filter((d) => d.id !== docId));
+          showToast(filename + " removed", "success");
+        } else {
+          showToast(t("knowledge.deleteFailed"), "error");
+        }
+      },
+    });
   }
 
   function showToast(text: string, type: "success" | "error" = "success") {
@@ -1234,10 +1241,14 @@ export default function InstanceDetailPage() {
     setSaving(false);
   }
 
-  async function deleteInstance() {
-    if (!confirm(t("confirmDelete"))) return;
-    await fetch(`/api/instances/${id}`, { method: "DELETE" });
-    router.push("/dashboard/instances");
+  function deleteInstance() {
+    setPendingConfirm({
+      message: t("confirmDelete"),
+      onConfirm: async () => {
+        await fetch(`/api/instances/${id}`, { method: "DELETE" });
+        router.push("/dashboard/instances");
+      },
+    });
   }
 
   async function saveConfig() {
@@ -1276,19 +1287,23 @@ export default function InstanceDetailPage() {
     setCreatingKey(false);
   }
 
-  async function revokeKey(keyId: string) {
-    if (!confirm(t("apiKeys.revokeConfirm"))) return;
-    const res = await fetch(`/api/instances/${id}/keys`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ keyId }),
+  function revokeKey(keyId: string) {
+    setPendingConfirm({
+      message: t("apiKeys.revokeConfirm"),
+      onConfirm: async () => {
+        const res = await fetch(`/api/instances/${id}/keys`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ keyId }),
+        });
+        if (res.ok) {
+          setKeys((prev) => prev.filter((k) => k.id !== keyId));
+          if (revealedKey) setRevealedKey(null);
+          showToast(t("activity.keyRevoked"));
+          loadLogs();
+        }
+      },
     });
-    if (res.ok) {
-      setKeys((prev) => prev.filter((k) => k.id !== keyId));
-      if (revealedKey) setRevealedKey(null);
-      showToast(t("activity.keyRevoked"));
-      loadLogs();
-    }
   }
 
   function copyToClipboard(text: string, id: string) {
@@ -1383,14 +1398,18 @@ export default function InstanceDetailPage() {
     await saveCredential(key, value);
   }
 
-  async function deleteCredential(key: string) {
-    if (!confirm(`Remove ${CREDENTIAL_KEY_LABELS[key] ?? key}? This cannot be undone.`)) return;
-    const res = await fetch(`/api/instances/${id}/credentials/${key}`, { method: "DELETE" });
-    if (res.ok) {
-      await loadCredentials();
-      await loadInstance();
-      showToast(t("credentials.credentialDeleted"));
-    }
+  function deleteCredential(key: string) {
+    setPendingConfirm({
+      message: `Remove ${CREDENTIAL_KEY_LABELS[key] ?? key}? This cannot be undone.`,
+      onConfirm: async () => {
+        const res = await fetch(`/api/instances/${id}/credentials/${key}`, { method: "DELETE" });
+        if (res.ok) {
+          await loadCredentials();
+          await loadInstance();
+          showToast(t("credentials.credentialDeleted"));
+        }
+      },
+    });
   }
 
   async function setupTelegram(token: string) {
@@ -4380,6 +4399,32 @@ print(resp.choices[0].message.content)`}</pre>
         </div>
       )}
     </div>
+
+    {/* ── Generic Confirm Modal ── replaces all window.confirm() calls */}
+    {pendingConfirm && (
+      <div
+        className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        onClick={(e) => e.target === e.currentTarget && setPendingConfirm(null)}
+      >
+        <div className="bg-[#111118] border border-white/10 rounded-2xl p-6 w-full max-w-sm">
+          <p className="text-sm text-white mb-6 leading-relaxed">{pendingConfirm.message}</p>
+          <div className="flex gap-3 justify-end">
+            <button
+              onClick={() => setPendingConfirm(null)}
+              className="px-4 py-2 rounded-xl text-sm text-zinc-400 hover:text-white border border-white/10 hover:border-white/20 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => { const fn = pendingConfirm.onConfirm; setPendingConfirm(null); fn(); }}
+              className="px-4 py-2 rounded-xl text-sm font-semibold bg-red-600 hover:bg-red-500 text-white transition-colors"
+            >
+              Confirm
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
 
     {/* ── Quick API Key Modal ── shown when user clicks "Add my API key" from upgrade card */}
       {showQuickKeyModal && (
