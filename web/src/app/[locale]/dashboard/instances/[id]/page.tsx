@@ -2333,8 +2333,8 @@ export default function InstanceDetailPage() {
             </div>
           )}
 
-          {/* Chat messages */}
-          {instance.status === "running" && (!chatNoCredentials || chatMessages.length > 0 || instance.sandboxMode) && (
+          {/* Chat messages — always shown when instance is running */}
+          {instance.status === "running" && (
             <>
               <div className="flex-1 overflow-y-auto space-y-4 mb-4 pr-1" style={{ maxHeight: 400 }}>
                 {chatMessages.length === 0 && !chatLoading && (

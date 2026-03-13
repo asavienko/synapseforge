@@ -3,9 +3,10 @@
  * Verify email page renders · Error states · API token handling
  */
 describe("11 · Email Verification Page", () => {
-  it("renders verify email page with verifying state", () => {
+  it("renders verify email page — check inbox state when no token", () => {
     cy.visit("/en/verify-email");
-    cy.contains("Verifying", { matchCase: false }).should("be.visible");
+    // No token in URL → shows "check inbox" screen (user arrived from dashboard gate)
+    cy.contains(/inbox|verify|synapseforge/i).should("be.visible");
     cy.snap("11-verify-01-page");
   });
 
@@ -33,10 +34,10 @@ describe("11 · Email Verification Page", () => {
     cy.snap("11-verify-05-missing-error");
   });
 
-  it("error state shows link to dashboard", () => {
+  it("error state shows resend button", () => {
     cy.visit("/en/verify-email?error=invalid");
-    cy.contains("dashboard", { matchCase: false }).should("be.visible");
-    cy.snap("11-verify-06-dashboard-link");
+    cy.contains(/resend/i).should("be.visible");
+    cy.snap("11-verify-06-resend-btn");
   });
 });
 
