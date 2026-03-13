@@ -1429,5 +1429,40 @@
     "installingDocker": "Instalando Docker...",
     "startingOpenClaw": "Iniciando OpenClaw...",
     "runningHealthCheck": "Ejecutando comprobación de salud..."
+  },
+  "landing": {
+    "howItWorks": {
+      "title": "Cómo funciona",
+      "step1": {
+        "num": "01",
+        "title": "Describe tu negocio",
+        "desc": "Cuéntanos qué haces, a quién atiendes y qué preguntas hacen tus clientes. Solo lleva 2 minutos."
+      },
+      "step2": {
+        "num": "02",
+        "title": "Configuramos tu agente",
+        "desc": "Tu IA se configura con el contexto de tu negocio, tono y preguntas frecuentes. Sin trabajo técnico."
+      },
+      "step3": {
+        "num": "03",
+        "title": "Entra en vivo en minutos",
+        "desc": "Comparte un enlace o añade el bot a Telegram o WhatsApp. Tu agente empieza a responder al instante."
+      }
+    },
+    "faq": {
+      "title": "Preguntas frecuentes",
+      "q1": "¿Qué pasa si mi agente da una respuesta incorrecta?",
+      "a1": "Tú controlas el prompt del sistema y la base de conocimiento. El agente solo responde con lo que tú proporcionas. Puedes revisar todas las conversaciones en el panel de gestión y ajustarlo en cualquier momento.",
+      "q2": "¿Cuánto tiempo lleva la configuración?",
+      "a2": "La mayoría de las empresas están en vivo en menos de 10 minutos. Nuestro asistente de incorporación te guía en cada paso — sin desarrolladores.",
+      "q3": "¿Necesito una cuenta de ChatGPT o OpenAI?",
+      "a3": "Puedes empezar con 20 mensajes gratuitos en modo sandbox usando nuestra clave de plataforma. Después conectas tu propia clave de OpenAI, Anthropic u OpenRouter — el coste es normalmente de €1–5/mes para una pequeña empresa.",
+      "q4": "¿En qué canales funciona?",
+      "a4": "Actualmente Telegram y WhatsApp (vía Twilio). El chat web embebido también está disponible. Más canales próximamente.",
+      "q5": "¿Puedo cancelar en cualquier momento?",
+      "a5": "Sí, completamente. Sin contratos ni compromisos. Puedes eliminar tu agente y tu cuenta en cualquier momento.",
+      "q6": "¿Son privados mis datos?",
+      "a6": "Sí. Las conversaciones se almacenan cifradas solo en tu cuenta. Nunca usamos tus datos para entrenar modelos ni los compartimos con terceros."
+    }
   }
 }

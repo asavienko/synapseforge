@@ -4,12 +4,13 @@ import { MobileNav } from "@/components/MobileNav";
 import { LandingDemoChat } from "@/components/LandingDemoChat";
 import {
   Zap, Bot, ArrowRight, Check, Shield, RefreshCw,
-  MessageSquare, Code2, Activity, Users, Key,
+  MessageSquare, Code2, Activity, Users, Key, Settings, Rocket,
 } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
 export default async function LandingPage() {
   const t = await getTranslations();
+  const tl = await getTranslations("landing");
 
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white grid-bg">
@@ -123,6 +124,27 @@ export default async function LandingPage() {
               <span>{t("trust.noCard")}</span>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ── How it Works (SMB steps) ─────────────────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-6 py-20">
+        <h2 className="text-3xl md:text-4xl font-bold mb-14 text-left md:text-center">
+          {tl("howItWorks.title")}
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[
+            { num: tl("howItWorks.step1.num"), icon: MessageSquare, title: tl("howItWorks.step1.title"), desc: tl("howItWorks.step1.desc") },
+            { num: tl("howItWorks.step2.num"), icon: Settings,      title: tl("howItWorks.step2.title"), desc: tl("howItWorks.step2.desc") },
+            { num: tl("howItWorks.step3.num"), icon: Rocket,        title: tl("howItWorks.step3.title"), desc: tl("howItWorks.step3.desc") },
+          ].map((step, i) => (
+            <div key={i} className="bg-white/[0.02] border border-white/5 rounded-2xl p-6">
+              <div className="text-5xl font-bold text-violet-600/20 mb-4">{step.num}</div>
+              <step.icon className="w-6 h-6 text-violet-400 mb-4" />
+              <h3 className="font-semibold text-base mb-2 text-white">{step.title}</h3>
+              <p className="text-zinc-400 text-sm leading-relaxed">{step.desc}</p>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -453,6 +475,29 @@ export default async function LandingPage() {
               </div>
             );
           })}
+        </div>
+      </section>
+
+      {/* ── FAQ ──────────────────────────────────────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-6 py-20">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">{tl("faq.title")}</h2>
+          {[
+            { q: tl("faq.q1"), a: tl("faq.a1") },
+            { q: tl("faq.q2"), a: tl("faq.a2") },
+            { q: tl("faq.q3"), a: tl("faq.a3") },
+            { q: tl("faq.q4"), a: tl("faq.a4") },
+            { q: tl("faq.q5"), a: tl("faq.a5") },
+            { q: tl("faq.q6"), a: tl("faq.a6") },
+          ].map((item, i) => (
+            <details key={i} className="border-b border-white/5 py-4 group">
+              <summary className="cursor-pointer list-none flex items-center justify-between text-sm font-medium text-white">
+                {item.q}
+                <span className="text-zinc-500 text-lg group-open:rotate-45 transition-transform inline-block shrink-0 ml-4">+</span>
+              </summary>
+              <div className="text-sm text-zinc-400 mt-3 leading-relaxed">{item.a}</div>
+            </details>
+          ))}
         </div>
       </section>
 

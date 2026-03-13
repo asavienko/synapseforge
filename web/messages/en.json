@@ -1429,5 +1429,40 @@
     "installingDocker": "Installing Docker...",
     "startingOpenClaw": "Starting OpenClaw...",
     "runningHealthCheck": "Running health check..."
+  },
+  "landing": {
+    "howItWorks": {
+      "title": "How it works",
+      "step1": {
+        "num": "01",
+        "title": "Describe your business",
+        "desc": "Tell us what you do, who you serve, and what questions your customers ask. Takes 2 minutes."
+      },
+      "step2": {
+        "num": "02",
+        "title": "We configure your agent",
+        "desc": "Your AI is set up with your business context, tone, and FAQs. No technical work required."
+      },
+      "step3": {
+        "num": "03",
+        "title": "Go live in minutes",
+        "desc": "Share a link or add the bot to Telegram or WhatsApp. Your agent starts answering instantly."
+      }
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "q1": "What if my agent gives a wrong answer?",
+      "a1": "You control the system prompt and knowledge base. The agent only answers based on what you provide. You can review all conversations in the manager dashboard and tune the agent anytime.",
+      "q2": "How long does setup take?",
+      "a2": "Most businesses are live in under 10 minutes. Our onboarding wizard walks you through every step — no developers needed.",
+      "q3": "Do I need a ChatGPT or OpenAI account?",
+      "a3": "You can start with 20 free sandbox messages using our platform key. After that, you connect your own OpenAI, Anthropic, or OpenRouter key — costs typically €1–5/month for a small business.",
+      "q4": "Which channels does it work on?",
+      "a4": "Currently Telegram and WhatsApp (via Twilio). Web chat embed is also available. More channels coming soon.",
+      "q5": "Can I cancel anytime?",
+      "a5": "Yes, completely. No contracts, no commitments. You can delete your agent and account at any time.",
+      "q6": "Is my data private?",
+      "a6": "Yes. Conversations are stored encrypted in your account only. We never use your data to train models or share it with third parties."
+    }
   }
 }
