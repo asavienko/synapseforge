@@ -38,6 +38,10 @@ const spec = {
         properties: {
           message: { type: "string", description: "The assistant reply" },
           instanceId: { type: "string" },
+          model: { type: "string", description: "The model used to generate the reply" },
+          latencyMs: { type: "number", description: "Time taken to generate the response in milliseconds" },
+          inputTokens: { type: "number", description: "Number of input tokens consumed" },
+          outputTokens: { type: "number", description: "Number of output tokens generated" },
         },
       },
       ErrorResponse: {
@@ -53,7 +57,7 @@ const spec = {
       post: {
         summary: "Send a chat message",
         description:
-          "Send a message to an AI agent instance and get a response.",
+          "Send a message to an AI agent instance and get a response. Supports both single-turn (`message`) and multi-turn (`messages` array) conversations. Pass the full conversation history in `messages` to maintain context across turns.",
         operationId: "sendChatMessage",
         requestBody: {
           required: true,
@@ -61,17 +65,28 @@ const spec = {
             "application/json": {
               schema: {
                 type: "object",
-                required: ["message"],
                 properties: {
                   message: {
                     type: "string",
-                    description: "The user message",
+                    description: "Single user message (single-turn). Use `messages` instead for multi-turn conversations.",
                     example: "How can you help me?",
                   },
-                  sessionId: {
-                    type: "string",
-                    description:
-                      "Optional session ID for conversation continuity",
+                  messages: {
+                    type: "array",
+                    description: "Full conversation history for multi-turn support. Each message must have `role` (user|assistant) and `content`. The last message must be a user message.",
+                    items: {
+                      type: "object",
+                      required: ["role", "content"],
+                      properties: {
+                        role: { type: "string", enum: ["user", "assistant"] },
+                        content: { type: "string" },
+                      },
+                    },
+                    example: [
+                      { role: "user", content: "What are your hours?" },
+                      { role: "assistant", content: "We're open Monday–Friday, 9am–6pm." },
+                      { role: "user", content: "What about weekends?" },
+                    ],
                   },
                 },
               },
