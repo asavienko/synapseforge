@@ -12,12 +12,10 @@ describe("17 · Chat Tab", () => {
   let instanceId: string;
 
   before(() => {
-    cy.login(EMAIL(), PASS());
-    cy.visit("/en/dashboard/instances");
-    cy.get("a[href*='/dashboard/instances/']", { timeout: 10000 }).first().then(($link) => {
-      const href = $link.attr("href") ?? "";
-      const match = href.match(/instances\/([^/?]+)/);
-      if (match) instanceId = match[1];
+    // Get instanceId directly from DB — avoids fragile client-rendered list navigation
+    cy.task("getCypressInstanceId").then((id) => {
+      expect(id, "Cypress Agent instance must exist in DB").to.be.a("string");
+      instanceId = id as string;
     });
   });
 

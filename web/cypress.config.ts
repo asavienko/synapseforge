@@ -62,6 +62,24 @@ export default defineConfig({
         },
 
         /**
+         * Get the seeded Cypress Agent instance ID directly from DB.
+         * Used by spec 07 (and others) to avoid fragile UI navigation in before().
+         */
+        async getCypressInstanceId() {
+          const { PrismaClient } = await import("@prisma/client");
+          const prisma = new PrismaClient();
+          try {
+            const instance = await prisma.aIInstance.findFirst({
+              where: { name: "Cypress Agent" },
+              select: { id: true },
+            });
+            return instance?.id ?? null;
+          } finally {
+            await prisma.$disconnect();
+          }
+        },
+
+        /**
          * Seed a ChatMessage directly into the DB for an instance.
          * Used by spec 29 test 05 to ensure chat history exists without
          * relying on intercepted HTTP responses (avoids race conditions).

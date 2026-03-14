@@ -18,10 +18,10 @@ const PASS  = () => Cypress.env("CYPRESS_USER_PASS")  || "cypress123";
 // Helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
-function getFirstInstanceId() {
-  return cy.request("/api/instances").then((res) => {
-    expect(res.body.length).to.be.greaterThan(0, "Need at least one instance");
-    return res.body[0].id as string;
+function getFirstInstanceId(): Cypress.Chainable<string> {
+  return cy.task("getCypressInstanceId").then((id) => {
+    expect(id, "Cypress Agent instance must exist in DB").to.be.a("string");
+    return id as string;
   });
 }
 

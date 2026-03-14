@@ -13,19 +13,11 @@
 const EMAIL = () => Cypress.env("TEST_EMAIL");
 const PASS  = () => Cypress.env("TEST_PASSWORD");
 
-// Helper: get a real API key for the first instance
+// Helper: get a real API key for the Cypress Agent instance
 function getApiKey(): Cypress.Chainable<string> {
-  return cy.request("/api/instances").then((res) => {
-    const instanceId: string = res.body[0].id;
-
-    // Start the instance so /v1/chat will accept requests
-    cy.request({
-      method: "PATCH",
-      url: `/api/instances/${instanceId}`,
-      body: { status: "running" },
-      headers: { "Content-Type": "application/json" },
-      failOnStatusCode: false,
-    });
+  return cy.task("getCypressInstanceId").then((instanceId) => {
+    // Ensure running via task (PATCH can silently fail in CI)
+    cy.task("setInstanceStatus", { instanceId, status: "running" });
 
     return cy.request({
       method: "POST",
@@ -39,17 +31,9 @@ function getApiKey(): Cypress.Chainable<string> {
 describe("20 · Public API", () => {
   before(() => {
     cy.login(EMAIL(), PASS());
-    // Ensure instance is in running state for API tests
-    cy.request("/api/instances").then((res) => {
-      if (res.body[0]?.id) {
-        cy.request({
-          method: "PATCH",
-          url: `/api/instances/${res.body[0].id}`,
-          body: { status: "running" },
-          headers: { "Content-Type": "application/json" },
-          failOnStatusCode: false,
-        });
-      }
+    // Ensure Cypress Agent is running for API tests
+    cy.task("getCypressInstanceId").then((instanceId) => {
+      cy.task("setInstanceStatus", { instanceId, status: "running" });
     });
   });
 

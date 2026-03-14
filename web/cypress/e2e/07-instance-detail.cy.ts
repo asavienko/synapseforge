@@ -10,17 +10,11 @@ describe("07 · Instance Detail", () => {
   let instanceId: string;
 
   before(() => {
-    // Navigate to the Cypress Agent instance and extract its ID from the URL
-    cy.login(EMAIL(), PASS());
-    cy.visit("/en/dashboard/instances");
-    // The instance list renders as <Link href="/dashboard/instances/{id}"> cards
-    cy.get("a[href*='/dashboard/instances/']", { timeout: 10000 }).first().then(($link) => {
-      const href = $link.attr("href") ?? "";
-      const match = href.match(/instances\/([^/?]+)/);
-      if (match) instanceId = match[1];
-      cy.wrap($link).click();
+    // Get instanceId directly from DB — avoids fragile UI navigation on client-rendered list page
+    cy.task("getCypressInstanceId").then((id) => {
+      expect(id, "Cypress Agent instance must exist in DB").to.be.a("string");
+      instanceId = id as string;
     });
-    cy.url({ timeout: 10000 }).should("match", /instances\/[^/?]+/);
   });
 
   beforeEach(() => {
