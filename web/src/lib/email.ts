@@ -14,15 +14,17 @@ export async function sendEmail({
   to,
   subject,
   html,
+  replyTo,
 }: {
   to: string;
   subject: string;
   html: string;
+  replyTo?: string;
 }): Promise<boolean> {
-  return send(to, subject, html);
+  return send(to, subject, html, replyTo);
 }
 
-async function send(to: string, subject: string, html: string): Promise<boolean> {
+async function send(to: string, subject: string, html: string, replyTo?: string): Promise<boolean> {
   if (process.env.DISABLE_EMAILS === "true") {
     console.log(`[Email DISABLED] To: ${to} | Subject: ${subject}`);
     return true; // pretend success so callers don't retry
@@ -32,7 +34,7 @@ async function send(to: string, subject: string, html: string): Promise<boolean>
     return false;
   }
   try {
-    const { data, error } = await resend.emails.send({ from: FROM, to, subject, html });
+    const { data, error } = await resend.emails.send({ from: FROM, to, subject, html, ...(replyTo ? { reply_to: replyTo } : {}) });
     if (error) { console.error("[Email send error]", error); return false; }
     console.log(`[Email sent] id=${data?.id} To: ${to} | Subject: ${subject}`);
     return true;
