@@ -83,9 +83,9 @@ describe("19 · Onboarding — 5-step flow", () => {
     cy.get("button").contains("Continue").click();
 
     cy.contains("Add your AI provider key").should("be.visible");
-    cy.contains("OpenAI").should("be.visible");
-    cy.contains("Anthropic").should("be.visible");
-    cy.contains("OpenRouter").should("be.visible");
+    cy.get("[data-testid='provider-openai_api_key']").should("be.visible");
+    cy.get("[data-testid='provider-anthropic_api_key']").should("be.visible");
+    cy.get("[data-testid='provider-openrouter_api_key']").should("be.visible");
     cy.snap("19-onboarding-05-step3");
   });
 
@@ -98,7 +98,7 @@ describe("19 · Onboarding — 5-step flow", () => {
     cy.contains("Customer Support").click();
     cy.get("button").contains("Continue").click();
 
-    cy.contains("OpenAI").click();
+    cy.get("[data-testid='provider-openai_api_key']").click();
     cy.get("input[placeholder='sk-...']").should("be.visible");
     cy.snap("19-onboarding-06-step3-openai-selected");
   });
@@ -112,7 +112,7 @@ describe("19 · Onboarding — 5-step flow", () => {
     cy.contains("Customer Support").click();
     cy.get("button").contains("Continue").click();
 
-    cy.contains("OpenAI").click();
+    cy.get("[data-testid='provider-openai_api_key']").click();
     cy.get("button").contains("Continue").should("be.disabled");
     cy.snap("19-onboarding-07-step3-disabled");
   });
@@ -132,7 +132,7 @@ describe("19 · Onboarding — 5-step flow", () => {
     cy.contains("Customer Support").click();
     cy.get("button").contains("Continue").click();
 
-    cy.contains("OpenAI").click();
+    cy.get("[data-testid='provider-openai_api_key']").click();
     cy.get("input[placeholder='sk-...']").type("sk-test-fake-key-abc123");
     cy.get("button").contains("Continue").click();
     cy.wait("@validateKey");
@@ -216,7 +216,7 @@ describe("19 · Onboarding — 5-step flow", () => {
     cy.contains("Sales Assistant").click();
     cy.get("button").contains("Continue").click();
 
-    cy.contains("OpenAI").click();
+    cy.get("[data-testid='provider-openai_api_key']").click();
     cy.get("input[placeholder='sk-...']").type("sk-test-key");
     cy.get("button").contains("Continue").click();
     cy.wait("@validateKey2");
@@ -226,7 +226,7 @@ describe("19 · Onboarding — 5-step flow", () => {
     cy.contains("button", "Finish setup").click();
 
     cy.wait("@onboardingPost2");
-    cy.contains("OpenAI").should("be.visible");
+    cy.get("[data-testid='provider-openai_api_key']").should("be.visible");
     cy.contains("Telegram").should("be.visible");
     cy.snap("19-onboarding-12-summary-with-creds");
   });

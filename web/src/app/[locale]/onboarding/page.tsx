@@ -367,6 +367,7 @@ export default function OnboardingPage() {
               {LLM_PROVIDERS.map((p) => (
                 <button
                   key={p.key}
+                  data-testid={`provider-${p.key}`}
                   onClick={() => { setLlmProvider(p.key); setLlmKey(""); }}
                   className={cn(
                     "w-full flex items-center gap-3 p-4 rounded-xl border text-left transition-all",

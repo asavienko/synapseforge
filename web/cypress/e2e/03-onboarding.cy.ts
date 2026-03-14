@@ -90,9 +90,9 @@ describe("03 · Onboarding", () => {
     cy.contains("Customer Support").click();
     cy.contains("Continue").click();
     cy.contains("Add your AI provider key").should("be.visible");
-    cy.contains("OpenAI").should("be.visible");
-    cy.contains("Anthropic").should("be.visible");
-    cy.contains("OpenRouter").should("be.visible");
+    cy.get("[data-testid='provider-openai_api_key']").should("be.visible");
+    cy.get("[data-testid='provider-anthropic_api_key']").should("be.visible");
+    cy.get("[data-testid='provider-openrouter_api_key']").should("be.visible");
     cy.snap("03-onboard-06-step3-ai-key");
   });
 
@@ -103,7 +103,7 @@ describe("03 · Onboarding", () => {
     cy.contains("Continue").click();
     cy.contains("Customer Support").click();
     cy.contains("Continue").click();
-    cy.contains("OpenAI").click();
+    cy.get("[data-testid='provider-openai_api_key']").click();
     cy.get("input[placeholder='sk-...']", { timeout: 8000 }).should("be.visible");
     cy.snap("03-onboard-07-step3-provider-selected");
   });
@@ -219,7 +219,7 @@ describe("03 · Onboarding", () => {
     cy.contains("Continue").click();
 
     // Step 3: pick OpenAI + enter key
-    cy.contains("OpenAI").click();
+    cy.get("[data-testid='provider-openai_api_key']").click();
     cy.get("input[placeholder='sk-...']", { timeout: 8000 }).type("sk-test-key-1234");
     cy.contains("Continue").click();
     cy.wait("@validateKey");
@@ -233,7 +233,7 @@ describe("03 · Onboarding", () => {
     cy.wait("@onboardingPost");
 
     // Summary should show OpenAI
-    cy.contains("OpenAI").should("be.visible");
+    cy.get("[data-testid='provider-openai_api_key']").should("be.visible");
     cy.snap("03-onboard-14-summary-with-key");
   });
 });
