@@ -108,11 +108,10 @@ describe("20 · Public API", () => {
   // ── 06. /api/v1/chat — stopped instance → 400 ────────────────────────────
   it("POST /api/v1/chat with stopped instance → 400", () => {
     cy.login(EMAIL(), PASS());
-    cy.request("/api/instances").then((res) => {
-      const instanceId: string = res.body[0].id;
-      // Use cy.task to reliably set status to stopped (PATCH can fail silently due to auth/plan checks)
+    // Use getCypressInstanceId task (reliable seed-based lookup) instead of API call
+    cy.task("getCypressInstanceId").then((instanceId) => {
       cy.task("setInstanceStatus", { instanceId, status: "stopped" }).then(() => {
-        return cy.request({
+        cy.request({
           method: "POST",
           url: `/api/instances/${instanceId}/keys`,
           body: { name: "Stop Test Key" },

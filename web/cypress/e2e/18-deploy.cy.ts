@@ -260,7 +260,7 @@ describe("18 · Deploy Tab", () => {
     cy.get("main").contains(/deployed|live|running/i).should("be.visible");
     // Integration list should be visible
     cy.get("main").contains("Telegram").should("be.visible");
-    cy.get("main").contains("Discord").should("be.visible");
+    cy.get("main").contains("WhatsApp").should("be.visible");
     cy.snap("18-deploy-09-running-state");
   });
 
