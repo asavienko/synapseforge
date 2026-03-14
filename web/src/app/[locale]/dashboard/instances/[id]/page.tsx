@@ -914,6 +914,12 @@ export default function InstanceDetailPage() {
   const [configDirty, setConfigDirty] = useState(false);
   const [savingConfig, setSavingConfig] = useState(false);
 
+  // Config live preview state
+  const [previewInput, setPreviewInput] = useState("");
+  const [previewMessages, setPreviewMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const previewEndRef = useRef<HTMLDivElement>(null);
+
   // API Keys state
   const [keys, setKeys] = useState<ApiKeyRow[]>([]);
   const [keysLoading, setKeysLoading] = useState(false);
@@ -1343,6 +1349,61 @@ export default function InstanceDetailPage() {
       showToast(t("activity.configFailed"), "error");
     }
     setSavingConfig(false);
+  }
+
+  async function sendPreviewMessage() {
+    const text = previewInput.trim();
+    if (!text || previewLoading) return;
+    const userMsg = { role: "user" as const, content: text };
+    const history = [...previewMessages, userMsg];
+    setPreviewMessages(history);
+    setPreviewInput("");
+    setPreviewLoading(true);
+    // Placeholder for streaming reply
+    const placeholderId = `preview-${Date.now()}`;
+    setPreviewMessages((prev) => [...prev, { role: "assistant", content: "", id: placeholderId } as never]);
+    try {
+      const res = await fetch(`/api/instances/${id}/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: history }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        setPreviewMessages((prev) => prev.map((m) =>
+          (m as { id?: string }).id === placeholderId
+            ? { role: "assistant", content: err.error ?? t("somethingWentWrong") }
+            : m
+        ));
+      } else {
+        const reader = res.body?.getReader();
+        const decoder = new TextDecoder();
+        let full = "";
+        if (reader) {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            full += decoder.decode(value, { stream: true });
+            setPreviewMessages((prev) => prev.map((m) =>
+              (m as { id?: string }).id === placeholderId ? { role: "assistant", content: full } : m
+            ));
+          }
+          reader.releaseLock();
+        }
+        setPreviewMessages((prev) => prev.map((m) =>
+          (m as { id?: string }).id === placeholderId ? { role: "assistant" as const, content: full } : m
+        ));
+      }
+    } catch {
+      setPreviewMessages((prev) => prev.map((m) =>
+        (m as { id?: string }).id === placeholderId
+          ? { role: "assistant", content: t("somethingWentWrong") }
+          : m
+      ));
+    } finally {
+      setPreviewLoading(false);
+      setTimeout(() => previewEndRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
+    }
   }
 
   async function createKey() {
@@ -2894,6 +2955,71 @@ export default function InstanceDetailPage() {
             {savingConfig ? <Loader2 className="w-4 h-4 animate-spin" /> : <Settings2 className="w-4 h-4" />}
             {savingConfig ? t("config.saving") : configDirty ? t("config.save") : t("config.saved")}
           </button>
+
+          {/* ── Live Preview ── */}
+          <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+            <div className="p-4 border-b border-white/5 flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-semibold text-white">{t("config.previewTitle")}</h3>
+                <p className="text-xs text-zinc-500 mt-0.5">{t("config.previewDesc")}</p>
+              </div>
+              {previewMessages.length > 0 && (
+                <button
+                  onClick={() => setPreviewMessages([])}
+                  className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors"
+                >
+                  {t("config.previewClear")}
+                </button>
+              )}
+            </div>
+
+            {/* Message history */}
+            {previewMessages.length > 0 && (
+              <div className="p-4 space-y-3 max-h-72 overflow-y-auto">
+                {previewMessages.map((msg, i) => (
+                  <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                    <div className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
+                      msg.role === "user"
+                        ? "bg-violet-600 text-white rounded-br-sm"
+                        : "bg-white/[0.06] text-zinc-200 rounded-bl-sm"
+                    }`}>
+                      {msg.content || (previewLoading && i === previewMessages.length - 1
+                        ? <span className="flex gap-1 py-0.5 px-1"><span className="w-1.5 h-1.5 rounded-full bg-zinc-400 animate-bounce [animation-delay:0ms]" /><span className="w-1.5 h-1.5 rounded-full bg-zinc-400 animate-bounce [animation-delay:150ms]" /><span className="w-1.5 h-1.5 rounded-full bg-zinc-400 animate-bounce [animation-delay:300ms]" /></span>
+                        : "")}
+                    </div>
+                  </div>
+                ))}
+                <div ref={previewEndRef} />
+              </div>
+            )}
+
+            {/* Input */}
+            <div className={`p-3 ${previewMessages.length > 0 ? "border-t border-white/5" : ""}`}>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={previewInput}
+                  onChange={(e) => setPreviewInput(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendPreviewMessage(); } }}
+                  placeholder={t("config.previewPlaceholder")}
+                  disabled={previewLoading}
+                  className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors disabled:opacity-50"
+                />
+                <button
+                  onClick={sendPreviewMessage}
+                  disabled={!previewInput.trim() || previewLoading}
+                  className="flex items-center gap-1.5 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 transition-colors px-4 py-2.5 rounded-xl text-sm font-medium text-white shrink-0"
+                >
+                  {previewLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                </button>
+              </div>
+              {configDirty && (
+                <p className="text-xs text-amber-400/70 mt-2 flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3" /> {t("config.previewUnsaved")}
+                </p>
+              )}
+            </div>
+          </div>
         </div>
       )}
 

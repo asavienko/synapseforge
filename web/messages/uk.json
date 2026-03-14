@@ -626,7 +626,12 @@
       "showAdvanced": "Show advanced settings (temperature, tokens)",
       "temperatureHint": "(0 = deterministic, 1 = creative)",
       "maxTokensLabel": "Max Tokens",
-      "maxTokensHint": "(max response length)"
+      "maxTokensHint": "(max response length)",
+      "previewTitle": "Тестуй свого агента",
+      "previewDesc": "Надішли повідомлення, щоб побачити, як агент відповідає з поточною конфігурацією.",
+      "previewPlaceholder": "Введи тестове повідомлення…",
+      "previewClear": "Очистити",
+      "previewUnsaved": "Незбережені зміни — збережи конфігурацію для тесту"
     },
     "apiKeys": {
       "generateTitle": "Згенерувати новий API-ключ",

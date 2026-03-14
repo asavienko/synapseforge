@@ -626,7 +626,12 @@
       "showAdvanced": "Show advanced settings (temperature, tokens)",
       "temperatureHint": "(0 = deterministic, 1 = creative)",
       "maxTokensLabel": "Max Tokens",
-      "maxTokensHint": "(max response length)"
+      "maxTokensHint": "(max response length)",
+      "previewTitle": "Prueba tu agente",
+      "previewDesc": "Envía un mensaje para ver cómo responde tu agente con la configuración actual.",
+      "previewPlaceholder": "Escribe un mensaje de prueba…",
+      "previewClear": "Limpiar",
+      "previewUnsaved": "Cambios sin guardar — guarda la configuración para probar la última versión"
     },
     "apiKeys": {
       "generateTitle": "Generar nueva clave API",
