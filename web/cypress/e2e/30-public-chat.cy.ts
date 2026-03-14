@@ -95,57 +95,50 @@ describe("30 · Public Chat Page + Widget", () => {
       .should("equal", 404);
   });
 
-  // ── Helper: inject widget on current page ─────────────────────────────────
+  // ── Helper: inject embed widget on current page ───────────────────────────
   function injectWidget(instanceIdVal: string) {
-    cy.visit("/", {
-      onLoad: (win) => {
-        (win as Window & { SynapseForge?: unknown }).SynapseForge = {
-          instanceId: instanceIdVal,
-          baseUrl: "http://localhost:3000",
-        };
-      },
-    });
+    cy.visit("/");
 
     cy.window().then((win) => {
       const script = win.document.createElement("script");
-      script.src = "http://localhost:3000/widget.js";
+      // The route is /embed.js?id=... (directory named embed.js)
+      script.src = `http://localhost:3000/embed.js?id=${instanceIdVal}`;
       win.document.body.appendChild(script);
     });
   }
 
-  // ── Test 4: Widget injects bubble + container ─────────────────────────────
-  it("widget.js injects the chat bubble and iframe container", () => {
+  // ── Test 4: Widget injects bubble + frame wrapper ─────────────────────────
+  it("embed.js injects the chat bubble and frame wrapper", () => {
     injectWidget(instanceId);
 
-    // Button must appear
-    cy.get("#sf-chat-btn", { timeout: 5000 }).should("be.visible");
+    // Root element must be injected
+    cy.get("#_sf_widget_root", { timeout: 6000 }).should("exist");
 
-    // Container must exist (closed by default)
-    cy.get("#sf-chat-container").should("exist");
+    // Bubble button must be visible
+    cy.get("#_sf_bubble").should("be.visible");
+
+    // Frame wrapper must exist (hidden by default via sf-hidden class)
+    cy.get("#_sf_frame_wrap").should("exist").and("have.class", "sf-hidden");
 
     cy.snap("30-public-04-widget-injected");
   });
 
-  // ── Test 5: Widget opens and closes on click ──────────────────────────────
+  // ── Test 5: Widget opens and closes the iframe on click ───────────────────
   it("widget bubble opens and closes the iframe on click", () => {
     injectWidget(instanceId);
 
-    cy.get("#sf-chat-btn", { timeout: 5000 }).should("be.visible");
+    cy.get("#_sf_bubble", { timeout: 6000 }).should("be.visible");
 
-    // Initially the container is hidden (display:none)
-    cy.get("#sf-chat-container").should("have.css", "display", "none");
+    // Initially hidden via sf-hidden class (opacity:0 + pointer-events:none)
+    cy.get("#_sf_frame_wrap").should("have.class", "sf-hidden");
 
-    // Click to open → display:block
-    cy.get("#sf-chat-btn").click();
-    cy.get("#sf-chat-container").should("have.css", "display", "block");
+    // Click to open → sf-hidden removed
+    cy.get("#_sf_bubble").click();
+    cy.get("#_sf_frame_wrap").should("not.have.class", "sf-hidden");
 
-    // Click to close → widget.js uses a 200 ms setTimeout before setting display:none
-    cy.get("#sf-chat-btn").click();
-    cy.get("#sf-chat-container", { timeout: 2000 }).should(
-      "have.css",
-      "display",
-      "none"
-    );
+    // Click to close → sf-hidden re-applied
+    cy.get("#_sf_bubble").click();
+    cy.get("#_sf_frame_wrap", { timeout: 2000 }).should("have.class", "sf-hidden");
 
     cy.snap("30-public-05-widget-closed");
   });
