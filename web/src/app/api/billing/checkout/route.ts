@@ -1,17 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { stripe, STRIPE_PLANS, PlanKey } from "@/lib/stripe";
+import { STRIPE_PLANS, PlanKey } from "@/lib/stripe";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { plan } = await req.json() as { plan: PlanKey };
+  // Graceful degradation: if Stripe is not configured, return a flag so the
+  // client can show a "contact us" fallback instead of a crash.
+  if (!process.env.STRIPE_SECRET_KEY) {
+    return NextResponse.json({ stripeUnavailable: true }, { status: 200 });
+  }
+
+  const { plan } = (await req.json()) as { plan: PlanKey };
   if (!STRIPE_PLANS[plan]) return NextResponse.json({ error: "Invalid plan." }, { status: 400 });
 
   const user = await prisma.user.findUnique({ where: { id: session.user.id } });
   if (!user) return NextResponse.json({ error: "User not found." }, { status: 404 });
+
+  // Lazy-import stripe only when key is available
+  const { getStripe } = await import("@/lib/stripe");
+  const stripe = getStripe();
 
   // Get or create Stripe customer
   let customerId = user.stripeCustomerId;

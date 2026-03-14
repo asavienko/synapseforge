@@ -84,6 +84,7 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
   const cancelled = params.get("cancelled") === "1";
   const [loading, setLoading] = useState<string | null>(null);
   const [billingError, setBillingError] = useState<string | null>(null);
+  const [showContactUpgrade, setShowContactUpgrade] = useState(false);
 
   // Cancellation survey state
   const [showCancelSurvey, setShowCancelSurvey] = useState(false);
@@ -103,10 +104,12 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
       body: JSON.stringify({ plan: planKey }),
     });
     const data = await res.json();
+    setLoading(null);
     if (data.url) {
       window.location.href = data.url;
+    } else if (data.stripeUnavailable) {
+      setShowContactUpgrade(true);
     } else {
-      setLoading(null);
       setBillingError(data.error || "Something went wrong. Please try again.");
     }
   }
@@ -417,6 +420,56 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
                 {tb("cancelSubmit")}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Contact-to-upgrade modal (shown when Stripe is not yet configured) ── */}
+      {showContactUpgrade && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={(e) => e.target === e.currentTarget && setShowContactUpgrade(false)}
+        >
+          <div className="bg-[#111118] border border-white/10 rounded-2xl p-7 w-full max-w-md">
+            <button
+              onClick={() => setShowContactUpgrade(false)}
+              className="absolute top-4 right-4 text-zinc-600 hover:text-zinc-300 transition-colors text-lg leading-none"
+            >
+              ✕
+            </button>
+
+            <div className="text-center mb-6">
+              <div className="text-3xl mb-3">🙌</div>
+              <h2 className="text-lg font-bold text-white mb-2">Let&apos;s get you set up</h2>
+              <p className="text-sm text-zinc-400 leading-relaxed">
+                Online checkout is coming soon. In the meantime, book a quick call and we&apos;ll
+                activate your plan manually — usually within 24 hours.
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <a
+                href="https://cal.com/synapseforge/setup"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full py-3 bg-violet-600 hover:bg-violet-500 text-white font-semibold text-sm rounded-xl transition-colors"
+              >
+                📅 Book a 15-min setup call
+              </a>
+              <a
+                href="/contact"
+                className="flex items-center justify-center gap-2 w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 font-medium text-sm rounded-xl transition-colors"
+              >
+                ✉️ Send us a message
+              </a>
+            </div>
+
+            <p className="text-center text-xs text-zinc-600 mt-5">
+              Questions? Email us at{" "}
+              <a href="mailto:hello@synapseforge.ai" className="text-violet-400 hover:text-violet-300">
+                hello@synapseforge.ai
+              </a>
+            </p>
           </div>
         </div>
       )}
