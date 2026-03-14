@@ -301,7 +301,9 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
   const [snapshotPanelId, setSnapshotPanelId] = useState<string | null>(null);
 
   // Tab navigation
-  const [activeTab, setActiveTab] = useState<"overview" | "referrals" | "analytics">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "referrals" | "analytics" | "leads">("overview");
+  const [leads, setLeads] = useState<Array<{ id: string; email: string; source: string; createdAt: string }>>([]);
+  const [leadsLoading, setLeadsLoading] = useState(false);
 
   // Analytics tab
   interface AnalyticsData {
@@ -345,6 +347,17 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
   const [referralLoaded, setReferralLoaded] = useState(false);
   const [referralOutstanding, setReferralOutstanding] = useState(0);
   const [markingPaid, setMarkingPaid] = useState<string | null>(null);
+
+  // Leads tab
+  useEffect(() => {
+    if (activeTab === "leads" && leads.length === 0) {
+      setLeadsLoading(true);
+      fetch("/api/admin/waitlist")
+        .then((r) => r.json())
+        .then((d) => { if (Array.isArray(d)) setLeads(d); })
+        .finally(() => setLeadsLoading(false));
+    }
+  }, [activeTab, leads.length]);
 
   useEffect(() => {
     if (activeTab === "referrals" && !referralLoaded) {
@@ -612,6 +625,7 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
             { key: "overview" as const, label: t("tabOverview"), icon: undefined },
             { key: "referrals" as const, label: t("tabReferrals"), icon: Gift },
             { key: "analytics" as const, label: t("tabAnalytics"), icon: BarChart2 },
+            { key: "leads" as const, label: `🔥 Leads${leads.length > 0 ? ` (${leads.length})` : ""}`, icon: undefined },
           ]).map((tab) => (
             <button
               key={tab.key}
@@ -1566,6 +1580,74 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
               )}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* ─── Leads Tab ─────────────────────────────────────────────────── */}
+      {activeTab === "leads" && (
+        <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+          <div className="p-5 border-b border-white/5 flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-semibold text-white">🔥 Waitlist Leads</h3>
+              <p className="text-xs text-zinc-500 mt-0.5">Users who hit sandbox limit and submitted their email</p>
+            </div>
+            <span className="text-xs text-zinc-500">{leads.length} total</span>
+          </div>
+          {leadsLoading ? (
+            <div className="p-8 flex justify-center"><Loader2 className="w-5 h-5 text-zinc-500 animate-spin" /></div>
+          ) : leads.length === 0 ? (
+            <div className="p-8 text-center text-zinc-500 text-sm">No leads yet. They'll appear when sandbox users submit their email.</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-xs text-zinc-500 border-b border-white/5">
+                    <th className="text-left px-5 py-3">Email</th>
+                    <th className="text-left px-5 py-3">Source</th>
+                    <th className="text-left px-5 py-3">Date</th>
+                    <th className="text-left px-5 py-3">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {leads.map((lead) => (
+                    <tr key={lead.id} className="hover:bg-white/[0.02]">
+                      <td className="px-5 py-3 text-zinc-200 font-mono text-xs">{lead.email}</td>
+                      <td className="px-5 py-3">
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-violet-500/15 text-violet-300 border border-violet-500/20">
+                          {lead.source}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3 text-zinc-500 text-xs">
+                        {new Date(lead.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                      </td>
+                      <td className="px-5 py-3">
+                        <a
+                          href={`mailto:${lead.email}?subject=Your%20SynapseForge%20trial&body=Hi!%20I%20saw%20you%20tried%20out%20SynapseForge%20and%20I%20wanted%20to%20reach%20out%20personally.`}
+                          className="text-xs text-violet-400 hover:text-violet-300 transition-colors"
+                        >
+                          Email →
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className="p-4 border-t border-white/5 flex justify-end">
+                <button
+                  onClick={() => {
+                    const csv = ["email,source,date", ...leads.map((l) => `${l.email},${l.source},${new Date(l.createdAt).toISOString().split("T")[0]}`)].join("\n");
+                    const a = document.createElement("a");
+                    a.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+                    a.download = `synapseforge-leads-${new Date().toISOString().split("T")[0]}.csv`;
+                    a.click();
+                  }}
+                  className="text-xs text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-1.5 rounded-lg transition-colors"
+                >
+                  Export CSV
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
