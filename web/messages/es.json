@@ -962,7 +962,30 @@
       "upgradeNotifyMe": "Notificarme",
       "upgradeNotified": "✓ ¡Nos pondremos en contacto!",
       "upgradeAddKey": "Agregar mi clave API",
-      "copyResponse": "Copiar respuesta"
+      "copyResponse": "Copiar respuesta",
+      "firstRunBanner": "Tu agente está activo en modo sandbox — ¡prueba a enviar un mensaje!",
+      "starterChips": {
+        "support": {
+          "chip1": "¿Cuál es su política de devoluciones?",
+          "chip2": "¿Cómo puedo rastrear mi pedido?",
+          "chip3": "Necesito ayuda con mi cuenta"
+        },
+        "assistant": {
+          "chip1": "¿En qué puedes ayudarme?",
+          "chip2": "Resúmeme esto",
+          "chip3": "¿Cómo empiezo?"
+        },
+        "analyst": {
+          "chip1": "Analiza estos datos para mí",
+          "chip2": "¿Qué tendencias ves?",
+          "chip3": "Dame un resumen"
+        },
+        "custom": {
+          "chip1": "¡Hola! ¿Qué puedes hacer?",
+          "chip2": "Cuéntame sobre ti",
+          "chip3": "¿En qué eres mejor?"
+        }
+      }
     },
     "knowledge": {
       "title": "Base de conocimiento",

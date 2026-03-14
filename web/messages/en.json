@@ -962,7 +962,30 @@
       "upgradeNotifyMe": "Notify me",
       "upgradeNotified": "✓ We'll be in touch!",
       "upgradeAddKey": "Add my API key",
-      "copyResponse": "Copy response"
+      "copyResponse": "Copy response",
+      "firstRunBanner": "Your agent is live in sandbox mode — try sending a message!",
+      "starterChips": {
+        "support": {
+          "chip1": "What's your return policy?",
+          "chip2": "How do I track my order?",
+          "chip3": "I need help with my account"
+        },
+        "assistant": {
+          "chip1": "What can you help me with?",
+          "chip2": "Summarise this for me",
+          "chip3": "How do I get started?"
+        },
+        "analyst": {
+          "chip1": "Analyse this data for me",
+          "chip2": "What trends do you see?",
+          "chip3": "Give me a summary"
+        },
+        "custom": {
+          "chip1": "Hello! What can you do?",
+          "chip2": "Tell me about yourself",
+          "chip3": "What are you best at?"
+        }
+      }
     },
     "knowledge": {
       "title": "Knowledge Base",

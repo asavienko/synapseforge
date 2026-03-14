@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import {
   Bot, ArrowLeft, Play, Square, Trash2, Loader2,
   Settings2, Key, Activity, Copy, Check, Eye, EyeOff,
@@ -927,7 +927,10 @@ export default function InstanceDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
 
+  const searchParams = useSearchParams();
   const [tab, setTab] = useState<Tab>("Overview");
+  const [showFirstRunBanner, setShowFirstRunBanner] = useState(false);
+  const [firstRunDetected, setFirstRunDetected] = useState(false);
   const [instance, setInstance] = useState<Instance | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -1227,6 +1230,15 @@ export default function InstanceDetailPage() {
   }, [id]);
 
   useEffect(() => { loadInstance(); }, [loadInstance]);
+
+  // Detect firstRun=1 param and auto-switch to Chat tab
+  useEffect(() => {
+    if (searchParams.get("firstRun") === "1" && !firstRunDetected) {
+      setFirstRunDetected(true);
+      setTab("Chat");
+      setShowFirstRunBanner(true);
+    }
+  }, [searchParams, firstRunDetected]);
 
   // Detect sandbox→real graduation and show the "what next?" modal
   useEffect(() => {
@@ -1739,10 +1751,11 @@ export default function InstanceDetailPage() {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatMessages, chatLoading]);
 
-  async function sendChat() {
-    if (!chatInput.trim() || chatLoading) return;
+  async function sendChat(override?: string) {
+    const text = override !== undefined ? override : chatInput;
+    if (!text.trim() || chatLoading) return;
 
-    const userMsg: ChatMsg = { role: "user", content: chatInput.trim() };
+    const userMsg: ChatMsg = { role: "user", content: text.trim() };
     const updatedMessages = [...chatMessages, userMsg];
     setChatMessages(updatedMessages);
     setChatInput("");
@@ -2541,8 +2554,32 @@ export default function InstanceDetailPage() {
             <>
               <div className="flex-1 overflow-y-auto space-y-4 mb-4 pr-1" style={{ maxHeight: 400 }}>
                 {chatMessages.length === 0 && !chatLoading && (
-                  <div className="flex items-center justify-center h-40">
+                  <div className="flex flex-col items-center justify-center h-40 gap-4">
                     <p className="text-zinc-600 text-sm">{t("chat.emptyState")}</p>
+                    {(() => {
+                      const type = instance?.type ?? "custom";
+                      const chips =
+                        type === "support"
+                          ? [t("chat.starterChips.support.chip1"), t("chat.starterChips.support.chip2"), t("chat.starterChips.support.chip3")]
+                          : type === "assistant"
+                          ? [t("chat.starterChips.assistant.chip1"), t("chat.starterChips.assistant.chip2"), t("chat.starterChips.assistant.chip3")]
+                          : type === "analyst"
+                          ? [t("chat.starterChips.analyst.chip1"), t("chat.starterChips.analyst.chip2"), t("chat.starterChips.analyst.chip3")]
+                          : [t("chat.starterChips.custom.chip1"), t("chat.starterChips.custom.chip2"), t("chat.starterChips.custom.chip3")];
+                      return (
+                        <div className="flex flex-wrap justify-center gap-2">
+                          {chips.map((chip) => (
+                            <button
+                              key={chip}
+                              onClick={() => sendChat(chip)}
+                              className="bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 text-xs px-3 py-2 rounded-full transition-colors"
+                            >
+                              {chip}
+                            </button>
+                          ))}
+                        </div>
+                      );
+                    })()}
                   </div>
                 )}
                 {chatMessages.map((msg, i) => {
@@ -2624,6 +2661,20 @@ export default function InstanceDetailPage() {
                 </div>
               )}
 
+              {/* First-run welcome banner */}
+              {showFirstRunBanner && (
+                <div className="bg-violet-500/10 border border-violet-500/20 rounded-xl px-4 py-3 mb-3 flex items-center gap-3">
+                  <span className="text-sm text-violet-300 flex-1">👋 {t("chat.firstRunBanner")}</span>
+                  <button
+                    onClick={() => setShowFirstRunBanner(false)}
+                    className="text-zinc-500 hover:text-zinc-300 transition-colors shrink-0"
+                    aria-label="Dismiss"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+
               {/* No creds banner (inline, after first failed attempt) */}
               {chatNoCredentials && chatMessages.length > 0 && (
                 <div className="mb-3 flex items-center gap-3 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3">
@@ -2653,7 +2704,7 @@ export default function InstanceDetailPage() {
                   className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors resize-none disabled:opacity-50"
                 />
                 <button
-                  onClick={sendChat}
+                  onClick={() => sendChat()}
                   disabled={chatLoading || !chatInput.trim()}
                   data-testid="chat-send-btn"
                   className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 transition-colors px-4 py-3 rounded-xl text-sm font-semibold text-white self-end"

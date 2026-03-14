@@ -480,6 +480,33 @@ export const email = {
 
   // ── Sandbox re-engagement ─────────────────────────────────────────────────
 
+  async sandboxColdStart(
+    to: string,
+    name: string,
+    instanceName: string,
+    instanceId: string,
+    sandboxLimit: number,
+  ) {
+    const first = name.split(" ")[0];
+    return send(
+      to,
+      `Your AI agent is set up — but you haven't tried it yet`,
+      base(
+        `${first}, your agent is waiting for a first message 👋`,
+        `<p>You built <strong style="color:#e4e4e7">${instanceName}</strong> and it's ready to go — but we noticed you haven't sent it a message yet.</p>
+         <p>It takes <strong style="color:#a78bfa">30 seconds</strong>. Here's what to do:</p>
+         <ol style="padding-left:20px;margin:16px 0;color:#a1a1aa">
+           <li style="margin-bottom:10px">Open your agent's <strong style="color:#e4e4e7">Chat tab</strong></li>
+           <li style="margin-bottom:10px">Type anything — "Hello", "What can you do?", or a question your customers ask</li>
+           <li style="margin-bottom:10px">Watch it respond in real time</li>
+         </ol>
+         <p style="color:#71717a;font-size:13px;">You have <strong style="color:#a78bfa">${sandboxLimit} free messages</strong> — no API key needed to start.</p>
+         <p style="color:#71717a;font-size:13px;">Once you see how it handles your questions, you can customise the persona, connect it to WhatsApp or Telegram, and go live.</p>`,
+        { href: `${APP_URL}/dashboard/instances/${instanceId}`, label: "Send your first message →" }
+      )
+    );
+  },
+
   async sandboxNudge(
     to: string,
     name: string,

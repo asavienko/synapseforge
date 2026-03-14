@@ -1,14 +1,16 @@
 /**
- * Sandbox re-engagement cron — runs every 6 hours.
+ * Sandbox re-engagement cron — runs daily.
  *
- * Finds users who:
- *  1. Signed up 20–52h ago (roughly T+24h, 32h window to avoid missing anyone between runs)
- *  2. Still in sandbox mode (haven't added their own API key yet)
- *  3. Have used at least 1 sandbox message (they tried it — worth re-engaging)
- *  4. Have NOT exhausted the sandbox (there's still value to demonstrate)
- *  5. Haven't already received this nudge (checked via ActivityLog)
+ * Two cohorts:
  *
- * The email shows how many messages they've used, how many remain, and what to try next.
+ * A) COLD START (sandboxUsed === 0): signed up 36–72h ago, never sent a message.
+ *    Sends "your agent is waiting for a first message" email.
+ *    Tracked via ActivityLog event: "sandbox_cold_start_sent"
+ *
+ * B) PARTIAL (sandboxUsed > 0, < SANDBOX_LIMIT): signed up 20–52h ago, tried it but stopped.
+ *    Sends "X messages left — your AI is waiting" email.
+ *    Tracked via ActivityLog event: "sandbox_nudge_sent"
+ *
  * Goal: pull distracted users back before they forget about the product.
  */
 import { NextResponse } from "next/server";
@@ -33,50 +35,91 @@ export async function GET(req: Request) {
   }
 
   const now = Date.now();
-  const windowStart = new Date(now - WINDOW_MAX_HOURS * 3600 * 1000);
-  const windowEnd   = new Date(now - WINDOW_MIN_HOURS * 3600 * 1000);
 
-  // Users created in the window, still in sandbox, with at least 1 message used
-  const candidates = await prisma.user.findMany({
-    where: {
-      createdAt: { gte: windowStart, lte: windowEnd },
-      instances: {
-        some: {
-          sandboxMode: true,
-          sandboxUsed: { gt: 0, lt: SANDBOX_LIMIT },
+  // Cohort A: cold start — signed up 36–72h ago, never tried the sandbox
+  const coldWindowStart = new Date(now - 72 * 3600 * 1000);
+  const coldWindowEnd   = new Date(now - 36 * 3600 * 1000);
+
+  // Cohort B: partial — signed up 20–52h ago, tried sandbox but didn't finish
+  const nudgeWindowStart = new Date(now - 52 * 3600 * 1000);
+  const nudgeWindowEnd   = new Date(now - 20 * 3600 * 1000);
+
+  const [coldCandidates, nudgeCandidates] = await Promise.all([
+    // Cohort A: sandboxUsed === 0
+    prisma.user.findMany({
+      where: {
+        createdAt: { gte: coldWindowStart, lte: coldWindowEnd },
+        instances: { some: { sandboxMode: true, sandboxUsed: 0 } },
+      },
+      include: {
+        instances: {
+          where: { sandboxMode: true, sandboxUsed: 0 },
+          orderBy: { createdAt: "asc" },
+          take: 1,
         },
       },
-    },
-    include: {
-      instances: {
-        where: {
-          sandboxMode: true,
-          sandboxUsed: { gt: 0, lt: SANDBOX_LIMIT },
-        },
-        orderBy: { createdAt: "asc" },
-        take: 1, // primary instance
+    }),
+    // Cohort B: 1 ≤ sandboxUsed < SANDBOX_LIMIT
+    prisma.user.findMany({
+      where: {
+        createdAt: { gte: nudgeWindowStart, lte: nudgeWindowEnd },
+        instances: { some: { sandboxMode: true, sandboxUsed: { gt: 0, lt: SANDBOX_LIMIT } } },
       },
-    },
-  });
+      include: {
+        instances: {
+          where: { sandboxMode: true, sandboxUsed: { gt: 0, lt: SANDBOX_LIMIT } },
+          orderBy: { createdAt: "asc" },
+          take: 1,
+        },
+      },
+    }),
+  ]);
 
   let sent = 0;
   let skipped = 0;
 
-  for (const user of candidates) {
+  // ── Cohort A: cold start ───────────────────────────────────────────────────
+  for (const user of coldCandidates) {
     if (!user.email || user.instances.length === 0) { skipped++; continue; }
-
     const instance = user.instances[0];
 
-    // Check if already nudged — use ActivityLog as state store (no schema change needed)
     const alreadySent = await prisma.activityLog.findFirst({
-      where: {
-        instanceId: instance.id,
-        event: "sandbox_nudge_sent",
-      },
+      where: { instanceId: instance.id, event: "sandbox_cold_start_sent" },
     });
     if (alreadySent) { skipped++; continue; }
 
-    // Send the nudge
+    const ok = await email.sandboxColdStart(
+      user.email,
+      user.name ?? "there",
+      instance.name,
+      instance.id,
+      SANDBOX_LIMIT,
+    ).catch(() => false);
+
+    if (ok) {
+      await prisma.activityLog.create({
+        data: {
+          instanceId: instance.id,
+          event: "sandbox_cold_start_sent",
+          details: `Cold-start email sent to ${user.email} (sandboxUsed: 0)`,
+        },
+      });
+      sent++;
+    } else {
+      skipped++;
+    }
+  }
+
+  // ── Cohort B: partial users ────────────────────────────────────────────────
+  for (const user of nudgeCandidates) {
+    if (!user.email || user.instances.length === 0) { skipped++; continue; }
+    const instance = user.instances[0];
+
+    const alreadySent = await prisma.activityLog.findFirst({
+      where: { instanceId: instance.id, event: "sandbox_nudge_sent" },
+    });
+    if (alreadySent) { skipped++; continue; }
+
     const ok = await email.sandboxNudge(
       user.email,
       user.name ?? "there",
@@ -87,7 +130,6 @@ export async function GET(req: Request) {
     ).catch(() => false);
 
     if (ok) {
-      // Mark as sent so we don't re-send on next cron run
       await prisma.activityLog.create({
         data: {
           instanceId: instance.id,
@@ -96,6 +138,8 @@ export async function GET(req: Request) {
         },
       });
       sent++;
+    } else {
+      skipped++;
     }
   }
 
@@ -103,6 +147,7 @@ export async function GET(req: Request) {
     ok: true,
     sent,
     skipped,
-    checked: candidates.length,
+    checked: coldCandidates.length + nudgeCandidates.length,
+    cohorts: { coldStart: coldCandidates.length, partial: nudgeCandidates.length },
   });
 }

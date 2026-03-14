@@ -229,7 +229,7 @@ export default function OnboardingPage() {
 
   function goToDeploy() {
     if (instanceId) {
-      router.push(`/dashboard/instances/${instanceId}`);
+      router.push(`/dashboard/instances/${instanceId}?firstRun=1`);
     } else {
       router.push("/dashboard");
     }
