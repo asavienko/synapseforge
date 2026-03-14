@@ -11,6 +11,9 @@ import { getTranslations } from "next-intl/server";
 export default async function LandingPage() {
   const t = await getTranslations();
   const tl = await getTranslations("landing");
+  const { auth } = await import("@/lib/auth");
+  const session = await auth().catch(() => null);
+  const isLoggedIn = !!session?.user;
 
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white grid-bg">
@@ -30,15 +33,26 @@ export default async function LandingPage() {
           </div>
           <div className="flex items-center gap-2 md:gap-3">
             <LocaleSwitcher />
-            <Link href="/sign-in" className="hidden md:block text-sm text-zinc-400 hover:text-white transition-colors px-4 py-2">
-              {t("nav.signIn")}
-            </Link>
-            <Link
-              href="/sign-up"
-              className="text-sm bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2 rounded-lg font-medium whitespace-nowrap"
-            >
-              {t("nav.getStarted")}
-            </Link>
+            {isLoggedIn ? (
+              <Link
+                href="/dashboard"
+                className="text-sm bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2 rounded-lg font-medium whitespace-nowrap"
+              >
+                {t("nav.dashboard")}
+              </Link>
+            ) : (
+              <>
+                <Link href="/sign-in" className="hidden md:block text-sm text-zinc-400 hover:text-white transition-colors px-4 py-2">
+                  {t("nav.signIn")}
+                </Link>
+                <Link
+                  href="/sign-up"
+                  className="text-sm bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2 rounded-lg font-medium whitespace-nowrap"
+                >
+                  {t("nav.getStarted")}
+                </Link>
+              </>
+            )}
             <MobileNav labels={{
               services: t("nav.services"),
               pricing: t("nav.pricing"),
@@ -67,10 +81,10 @@ export default async function LandingPage() {
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
           <Link
-            href="/sign-up"
+            href={isLoggedIn ? "/dashboard" : "/sign-up"}
             className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 transition-all px-8 py-4 rounded-xl font-semibold text-lg shadow-lg shadow-violet-500/20"
           >
-            {t("hero.cta")} <ArrowRight className="w-5 h-5" />
+            {isLoggedIn ? t("nav.dashboard") : t("hero.cta")} <ArrowRight className="w-5 h-5" />
           </Link>
           <a
             href="#how"

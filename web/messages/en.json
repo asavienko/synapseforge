@@ -16,7 +16,8 @@
     "about": "About",
     "contact": "Contact",
     "signIn": "Sign in",
-    "getStarted": "Get started"
+    "getStarted": "Get started",
+    "dashboard": "Dashboard"
   },
   "hero": {
     "badge": "Now in early access",
