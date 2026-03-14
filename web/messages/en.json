@@ -81,7 +81,7 @@
       "humanManager": "Dedicated human manager",
       "response24h": "24h manager response time",
       "customConfig": "Custom model configuration",
-      "integrations": "Telegram, Discord, Slack integrations",
+      "integrations": "Telegram & WhatsApp integration",
       "sla99": "99% uptime SLA",
       "unlimitedInstances": "Unlimited AI instances",
       "managerTeam": "Dedicated manager team",
@@ -89,7 +89,9 @@
       "customIntegrations": "Custom integrations & webhooks",
       "teamTraining": "Team onboarding & training",
       "whiteLabel": "White-label option"
-    }
+    },
+    "currentPlan": "Current plan",
+    "upgradeToPro": "Upgrade to Pro"
   },
   "about": {
     "title": "Built different",

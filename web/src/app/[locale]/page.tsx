@@ -12,8 +12,12 @@ export default async function LandingPage() {
   const t = await getTranslations();
   const tl = await getTranslations("landing");
   const { auth } = await import("@/lib/auth");
+  const { prisma } = await import("@/lib/prisma");
   const session = await auth().catch(() => null);
   const isLoggedIn = !!session?.user;
+  const userPlan = isLoggedIn && session?.user?.id
+    ? await prisma.user.findUnique({ where: { id: session.user.id }, select: { plan: true } }).then(u => u?.plan ?? "free").catch(() => "free")
+    : "free";
 
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white grid-bg">
@@ -496,12 +500,32 @@ export default async function LandingPage() {
                   ))}
                 </ul>
                 {plan === "enterprise" ? (
-                  <a
-                    href="mailto:hello@synapseforge.ai"
+                  <Link
+                    href="/contact"
                     className="block text-center py-3 rounded-xl font-semibold text-sm transition-colors border border-white/10 hover:border-white/20 text-zinc-300"
                   >
                     {t(`pricing.${plan}.cta` as Parameters<typeof t>[0])}
-                  </a>
+                  </Link>
+                ) : isLoggedIn ? (
+                  userPlan === plan ? (
+                    <div className="block text-center py-3 rounded-xl text-sm font-semibold text-emerald-400 border border-emerald-500/30 bg-emerald-500/5">
+                      ✓ {t("pricing.currentPlan")}
+                    </div>
+                  ) : plan === "pro" ? (
+                    <Link
+                      href="/dashboard/billing"
+                      className="block text-center py-3 rounded-xl font-semibold text-sm transition-colors bg-violet-600 hover:bg-violet-500 text-white"
+                    >
+                      {t("pricing.upgradeToPro")}
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/dashboard"
+                      className="block text-center py-3 rounded-xl font-semibold text-sm transition-colors border border-white/10 hover:border-white/20 text-zinc-300"
+                    >
+                      {t("nav.dashboard")}
+                    </Link>
+                  )
                 ) : (
                   <Link
                     href="/sign-up"

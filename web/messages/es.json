@@ -81,7 +81,7 @@
       "humanManager": "Manager humano dedicado",
       "response24h": "Respuesta en 24h",
       "customConfig": "Configuración de modelo personalizada",
-      "integrations": "Telegram, Discord, Slack",
+      "integrations": "Integración con Telegram y WhatsApp",
       "sla99": "SLA 99%",
       "unlimitedInstances": "Instancias ilimitadas",
       "managerTeam": "Equipo de managers",
@@ -89,7 +89,9 @@
       "customIntegrations": "Integraciones personalizadas",
       "teamTraining": "Formación del equipo",
       "whiteLabel": "Opción white-label"
-    }
+    },
+    "currentPlan": "Plan actual",
+    "upgradeToPro": "Actualizar a Pro"
   },
   "about": {
     "title": "Construido diferente",

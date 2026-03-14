@@ -81,7 +81,7 @@
       "humanManager": "Особистий менеджер",
       "response24h": "Відповідь за 24г",
       "customConfig": "Власна конфігурація моделі",
-      "integrations": "Telegram, Discord, Slack",
+      "integrations": "Інтеграція з Telegram і WhatsApp",
       "sla99": "SLA 99%",
       "unlimitedInstances": "Необмежена кількість екземплярів",
       "managerTeam": "Команда менеджерів",
@@ -89,7 +89,9 @@
       "customIntegrations": "Власні інтеграції",
       "teamTraining": "Навчання команди",
       "whiteLabel": "White-label"
-    }
+    },
+    "currentPlan": "Поточний план",
+    "upgradeToPro": "Перейти на Pro"
   },
   "about": {
     "title": "Збудовано інакше",
