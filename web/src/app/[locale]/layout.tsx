@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     url: "https://synapseforge-mu.vercel.app",
     images: [
       {
-        url: "/og-image.png",
+        url: "/api/og",
         width: 1200,
         height: 630,
         alt: "SynapseForge — AI Agent for Telegram & WhatsApp",
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     title: "AI Agent for Your Business — Live in 10 Minutes",
     description:
       "Stop missing customer messages. Deploy a 24/7 AI agent on Telegram and WhatsApp. Start free.",
-    images: ["/og-image.png"],
+    images: ["/api/og"],
   },
   robots: {
     index: true,
