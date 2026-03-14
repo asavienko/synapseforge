@@ -513,6 +513,31 @@ function DeployTab({
 
   return (
     <div className="space-y-5">
+
+      {/* ── Quick-connect banner: shown when agent has AI key but no channel yet ── */}
+      {hasLLM && !hasChannel && (
+        <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-emerald-300 mb-1">✅ Your AI is ready — now connect a channel</p>
+            <p className="text-xs text-zinc-500">Add a Telegram bot token or embed the web widget to start handling real customer conversations.</p>
+          </div>
+          <div className="flex flex-wrap gap-2 shrink-0">
+            <button
+              onClick={onGoToCredentials}
+              className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 bg-sky-600/20 hover:bg-sky-600/30 text-sky-300 border border-sky-500/20 rounded-xl transition-colors"
+            >
+              ✈️ Set up Telegram
+            </button>
+            <button
+              onClick={onGoToCredentials}
+              className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/20 rounded-xl transition-colors"
+            >
+              💬 Set up WhatsApp
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* ── Not yet deployed ── */}
       {(isNotDeployed || isFailed) && (
         <>
@@ -998,6 +1023,8 @@ export default function InstanceDetailPage() {
   const [inlineKeySaving, setInlineKeySaving] = useState(false);
   const [inlineKeyError, setInlineKeyError] = useState("");
   const [showQuickKeyModal, setShowQuickKeyModal] = useState(false);
+  const [showGraduationModal, setShowGraduationModal] = useState(false);
+  const prevSandboxModeRef = useRef<boolean | null>(null);
 
   // Generic inline confirmation modal — replaces all window.confirm() calls
   const [pendingConfirm, setPendingConfirm] = useState<{ message: string; onConfirm: () => void } | null>(null);
@@ -1200,6 +1227,17 @@ export default function InstanceDetailPage() {
   }, [id]);
 
   useEffect(() => { loadInstance(); }, [loadInstance]);
+
+  // Detect sandbox→real graduation and show the "what next?" modal
+  useEffect(() => {
+    if (!instance) return;
+    const prev = prevSandboxModeRef.current;
+    const curr = instance.sandboxMode ?? false;
+    if (prev === true && curr === false) {
+      setShowGraduationModal(true);
+    }
+    prevSandboxModeRef.current = curr;
+  }, [instance?.sandboxMode]);
 
   // Auto-poll while provisioning (8s — banner has its own dedicated poller)
   useEffect(() => {
@@ -4740,6 +4778,82 @@ print(resp.choices[0].message.content)`}</pre>
                 {t("chat.inlineKeyAdvanced")}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Graduation Modal — shown once when sandboxMode flips false ───────── */}
+      {showGraduationModal && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={(e) => e.target === e.currentTarget && setShowGraduationModal(false)}
+        >
+          <div className="bg-[#111118] border border-white/10 rounded-2xl p-7 w-full max-w-lg">
+            {/* Header */}
+            <div className="text-center mb-7">
+              <div className="text-4xl mb-3">🚀</div>
+              <h2 className="text-xl font-bold text-white mb-2">Your agent is live!</h2>
+              <p className="text-sm text-zinc-400 leading-relaxed">
+                You&apos;re now running on your own API key — no message limits.
+                Connect a channel so real customers can start talking to your agent.
+              </p>
+            </div>
+
+            {/* Channel cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+              {/* Telegram */}
+              <button
+                onClick={() => { setShowGraduationModal(false); setTab("Credentials"); }}
+                className="flex flex-col items-center gap-2 p-4 bg-white/[0.03] hover:bg-sky-600/10 border border-white/10 hover:border-sky-500/30 rounded-xl transition-all group"
+              >
+                <span className="text-2xl">✈️</span>
+                <span className="text-sm font-semibold text-white">Telegram</span>
+                <span className="text-[11px] text-zinc-500 group-hover:text-sky-400 transition-colors">Live in ~5 min</span>
+              </button>
+
+              {/* WhatsApp */}
+              <button
+                onClick={() => { setShowGraduationModal(false); setTab("Credentials"); }}
+                className="flex flex-col items-center gap-2 p-4 bg-white/[0.03] hover:bg-emerald-600/10 border border-white/10 hover:border-emerald-500/30 rounded-xl transition-all group"
+              >
+                <span className="text-2xl">💬</span>
+                <span className="text-sm font-semibold text-white">WhatsApp</span>
+                <span className="text-[11px] text-zinc-500 group-hover:text-emerald-400 transition-colors">Live in ~10 min</span>
+              </button>
+
+              {/* Web Widget */}
+              <button
+                onClick={() => { setShowGraduationModal(false); setTab("Deploy"); }}
+                className="flex flex-col items-center gap-2 p-4 bg-white/[0.03] hover:bg-violet-600/10 border border-white/10 hover:border-violet-500/30 rounded-xl transition-all group"
+              >
+                <span className="text-2xl">🌐</span>
+                <span className="text-sm font-semibold text-white">Web Widget</span>
+                <span className="text-[11px] text-zinc-500 group-hover:text-violet-400 transition-colors">Paste one snippet</span>
+              </button>
+            </div>
+
+            {/* Public chat link */}
+            <div className="bg-violet-600/10 border border-violet-500/20 rounded-xl p-4 mb-5 flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-semibold text-violet-300 mb-0.5">Your agent&apos;s public URL</p>
+                <p className="text-[11px] text-zinc-500 font-mono truncate">/chat/{id}</p>
+              </div>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(`${window.location.origin}/chat/${id}`);
+                }}
+                className="shrink-0 text-xs text-violet-400 hover:text-violet-300 bg-violet-600/10 hover:bg-violet-600/20 border border-violet-500/20 px-3 py-1.5 rounded-lg transition-colors"
+              >
+                Copy link
+              </button>
+            </div>
+
+            <button
+              onClick={() => setShowGraduationModal(false)}
+              className="w-full text-center text-xs text-zinc-600 hover:text-zinc-400 transition-colors py-1"
+            >
+              I&apos;ll set up channels later
+            </button>
           </div>
         </div>
       )}
