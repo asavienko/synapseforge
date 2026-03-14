@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { callLLM, LLMResult, LLMError, ChatMessage } from "@/lib/llm";
+import { retrieveContext } from "@/lib/rag";
 
 // LLM calls can take 30-60s — extend Vercel's default 10s limit
 export const maxDuration = 60;
@@ -137,10 +138,23 @@ export async function POST(
   // Build the full message array: prior history + current user turn
   const messages: ChatMessage[] = [...history, { role: "user", content: message }];
 
+  // ── RAG: inject knowledge base context so the public widget uses uploaded docs ──
+  // Best-effort: silently skip on error — knowledge base is optional
+  const kbContext = await retrieveContext(instanceId, message).catch(() => "");
+  const callMessages = kbContext
+    ? [
+        ...messages.slice(0, -1),
+        {
+          role: "user" as const,
+          content: `${message}\n\n[Context from knowledge base]\n${kbContext}`,
+        },
+      ]
+    : messages;
+
   // ── Call LLM ──────────────────────────────────────────────────────────────
   let result: LLMResult | LLMError;
   try {
-    result = await callLLM(instanceId, messages);
+    result = await callLLM(instanceId, callMessages);
   } catch (err) {
     return NextResponse.json(
       { error: err instanceof Error ? err.message : "LLM call failed" },
