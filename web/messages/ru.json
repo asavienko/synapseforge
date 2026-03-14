@@ -1013,7 +1013,13 @@
       "autoUpdateHint": "This page will update automatically when your agent is ready.",
       "channelTelegramDesc": "Users can message your bot on Telegram",
       "channelDiscordDesc": "Bot joins your Discord server",
-      "channelSlackDesc": "Bot connects to your Slack workspace"
+      "channelSlackDesc": "Bot connects to your Slack workspace",
+      "embedTitle": "Встроить на сайт",
+      "embedDesc": "Добавьте виджет чата на любую страницу одной строкой кода.",
+      "embedCopy": "Копировать",
+      "embedCopied": "Скопировано!",
+      "embedHint": "Вставьте этот код в любое место HTML — виджет чата появится немедленно.",
+      "embedMoreOptions": "Другие способы поделиться"
     },
     "usage": {
       "title": "Аналитика Использования",

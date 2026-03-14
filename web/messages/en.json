@@ -1013,7 +1013,13 @@
       "autoUpdateHint": "This page will update automatically when your agent is ready.",
       "channelTelegramDesc": "Users can message your bot on Telegram",
       "channelDiscordDesc": "Bot joins your Discord server",
-      "channelSlackDesc": "Bot connects to your Slack workspace"
+      "channelSlackDesc": "Bot connects to your Slack workspace",
+      "embedTitle": "Embed on your website",
+      "embedDesc": "Add a chat widget to any page with one line of code.",
+      "embedCopy": "Copy",
+      "embedCopied": "Copied!",
+      "embedHint": "Paste this snippet anywhere in your HTML — the chat widget will appear instantly.",
+      "embedMoreOptions": "More sharing options"
     },
     "usage": {
       "title": "Usage Analytics",
