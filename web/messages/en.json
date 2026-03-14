@@ -1197,7 +1197,10 @@
     "online": "Online",
     "poweredBy": "Powered by SynapseForge",
     "typeMessage": "Type a message…",
-    "connectionError": "Connection error. Please check your connection and try again."
+    "connectionError": "Connection error. Please check your connection and try again.",
+    "starterQ1": "What can you help me with?",
+    "starterQ2": "Tell me about your services",
+    "starterQ3": "How do I get started?"
   },
   "manager": {
     "portalLabel": "Manager Portal",

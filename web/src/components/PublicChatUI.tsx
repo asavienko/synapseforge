@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import { Send, Bot, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface Message {
   role: "user" | "assistant";
@@ -30,26 +32,43 @@ export function PublicChatUI({ instanceId, branding }: Props) {
   ]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
+  const [started, setStarted] = useState(false); // hides starters after first message
   const bottomRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const STARTERS = [
+    t("starterQ1"),
+    t("starterQ2"),
+    t("starterQ3"),
+  ];
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  async function send() {
-    const text = input.trim();
-    if (!text || sending) return;
+  async function send(text?: string) {
+    const msg = (text ?? input).trim();
+    if (!msg || sending) return;
     setInput("");
+    setStarted(true);
     setSending(true);
 
-    const userMsg: Message = { role: "user", content: text };
-    setMessages((prev) => [...prev, userMsg]);
+    const userMsg: Message = { role: "user", content: msg };
+    const nextMessages = [...messages, userMsg];
+    setMessages(nextMessages);
+
+    // Build history to send (exclude the initial welcome message from history)
+    const history = nextMessages
+      .slice(1) // skip initial welcome
+      .slice(0, -1) // exclude the just-added user message (sent as `message`)
+      .filter((m) => !m.error)
+      .map((m) => ({ role: m.role, content: m.content }));
 
     try {
       const res = await fetch(`/api/chat/${instanceId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text }),
+        body: JSON.stringify({ message: msg, history }),
       });
 
       const data = await res.json();
@@ -72,14 +91,11 @@ export function PublicChatUI({ instanceId, branding }: Props) {
     } catch {
       setMessages((prev) => [
         ...prev,
-        {
-          role: "assistant",
-          content: t("connectionError"),
-          error: true,
-        },
+        { role: "assistant", content: t("connectionError"), error: true },
       ]);
     } finally {
       setSending(false);
+      setTimeout(() => inputRef.current?.focus(), 50);
     }
   }
 
@@ -114,7 +130,14 @@ export function PublicChatUI({ instanceId, branding }: Props) {
         </div>
         {!branding.hidePoweredBy && (
           <div className="ml-auto">
-            <span className="text-xs text-zinc-600">{t("poweredBy")}</span>
+            <a
+              href="https://synapseforge.ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors"
+            >
+              {t("poweredBy")}
+            </a>
           </div>
         )}
       </div>
@@ -138,7 +161,7 @@ export function PublicChatUI({ instanceId, branding }: Props) {
               </div>
             )}
             <div
-              className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap break-words ${
+              className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed break-words ${
                 msg.role === "user"
                   ? "text-white rounded-br-sm"
                   : msg.error
@@ -151,11 +174,35 @@ export function PublicChatUI({ instanceId, branding }: Props) {
                   : undefined
               }
             >
-              {msg.content}
+              {msg.role === "assistant" && !msg.error ? (
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    p: ({ children }) => <p className="mb-1 last:mb-0">{children}</p>,
+                    ul: ({ children }) => <ul className="list-disc ml-4 mb-1 space-y-0.5">{children}</ul>,
+                    ol: ({ children }) => <ol className="list-decimal ml-4 mb-1 space-y-0.5">{children}</ol>,
+                    li: ({ children }) => <li>{children}</li>,
+                    strong: ({ children }) => <strong className="font-semibold text-white">{children}</strong>,
+                    code: ({ children }) => (
+                      <code className="bg-white/10 rounded px-1 py-0.5 font-mono text-xs">{children}</code>
+                    ),
+                    a: ({ href, children }) => (
+                      <a href={href} target="_blank" rel="noopener noreferrer" className="underline opacity-80 hover:opacity-100">
+                        {children}
+                      </a>
+                    ),
+                  }}
+                >
+                  {msg.content}
+                </ReactMarkdown>
+              ) : (
+                <span className="whitespace-pre-wrap">{msg.content}</span>
+              )}
             </div>
           </div>
         ))}
 
+        {/* Typing indicator */}
         {sending && (
           <div className="flex justify-start">
             <div
@@ -165,18 +212,9 @@ export function PublicChatUI({ instanceId, branding }: Props) {
               <Bot className="w-3.5 h-3.5" style={{ color: branding.brandColor }} />
             </div>
             <div className="bg-white/[0.06] border border-white/[0.08] rounded-2xl rounded-bl-sm px-4 py-3 flex items-center gap-1.5">
-              <span
-                className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-bounce"
-                style={{ animationDelay: "0ms" }}
-              />
-              <span
-                className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-bounce"
-                style={{ animationDelay: "150ms" }}
-              />
-              <span
-                className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-bounce"
-                style={{ animationDelay: "300ms" }}
-              />
+              <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-bounce" style={{ animationDelay: "0ms" }} />
+              <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-bounce" style={{ animationDelay: "150ms" }} />
+              <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-bounce" style={{ animationDelay: "300ms" }} />
             </div>
           </div>
         )}
@@ -184,16 +222,35 @@ export function PublicChatUI({ instanceId, branding }: Props) {
         <div ref={bottomRef} />
       </div>
 
+      {/* Conversation starters — shown until first user message */}
+      {!started && !sending && (
+        <div className="px-4 pb-2 flex flex-wrap gap-2 justify-center">
+          {STARTERS.map((s) => (
+            <button
+              key={s}
+              onClick={() => send(s)}
+              className="text-xs px-3 py-1.5 rounded-full border transition-all hover:scale-105 active:scale-95"
+              style={{
+                borderColor: `${branding.brandColor}40`,
+                color: branding.brandColor,
+                backgroundColor: `${branding.brandColor}10`,
+              }}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Input */}
       <div className="px-4 pb-4 pt-2 border-t border-white/[0.08]">
         <div className="flex gap-2">
           <input
+            ref={inputRef}
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) =>
-              e.key === "Enter" && !e.shiftKey && void send()
-            }
+            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && void send()}
             placeholder={t("typeMessage")}
             disabled={sending}
             className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500/50 transition-colors disabled:opacity-50"

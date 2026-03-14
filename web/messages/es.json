@@ -1296,7 +1296,10 @@
     "online": "En línea",
     "poweredBy": "Desarrollado por SynapseForge",
     "typeMessage": "Escribe un mensaje…",
-    "connectionError": "Error de conexión. Por favor, verifica tu conexión e inténtalo de nuevo."
+    "connectionError": "Error de conexión. Por favor, verifica tu conexión e inténtalo de nuevo.",
+    "starterQ1": "¿En qué puedes ayudarme?",
+    "starterQ2": "Cuéntame sobre sus servicios",
+    "starterQ3": "¿Cómo empiezo?"
   },
   "manager": {
     "portalLabel": "Portal del Gestor",

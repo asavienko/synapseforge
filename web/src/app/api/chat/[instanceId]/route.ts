@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { callLLM, LLMResult, LLMError } from "@/lib/llm";
+import { callLLM, LLMResult, LLMError, ChatMessage } from "@/lib/llm";
 
 // LLM calls can take 30-60s — extend Vercel's default 10s limit
 export const maxDuration = 60;
@@ -45,8 +45,12 @@ export async function OPTIONS() {
 /**
  * POST /api/chat/[instanceId]
  *
- * Public chat proxy for the web widget. No auth needed from the client.
- * Rate limited by IP. Only works for running instances.
+ * Public chat proxy for the web widget and /chat/[instanceId] page.
+ * Accepts either:
+ *   { message: string }                    — single-turn (legacy)
+ *   { message: string, history: [{role, content}][] } — multi-turn with history
+ *
+ * No auth needed from the client. Rate limited by IP.
  */
 export async function POST(
   req: NextRequest,
@@ -93,9 +97,22 @@ export async function POST(
 
   // ── Parse body ────────────────────────────────────────────────────────────
   let message: string;
+  let history: ChatMessage[] = [];
+
   try {
-    const body = (await req.json()) as { message?: string };
+    const body = (await req.json()) as {
+      message?: string;
+      history?: { role: string; content: string }[];
+    };
     message = body.message?.trim() ?? "";
+
+    // Accept conversation history from the client (max 20 turns to cap tokens)
+    if (Array.isArray(body.history)) {
+      history = body.history
+        .filter((m) => m.role === "user" || m.role === "assistant")
+        .slice(-20)
+        .map((m) => ({ role: m.role as "user" | "assistant", content: m.content }));
+    }
   } catch {
     return NextResponse.json(
       { error: "Invalid JSON body" },
@@ -117,10 +134,13 @@ export async function POST(
     );
   }
 
+  // Build the full message array: prior history + current user turn
+  const messages: ChatMessage[] = [...history, { role: "user", content: message }];
+
   // ── Call LLM ──────────────────────────────────────────────────────────────
   let result: LLMResult | LLMError;
   try {
-    result = await callLLM(instanceId, [{ role: "user", content: message }]);
+    result = await callLLM(instanceId, messages);
   } catch (err) {
     return NextResponse.json(
       { error: err instanceof Error ? err.message : "LLM call failed" },
