@@ -226,7 +226,9 @@ describe("19 · Onboarding — 5-step flow", () => {
     cy.contains("button", "Finish setup").click();
 
     cy.wait("@onboardingPost2");
-    cy.get("[data-testid='provider-openai_api_key']").should("be.visible");
+    // Summary screen (step 5) shows provider label as text — not the picker button
+    cy.contains("AI provider").should("be.visible");
+    cy.contains("OpenAI").should("be.visible");
     cy.contains("Telegram").should("be.visible");
     cy.snap("19-onboarding-12-summary-with-creds");
   });

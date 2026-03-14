@@ -41,6 +41,27 @@ export default defineConfig({
         },
 
         /**
+         * Directly set instance status via Prisma.
+         * Used by spec 20 to reliably simulate a stopped instance.
+         */
+        async setInstanceStatus({
+          instanceId,
+          status,
+        }: {
+          instanceId: string;
+          status: string;
+        }) {
+          const { PrismaClient } = await import("@prisma/client");
+          const prisma = new PrismaClient();
+          try {
+            await prisma.aIInstance.update({ where: { id: instanceId }, data: { status } });
+            return { ok: true };
+          } finally {
+            await prisma.$disconnect();
+          }
+        },
+
+        /**
          * Seed a ChatMessage directly into the DB for an instance.
          * Used by spec 29 test 05 to ensure chat history exists without
          * relying on intercepted HTTP responses (avoids race conditions).

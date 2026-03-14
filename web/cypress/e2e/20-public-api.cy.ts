@@ -126,33 +126,27 @@ describe("20 · Public API", () => {
     cy.login(EMAIL(), PASS());
     cy.request("/api/instances").then((res) => {
       const instanceId: string = res.body[0].id;
-      // Ensure stopped
-      cy.request({
-        method: "PATCH",
-        url: `/api/instances/${instanceId}`,
-        body: { status: "stopped" },
-        headers: { "Content-Type": "application/json" },
-        failOnStatusCode: false,
-      });
-
-      return cy.request({
-        method: "POST",
-        url: `/api/instances/${instanceId}/keys`,
-        body: { name: "Stop Test Key" },
-        headers: { "Content-Type": "application/json" },
-      }).then((keyRes) => {
-        cy.request({
+      // Use cy.task to reliably set status to stopped (PATCH can fail silently due to auth/plan checks)
+      cy.task("setInstanceStatus", { instanceId, status: "stopped" }).then(() => {
+        return cy.request({
           method: "POST",
-          url: "/api/v1/chat",
-          body: { message: "Hello" },
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${keyRes.body.key}`,
-          },
-          failOnStatusCode: false,
-        }).then((chatRes) => {
-          expect(chatRes.status).to.eq(400);
-          expect(chatRes.body.error).to.include("stopped");
+          url: `/api/instances/${instanceId}/keys`,
+          body: { name: "Stop Test Key" },
+          headers: { "Content-Type": "application/json" },
+        }).then((keyRes) => {
+          cy.request({
+            method: "POST",
+            url: "/api/v1/chat",
+            body: { message: "Hello" },
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${keyRes.body.key}`,
+            },
+            failOnStatusCode: false,
+          }).then((chatRes) => {
+            expect(chatRes.status).to.eq(400);
+            expect(chatRes.body.error).to.include("stopped");
+          });
         });
       });
     });

@@ -232,8 +232,9 @@ describe("03 · Onboarding", () => {
 
     cy.wait("@onboardingPost");
 
-    // Summary should show OpenAI
-    cy.get("[data-testid='provider-openai_api_key']").should("be.visible");
+    // Summary should show OpenAI provider label (step 5 summary row)
+    cy.contains("AI provider").should("be.visible");
+    cy.contains("OpenAI").should("be.visible");
     cy.snap("03-onboard-14-summary-with-key");
   });
 });
