@@ -1036,7 +1036,7 @@
       "chatAvailable": "Чат доступний на вкладці Чат",
       "addKey": "Add key",
       "checkLLMHint": "OpenAI, Anthropic or OpenRouter key required",
-      "checkChannelHint": "Add Telegram, Discord or Slack tokens to reach users on those platforms",
+      "checkChannelHint": "Додайте токен Telegram-бота або облікові дані WhatsApp (Twilio) для роботи з користувачами",
       "addChannel": "Add channel",
       "noneConfigured": "None configured",
       "liveStatus": "Live",
@@ -1046,7 +1046,7 @@
       "whatHappensTitle": "What happens when you deploy",
       "step1Text": "A dedicated cloud server is provisioned in under 3 minutes",
       "step2Text": "OpenClaw is installed and configured with your credentials",
-      "step3Text": "Your AI agent goes live on all configured channels (Telegram, Discord, Slack)",
+      "step3Text": "Ваш агент ШІ запускається в Telegram, WhatsApp і веб-віджеті",
       "step4Text": "When you update credentials, config syncs automatically within 5 minutes",
       "provStep1Label": "Provisioning cloud server",
       "provStep1Sub": "Allocating your dedicated VPS",
@@ -1055,7 +1055,7 @@
       "provStep3Label": "Configuring your agent",
       "provStep3Sub": "Applying your credentials and settings",
       "provStep4Label": "Going live",
-      "provStep4Sub": "Your agent will start responding on connected channels",
+      "provStep4Sub": "Агент почне відповідати на підключених каналах",
       "autoUpdateHint": "This page will update automatically when your agent is ready.",
       "channelTelegramDesc": "Users can message your bot on Telegram",
       "channelDiscordDesc": "Bot joins your Discord server",
@@ -1072,7 +1072,9 @@
       "qrDesc": "Роздрукуйте або поділіться QR-кодом — клієнти сканують його, щоб відкрити вашого агента",
       "qrDownload": "Завантажити PNG",
       "qrCopyLink": "Скопіювати посилання",
-      "qrCopied": "Скопійовано!"
+      "qrCopied": "Скопійовано!",
+      "channelWhatsApp": "WhatsApp",
+      "channelWidget": "Веб-віджет"
     },
     "usage": {
       "title": "Аналітика Використання",

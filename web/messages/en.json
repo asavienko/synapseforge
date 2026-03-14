@@ -1036,7 +1036,7 @@
       "chatAvailable": "Chat available in the Chat tab",
       "addKey": "Add key",
       "checkLLMHint": "OpenAI, Anthropic or OpenRouter key required",
-      "checkChannelHint": "Add Telegram, Discord or Slack tokens to reach users on those platforms",
+      "checkChannelHint": "Add a Telegram bot token or WhatsApp (Twilio) credentials to reach users on those platforms",
       "addChannel": "Add channel",
       "noneConfigured": "None configured",
       "liveStatus": "Live",
@@ -1046,7 +1046,7 @@
       "whatHappensTitle": "What happens when you deploy",
       "step1Text": "A dedicated cloud server is provisioned in under 3 minutes",
       "step2Text": "OpenClaw is installed and configured with your credentials",
-      "step3Text": "Your AI agent goes live on all configured channels (Telegram, Discord, Slack)",
+      "step3Text": "Your AI agent goes live on Telegram, WhatsApp, and the web widget",
       "step4Text": "When you update credentials, config syncs automatically within 5 minutes",
       "provStep1Label": "Provisioning cloud server",
       "provStep1Sub": "Allocating your dedicated VPS",
@@ -1072,7 +1072,9 @@
       "qrDesc": "Print or share this QR code — customers scan it to open your agent",
       "qrDownload": "Download PNG",
       "qrCopyLink": "Copy link",
-      "qrCopied": "Copied!"
+      "qrCopied": "Copied!",
+      "channelWhatsApp": "WhatsApp",
+      "channelWidget": "Web Widget"
     },
     "usage": {
       "title": "Usage Analytics",

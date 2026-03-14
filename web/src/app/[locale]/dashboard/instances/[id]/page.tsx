@@ -496,9 +496,10 @@ function DeployTab({
   const credKeys = credentials.map((c) => c.key);
   const hasLLM = credKeys.some((k) => ["openai_api_key", "anthropic_api_key", "openrouter_api_key"].includes(k));
   const hasTelegram = credKeys.includes("telegram_bot_token");
-  const hasDiscord = credKeys.includes("discord_bot_token");
-  const hasSlack = credKeys.includes("slack_app_token") || credKeys.includes("slack_bot_token");
-  const hasChannel = hasTelegram || hasDiscord || hasSlack;
+  const hasWhatsApp = credKeys.includes("twilio_account_sid");
+  // Web Widget is always active once the instance is running — no credential needed
+  const hasWebWidget = true;
+  const hasChannel = hasTelegram || hasWhatsApp || hasWebWidget;
 
   const isProvisioning = instance.provisionStatus === "provisioning";
   const isReady = instance.hasGateway && (instance.provisionStatus === "ready" || (instance.hasGateway && !isProvisioning));
@@ -507,8 +508,8 @@ function DeployTab({
 
   const activeChannels = [
     hasTelegram && t("deploy.channelTelegram"),
-    hasDiscord && t("deploy.channelDiscord"),
-    hasSlack && t("deploy.channelSlack"),
+    hasWhatsApp && t("deploy.channelWhatsApp"),
+    hasWebWidget && t("deploy.channelWidget"),
   ].filter(Boolean) as string[];
 
   return (

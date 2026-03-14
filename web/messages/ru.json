@@ -1036,7 +1036,7 @@
       "chatAvailable": "Чат доступен на вкладке Чат",
       "addKey": "Add key",
       "checkLLMHint": "OpenAI, Anthropic or OpenRouter key required",
-      "checkChannelHint": "Add Telegram, Discord or Slack tokens to reach users on those platforms",
+      "checkChannelHint": "Добавьте токен Telegram-бота или учётные данные WhatsApp (Twilio) для работы с пользователями",
       "addChannel": "Add channel",
       "noneConfigured": "None configured",
       "liveStatus": "Live",
@@ -1046,7 +1046,7 @@
       "whatHappensTitle": "What happens when you deploy",
       "step1Text": "A dedicated cloud server is provisioned in under 3 minutes",
       "step2Text": "OpenClaw is installed and configured with your credentials",
-      "step3Text": "Your AI agent goes live on all configured channels (Telegram, Discord, Slack)",
+      "step3Text": "Ваш ИИ-агент запускается в Telegram, WhatsApp и веб-виджете",
       "step4Text": "When you update credentials, config syncs automatically within 5 minutes",
       "provStep1Label": "Provisioning cloud server",
       "provStep1Sub": "Allocating your dedicated VPS",
@@ -1055,7 +1055,7 @@
       "provStep3Label": "Configuring your agent",
       "provStep3Sub": "Applying your credentials and settings",
       "provStep4Label": "Going live",
-      "provStep4Sub": "Your agent will start responding on connected channels",
+      "provStep4Sub": "Агент начнёт отвечать на подключённых каналах",
       "autoUpdateHint": "This page will update automatically when your agent is ready.",
       "channelTelegramDesc": "Users can message your bot on Telegram",
       "channelDiscordDesc": "Bot joins your Discord server",
@@ -1072,7 +1072,9 @@
       "qrDesc": "Распечатайте или поделитесь QR-кодом — клиенты сканируют его, чтобы открыть вашего агента",
       "qrDownload": "Скачать PNG",
       "qrCopyLink": "Копировать ссылку",
-      "qrCopied": "Скопировано!"
+      "qrCopied": "Скопировано!",
+      "channelWhatsApp": "WhatsApp",
+      "channelWidget": "Веб-виджет"
     },
     "usage": {
       "title": "Аналитика Использования",
