@@ -37,7 +37,7 @@ const PLANS = [
       "24h response time",
       "Weekly check-ins",
       "Custom configurations",
-      "CRM & Slack integrations",
+      "Telegram & WhatsApp integration",
       "99% uptime SLA",
     ],
     highlight: true,

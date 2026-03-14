@@ -1065,7 +1065,14 @@
       "embedCopy": "Copiar",
       "embedCopied": "¡Copiado!",
       "embedHint": "Pega este código en cualquier parte de tu HTML — el widget de chat aparecerá al instante.",
-      "embedMoreOptions": "Más opciones para compartir"
+      "embedMoreOptions": "Más opciones para compartir",
+      "channelWhatsAppDesc": "Responde mensajes de WhatsApp via Twilio",
+      "channelWidgetDesc": "Widget de chat embebido — siempre activo",
+      "qrTitle": "Código QR",
+      "qrDesc": "Imprime o comparte este código QR — los clientes lo escanean para abrir tu agente",
+      "qrDownload": "Descargar PNG",
+      "qrCopyLink": "Copiar enlace",
+      "qrCopied": "¡Copiado!"
     },
     "usage": {
       "title": "Análisis de Uso",

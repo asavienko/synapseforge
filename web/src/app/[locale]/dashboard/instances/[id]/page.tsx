@@ -808,11 +808,11 @@ function DeployTab({
             </div>
             <div className="divide-y divide-white/5">
               {[
-                { key: "telegram_bot_token", label: "Telegram", icon: "✈", desc: t("deploy.channelTelegramDesc") },
-                { key: "discord_bot_token", label: "Discord", icon: "🎮", desc: t("deploy.channelDiscordDesc") },
-                { key: "slack_app_token", label: "Slack", icon: "💬", desc: t("deploy.channelSlackDesc") },
+                { key: "telegram_bot_token", label: "Telegram", icon: "✈️", desc: t("deploy.channelTelegramDesc") },
+                { key: "twilio_account_sid", label: "WhatsApp", icon: "💬", desc: t("deploy.channelWhatsAppDesc") },
+                { key: "web_widget", label: "Web Widget", icon: "🌐", desc: t("deploy.channelWidgetDesc") },
               ].map(({ key, label, icon, desc }) => {
-                const active = credKeys.includes(key);
+                const active = key === "web_widget" ? true : credKeys.includes(key);
                 return (
                   <div key={key} className="flex items-center gap-4 p-4">
                     <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-lg ${
@@ -842,10 +842,79 @@ function DeployTab({
             </div>
           </div>
 
+          {/* ── QR Code ── */}
+          <QRCard instanceId={instanceId} t={t} />
+
           {/* ── Embed on your website ── */}
           <EmbedCard instanceId={instanceId} t={t} />
         </div>
       )}
+    </div>
+  );
+}
+
+// ─── QRCard ──────────────────────────────────────────────────────────────────
+
+function QRCard({ instanceId, t }: { instanceId: string; t: (key: string) => string }) {
+  const [copied, setCopied] = useState(false);
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://synapseforge.ai";
+  const chatUrl = `${origin}/chat/${instanceId}`;
+  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&color=7c3aed&bgcolor=111118&data=${encodeURIComponent(chatUrl)}`;
+
+  function copyLink() {
+    navigator.clipboard.writeText(chatUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  function downloadQR() {
+    const a = document.createElement("a");
+    a.href = `https://api.qrserver.com/v1/create-qr-code/?size=512x512&color=7c3aed&bgcolor=111118&data=${encodeURIComponent(chatUrl)}&format=png`;
+    a.download = `agent-qr-${instanceId}.png`;
+    a.target = "_blank";
+    a.click();
+  }
+
+  return (
+    <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+      <div className="p-5 border-b border-white/5">
+        <h3 className="text-sm font-semibold text-white">{t("deploy.qrTitle")}</h3>
+        <p className="text-xs text-zinc-500 mt-0.5">{t("deploy.qrDesc")}</p>
+      </div>
+      <div className="p-5 flex flex-col sm:flex-row items-center gap-6">
+        {/* QR image */}
+        <div className="shrink-0 p-3 bg-[#111118] border border-white/10 rounded-xl">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={qrSrc}
+            alt="QR code for agent chat"
+            width={160}
+            height={160}
+            className="rounded-lg"
+            style={{ imageRendering: "pixelated" }}
+          />
+        </div>
+        {/* Info + actions */}
+        <div className="flex-1 min-w-0 w-full">
+          <p className="text-xs text-zinc-500 mb-2 font-mono break-all">{chatUrl}</p>
+          <div className="flex flex-wrap gap-2 mt-4">
+            <button
+              onClick={copyLink}
+              className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 transition-colors"
+            >
+              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+              {copied ? t("deploy.qrCopied") : t("deploy.qrCopyLink")}
+            </button>
+            <button
+              onClick={downloadQR}
+              className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg bg-violet-600/20 hover:bg-violet-600/30 border border-violet-500/30 text-violet-300 transition-colors"
+            >
+              <Download className="w-3.5 h-3.5" />
+              {t("deploy.qrDownload")}
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
