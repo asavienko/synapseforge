@@ -30,14 +30,14 @@ export async function POST(req: NextRequest) {
         if (!userId || !plan) break;
 
         const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
+        const periodEnd = subscription.items.data[0]?.current_period_end ?? null;
         await prisma.user.update({
           where: { id: userId },
           data: {
             plan,
             stripeSubscriptionId: subscription.id,
             stripePriceId: subscription.items.data[0].price.id,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            stripeCurrentPeriodEnd: new Date(((subscription as unknown) as any).current_period_end * 1000),
+            stripeCurrentPeriodEnd: periodEnd ? new Date(periodEnd * 1000) : null,
             stripeCustomerId: session.customer as string,
           },
         });
@@ -46,19 +46,21 @@ export async function POST(req: NextRequest) {
       }
 
       case "invoice.payment_succeeded": {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const invoice = event.data.object as any;
-        if (!invoice.subscription) break;
+        const invoice = event.data.object as Stripe.Invoice;
+        // In Stripe SDK v20+, subscription moved to invoice.parent.subscription_details.subscription
+        const subRef = invoice.parent?.subscription_details?.subscription;
+        const invoiceSubscriptionId = typeof subRef === "string" ? subRef : subRef?.id ?? null;
+        if (!invoiceSubscriptionId) break;
 
-        const subscription = await stripe.subscriptions.retrieve(invoice.subscription as string);
+        const subscription = await stripe.subscriptions.retrieve(invoiceSubscriptionId);
         const userId = subscription.metadata?.userId;
         if (!userId) break;
 
+        const periodEnd = subscription.items.data[0]?.current_period_end ?? null;
         await prisma.user.update({
           where: { id: userId },
           data: {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            stripeCurrentPeriodEnd: new Date(((subscription as unknown) as any).current_period_end * 1000),
+            stripeCurrentPeriodEnd: periodEnd ? new Date(periodEnd * 1000) : null,
           },
         });
         break;
@@ -76,14 +78,14 @@ export async function POST(req: NextRequest) {
         const status = subscription.status;
         const effectivePlan = status === "active" ? newPlan : "free";
 
+        const updatedPeriodEnd = subscription.items.data[0]?.current_period_end ?? null;
         await prisma.user.update({
           where: { id: userId },
           data: {
             plan: effectivePlan,
             stripeSubscriptionId: subscription.id,
             stripePriceId: subscription.items.data[0].price.id,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            stripeCurrentPeriodEnd: new Date(((subscription as unknown) as any).current_period_end * 1000),
+            stripeCurrentPeriodEnd: updatedPeriodEnd ? new Date(updatedPeriodEnd * 1000) : null,
           },
         });
 
