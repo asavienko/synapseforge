@@ -52,22 +52,22 @@ export function SandboxUpgradeCard({ onAddKey }: SandboxUpgradeCardProps) {
         {t("upgradeDesc")}
       </p>
 
-      {/* CTAs */}
+      {/* CTAs — API key first: instant access, no scheduling friction */}
       <div className="flex flex-col gap-2 mb-4">
+        <button
+          onClick={onAddKey}
+          className="w-full text-center text-sm font-semibold px-4 py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-xl transition-colors"
+        >
+          {t("addApiKey")}
+        </button>
         <a
           href="https://cal.com/synapseforge/setup"
           target="_blank"
           rel="noopener noreferrer"
-          className="w-full text-center text-sm font-semibold px-4 py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-xl transition-colors"
+          className="w-full text-center text-sm px-4 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-white/10 rounded-xl transition-colors"
         >
           {t("bookCall")}
         </a>
-        <button
-          onClick={onAddKey}
-          className="w-full text-center text-sm px-4 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-white/10 rounded-xl transition-colors"
-        >
-          {t("addApiKey")}
-        </button>
       </div>
 
       {/* Email capture */}

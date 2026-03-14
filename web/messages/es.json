@@ -1428,8 +1428,8 @@
     "testConnection": "Probar conexión"
   },
   "sandbox": {
-    "usedFreeMessages": "Has utilizado los 20 mensajes gratuitos del sandbox",
-    "upgradeDesc": "¿Listo para ir más allá del sandbox? Reserva una llamada de configuración — configuraremos tu agente de IA y te pondremos en marcha con tus propias claves API.",
+    "usedFreeMessages": "Has usado tus 20 mensajes gratuitos",
+    "upgradeDesc": "Añade tu propia clave de OpenAI, Anthropic u OpenRouter para desbloquear conversaciones ilimitadas al instante, sin necesidad de llamada. O reserva una llamada si quieres que lo gestionemos todo.",
     "bookCall": "Reservar una llamada de configuración",
     "addApiKey": "Añadir mi clave API",
     "emailPlaceholder": "tu@email.com",

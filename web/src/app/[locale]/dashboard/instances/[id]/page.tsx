@@ -1809,10 +1809,14 @@ export default function InstanceDetailPage() {
     if (res.ok) {
       setChatNoCredentials(false);
       setInlineKeyValue("");
+      // Reload instance so sandboxMode flips to false, banner disappears,
+      // and credential list refreshes — critical for the sandbox→real transition
+      await loadInstance();
+      loadCredentials();
       // Auto-focus the chat input so user can immediately type
       setTimeout(() => {
         document.querySelector<HTMLTextAreaElement>("textarea[placeholder]")?.focus();
-      }, 100);
+      }, 150);
     } else {
       const data = await res.json();
       setInlineKeyError(data.error ?? t("credentials.saveFailed"));
