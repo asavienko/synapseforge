@@ -850,6 +850,7 @@ export default function InstanceDetailPage() {
   // Logs state
   const [logs, setLogs] = useState<LogRow[]>([]);
   const [logsLoading, setLogsLoading] = useState(false);
+  const [logFilter, setLogFilter] = useState<"all" | "config" | "chat" | "errors" | "keys" | "provision">("all");
 
   // Usage stats state
   type UsageData = {
@@ -2942,12 +2943,25 @@ print(resp.choices[0].message.content)`}</pre>
       {/* ── Activity Log ── */}
       {tab === "Activity Log" && (
         <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
-          <div className="p-5 border-b border-white/5 flex items-center justify-between">
+          <div className="p-5 border-b border-white/5 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
             <div className="flex items-center gap-2">
               <h3 className="text-sm font-semibold text-white">{t("activity.title")}</h3>
               {logsLoading && <Loader2 className="w-3.5 h-3.5 text-zinc-600 animate-spin" />}
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
+              {/* Event type filter */}
+              <select
+                value={logFilter}
+                onChange={(e) => setLogFilter(e.target.value as typeof logFilter)}
+                className="text-xs bg-white/5 border border-white/10 rounded-lg px-2.5 py-1.5 text-zinc-300 focus:outline-none focus:border-violet-500 transition-colors"
+              >
+                <option value="all">{t("activity.filterAll")}</option>
+                <option value="config">{t("activity.filterConfig")}</option>
+                <option value="chat">{t("activity.filterChat")}</option>
+                <option value="errors">{t("activity.filterErrors")}</option>
+                <option value="keys">{t("activity.filterKeys")}</option>
+                <option value="provision">{t("activity.filterProvision")}</option>
+              </select>
               <span className="text-xs text-zinc-600">{t("activity.autoRefresh")}</span>
               <button onClick={loadLogs} className="text-xs text-zinc-500 hover:text-white transition-colors">{t("activity.refresh")}</button>
             </div>
@@ -2959,9 +2973,26 @@ print(resp.choices[0].message.content)`}</pre>
               <Activity className="w-8 h-8 text-zinc-700 mx-auto mb-2" />
               <p className="text-zinc-500 text-sm">{t("activity.noActivity")}</p>
             </div>
-          ) : (
+          ) : (() => {
+            const filteredLogs = logs.filter((log) => {
+              if (logFilter === "all") return true;
+              if (logFilter === "config") return ["config_changed", "config_synced"].includes(log.event);
+              if (logFilter === "chat") return log.event === "chat_message";
+              if (logFilter === "errors") return ["error", "provision_failed", "key_revoked"].includes(log.event);
+              if (logFilter === "keys") return ["key_generated", "key_revoked"].includes(log.event);
+              if (logFilter === "provision") return log.event.startsWith("provision_");
+              return true;
+            });
+            if (filteredLogs.length === 0) return (
+              <div className="p-8 text-center">
+                <Activity className="w-8 h-8 text-zinc-700 mx-auto mb-2" />
+                <p className="text-zinc-500 text-sm">{t("activity.noResults")}</p>
+                <button onClick={() => setLogFilter("all")} className="mt-2 text-xs text-violet-400 hover:text-violet-300">{t("activity.clearFilter")}</button>
+              </div>
+            );
+            return (
             <div>
-              {groupLogsByDay(logs).map(({ label, logs: dayLogs }) => (
+              {groupLogsByDay(filteredLogs).map(({ label, logs: dayLogs }) => (
                 <div key={label}>
                   {/* Day separator */}
                   <div className="px-4 py-2 bg-white/[0.01] border-b border-white/5">
@@ -2995,7 +3026,8 @@ print(resp.choices[0].message.content)`}</pre>
                 </div>
               ))}
             </div>
-          )}
+          );
+          })()}
         </div>
       )}
 

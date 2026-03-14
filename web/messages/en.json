@@ -657,7 +657,15 @@
       "keyCreated": "API key created. Copy it now — it won't be shown again.",
       "keyRevoked": "API key revoked.",
       "autoRefresh": "Auto-refreshes every 30s",
-      "refresh": "Refresh"
+      "refresh": "Refresh",
+      "filterAll": "All events",
+      "filterConfig": "Config",
+      "filterChat": "Chat",
+      "filterErrors": "Errors",
+      "filterKeys": "API Keys",
+      "filterProvision": "Provisioning",
+      "noResults": "No events match this filter.",
+      "clearFilter": "Clear filter"
     },
     "infrastructure": {
       "tab": "Infrastructure",

@@ -657,7 +657,15 @@
       "keyCreated": "API-ключ створено. Скопіюйте зараз — він не буде показаний знову.",
       "keyRevoked": "API-ключ відкликано.",
       "autoRefresh": "Auto-refreshes every 30s",
-      "refresh": "Refresh"
+      "refresh": "Refresh",
+      "filterAll": "Усі події",
+      "filterConfig": "Конфігурація",
+      "filterChat": "Чат",
+      "filterErrors": "Помилки",
+      "filterKeys": "API-ключі",
+      "filterProvision": "Розгортання",
+      "noResults": "Немає подій для цього фільтра.",
+      "clearFilter": "Скинути фільтр"
     },
     "infrastructure": {
       "tab": "Інфраструктура",

@@ -657,7 +657,15 @@
       "keyCreated": "Clave API creada. Cópiala ahora — no se volverá a mostrar.",
       "keyRevoked": "Clave API revocada.",
       "autoRefresh": "Auto-refreshes every 30s",
-      "refresh": "Refresh"
+      "refresh": "Refresh",
+      "filterAll": "Todos los eventos",
+      "filterConfig": "Configuración",
+      "filterChat": "Chat",
+      "filterErrors": "Errores",
+      "filterKeys": "Claves API",
+      "filterProvision": "Aprovisionamiento",
+      "noResults": "Ningún evento coincide con este filtro.",
+      "clearFilter": "Limpiar filtro"
     },
     "infrastructure": {
       "tab": "Infraestructura",

@@ -657,7 +657,15 @@
       "keyCreated": "API-ключ создан. Скопируйте сейчас — он не будет показан снова.",
       "keyRevoked": "API-ключ отозван.",
       "autoRefresh": "Auto-refreshes every 30s",
-      "refresh": "Refresh"
+      "refresh": "Refresh",
+      "filterAll": "Все события",
+      "filterConfig": "Конфигурация",
+      "filterChat": "Чат",
+      "filterErrors": "Ошибки",
+      "filterKeys": "API-ключи",
+      "filterProvision": "Развёртывание",
+      "noResults": "Нет событий по этому фильтру.",
+      "clearFilter": "Сбросить фильтр"
     },
     "infrastructure": {
       "tab": "Инфраструктура",
