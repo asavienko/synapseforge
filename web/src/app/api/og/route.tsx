@@ -6,6 +6,8 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const title = searchParams.get("title") ?? "AI Agent for Your Business";
   const subtitle = searchParams.get("subtitle") ?? "Live on Telegram & WhatsApp in 10 minutes";
+  // type=agent: show "Chat now" CTA instead of channel pills
+  const type = searchParams.get("type") ?? "default";
 
   return new ImageResponse(
     (
@@ -118,37 +120,69 @@ export async function GET(req: Request) {
             {subtitle}
           </div>
 
-          {/* Channel pills */}
+          {/* Pills: channel list for landing, chat CTA for agent pages */}
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-            {["Telegram", "WhatsApp", "Web Widget"].map((channel) => (
-              <div
-                key={channel}
-                style={{
-                  padding: "8px 20px",
-                  borderRadius: "100px",
-                  background: "rgba(255,255,255,0.06)",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                  color: "#e2e8f0",
-                  fontSize: "16px",
-                  fontWeight: "500",
-                }}
-              >
-                {channel}
-              </div>
-            ))}
-            <div
-              style={{
-                padding: "8px 20px",
-                borderRadius: "100px",
-                background: "rgba(124,58,237,0.2)",
-                border: "1px solid rgba(124,58,237,0.4)",
-                color: "#a78bfa",
-                fontSize: "16px",
-                fontWeight: "600",
-              }}
-            >
-              Start free →
-            </div>
+            {type === "agent" ? (
+              <>
+                <div
+                  style={{
+                    padding: "10px 28px",
+                    borderRadius: "100px",
+                    background: "rgba(124,58,237,0.25)",
+                    border: "1px solid rgba(124,58,237,0.5)",
+                    color: "#c4b5fd",
+                    fontSize: "18px",
+                    fontWeight: "600",
+                  }}
+                >
+                  💬 Chat now →
+                </div>
+                <div
+                  style={{
+                    padding: "10px 24px",
+                    borderRadius: "100px",
+                    background: "rgba(255,255,255,0.05)",
+                    border: "1px solid rgba(255,255,255,0.10)",
+                    color: "#71717a",
+                    fontSize: "16px",
+                  }}
+                >
+                  Powered by SynapseForge
+                </div>
+              </>
+            ) : (
+              <>
+                {["Telegram", "WhatsApp", "Web Widget"].map((channel) => (
+                  <div
+                    key={channel}
+                    style={{
+                      padding: "8px 20px",
+                      borderRadius: "100px",
+                      background: "rgba(255,255,255,0.06)",
+                      border: "1px solid rgba(255,255,255,0.12)",
+                      color: "#e2e8f0",
+                      fontSize: "16px",
+                      fontWeight: "500",
+                    }}
+                  >
+                    {channel}
+                  </div>
+                ))}
+                <div
+                  style={{
+                    padding: "8px 20px",
+                    borderRadius: "100px",
+                    background: "rgba(124,58,237,0.2)",
+                    border: "1px solid rgba(124,58,237,0.4)",
+                    color: "#a78bfa",
+                    fontSize: "16px",
+                    fontWeight: "600",
+                  }}
+                >
+                  Start free →
+                </div>
+              </>
+            )}
           </div>
         </div>
 

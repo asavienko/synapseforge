@@ -8,12 +8,12 @@ interface PageProps {
 }
 
 async function loadBranding(instanceId: string): Promise<{
-  instance: { id: string; name: string; userId: string; status: string };
+  instance: { id: string; name: string; description: string | null; userId: string; status: string };
   branding: Branding;
 } | null> {
   const instance = await prisma.aIInstance.findUnique({
     where: { id: instanceId },
-    select: { id: true, name: true, userId: true, status: true },
+    select: { id: true, name: true, description: true, userId: true, status: true },
   });
 
   if (!instance) return null;
@@ -33,13 +33,33 @@ async function loadBranding(instanceId: string): Promise<{
   return { instance, branding };
 }
 
+const APP_URL = process.env.NEXTAUTH_URL ?? "https://synapseforge-mu.vercel.app";
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { instanceId } = await params;
   const data = await loadBranding(instanceId);
   const name = data?.branding.agentName ?? "AI Assistant";
+  const description = data?.instance.description ?? `Chat with ${name} — your AI assistant`;
+
+  const ogTitle = encodeURIComponent(name);
+  const ogSubtitle = encodeURIComponent(description.length > 80 ? description.slice(0, 77) + "…" : description);
+  const ogUrl = `${APP_URL}/api/og?type=agent&title=${ogTitle}&subtitle=${ogSubtitle}`;
+
   return {
     title: name,
-    description: `Chat with ${name}`,
+    description,
+    openGraph: {
+      type: "website",
+      title: name,
+      description,
+      images: [{ url: ogUrl, width: 1200, height: 630, alt: name }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: name,
+      description,
+      images: [ogUrl],
+    },
   };
 }
 
