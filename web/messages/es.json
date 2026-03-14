@@ -1491,5 +1491,18 @@
     "error": "Clave inválida o error al guardar. Por favor, inténtalo de nuevo.",
     "back": "Volver al panel",
     "altProviders": "O usa Anthropic u OpenRouter en su lugar"
+  },
+  "testimonials": {
+    "title": "Lo que dicen nuestros clientes",
+    "subtitle": "Negocios reales funcionando en SynapseForge",
+    "quote1": "Configuramos un agente de atención al cliente en una tarde. Ahora gestiona el 70% de nuestros mensajes de WhatsApp sin intervención humana. Nuestro equipo puede centrarse en el trabajo real.",
+    "name1": "Maria Gonzalez",
+    "role1": "Directora de Operaciones, PYME de retail",
+    "quote2": "Era escéptico — pensé que los agentes de IA eran para grandes tecnológicas. SynapseForge me demostró lo contrario. El proceso fue de verdad 3 minutos y el agente empezó a responder preguntas al instante.",
+    "name2": "James Whitfield",
+    "role2": "Fundador, tienda de comercio electrónico",
+    "quote3": "Nuestro bot de Telegram ahora califica leads 24/7. Dejamos de perder consultas que llegan de noche. Los ingresos de esos leads cubren con creces el coste de la suscripción.",
+    "name3": "Olena Marchuk",
+    "role3": "CEO, Agencia Digital"
   }
 }

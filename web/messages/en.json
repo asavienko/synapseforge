@@ -1491,5 +1491,18 @@
     "error": "Invalid key or save failed. Please try again.",
     "back": "Back to dashboard",
     "altProviders": "Or use Anthropic or OpenRouter instead"
+  },
+  "testimonials": {
+    "title": "What our customers say",
+    "subtitle": "Real businesses running on SynapseForge",
+    "quote1": "We set up a customer support agent in one afternoon. It now handles 70% of our incoming WhatsApp messages without any human involvement. Our team finally has time to focus on actual work.",
+    "name1": "Maria Gonzalez",
+    "role1": "Operations Manager, Retail SME",
+    "quote2": "I was skeptical — I thought AI agents were for big tech companies. SynapseForge proved me wrong. The onboarding was genuinely 3 minutes and the agent started answering questions immediately.",
+    "name2": "James Whitfield",
+    "role2": "Founder, E-commerce store",
+    "quote3": "Our Telegram bot now qualifies leads 24/7. We stopped missing inquiries that come in at night. Revenue from those leads covers the subscription cost many times over.",
+    "name3": "Olena Marchuk",
+    "role3": "CEO, Digital Agency"
   }
 }
