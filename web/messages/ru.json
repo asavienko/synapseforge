@@ -435,7 +435,22 @@
   },
   "contact": {
     "title": "Связаться с нами",
-    "subtitle": "Есть вопрос? Напишите нам."
+    "subtitle": "Есть вопрос? Ответим в течение 24 часов.",
+    "nameLabel": "Имя",
+    "namePlaceholder": "Ваше имя",
+    "emailLabel": "Email",
+    "emailPlaceholder": "you@example.com",
+    "subjectLabel": "Тема",
+    "subjectPlaceholder": "О чём речь?",
+    "messageLabel": "Сообщение",
+    "messagePlaceholder": "Расскажите, чем мы можем помочь...",
+    "send": "Отправить",
+    "sending": "Отправляем…",
+    "successTitle": "Сообщение отправлено!",
+    "successDesc": "Мы ответим вам в течение 24 часов.",
+    "successReset": "Отправить ещё одно",
+    "fallback": "Предпочитаете email?",
+    "backHome": "На главную"
   },
   "verifyEmail": {
     "loading": "Загрузка…",

@@ -435,7 +435,22 @@
   },
   "contact": {
     "title": "Contáctanos",
-    "subtitle": "¿Tienes una pregunta? Escríbenos."
+    "subtitle": "¿Tienes alguna pregunta? Te respondemos en 24 horas.",
+    "nameLabel": "Nombre",
+    "namePlaceholder": "Tu nombre",
+    "emailLabel": "Correo electrónico",
+    "emailPlaceholder": "tu@ejemplo.com",
+    "subjectLabel": "Asunto",
+    "subjectPlaceholder": "¿De qué se trata?",
+    "messageLabel": "Mensaje",
+    "messagePlaceholder": "Cuéntanos cómo podemos ayudarte...",
+    "send": "Enviar mensaje",
+    "sending": "Enviando…",
+    "successTitle": "¡Mensaje enviado!",
+    "successDesc": "Te responderemos en menos de 24 horas.",
+    "successReset": "Enviar otro mensaje",
+    "fallback": "¿Prefieres el correo?",
+    "backHome": "Volver al inicio"
   },
   "verifyEmail": {
     "loading": "Cargando…",

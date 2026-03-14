@@ -435,7 +435,22 @@
   },
   "contact": {
     "title": "Зв'яжіться з нами",
-    "subtitle": "Маєте питання? Напишіть нам."
+    "subtitle": "Маєте питання? Відповімо протягом 24 годин.",
+    "nameLabel": "Ім'я",
+    "namePlaceholder": "Ваше ім'я",
+    "emailLabel": "Email",
+    "emailPlaceholder": "you@example.com",
+    "subjectLabel": "Тема",
+    "subjectPlaceholder": "Про що йдеться?",
+    "messageLabel": "Повідомлення",
+    "messagePlaceholder": "Розкажіть, як ми можемо допомогти...",
+    "send": "Надіслати",
+    "sending": "Надсилаємо…",
+    "successTitle": "Повідомлення надіслано!",
+    "successDesc": "Ми відповімо вам протягом 24 годин.",
+    "successReset": "Надіслати ще одне",
+    "fallback": "Надаєте перевагу email?",
+    "backHome": "На головну"
   },
   "verifyEmail": {
     "loading": "Завантаження…",

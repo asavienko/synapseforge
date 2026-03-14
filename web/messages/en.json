@@ -434,8 +434,23 @@
     "upgradeRequestError": "Failed to send request"
   },
   "contact": {
-    "title": "Contact Us",
-    "subtitle": "Have a question? Drop us a line."
+    "title": "Contact us",
+    "subtitle": "Have a question? We'll reply within 24 hours.",
+    "nameLabel": "Name",
+    "namePlaceholder": "Your name",
+    "emailLabel": "Email",
+    "emailPlaceholder": "you@example.com",
+    "subjectLabel": "Subject",
+    "subjectPlaceholder": "What's this about?",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Tell us how we can help...",
+    "send": "Send message",
+    "sending": "Sending…",
+    "successTitle": "Message sent!",
+    "successDesc": "We'll get back to you within 24 hours.",
+    "successReset": "Send another message",
+    "fallback": "Prefer email?",
+    "backHome": "Back to home"
   },
   "verifyEmail": {
     "loading": "Loading…",
