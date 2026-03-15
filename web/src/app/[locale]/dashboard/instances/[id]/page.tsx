@@ -2540,7 +2540,7 @@ export default function InstanceDetailPage() {
           )}
 
           {/* Inline key setup — shown when no credentials, right inside chat */}
-          {instance.status === "running" && chatNoCredentials && chatMessages.length === 0 && !instance.sandboxMode && (
+          {instance.status === "running" && chatNoCredentials && chatMessages.length === 0 && (
             <div className="flex-1 flex items-center justify-center px-2">
               <div className="w-full max-w-md">
                 <div className="flex items-center gap-3 mb-5">
