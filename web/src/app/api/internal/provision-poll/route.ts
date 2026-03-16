@@ -30,13 +30,14 @@ export async function POST(req: NextRequest) {
 
     for (const instance of instances) {
       try {
-        // Check Hetzner server status
+        // Check Hetzner server status with timeout
         const hetznerRes = await fetch(
           `https://api.hetzner.cloud/v1/servers/${instance.vpsServerId}`,
           {
             headers: {
               Authorization: `Bearer ${process.env.HETZNER_API_KEY}`,
             },
+            signal: AbortSignal.timeout(10000), // 10s timeout
           }
         );
 
