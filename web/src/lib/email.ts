@@ -9,32 +9,13 @@ const FOOTER_EMAIL = "hello@synapseforge.ai";
 
 // ─── Core send ────────────────────────────────────────────────────────────────
 
-/** Standalone export for cron routes and other server-side callers */
-export async function sendEmail({
-  to,
-  subject,
-  html,
-  replyTo,
-}: {
-  to: string;
-  subject: string;
-  html: string;
-  replyTo?: string;
-}): Promise<boolean> {
-  return send(to, subject, html, replyTo);
-}
-
-async function send(to: string, subject: string, html: string, replyTo?: string): Promise<boolean> {
-  if (process.env.DISABLE_EMAILS === "true") {
-    console.log(`[Email DISABLED] To: ${to} | Subject: ${subject}`);
-    return true; // pretend success so callers don't retry
-  }
+async function send(to: string, subject: string, html: string): Promise<boolean> {
   if (!resend) {
     console.log(`[Email - no RESEND_API_KEY] To: ${to} | Subject: ${subject}`);
     return false;
   }
   try {
-    const { data, error } = await resend.emails.send({ from: FROM, to, subject, html, ...(replyTo ? { reply_to: replyTo } : {}) });
+    const { data, error } = await resend.emails.send({ from: FROM, to, subject, html });
     if (error) { console.error("[Email send error]", error); return false; }
     console.log(`[Email sent] id=${data?.id} To: ${to} | Subject: ${subject}`);
     return true;
@@ -100,7 +81,7 @@ export const email = {
   // ── Auth ──────────────────────────────────────────────────────────────────
 
   async verifyEmail(to: string, name: string, token: string) {
-    const url = `${APP_URL}/en/verify-email?token=${token}`;
+    const url = `${APP_URL}/verify-email?token=${token}`;
     return send(
       to,
       "Verify your SynapseForge email",
@@ -157,30 +138,6 @@ export const email = {
         { href: `${APP_URL}/dashboard/messages`, label: `Message ${managerName} →` }
       )
     );
-  },
-
-  async newSignupAlert(
-    adminEmails: string[],
-    userName: string,
-    userEmail: string,
-  ) {
-    const results = await Promise.allSettled(
-      adminEmails.map((to) =>
-        send(
-          to,
-          `🆕 New signup: ${userName}`,
-          base(
-            `New user signed up: ${userName}`,
-            `<p>A new user just created a SynapseForge account and needs a manager assigned.</p>
-             ${row("Name", userName)}
-             ${row("Email", userEmail)}
-             <p style="font-size:13px;color:#71717a;margin-top:16px">Go to the admin panel to assign a manager and kick off their onboarding.</p>`,
-            { href: `${APP_URL}/admin`, label: "Open Admin Panel →" }
-          )
-        )
-      )
-    );
-    return results;
   },
 
   async newUserAlert(
@@ -397,77 +354,6 @@ export const email = {
     );
   },
 
-  async planUpgraded(
-    to: string,
-    userName: string,
-    fromPlan: string,
-    toPlan: string,
-    allowedInstances: number
-  ) {
-    const instancesBlock = `
-      <p>Now you can deploy:</p>
-      <ul style="margin:8px 0;padding-left:20px;color:#a1a1aa">
-        <li>${allowedInstances === -1 ? "Unlimited AI instances" : `${allowedInstances} AI instance${allowedInstances !== 1 ? "s" : ""}`}</li>
-        ${toPlan === "pro" ? "<li>Dedicated human manager</li>" : ""}
-        ${toPlan === "enterprise" ? "<li>Dedicated manager team</li>" : ""}
-      </ul>
-    `;
-    return send(
-      to,
-      `Welcome to ${toPlan}! Your plan has been upgraded.`,
-      base(
-        `Plan changed: ${fromPlan} → ${toPlan}`,
-        `<p>Hi ${userName}, your SynapseForge subscription has been updated.</p>
-         ${row("Previous plan", fromPlan)}
-         ${row("New plan", toPlan)}
-         ${instancesBlock}
-         <p>If this was unexpected or you need help, reply to this email and we'll look into it.</p>`,
-        { href: `${APP_URL}/dashboard/billing", label: "Manage Billing →" }
-      )
-    );
-  },
-    const stoppedBlock = stoppedInstances.length > 0
-      ? `<p>The following instance${stoppedInstances.length > 1 ? "s were" : " was"} automatically paused because they exceed the ${toPlan} plan limit:</p>
-         <ul style="margin:8px 0;padding-left:20px;color:#a1a1aa">
-           ${stoppedInstances.map((i) => `<li style="margin:4px 0">${i.name}</li>`).join("")}
-         </ul>
-         <p>Your data and settings are preserved — simply upgrade to restart them.</p>`
-      : "";
-    return send(
-      to,
-      `Your plan has changed to ${toPlan}`,
-      base(
-        `Plan changed: ${fromPlan} → ${toPlan}`,
-        `<p>Hi ${userName}, your SynapseForge subscription has been updated.</p>
-         ${row("Previous plan", fromPlan)}
-         ${row("New plan", toPlan)}
-         ${stoppedBlock}
-         <p>If this was unexpected or you need help, reply to this email and we'll look into it.</p>`,
-        { href: `${APP_URL}/dashboard/billing`, label: "Manage Billing →" }
-      )
-    );
-  },
-
-  async referralConverted(
-    referrerEmail: string,
-    referrerName: string,
-    referredName: string,
-    commissionUsd: number
-  ) {
-    return send(
-      referrerEmail,
-      `💰 You earned $${commissionUsd.toFixed(2)} from ${referredName}'s subscription!`,
-      base(
-        `You earned a referral commission!`,
-        `<p>Hi ${referrerName}, great news! <strong style="color:#e4e4e7">${referredName}</strong> just upgraded their SynapseForge subscription using your referral link.</p>
-         ${row("Commission earned", `<strong style="color:#34d399">$${commissionUsd.toFixed(2)}</strong>`)}
-         <p>This commission will be credited to your account. Keep sharing your referral link to earn more!</p>
-         <p style="color:#71717a;font-size:13px">You earn 10% of every subscription you refer for 6 months. Commissions are paid out manually — contact us if you have questions.</p>`,
-        { href: `${APP_URL}/dashboard/referral`, label: "View Referral Dashboard →" }
-      )
-    );
-  },
-
   async managerInstanceAlert(
     managerEmail: string,
     managerName: string,
@@ -496,71 +382,6 @@ export const email = {
          ${errorBlock}
          <p>Please investigate and follow up with the client.</p>`,
         { href: `${APP_URL}/admin`, label: "Open Admin Panel →" }
-      )
-    );
-  },
-
-  // ── Sandbox re-engagement ─────────────────────────────────────────────────
-
-  async sandboxColdStart(
-    to: string,
-    name: string,
-    instanceName: string,
-    instanceId: string,
-    sandboxLimit: number,
-  ) {
-    const first = name.split(" ")[0];
-    return send(
-      to,
-      `Your AI agent is set up — but you haven't tried it yet`,
-      base(
-        `${first}, your agent is waiting for a first message 👋`,
-        `<p>You built <strong style="color:#e4e4e7">${instanceName}</strong> and it's ready to go — but we noticed you haven't sent it a message yet.</p>
-         <p>It takes <strong style="color:#a78bfa">30 seconds</strong>. Here's what to do:</p>
-         <ol style="padding-left:20px;margin:16px 0;color:#a1a1aa">
-           <li style="margin-bottom:10px">Open your agent's <strong style="color:#e4e4e7">Chat tab</strong></li>
-           <li style="margin-bottom:10px">Type anything — "Hello", "What can you do?", or a question your customers ask</li>
-           <li style="margin-bottom:10px">Watch it respond in real time</li>
-         </ol>
-         <p style="color:#71717a;font-size:13px;">You have <strong style="color:#a78bfa">${sandboxLimit} free messages</strong> — no API key needed to start.</p>
-         <p style="color:#71717a;font-size:13px;">Once you see how it handles your questions, you can customise the persona, connect it to WhatsApp or Telegram, and go live.</p>`,
-        { href: `${APP_URL}/dashboard/instances/${instanceId}`, label: "Send your first message →" }
-      )
-    );
-  },
-
-  async sandboxNudge(
-    to: string,
-    name: string,
-    instanceName: string,
-    instanceId: string,
-    sandboxUsed: number,
-    sandboxLimit: number,
-  ) {
-    const remaining = sandboxLimit - sandboxUsed;
-    const pct = Math.round((sandboxUsed / sandboxLimit) * 100);
-    const progressBar = `
-      <div style="background:rgba(255,255,255,0.05);border-radius:8px;height:8px;overflow:hidden;margin:12px 0;">
-        <div style="background:#7c3aed;height:100%;width:${pct}%;border-radius:8px;"></div>
-      </div>`;
-
-    return send(
-      to,
-      `${remaining} free messages left — your AI is waiting`,
-      base(
-        `Your AI agent is ready, ${name.split(" ")[0]} 🤖`,
-        `<p>You set up <strong style="color:#e4e4e7">${instanceName}</strong> and have been exploring — great start.</p>
-         <p>You've used <strong style="color:#a78bfa">${sandboxUsed} of ${sandboxLimit}</strong> free sandbox messages.</p>
-         ${progressBar}
-         <p style="color:#71717a;font-size:13px;">${remaining} free messages remaining before your agent is ready to go live.</p>
-         <p>Here are a few things to try:</p>
-         <ul style="padding-left:20px;margin:16px 0;color:#a1a1aa">
-           <li style="margin-bottom:8px">Ask your agent a question your customers frequently ask</li>
-           <li style="margin-bottom:8px">Try updating the system prompt in the <strong style="color:#e4e4e7">Configuration</strong> tab</li>
-           <li style="margin-bottom:8px">Test the public chat page to see what your customers see</li>
-         </ul>
-         <p style="color:#71717a;font-size:13px;">Once you're happy with the responses, add your own API key and your agent goes live — no usage limits.</p>`,
-        { href: `${APP_URL}/dashboard/instances/${instanceId}`, label: "Continue testing →" }
       )
     );
   },
