@@ -11,12 +11,6 @@ const nextConfig: NextConfig = {
       "./node_modules/.prisma/client/query_engine-rhel-openssl-3.0.x.so.node",
     ],
   },
-  // Enable middleware for rate limiting and other edge middleware
-  experimental: {
-    middleware: {
-      allowed: true,
-    },
-  },
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
