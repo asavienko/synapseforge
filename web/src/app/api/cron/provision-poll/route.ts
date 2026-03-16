@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { NextResponse } from "next/server";
 
 // Shared secret for internal endpoints
 const INTERNAL_SECRET = process.env.INTERNAL_API_KEY;
