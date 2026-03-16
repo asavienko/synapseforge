@@ -397,13 +397,35 @@ export const email = {
     );
   },
 
-  async planDowngraded(
+  async planUpgraded(
     to: string,
     userName: string,
     fromPlan: string,
     toPlan: string,
-    stoppedInstances: { name: string }[]
+    allowedInstances: number
   ) {
+    const instancesBlock = `
+      <p>Now you can deploy:</p>
+      <ul style="margin:8px 0;padding-left:20px;color:#a1a1aa">
+        <li>${allowedInstances === -1 ? "Unlimited AI instances" : `${allowedInstances} AI instance${allowedInstances !== 1 ? "s" : ""}`}</li>
+        ${toPlan === "pro" ? "<li>Dedicated human manager</li>" : ""}
+        ${toPlan === "enterprise" ? "<li>Dedicated manager team</li>" : ""}
+      </ul>
+    `;
+    return send(
+      to,
+      `Welcome to ${toPlan}! Your plan has been upgraded.`,
+      base(
+        `Plan changed: ${fromPlan} → ${toPlan}`,
+        `<p>Hi ${userName}, your SynapseForge subscription has been updated.</p>
+         ${row("Previous plan", fromPlan)}
+         ${row("New plan", toPlan)}
+         ${instancesBlock}
+         <p>If this was unexpected or you need help, reply to this email and we'll look into it.</p>`,
+        { href: `${APP_URL}/dashboard/billing", label: "Manage Billing →" }
+      )
+    );
+  },
     const stoppedBlock = stoppedInstances.length > 0
       ? `<p>The following instance${stoppedInstances.length > 1 ? "s were" : " was"} automatically paused because they exceed the ${toPlan} plan limit:</p>
          <ul style="margin:8px 0;padding-left:20px;color:#a1a1aa">

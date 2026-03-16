@@ -42,6 +42,20 @@ export async function POST(req: NextRequest) {
           },
         });
         console.log(`[Stripe] User ${userId} upgraded to ${plan}`);
+        
+        // Immediately enforce plan limits if user upgraded to a paid plan
+        if (plan !== "free") {
+          const result = await enforcePlanLimits(userId, plan);
+          if (result) {
+            emailService.planUpgraded(
+              result.userEmail,
+              result.userName,
+              "free",
+              plan,
+              result.allowedInstances
+            ).catch(console.error);
+          }
+        }
         break;
       }
 
@@ -77,7 +91,6 @@ export async function POST(req: NextRequest) {
         const newPlan = subscription.metadata?.plan ?? "free";
         const status = subscription.status;
         const effectivePlan = status === "active" ? newPlan : "free";
-
         const updatedPeriodEnd = subscription.items.data[0]?.current_period_end ?? null;
         await prisma.user.update({
           where: { id: userId },
@@ -99,6 +112,18 @@ export async function POST(req: NextRequest) {
               prevPlan,
               effectivePlan,
               result.stoppedInstances
+            ).catch(console.error);
+          }
+        } else if (effectivePlan !== prevPlan && effectivePlan !== "free") {
+          // If upgraded to paid plan, enforce limits immediately
+          const result = await enforcePlanLimits(userId, effectivePlan);
+          if (result) {
+            emailService.planUpgraded(
+              result.userEmail,
+              result.userName,
+              prevPlan,
+              effectivePlan,
+              result.allowedInstances
             ).catch(console.error);
           }
         }

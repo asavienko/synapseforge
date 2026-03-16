@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { PLANS } from "@/lib/utils";
 
 export const REGION_LABELS = {
   nbg1: "Nässheim, DE",
