@@ -7,14 +7,20 @@ if (process.env.REDIS_URL) {
   redisClient = new Redis(process.env.REDIS_URL);
 }
 
-const store = new Map<string, { count: number; resetAt: number }>();
+/**
+ * In-memory rate limit store per worker.
+ * Note: In a multi-worker deployment (e.g., multiple Vercel instances),
+ * in-memory limits will not be consistent across workers.
+ */
+const memoryStore = new Map<string, { count: number; resetAt: number }>();
 
 // Cleanup stale entries every 5 min to avoid memory leak
+let cleanupInterval: NodeJS.Timeout | undefined;
 if (typeof setInterval !== "undefined") {
-  setInterval(() => {
+  cleanupInterval = setInterval(() => {
     const now = Date.now();
-    for (const [key, entry] of store.entries()) {
-      if (now > entry.resetAt) store.delete(key);
+    for (const [key, entry] of memoryStore.entries()) {
+      if (now > entry.resetAt) memoryStore.delete(key);
     }
   }, 5 * 60 * 1000);
 }
@@ -40,7 +46,8 @@ export async function rateLimit(key: string, max: number, windowMs: number): Pro
       await redisClient.expire(key, Math.ceil(windowMs / 1000));
     }
     return current <= max;
-  } catch {
+  } catch (error) {
+    console.error("[rateLimit] Redis error, falling back to in-memory:", error);
     // Fallback to in-memory if Redis operation fails
     return inMemoryRateLimit(key, max, windowMs);
   }
@@ -48,10 +55,10 @@ export async function rateLimit(key: string, max: number, windowMs: number): Pro
 
 function inMemoryRateLimit(key: string, max: number, windowMs: number): boolean {
   const now = Date.now();
-  const entry = store.get(key);
+  const entry = memoryStore.get(key);
 
   if (!entry || now > entry.resetAt) {
-    store.set(key, { count: 1, resetAt: now + windowMs });
+    memoryStore.set(key, { count: 1, resetAt: now + windowMs });
     return true;
   }
 
