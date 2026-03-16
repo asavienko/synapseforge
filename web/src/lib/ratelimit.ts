@@ -9,6 +9,18 @@ if (process.env.REDIS_URL) {
 
 const store = new Map<string, { count: number; resetAt: number }>();
 
+// Cleanup stale entries every 5 min to avoid memory leak
+if (typeof setInterval !== "undefined") {
+  setInterval(() => {
+    const now = Date.now();
+    for (const [key, entry] of store.entries()) {
+      if (now > entry.resetAt) store.delete(key);
+    }
+  }, 5 * 60 * 1000);
+}
+
+const store = new Map<string, { count: number; resetAt: number }>();
+
 /**
  * Returns true if the request is allowed, false if rate limited.
  * @param key      Unique key (e.g. IP address or IP+route)
