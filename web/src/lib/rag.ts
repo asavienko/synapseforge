@@ -1,4 +1,5 @@
-import { prisma } from "@/lib/prisma";
+import { prisma } from '@/lib/prisma';
+import { searchSimilarChunks } from '@/lib/knowledge';
 
 async function getQueryEmbedding(query: string): Promise<number[] | null> {
   if (!process.env.OPENAI_API_KEY) return null;
@@ -19,7 +20,7 @@ async function getQueryEmbedding(query: string): Promise<number[] | null> {
 }
 
 /**
- * Cosine similarity between two vectors (fallback when pgvector not available).
+ * Cosine similarity (fallback if needed)
  */
 function cosineSimilarity(a: number[], b: number[]): number {
   if (a.length !== b.length || a.length === 0) return 0;
@@ -37,7 +38,7 @@ function cosineSimilarity(a: number[], b: number[]): number {
 
 /**
  * Retrieve relevant knowledge base context for a given query.
- * Uses embedding cosine similarity when available, otherwise keyword fallback.
+ * Uses pgvector similarity when available, with cosine similarity fallback.
  */
 export async function retrieveContext(
   instanceId: string,
@@ -57,65 +58,48 @@ export async function retrieveContext(
 
     if (!kb || kb.documents.length === 0) return "";
 
-    const allChunks = kb.documents.flatMap((d) => d.chunks);
-    if (allChunks.length === 0) return "";
-
-    // Try embedding-based similarity
+    // Try embedding-based similarity via pgvector
     const queryEmbedding = await getQueryEmbedding(query);
 
     if (queryEmbedding) {
-      // Score chunks by cosine similarity using stored embeddings
-      const scored = allChunks
-        .map((chunk) => {
-          let similarity = 0;
-          if (chunk.embedding) {
-            try {
-              const emb = JSON.parse(chunk.embedding) as number[];
-              similarity = cosineSimilarity(queryEmbedding, emb);
-            } catch {
-              // ignore parse errors
-            }
-          }
-          return { content: chunk.content, similarity };
-        })
-        .filter((c) => c.similarity > 0.5)
-        .sort((a, b) => b.similarity - a.similarity)
+      const results = await searchSimilarChunks(instanceId, queryEmbedding, topK * 2); // get extra to filter
+      // Convert distance to similarity and filter by threshold
+      const filtered = results
+        .map(r => ({ ...r, similarity: 1 - r.distance }))
+        .filter(r => r.similarity > 0.5)
         .slice(0, topK);
-
-      if (scored.length > 0) {
-        return scored.map((c) => c.content).join("\n\n---\n\n");
+      if (filtered.length > 0) {
+        return filtered.map(r => r.content).join("\n\n---\n\n");
       }
     }
 
-    // Fallback: simple keyword search
+    // Fallback: simple keyword search within already-fetched chunks
+    const allChunks = kb.documents.flatMap(d => d.chunks);
+    if (allChunks.length === 0) return "";
+
+    // Simple keyword fallback if no vector results
     const queryLower = query.toLowerCase();
     const keywords = queryLower
       .split(/\s+/)
-      .filter((w) => w.length > 3)
+      .filter(w => w.length > 3)
       .slice(0, 10);
 
     const scored = allChunks
-      .map((chunk) => {
+      .map(chunk => {
         const contentLower = chunk.content.toLowerCase();
-        const score = keywords.reduce(
-          (acc, kw) => acc + (contentLower.includes(kw) ? 1 : 0),
-          0
-        );
+        const score = keywords.reduce((acc, kw) => acc + (contentLower.includes(kw) ? 1 : 0), 0);
         return { content: chunk.content, score };
       })
-      .filter((c) => c.score > 0)
+      .filter(c => c.score > 0)
       .sort((a, b) => b.score - a.score)
       .slice(0, topK);
 
     if (scored.length > 0) {
-      return scored.map((c) => c.content).join("\n\n---\n\n");
+      return scored.map(s => s.content).join("\n\n---\n\n");
     }
 
     // Last resort: return first N chunks
-    return allChunks
-      .slice(0, topK)
-      .map((c) => c.content)
-      .join("\n\n---\n\n");
+    return allChunks.slice(0, topK).map(c => c.content).join("\n\n---\n\n");
   } catch (err) {
     console.error("[rag] retrieval error:", err);
     return "";

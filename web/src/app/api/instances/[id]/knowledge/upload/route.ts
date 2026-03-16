@@ -1,6 +1,8 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { insertChunkWithEmbedding } from '@/lib/knowledge';
+import { randomUUID } from 'crypto';
 
 // Inline text chunker (no external dep required)
 function chunkText(text: string, chunkSize = 1000, overlap = 200): string[] {
@@ -98,14 +100,17 @@ export async function POST(
 
       for (const chunk of chunks) {
         const embedding = await getEmbedding(chunk);
-        // Store as vector (Prisma will handle conversion to pgvector)
-        await prisma.knowledgeChunk.create({
-          data: {
-            docId: doc.id,
-            content: chunk,
-            embedding: embedding ? embedding : null,
-          },
-        });
+        if (embedding) {
+          await insertChunkWithEmbedding(doc.id, chunk, embedding);
+        } else {
+          // Fallback: skip embedding, still store chunk without vector (for degraded search)
+          await prisma.knowledgeChunk.create({
+            data: {
+              docId: doc.id,
+              content: chunk,
+            },
+          });
+        }
       }
 
       await prisma.knowledgeDoc.update({
