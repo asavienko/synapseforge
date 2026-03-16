@@ -123,7 +123,7 @@ export async function POST(req: NextRequest) {
 
   // Verify Twilio signature before processing
   const url = req.url;
-  if (signature && !verifyTwilioSignature(instanceAuthToken, url, body)) {
+  if (signature && !verifyTwilioSignature(instanceAuthToken, url, body, signature)) {
     console.warn("[WhatsApp webhook] Invalid Twilio signature");
     return NextResponse.json({ error: "Invalid signature" }, { status: 403 });
   }
