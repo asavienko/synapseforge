@@ -47,7 +47,7 @@ export interface ProvisionResult {
 
 /**
  * Provision a new VPS instance on Hetzner for the given AIInstance.
- * Creates the server, installs OpenClaw, and updates the DB record.
+ * Creates the server and updates the DB record.
  */
 export async function provisionInstance(
   instanceId: string,
@@ -118,13 +118,9 @@ echo "Starting SynapseForge bootstrap for instance ${instanceId}" > /var/log/syn
         vpsServerId: String(server.id),
         vpsProvider: "hetzner",
         provisionStatus: "provisioning",
-        // vpsUrl will be set after OpenClaw is installed and health check passes
+        // vpsUrl will be set by the cron job after gateway becomes healthy
       },
     });
-
-    // Schedule background task to monitor provisioning and install OpenClaw
-    // This will poll the Hetzner API until the server is ready, then trigger OpenClaw installation
-    monitorProvisioning(instanceId, server.id, ip).catch(console.error);
 
     return { ok: true, serverId: String(server.id), ip };
   } catch (error) {
@@ -135,115 +131,4 @@ echo "Starting SynapseForge bootstrap for instance ${instanceId}" > /var/log/syn
     }).catch(console.error);
     return { ok: false, error: error instanceof Error ? error.message : "Unknown error" };
   }
-}
-
-/**
- * Background task to monitor VPS provisioning progress.
- * Polls Hetzner API until server is ready, then triggers OpenClaw installation.
- */
-async function monitorProvisioning(instanceId: string, serverId: number, ip: string) {
-  const hetznerKey = process.env.HETZNER_API_KEY;
-  if (!hetznerKey) return;
-
-  // Poll Hetzner until server is running
-  let attempts = 0;
-  const maxAttempts = 60; // 5 minutes at 5s intervals
-
-  while (attempts < maxAttempts) {
-    await new Promise((resolve) => setTimeout(resolve, 5000));
-
-    const res = await fetch(`https://api.hetzner.cloud/v1/servers/${serverId}`, {
-      headers: { "Authorization": `Bearer ${hetznerKey}` },
-    });
-
-    if (!res.ok) {
-      attempts++;
-      continue;
-    }
-
-    const data = await res.json();
-    const status = data.server?.status;
-
-    if (status === "running") {
-      // Server is ready, now install OpenClaw
-      await installOpenClaw(instanceId, ip);
-      return;
-    }
-
-    if (status === "error") {
-      await prisma.aIInstance.update({
-        where: { id: instanceId },
-        data: { provisionStatus: "failed" },
-      });
-      return;
-    }
-
-    attempts++;
-  }
-
-  // Timeout
-  await prisma.aIInstance.update({
-    where: { id: instanceId },
-    data: { provisionStatus: "failed" },
-  });
-}
-
-/**
- * Install OpenClaw on the VPS via SSH or cloud-init.
- * Updates the instance record with the gateway URL after successful installation.
- */
-async function installOpenClaw(instanceId: string, ip: string) {
-  try {
-    // For now, we'll set a placeholder gateway URL
-    // In production, this would:
-    // 1. SSH into the VPS
-    // 2. Install Docker and OpenClaw
-    // 3. Configure the gateway
-    // 4. Wait for health check to pass
-    // 5. Set the vpsUrl and gatewayToken
-
-    const gatewayUrl = `http://${ip}:3000`;
-
-    await prisma.aIInstance.update({
-      where: { id: instanceId },
-      data: {
-        vpsUrl: gatewayUrl,
-        provisionStatus: "ready",
-        status: "running",
-        configSynced: true,
-      },
-    });
-  } catch (error) {
-    console.error("OpenClaw installation error:", error);
-    await prisma.aIInstance.update({
-      where: { id: instanceId },
-      data: { provisionStatus: "failed" },
-    }).catch(console.error);
-  }
-}
-
-/**
- * Get the current provisioning status of an instance.
- */
-export async function getProvisionStatus(instanceId: string) {
-  const instance = await prisma.aIInstance.findUnique({
-    where: { id: instanceId },
-    select: {
-      provisionStatus: true,
-      vpsServerId: true,
-      vpsUrl: true,
-      vpsProvider: true,
-    },
-  });
-
-  if (!instance) {
-    return { error: "Instance not found" };
-  }
-
-  return {
-    provisionStatus: instance.provisionStatus,
-    serverId: instance.vpsServerId,
-    vpsUrl: instance.vpsUrl,
-    provider: instance.vpsProvider,
-  };
 }
