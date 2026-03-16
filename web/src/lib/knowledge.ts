@@ -25,6 +25,15 @@ export async function searchSimilarChunks(
   queryEmbedding: number[],
   limit: number = 5
 ) {
+  // Get instance to verify ownership and get userId
+  const instance = await prisma.aIInstance.findUnique({
+    where: { id: instanceId },
+    select: { userId: true },
+  });
+  if (!instance) {
+    return [];
+  }
+
   const embeddingsArrayStr = `[${queryEmbedding.join(',')}]`;
   return prisma.$queryRaw<
     Array<{
@@ -47,7 +56,7 @@ export async function searchSimilarChunks(
     JOIN "AIInstance" ON "KnowledgeBase"."instanceId" = "AIInstance"."id"
     WHERE 
       "AIInstance"."id" = ${instanceId}
-      AND "AIInstance"."userId" = ${(await prisma.aIInstance.findUnique({ where: { id: instanceId } }))?.userId}
+      AND "AIInstance"."userId" = ${instance.userId}
       AND "KnowledgeChunk"."embedding" IS NOT NULL
     ORDER BY "KnowledgeChunk"."embedding" <=> ${embeddingsArrayStr}::vector
     LIMIT ${limit}
