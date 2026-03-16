@@ -7,7 +7,7 @@ import { prisma } from '@/lib/prisma';
 export async function migrateEmbeddings() {
   console.log('Starting embedding migration...');
 
-  // Find all chunks with embedding != null
+  // Find all chunks with embedding != null (using raw SQL to bypass Prisma type limitations)
   const chunks = await prisma.$queryRaw<
     Array<{ id: string; embedding: string }>
   >`SELECT "id", "embedding" FROM "KnowledgeChunk" WHERE "embedding" IS NOT NULL`;
