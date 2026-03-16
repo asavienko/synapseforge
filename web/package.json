@@ -14,6 +14,7 @@
     "test:e2e": "start-server-and-test dev http://localhost:3000 cy:run",
     "cy:run:chrome": "cypress run --browser chrome",
     "cy:seed": "npx tsx cypress/support/seed.ts",
+    "migrate:embeddings": "tsx scripts/migrate-embeddings.ts",
     "prepare": "node -e \"if(process.env.CI||process.env.VERCEL)process.exit(0)\" || (cd .. && node web/node_modules/.bin/husky)"
   },
   "dependencies": {
