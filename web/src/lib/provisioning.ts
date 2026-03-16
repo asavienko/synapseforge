@@ -72,6 +72,29 @@ export async function provisionInstance(
     return { ok: false, error: "Instance already provisioned" };
   }
 
+  // Enforce plan limits before provisioning
+  const user = await prisma.user.findUnique({
+    where: { id: instance.userId },
+    select: { id: true, plan: true, instances: { select: { id: true, status: true } } },
+  });
+  if (!user) {
+    return { ok: false, error: "User not found" };
+  }
+
+  const plan = PLANS[user.plan as keyof typeof PLANS] ?? PLANS.free;
+  const limit = plan.instances; // -1 = unlimited
+
+  // Count running instances (excluding the one being provisioned)
+  const runningCount = user.instances.filter((i) => i.status === "running").length;
+
+  // If user has reached limit and this is a new instance, block provisioning
+  if (limit !== -1 && runningCount >= limit) {
+    return { 
+      ok: false, 
+      error: `Plan limit reached (${limit} instance${limit !== 1 ? "s" : ""} max)` 
+    };
+  }
+
   const serverType = TIER_SERVER_TYPE[instance.tier] ?? TIER_SERVER_TYPE.minimal;
   const serverName = `sf-${instance.id.slice(0, 8)}-${Date.now().toString(36)}`;
 
