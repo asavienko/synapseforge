@@ -185,6 +185,7 @@ model AIInstance {
   chatMessages  ChatMessage[]
   webhooks      Webhook[]
   knowledgeBase KnowledgeBase?
+  migrations   MigrationJob[]
 }
 
 model KnowledgeBase {
@@ -194,6 +195,8 @@ model KnowledgeBase {
   createdAt  DateTime         @default(now())
   instance   AIInstance       @relation(fields: [instanceId], references: [id], onDelete: Cascade)
   documents  KnowledgeDoc[]
+
+  @@map("knowledge_base")
 }
 
 model KnowledgeDoc {

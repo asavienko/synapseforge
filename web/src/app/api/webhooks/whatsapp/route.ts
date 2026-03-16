@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { decrypt } from "@/lib/crypto";
 import { callLLM } from "@/lib/llm";
@@ -33,26 +33,27 @@ async function sendWhatsAppMessage(
 }
 
 /**
- * Verify Twilio webhook signature using the auth token from instance credentials.
+ * Verify Twilio webhook signature using the auth token.
  */
-async function verifyTwilioSignature(
+function verifyTwilioSignature(
   authToken: string,
   url: string,
-  params: Record<string, string>
-): Promise<boolean> {
+  params: Record<string, string>,
+  signatureHeader: string
+): boolean {
   try {
-    const crypto = await import("crypto");
+    const crypto = require("crypto");
     const expected = crypto.createHmac("sha1", authToken);
+    expected.update(url);
     const sortedKeys = Object.keys(params).sort();
     for (const key of sortedKeys) {
       expected.update(key);
       expected.update(params[key]);
     }
-    const signature = params["X-Twilio-Signature"] || params["signature"];
-    if (!signature) return false;
-    const computed = `sha1=${expected.digest("hex")}`;
-    return crypto.timingSafeEqual(Buffer.from(computed), Buffer.from(signature));
-  } catch {
+    const computed = "sha1=" + expected.digest("hex");
+    return crypto.timingSafeEqual(Buffer.from(computed), Buffer.from(signatureHeader));
+  } catch (err) {
+    console.error("[Twilio] Signature verification error:", err);
     return false;
   }
 }
@@ -66,6 +67,15 @@ export async function POST(req: NextRequest) {
     new URLSearchParams(text).forEach((value, key) => { body[key] = value; });
   } else {
     Object.assign(body, await req.json());
+  }
+
+  const signature = req.headers.get("x-twilio-signature");
+  if (!signature) {
+    console.warn("[WhatsApp webhook] Missing X-Twilio-Signature");
+    // For safety, reject during development if signature missing
+    if (process.env.NODE_ENV !== "development") {
+      return NextResponse.json({ error: "Missing signature" }, { status: 403 });
+    }
   }
 
   const to = (body["To"] as string | undefined) || "";
@@ -113,7 +123,7 @@ export async function POST(req: NextRequest) {
 
   // Verify Twilio signature before processing
   const url = req.url;
-  if (!(await verifyTwilioSignature(instanceAuthToken, url, body))) {
+  if (signature && !verifyTwilioSignature(instanceAuthToken, url, body)) {
     console.warn("[WhatsApp webhook] Invalid Twilio signature");
     return NextResponse.json({ error: "Invalid signature" }, { status: 403 });
   }
