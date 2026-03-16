@@ -19,6 +19,15 @@ export async function POST(req: NextRequest) {
   const user = await prisma.user.findUnique({ where: { id: session.user.id } });
   if (!user) return NextResponse.json({ error: "User not found." }, { status: 404 });
 
+  // Free plan — no Stripe needed
+  if (plan === "free") {
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { plan: "free", stripeSubscriptionId: null, stripePriceId: null, stripeCurrentPeriodEnd: null },
+    });
+    return NextResponse.json({ success: true, downgradedToFree: true });
+  }
+
   // Lazy-import stripe only when key is available
   const { getStripe } = await import("@/lib/stripe");
   const stripe = getStripe();

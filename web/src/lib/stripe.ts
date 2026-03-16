@@ -23,16 +23,62 @@ export const stripe = new Proxy({} as Stripe, {
 });
 
 export const STRIPE_PLANS = {
+  free: {
+    priceId: "",
+    name: "Free",
+    amount: 0,
+    features: ["1 AI instance", "Community support", "Basic integrations"],
+  },
   pro: {
     priceId: process.env.STRIPE_PRO_PRICE_ID ?? "",
     name: "Pro",
-    amount: 49900, // $499/mo in cents
+    amount: 4900, // $49/mo in cents
+    features: [
+      "Up to 3 AI instances",
+      "Dedicated human manager",
+      "24h response time",
+      "Weekly check-ins",
+      "Custom configurations",
+      "Telegram & WhatsApp integration",
+      "99% uptime SLA",
+    ],
   },
   enterprise: {
     priceId: process.env.STRIPE_ENTERPRISE_PRICE_ID ?? "",
     name: "Enterprise",
-    amount: 299900, // $2999/mo in cents
+    amount: 29900, // $299/mo in cents
+    features: [
+      "Unlimited AI instances",
+      "Dedicated manager team",
+      "4h response SLA",
+      "Custom integrations",
+      "Team training",
+      "Monthly strategy calls",
+      "White-label option",
+    ],
   },
 } as const;
 
 export type PlanKey = keyof typeof STRIPE_PLANS;
+
+/**
+ * Get the effective plan for a user based on their subscription status
+ */
+export function getUserPlan(
+  userPlan: string | null | undefined,
+  stripeSubscriptionStatus?: string | null,
+  stripeCurrentPeriodEnd?: Date | null
+): PlanKey {
+  // If user has an active Stripe subscription, use that plan
+  if (stripeSubscriptionStatus === "active" || stripeSubscriptionStatus === "trialing") {
+    // Determine which plan based on stripeSubscriptionId or stored plan
+    if (userPlan === "pro" || userPlan === "enterprise") {
+      return userPlan as PlanKey;
+    }
+    // Default to pro if subscription exists but plan unclear
+    return "pro";
+  }
+
+  // Otherwise use the stored plan (defaults to free)
+  return (userPlan as PlanKey) || "free";
+}
