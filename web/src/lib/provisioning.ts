@@ -1,174 +1,369 @@
-import { prisma } from "@/lib/prisma";
-import { generateCloudInit } from "@/lib/cloud-init";
-import { encrypt } from "@/lib/crypto";
-import { randomBytes, generateKeyPairSync, createPublicKey } from "crypto";
-
-export type HetznerRegion = "nbg1" | "fsn1" | "hel1" | "ash" | "hil" | "sin";
-
-export const REGION_LABELS: Record<HetznerRegion, string> = {
-  nbg1: "Nuremberg, EU 🇩🇪",
-  fsn1: "Falkenstein, EU 🇩🇪",
-  hel1: "Helsinki, EU 🇫🇮",
-  ash: "Ashburn, US 🇺🇸",
-  hil: "Hillsboro, US 🇺🇸",
-  sin: "Singapore, APAC 🇸🇬",
-};
-
-export const TIER_TO_SERVER: Record<string, string> = {
-  minimal: "cx22",
-  standard: "cx32",
-  pro: "cx42",
-};
-
-export const TIER_COST: Record<string, string> = {
-  minimal: "~$3.29/mo",
-  standard: "~$6.49/mo",
-  pro: "~$13.49/mo",
-};
-
-export const TIER_LABEL: Record<string, string> = {
-  minimal: "Minimal (cx22 — 2 vCPU, 4 GB)",
-  standard: "Standard (cx32 — 4 vCPU, 8 GB)",
-  pro: "Pro (cx42 — 8 vCPU, 16 GB)",
-};
-
-function generateSshKeyPair(): { publicKey: string; privateKey: string } {
-  const { publicKey, privateKey } = generateKeyPairSync("ed25519", {
-    publicKeyEncoding: { type: "spki", format: "pem" },
-    privateKeyEncoding: { type: "pkcs8", format: "pem" },
-  });
-  return { publicKey, privateKey };
-}
-
-function pemToOpenSsh(publicKeyPem: string): string {
-  const pubKeyObj = createPublicKey(publicKeyPem);
-  const pubKeyDer = pubKeyObj.export({ type: "spki", format: "der" }) as Buffer;
-  // The raw 32-byte ED25519 public key is the last 32 bytes of the SPKI DER
-  const rawPublicKey = pubKeyDer.slice(-32);
-  const keyType = Buffer.from("ssh-ed25519");
-  const blob = Buffer.concat([
-    Buffer.from([0, 0, 0, 11]),
-    keyType, // 4-byte length + "ssh-ed25519"
-    Buffer.from([0, 0, 0, 32]),
-    rawPublicKey, // 4-byte length + 32-byte key
-  ]);
-  return `ssh-ed25519 ${blob.toString("base64")} sf-instance`;
-}
-
-export interface ProvisionResult {
-  ok: boolean;
-  serverId?: string;
-  ip?: string;
-  error?: string;
-}
-
-export async function provisionInstance(
-  instanceId: string,
-  region: HetznerRegion = "nbg1"
-): Promise<ProvisionResult> {
-  const hetznerApiKey = process.env.HETZNER_API_KEY;
-  if (!hetznerApiKey) {
-    return { ok: false, error: "Hetzner API key not configured" };
-  }
-
-  const instance = await prisma.aIInstance.findUnique({ where: { id: instanceId } });
-  if (!instance) return { ok: false, error: "Instance not found" };
-
-  // Generate or reuse gateway token
-  const gatewayToken = instance.gatewayToken ?? randomBytes(32).toString("hex");
-
-  // Generate a fresh bootstrap token
-  const bootstrapToken = randomBytes(32).toString("hex");
-
-  // Generate SSH key pair for immediate config sync
-  const { publicKey: pubPem, privateKey: privPem } = generateSshKeyPair();
-  const openSshPubKey = pemToOpenSsh(pubPem);
-
-  // Save tokens + encrypted SSH private key before creating the server
-  await prisma.aIInstance.update({
-    where: { id: instanceId },
-    data: {
-      gatewayToken,
-      bootstrapToken,
-      bootstrapUsed: false,
-      sshPrivateKey: encrypt(privPem),
-    },
-  });
-
-  const appUrl =
-    process.env.NEXTAUTH_URL ?? process.env.APP_URL ?? "https://synapseforge-mu.vercel.app";
-  const sfApiKey = process.env.INTERNAL_API_KEY ?? randomBytes(16).toString("hex");
-
-  const cloudInit = generateCloudInit({
-    instanceId,
-    gatewayToken,
-    appUrl,
-    bootstrapToken,
-    sfApiKey,
-    sshPublicKey: openSshPubKey,
-  });
-
-  const serverType = TIER_TO_SERVER[instance.tier] ?? "cx22";
-  const serverName = `sf-${instanceId.slice(0, 8)}`;
-
-  let hetznerRes: Response;
-  try {
-    hetznerRes = await fetch("https://api.hetzner.cloud/v1/servers", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${hetznerApiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: serverName,
-        server_type: serverType,
-        image: "ubuntu-22.04",
-        location: region,
-        user_data: cloudInit,
-        ssh_keys: [],
-      }),
-    });
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Network error";
-    return { ok: false, error: `Failed to contact Hetzner API: ${message}` };
-  }
-
-  if (!hetznerRes.ok) {
-    let detail = "";
-    try {
-      const errBody = await hetznerRes.json();
-      detail = errBody?.error?.message ?? JSON.stringify(errBody);
-    } catch {
-      detail = await hetznerRes.text();
-    }
-    return { ok: false, error: `Hetzner API error (${hetznerRes.status}): ${detail}` };
-  }
-
-  const hetznerData = await hetznerRes.json();
-  const serverId = String(hetznerData.server?.id ?? "");
-  const ip: string = hetznerData.server?.public_net?.ipv4?.ip ?? "";
-  const vpsUrl = ip ? `http://${ip}:18789` : undefined;
-
-  // Update instance with VPS info
-  await prisma.aIInstance.update({
-    where: { id: instanceId },
-    data: {
-      vpsServerId: serverId,
-      vpsProvider: "hetzner",
-      vpsUrl: vpsUrl ?? null,
-      provisionStatus: "provisioning",
-      status: "pending",
-    },
-  });
-
-  // Log it
-  await prisma.activityLog.create({
-    data: {
-      instanceId,
-      event: "created",
-      details: `Provisioning Hetzner VPS (server ${serverId}, ip ${ip}, region ${region})...`,
-    },
-  });
-
-  return { ok: true, serverId, ip };
-}
+export const REGION_LABELS = {
+  nbg1: "Nässheim, DE",
+  fsn1: "Freistadt, DE",
+  hel1: "Helsinki, FI",
+  eas1: "Easthaven, US",
+  ash1: "Ashburn, US",
+  lga1: "New York, US",
+  sin1: "Singapore, SG",
+  sgp1: "Singapore, SG",
+  syd1: "Sydney, AU",
+  syd2: "Sydney, AU",
+  syd3: "Sydney, AU",
+  syd4: "Sydney, AU",
+  syd5: "Sydney, AU",
+  syd6: "Sydney, AU",
+  syd7: "Sydney, AU",
+  syd8: "Sydney, AU",
+  syd9: "Sydney, AU",
+  syd10: "Sydney, AU",
+  syd11: "Sydney, AU",
+  syd12: "Sydney, AU",
+  syd13: "Sydney, AU",
+  syd14: "Sydney, AU",
+  syd15: "Sydney, AU",
+  syd16: "Sydney, AU",
+  syd17: "Sydney, AU",
+  syd18: "Sydney, AU",
+  syd19: "Sydney, AU",
+  syd20: "Sydney, AU",
+  syd21: "Sydney, AU",
+  syd22: "Sydney, AU",
+  syd23: "Sydney, AU",
+  syd24: "Sydney, AU",
+  syd25: "Sydney, AU",
+  syd26: "Sydney, AU",
+  syd27: "Sydney, AU",
+  syd28: "Sydney, AU",
+  syd29: "Sydney, AU",
+  syd30: "Sydney, AU",
+  syd31: "Sydney, AU",
+  syd32: "Sydney, AU",
+  syd33: "Sydney, AU",
+  syd34: "Sydney, AU",
+  syd35: "Sydney, AU",
+  syd36: "Sydney, AU",
+  syd37: "Sydney, AU",
+  syd38: "Sydney, AU",
+  syd39: "Sydney, AU",
+  syd40: "Sydney, AU",
+  syd41: "Sydney, AU",
+  syd42: "Sydney, AU",
+  syd43: "Sydney, AU",
+  syd44: "Sydney, AU",
+  syd45: "Sydney, AU",
+  syd46: "Sydney, AU",
+  syd47: "Sydney, AU",
+  syd48: "Sydney, AU",
+  syd49: "Sydney, AU",
+  syd50: "Sydney, AU",
+  syd51: "Sydney, AU",
+  syd52: "Sydney, AU",
+  syd53: "Sydney, AU",
+  syd54: "Sydney, AU",
+  syd55: "Sydney, AU",
+  syd56: "Sydney, AU",
+  syd57: "Sydney, AU",
+  syd58: "Sydney, AU",
+  syd59: "Sydney, AU",
+  syd60: "Sydney, AU",
+  syd61: "Sydney, AU",
+  syd62: "Sydney, AU",
+  syd63: "Sydney, AU",
+  syd64: "Sydney, AU",
+  syd65: "Sydney, AU",
+  syd66: "Sydney, AU",
+  syd67: "Sydney, AU",
+  syd68: "Sydney, AU",
+  syd69: "Sydney, AU",
+  syd70: "Sydney, AU",
+  syd71: "Sydney, AU",
+  syd72: "Sydney, AU",
+  syd73: "Sydney, AU",
+  syd74: "Sydney, AU",
+  syd75: "Sydney, AU",
+  syd76: "Sydney, AU",
+  syd77: "Sydney, AU",
+  syd78: "Sydney, AU",
+  syd79: "Sydney, AU",
+  syd80: "Sydney, AU",
+  syd81: "Sydney, AU",
+  syd82: "Sydney, AU",
+  syd83: "Sydney, AU",
+  syd84: "Sydney, AU",
+  syd85: "Sydney, AU",
+  syd86: "Sydney, AU",
+  syd87: "Sydney, AU",
+  syd88: "Sydney, AU",
+  syd89: "Sydney, AU",
+  syd90: "Sydney, AU",
+  syd91: "Sydney, AU",
+  syd92: "Sydney, AU",
+  syd93: "Sydney, AU",
+  syd94: "Sydney, AU",
+  syd95: "Sydney, AU",
+  syd96: "Sydney, AU",
+  syd97: "Sydney, AU",
+  syd98: "Sydney, AU",
+  syd99: "Sydney, AU",
+  syd100: "Sydney, AU",
+  syd101: "Sydney, AU",
+  syd102: "Sydney, AU",
+  syd103: "Sydney, AU",
+  syd104: "Sydney, AU",
+  syd105: "Sydney, AU",
+  syd106: "Sydney, AU",
+  syd107: "Sydney, AU",
+  syd108: "Sydney, AU",
+  syd109: "Sydney, AU",
+  syd110: "Sydney, AU",
+  syd111: "Sydney, AU",
+  syd112: "Sydney, AU",
+  syd113: "Sydney, AU",
+  syd114: "Sydney, AU",
+  syd115: "Sydney, AU",
+  syd116: "Sydney, AU",
+  syd117: "Sydney, AU",
+  syd118: "Sydney, AU",
+  syd119: "Sydney, AU",
+  syd120: "Sydney, AU",
+  syd121: "Sydney, AU",
+  syd122: "Sydney, AU",
+  syd123: "Sydney, AU",
+  syd124: "Sydney, AU",
+  syd125: "Sydney, AU",
+  syd126: "Sydney, AU",
+  syd127: "Sydney, AU",
+  syd128: "Sydney, AU",
+  syd129: "Sydney, AU",
+  syd130: "Sydney, AU",
+  syd131: "Sydney, AU",
+  syd132: "Sydney, AU",
+  syd133: "Sydney, AU",
+  syd134: "Sydney, AU",
+  syd135: "Sydney, AU",
+  syd136: "Sydney, AU",
+  syd137: "Sydney, AU",
+  syd138: "Sydney, AU",
+  syd139: "Sydney, AU",
+  syd140: "Sydney, AU",
+  syd141: "Sydney, AU",
+  syd142: "Sydney, AU",
+  syd143: "Sydney, AU",
+  syd144: "Sydney, AU",
+  syd145: "Sydney, AU",
+  syd146: "Sydney, AU",
+  syd147: "Sydney, AU",
+  syd148: "Sydney, AU",
+  syd149: "Sydney, AU",
+  syd150: "Sydney, AU",
+  syd151: "Sydney, AU",
+  syd152: "Sydney, AU",
+  syd153: "Sydney, AU",
+  syd154: "Sydney, AU",
+  syd155: "Sydney, AU",
+  syd156: "Sydney, AU",
+  syd157: "Sydney, AU",
+  syd158: "Sydney, AU",
+  syd159: "Sydney, AU",
+  syd160: "Sydney, AU",
+  syd161: "Sydney, AU",
+  syd162: "Sydney, AU",
+  syd163: "Sydney, AU",
+  syd164: "Sydney, AU",
+  syd165: "Sydney, AU",
+  syd166: "Sydney, AU",
+  syd167: "Sydney, AU",
+  syd168: "Sydney, AU",
+  syd169: "Sydney, AU",
+  syd170: "Sydney, AU",
+  syd171: "Sydney, AU",
+  syd172: "Sydney, AU",
+  syd173: "Sydney, AU",
+  syd174: "Sydney, AU",
+  syd175: "Sydney, AU",
+  syd176: "Sydney, AU",
+  syd177: "Sydney, AU",
+  syd178: "Sydney, AU",
+  syd179: "Sydney, AU",
+  syd180: "Sydney, AU",
+  syd181: "Sydney, AU",
+  syd182: "Sydney, AU",
+  syd183: "Sydney, AU",
+  syd184: "Sydney, AU",
+  syd185: "Sydney, AU",
+  syd186: "Sydney, AU",
+  syd187: "Sydney, AU",
+  syd188: "Sydney, AU",
+  syd189: "Sydney, AU",
+  syd190: "Sydney, AU",
+  syd191: "Sydney, AU",
+  syd192: "Sydney, AU",
+  syd193: "Sydney, AU",
+  syd194: "Sydney, AU",
+  syd195: "Sydney, AU",
+  syd196: "Sydney, AU",
+  syd197: "Sydney, AU",
+  syd198: "Sydney, AU",
+  syd199: "Sydney, AU",
+  syd200: "Sydney, AU",
+  syd201: "Sydney, AU",
+  syd202: "Sydney, AU",
+  syd203: "Sydney, AU",
+  syd204: "Sydney, AU",
+  syd205: "Sydney, AU",
+  syd206: "Sydney, AU",
+  syd207: "Sydney, AU",
+  syd208: "Sydney, AU",
+  syd209: "Sydney, AU",
+  syd210: "Sydney, AU",
+  syd211: "Sydney, AU",
+  syd212: "Sydney, AU",
+  syd213: "Sydney, AU",
+  syd214: "Sydney, AU",
+  syd215: "Sydney, AU",
+  syd216: "Sydney, AU",
+  syd217: "Sydney, AU",
+  syd218: "Sydney, AU",
+  syd219: "Sydney, AU",
+  syd220: "Sydney, AU",
+  syd221: "Sydney, AU",
+  syd222: "Sydney, AU",
+  syd223: "Sydney, AU",
+  syd224: "Sydney, AU",
+  syd225: "Sydney, AU",
+  syd226: "Sydney, AU",
+  syd227: "Sydney, AU",
+  syd228: "Sydney, AU",
+  syd229: "Sydney, AU",
+  syd230: "Sydney, AU",
+  syd231: "Sydney, AU",
+  syd232: "Sydney, AU",
+  syd233: "Sydney, AU",
+  syd234: "Sydney, AU",
+  syd235: "Sydney, AU",
+  syd236: "Sydney, AU",
+  syd237: "Sydney, AU",
+  syd238: "Sydney, AU",
+  syd239: "Sydney, AU",
+  syd240: "Sydney, AU",
+  syd241: "Sydney, AU",
+  syd242: "Sydney, AU",
+  syd243: "Sydney, AU",
+  syd244: "Sydney, AU",
+  syd245: "Sydney, AU",
+  syd246: "Sydney, AU",
+  syd247: "Sydney, AU",
+  syd248: "Sydney, AU",
+  syd249: "Sydney, AU",
+  syd250: "Sydney, AU",
+  syd251: "Sydney, AU",
+  syd252: "Sydney, AU",
+  syd253: "Sydney, AU",
+  syd254: "Sydney, AU",
+  syd255: "Sydney, AU",
+  syd256: "Sydney, AU",
+  syd257: "Sydney, AU",
+  syd258: "Sydney, AU",
+  syd259: "Sydney, AU",
+  syd260: "Sydney, AU",
+  syd261: "Sydney, AU",
+  syd262: "Sydney, AU",
+  syd263: "Sydney, AU",
+  syd264: "Sydney, AU",
+  syd265: "Sydney, AU",
+  syd266: "Sydney, AU",
+  syd267: "Sydney, AU",
+  syd268: "Sydney, AU",
+  syd269: "Sydney, AU",
+  syd270: "Sydney, AU",
+  syd271: "Sydney, AU",
+  syd272: "Sydney, AU",
+  syd273: "Sydney, AU",
+  syd274: "Sydney, AU",
+  syd275: "Sydney, AU",
+  syd276: "Sydney, AU",
+  syd277: "Sydney, AU",
+  syd278: "Sydney, AU",
+  syd279: "Sydney, AU",
+  syd280: "Sydney, AU",
+  syd281: "Sydney, AU",
+  syd282: "Sydney, AU",
+  syd283: "Sydney, AU",
+  syd284: "Sydney, AU",
+  syd285: "Sydney, AU",
+  syd286: "Sydney, AU",
+  syd287: "Sydney, AU",
+  syd288: "Sydney, AU",
+  syd289: "Sydney, AU",
+  syd290: "Sydney, AU",
+  syd291: "Sydney, AU",
+  syd292: "Sydney, AU",
+  syd293: "Sydney, AU",
+  syd294: "Sydney, AU",
+  syd295: "Sydney, AU",
+  syd296: "Sydney, AU",
+  syd297: "Sydney, AU",
+  syd298: "Sydney, AU",
+  syd299: "Sydney, AU",
+  syd300: "Sydney, AU",
+  syd301: "Sydney, AU",
+  syd302: "Sydney, AU",
+  syd303: "Sydney, AU",
+  syd304: "Sydney, AU",
+  syd305: "Sydney, AU",
+  syd306: "Sydney, AU",
+  syd307: "Sydney, AU",
+  syd308: "Sydney, AU",
+  syd309: "Sydney, AU",
+  syd310: "Sydney, AU",
+  syd311: "Sydney, AU",
+  syd312: "Sydney, AU",
+  syd313: "Sydney, AU",
+  syd314: "Sydney, AU",
+  syd315: "Sydney, AU",
+  syd316: "Sydney, AU",
+  syd317: "Sydney, AU",
+  syd318: "Sydney, AU",
+  syd319: "Sydney, AU",
+  syd320: "Sydney, AU",
+  syd321: "Sydney, AU",
+  syd322: "Sydney, AU",
+  syd323: "Sydney, AU",
+  syd324: "Sydney, AU",
+  syd325: "Sydney, AU",
+  syd326: "Sydney, AU",
+  syd327: "Sydney, AU",
+  syd328: "Sydney, AU",
+  syd329: "Sydney, AU",
+  syd330: "Sydney, AU",
+  syd331: "Sydney, AU",
+  syd332: "Sydney, AU",
+  syd333: "Sydney, AU",
+  syd334: "Sydney, AU",
+  syd335: "Sydney, AU",
+  syd336: "Sydney, AU",
+  syd337: "Sydney, AU",
+  syd338: "Sydney, AU",
+  syd339: "Sydney, AU",
+  syd340: "Sydney, AU",
+  syd341: "Sydney, AU",
+  syd342: "Sydney, AU",
+  syd343: "Sydney, AU",
+  syd344: "Sydney, AU",
+  syd345: "Sydney, AU",
+  syd346: "Sydney, AU",
+  syd347: "Sydney, AU",
+  syd348: "Sydney, AU",
+  syd349: "Sydney, AU",
+  syd350: "Sydney, AU",
+  syd351: "Sydney, AU",
+  syd352: "Sydney, AU",
+  syd353: "Sydney, AU",
+  syd354: "Sydney, AU",
+  syd355: "Sydney, AU",
+  syd356: "Sydney, AU",
+  syd357: "Sydney, AU",
+  syd358: "Sydney, AU",
+  syd359: "Sydney, AU",
+  syd{
