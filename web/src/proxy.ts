@@ -47,7 +47,7 @@ function getLimitForPath(pathname: string): { max: number; windowMs: number } {
 }
 
 // Combined middleware: auth + i18n + rate limiting
-export default auth(function middleware(req) {
+export default auth(async function middleware(req) {
   const { pathname } = req.nextUrl;
 
   // API routes: rate limiting only (skip i18n + auth redirects)
