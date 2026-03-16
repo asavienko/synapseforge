@@ -1,6 +1,6 @@
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { NextRequest, NextResponse } from "next/server";
+import { auth } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+import { NextRequest, NextResponse } from 'next/server';
 
 // Inline text chunker (no external dep required)
 function chunkText(text: string, chunkSize = 1000, overlap = 200): string[] {
@@ -30,6 +30,8 @@ async function getEmbedding(text: string): Promise<number[] | null> {
     return null;
   }
 }
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(
   req: NextRequest,
