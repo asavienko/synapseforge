@@ -1,7 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { auth } from '@/lib/auth';
 import { z } from 'zod';
 
 // Initialize Prisma client
@@ -21,7 +20,7 @@ export async function POST(request: Request) {
     const validatedData = formSchema.parse(body);
 
     // Get the current session
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -47,7 +46,10 @@ export async function POST(request: Request) {
   } catch (error) {
     // Handle validation errors
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Validation failed', details: error.errors }, { status: 400 });
+      return NextResponse.json({ 
+        error: 'Validation failed', 
+        details: error.errors.map(e => e.message) 
+      }, { status: 400 });
     }
     
     // Generic error handling
