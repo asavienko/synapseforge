@@ -25,15 +25,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Update user with onboarding data
+    // Update user with onboarding data as JSON
     await prisma.user.update({
       where: { id: session.user.id },
       data: {
-        business: validatedData.business,
-        industry: validatedData.industry,
-        useCase: validatedData.useCase,
-        // Mark onboarding as completed
-        onboardingCompleted: true,
+        onboardingData: JSON.stringify({
+          business: validatedData.business,
+          industry: validatedData.industry,
+          useCase: validatedData.useCase,
+        }),
+        onboardingDone: true,
       },
     });
 
@@ -46,12 +47,12 @@ export async function POST(request: Request) {
   } catch (error) {
     // Handle validation errors
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ 
-        error: 'Validation failed', 
-        details: error.errors.map(e => e.message) 
+      return NextResponse.json({
+        error: 'Validation failed',
+        details: (error.errors ?? []).map((e: any) => e.message)
       }, { status: 400 });
     }
-    
+
     // Generic error handling
     console.error('Onboarding error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
