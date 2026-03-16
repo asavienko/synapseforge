@@ -7,6 +7,8 @@ if (process.env.REDIS_URL) {
   redisClient = new Redis(process.env.REDIS_URL);
 }
 
+const store = new Map<string, { count: number; resetAt: number }>();
+
 /**
  * Returns true if the request is allowed, false if rate limited.
  * @param key      Unique key (e.g. IP address or IP+route)
