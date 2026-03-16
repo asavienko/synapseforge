@@ -211,8 +211,7 @@ model KnowledgeChunk {
   id        String       @id @default(cuid())
   docId     String
   content   String
-  // TODO: migrate to vector(1536) once pgvector confirmed — currently stored as String for compatibility
-  embedding String?
+  embedding Unsupported("vector")?
   createdAt DateTime     @default(now())
   doc       KnowledgeDoc @relation(fields: [docId], references: [id], onDelete: Cascade)
 }

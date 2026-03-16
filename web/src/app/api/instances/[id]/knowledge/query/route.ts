@@ -21,18 +21,6 @@ async function getEmbedding(text: string): Promise<number[] | null> {
   }
 }
 
-function cosineSimilarity(a: number[], b: number[]): number {
-  let dotProduct = 0;
-  let normA = 0;
-  let normB = 0;
-  for (let i = 0; i < a.length; i++) {
-    dotProduct += a[i] * b[i];
-    normA += a[i] * a[i];
-    normB += b[i] * b[i];
-  }
-  return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
-}
-
 export const dynamic = 'force-dynamic';
 
 export async function POST(
@@ -54,60 +42,42 @@ export async function POST(
   if (!query || typeof query !== 'string')
     return NextResponse.json({ error: "Query required" }, { status: 400 });
 
-  // Get knowledge base
-  const kb = await prisma.knowledgeBase.findUnique({
-    where: { instanceId: id },
-    include: { documents: { include: { chunks: true } } },
-  });
-  if (!kb) {
-    return NextResponse.json({ error: "No knowledge base uploaded" }, { status: 404 });
-  }
-
   // Generate embedding for query
   const queryEmbedding = await getEmbedding(query);
   if (!queryEmbedding) {
     return NextResponse.json({ error: "Failed to generate embedding" }, { status: 500 });
   }
 
-  // Collect all chunks with their embeddings
-  const chunks: Array<{ id: string; content: string; embedding?: number[]; docId: string; filename: string }> = [];
-  for (const doc of kb.documents) {
-    for (const chunk of doc.chunks) {
-      if (chunk.embedding) {
-        try {
-          const embedding = JSON.parse(chunk.embedding);
-          chunks.push({
-            id: chunk.id,
-            content: chunk.content,
-            embedding,
-            docId: doc.id,
-            filename: doc.filename,
-          });
-        } catch {
-          // Skip malformed embeddings
-        }
-      }
-    }
-  }
+  // Use raw SQL with pgvector <=> operator for efficient cosine similarity search
+  const embeddingsArrayStr = `[${queryEmbedding.join(',')}]`;
+  const results = await prisma.$queryRaw<
+    Array<{ id: string; content: string; distance: number; filename: string; docId: string }>
+  >`
+    SELECT 
+      "KnowledgeChunk"."id",
+      "KnowledgeChunk"."content",
+      "KnowledgeChunk"."embedding" <=> ${embeddingsArrayStr}::vector as "distance",
+      "KnowledgeDoc"."filename",
+      "KnowledgeDoc"."id" as "docId"
+    FROM "KnowledgeChunk"
+    JOIN "KnowledgeDoc" ON "KnowledgeChunk"."docId" = "KnowledgeDoc"."id"
+    JOIN "KnowledgeBase" ON "KnowledgeDoc"."knowledgeBaseId" = "KnowledgeBase"."id"
+    JOIN "AIInstance" ON "KnowledgeBase"."instanceId" = "AIInstance"."id"
+    WHERE 
+      "AIInstance"."id" = ${id}
+      AND "AIInstance"."userId" = ${session.user.id}
+      AND "KnowledgeChunk"."embedding" IS NOT NULL
+    ORDER BY "KnowledgeChunk"."embedding" <=> ${embeddingsArrayStr}::vector
+    LIMIT ${limit}
+  `;
 
-  if (chunks.length === 0) {
-    return NextResponse.json({ results: [] });
-  }
-
-  // Compute similarities
-  const scored = chunks.map((chunk) => ({
-    ...chunk,
-    score: cosineSimilarity(queryEmbedding, chunk.embedding!),
-  }));
-
-  // Sort by descending score and take top N
-  scored.sort((a, b) => b.score - a.score);
-  const topResults = scored.slice(0, limit).map(({ id, content, score, filename, docId }) => ({
-    id,
-    content,
-    score,
-    filename,
-    docId,
+  // Convert distance to similarity score (1 - distance for cosine)
+  const topResults = results.map((r) => ({
+    id: r.id,
+    content: r.content,
+    score: 1 - r.distance,
+    filename: r.filename,
+    docId: r.docId,
   }));
 
   return NextResponse.json({ results: topResults });
