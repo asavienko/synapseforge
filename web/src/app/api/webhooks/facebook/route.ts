@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import crypto from "crypto";
 
 /**
  * GET /api/webhooks/facebook
@@ -19,10 +20,34 @@ export async function GET(req: NextRequest) {
 
 /**
  * POST /api/webhooks/facebook
- * Receive Facebook Page Messenger events and route them to the matching instance chat.
+ * Receive Facebook Page Messenger events with signature verification.
  */
 export async function POST(req: NextRequest) {
-  const body = await req.json();
+  // Get Facebook signature from header (X-Hub-Signature-256)
+  const signature = req.headers.get("x-hub-signature-256");
+  if (!signature) {
+    return NextResponse.json({ error: "Missing signature" }, { status: 403 });
+  }
+
+  // Read raw body for signature verification
+  const rawBody = await req.text();
+
+  // Compute expected signature using app secret
+  const appSecret = process.env.FACEBOOK_APP_SECRET;
+  if (!appSecret) {
+    console.error("[Facebook webhook] Missing FACEBOOK_APP_SECRET");
+    return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
+  }
+
+  const expectedSignature = "sha256=" + crypto.createHmac("sha256", appSecret).update(rawBody).digest("hex");
+
+  if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature))) {
+    console.warn("[Facebook webhook] Invalid signature");
+    return NextResponse.json({ error: "Invalid signature" }, { status: 403 });
+  }
+
+  // Parse JSON after verification
+  const body = JSON.parse(rawBody);
 
   if (body.object === "page") {
     for (const entry of body.entry || []) {
@@ -38,7 +63,7 @@ export async function POST(req: NextRequest) {
         const messageText = messaging.message?.text as string | undefined;
         if (!messageText || !senderId) continue;
 
-        // Route to instance chat — fire and forget
+        // Route to instance chat
         fetch(
           `${process.env.NEXTAUTH_URL}/api/instances/${cred.instanceId}/chat`,
           {

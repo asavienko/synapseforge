@@ -4,19 +4,6 @@ import { decrypt } from "@/lib/crypto";
 import { callLLM } from "@/lib/llm";
 import { isSandboxExhausted } from "@/lib/sandbox";
 
-/**
- * POST /api/webhooks/whatsapp
- * Receives Twilio WhatsApp webhook events.
- * Supports text messages and voice note transcription via Whisper.
- *
- * Configure this URL in Twilio: https://yourdomain.com/api/webhooks/whatsapp
- *
- * FIXED: previously fired-and-forgot to the streaming chat API (which never
- * sent a reply back to the user). Now calls callLLM() directly and uses
- * the Twilio Messages API to send the response.
- */
-
-// LLM calls can take 30–60s
 export const maxDuration = 60;
 
 const TWIML_OK = new Response("<Response></Response>", {
@@ -24,13 +11,11 @@ const TWIML_OK = new Response("<Response></Response>", {
   headers: { "Content-Type": "text/xml" },
 });
 
-// ── Send a WhatsApp message via Twilio Messages API ───────────────────────
-
 async function sendWhatsAppMessage(
   accountSid: string,
   authToken: string,
-  from: string, // whatsapp:+14155238886
-  to: string,   // whatsapp:+1234567890
+  from: string,
+  to: string,
   body: string
 ): Promise<void> {
   const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
@@ -47,6 +32,31 @@ async function sendWhatsAppMessage(
   });
 }
 
+/**
+ * Verify Twilio webhook signature using the auth token from instance credentials.
+ */
+async function verifyTwilioSignature(
+  authToken: string,
+  url: string,
+  params: Record<string, string>
+): Promise<boolean> {
+  try {
+    const crypto = await import("crypto");
+    const expected = crypto.createHmac("sha1", authToken);
+    const sortedKeys = Object.keys(params).sort();
+    for (const key of sortedKeys) {
+      expected.update(key);
+      expected.update(params[key]);
+    }
+    const signature = params["X-Twilio-Signature"] || params["signature"];
+    if (!signature) return false;
+    const computed = `sha1=${expected.digest("hex")}`;
+    return crypto.timingSafeEqual(Buffer.from(computed), Buffer.from(signature));
+  } catch {
+    return false;
+  }
+}
+
 export async function POST(req: NextRequest) {
   const contentType = req.headers.get("content-type") || "";
   const body: Record<string, string> = {};
@@ -58,37 +68,56 @@ export async function POST(req: NextRequest) {
     Object.assign(body, await req.json());
   }
 
-  const to   = (body["To"]   as string | undefined) || "";
+  const to = (body["To"] as string | undefined) || "";
   const from = (body["From"] as string | undefined) || "";
-  const numMedia          = parseInt(body["NumMedia"]          || "0");
+  const numMedia = parseInt(body["NumMedia"] || "0");
   const mediaContentType0 = body["MediaContentType0"] as string | undefined;
-  const mediaUrl0         = body["MediaUrl0"]         as string | undefined;
-  let   messageText       = (body["Body"] as string | undefined) || "";
+  const mediaUrl0 = body["MediaUrl0"] as string | undefined;
+  let messageText = (body["Body"] as string | undefined) || "";
 
   if (!to || !from) return TWIML_OK;
 
   const toNumber = to.replace(/^whatsapp:/, "");
 
-  // ── Find instance by Twilio WhatsApp number ──────────────────────────────
+  // Find instance by Twilio WhatsApp number
   const allWhatsappCreds = await prisma.instanceCredential.findMany({
     where: { key: "twilio_whatsapp_number" },
     select: { instanceId: true, value: true },
   });
 
   let instanceId: string | null = null;
+  let instanceAuthToken: string | null = null;
+
   for (const row of allWhatsappCreds) {
     try {
       const decrypted = decrypt(row.value);
       if (decrypted.replace(/\s/g, "") === toNumber.replace(/\s/g, "")) {
         instanceId = row.instanceId;
+        // Fetch the instance to get its Twilio auth token for signature verification
+        const instance = await prisma.aIInstance.findFirst({
+          where: { id: row.instanceId },
+          include: { credentials: true },
+        });
+        if (instance) {
+          const authCred = instance.credentials.find(c => c.key === "twilio_auth_token");
+          if (authCred) {
+            instanceAuthToken = decrypt(authCred.value);
+          }
+        }
         break;
       }
-    } catch { /* skip undecryptable rows */ }
+    } catch { /* skip */ }
   }
 
-  if (!instanceId) return TWIML_OK;
+  if (!instanceId || !instanceAuthToken) return TWIML_OK;
 
-  // ── Load instance + credentials ──────────────────────────────────────────
+  // Verify Twilio signature before processing
+  const url = req.url;
+  if (!(await verifyTwilioSignature(instanceAuthToken, url, body))) {
+    console.warn("[WhatsApp webhook] Invalid Twilio signature");
+    return NextResponse.json({ error: "Invalid signature" }, { status: 403 });
+  }
+
   const instance = await prisma.aIInstance.findUnique({
     where: { id: instanceId },
     include: { credentials: true },
@@ -96,11 +125,11 @@ export async function POST(req: NextRequest) {
 
   if (!instance || instance.status !== "running") return TWIML_OK;
 
-  // ── Transcribe voice note if present ─────────────────────────────────────
+  // Transcribe voice note if present
   if (numMedia > 0 && mediaUrl0 && mediaContentType0 &&
       (mediaContentType0.startsWith("audio/") || mediaContentType0 === "video/ogg")) {
-    const sidRow    = instance.credentials.find(c => c.key === "twilio_account_sid");
-    const authRow   = instance.credentials.find(c => c.key === "twilio_auth_token");
+    const sidRow = instance.credentials.find(c => c.key === "twilio_account_sid");
+    const authRow = instance.credentials.find(c => c.key === "twilio_auth_token");
     const openaiRow = instance.credentials.find(c => c.key === "openai_api_key");
 
     if (sidRow && authRow && openaiRow) {
@@ -121,14 +150,13 @@ export async function POST(req: NextRequest) {
 
   if (!messageText) return TWIML_OK;
 
-  // ── Check sandbox / credentials ──────────────────────────────────────────
+  // Check sandbox / credentials
   const llmKeys = ["openai_api_key", "anthropic_api_key", "openrouter_api_key"];
   const hasLLMCreds = instance.credentials.some(c => llmKeys.includes(c.key));
 
   if (!hasLLMCreds) {
     if (instance.sandboxMode && isSandboxExhausted(instance.sandboxUsed ?? 0)) {
-      // Send exhausted message via Twilio
-      const sidRow  = instance.credentials.find(c => c.key === "twilio_account_sid");
+      const sidRow = instance.credentials.find(c => c.key === "twilio_account_sid");
       const authRow = instance.credentials.find(c => c.key === "twilio_auth_token");
       if (sidRow && authRow) {
         await sendWhatsAppMessage(
@@ -143,12 +171,12 @@ export async function POST(req: NextRequest) {
     if (!instance.sandboxMode) return TWIML_OK;
   }
 
-  // ── Persist user message ──────────────────────────────────────────────────
+  // Persist user message
   await prisma.chatMessage.create({
     data: { instanceId, role: "user", content: messageText, source: "whatsapp" },
   });
 
-  // ── Fetch recent conversation history ─────────────────────────────────────
+  // Fetch recent conversation history
   const history = await prisma.chatMessage.findMany({
     where: { instanceId },
     orderBy: { createdAt: "desc" },
@@ -160,7 +188,7 @@ export async function POST(req: NextRequest) {
     .filter(m => m.role === "user" || m.role === "assistant")
     .map(m => ({ role: m.role as "user" | "assistant", content: m.content }));
 
-  // ── Call LLM ──────────────────────────────────────────────────────────────
+  // Call LLM
   const result = await callLLM(instanceId, [
     ...contextMessages,
     { role: "user", content: messageText },
@@ -173,8 +201,8 @@ export async function POST(req: NextRequest) {
 
   const reply = result.response;
 
-  // ── Send reply via Twilio Messages API ───────────────────────────────────
-  const sidRow  = instance.credentials.find(c => c.key === "twilio_account_sid");
+  // Send reply via Twilio
+  const sidRow = instance.credentials.find(c => c.key === "twilio_account_sid");
   const authRow = instance.credentials.find(c => c.key === "twilio_auth_token");
 
   if (sidRow && authRow) {
@@ -185,12 +213,12 @@ export async function POST(req: NextRequest) {
     ).catch(err => console.error("[whatsapp-webhook] Twilio send error:", err));
   }
 
-  // ── Persist assistant reply ───────────────────────────────────────────────
+  // Persist assistant reply
   await prisma.chatMessage.create({
     data: { instanceId, role: "assistant", content: reply, source: "whatsapp" },
   });
 
-  // ── Increment sandbox usage ───────────────────────────────────────────────
+  // Increment sandbox usage
   if (instance.sandboxMode && !hasLLMCreds) {
     await prisma.aIInstance.update({
       where: { id: instanceId },
@@ -200,8 +228,6 @@ export async function POST(req: NextRequest) {
 
   return TWIML_OK;
 }
-
-// ── Whisper audio transcription ───────────────────────────────────────────
 
 async function transcribeAudio(
   audioUrl: string,
