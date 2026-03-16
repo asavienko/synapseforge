@@ -70,8 +70,16 @@ export async function migrateEmbeddings() {
  * Verify migration: check embedding column types.
  */
 export async function verifyMigration() {
-  const total = await prisma.knowledgeChunk.count();
-  const vectorNull = await prisma.knowledgeChunk.count({ where: { embedding: null } });
+  const totalResult = await prisma.$queryRaw<Array<{ count: bigint }>>`SELECT COUNT(*) as "count" FROM "KnowledgeChunk"`;
+  const total = Number(totalResult[0]?.count ?? 0);
+
+  const nullResult = await prisma.$queryRaw<Array<{ count: bigint }>>`
+    SELECT COUNT(*) as "count"
+    FROM "KnowledgeChunk"
+    WHERE "embedding" IS NULL
+  `;
+  const vectorNull = Number(nullResult[0]?.count ?? 0);
+
   const sample = await prisma.$queryRaw<any[]>`
     SELECT "id", pg_typeof("embedding") as type
     FROM "KnowledgeChunk"
