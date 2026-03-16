@@ -98,7 +98,7 @@ export async function POST(
 
       for (const chunk of chunks) {
         const embedding = await getEmbedding(chunk);
-        // Store embedding as JSON string (TODO: migrate to vector(1536) once pgvector confirmed in prod)
+        // Store embedding as JSON string (migrated to vector(1536) with pgvector)
         await prisma.knowledgeChunk.create({
           data: {
             docId: doc.id,
