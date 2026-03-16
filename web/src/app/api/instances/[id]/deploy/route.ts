@@ -32,6 +32,45 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     );
   }
 
+  // Enforce plan limits before provisioning
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { plan: true, stripeSubscriptionId: true, stripeCurrentPeriodEnd: true },
+  });
+  if (!user) {
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
+  }
+
+  const PLANS = {
+    free: { label: "Free", instances: 1, tier: "minimal" },
+    pro: { label: "Pro", instances: 3, tier: "standard" },
+    enterprise: { label: "Enterprise", instances: -1, tier: "pro" },
+  } as const;
+
+  const effectivePlan = user.stripeSubscriptionId && user.stripeCurrentPeriodEnd && user.stripeCurrentPeriodEnd > new Date()
+    ? user.plan
+    : "free";
+
+  const limit = PLANS[effectivePlan as keyof typeof PLANS]?.instances ?? 1;
+  if (limit !== -1) {
+    const existingCount = await prisma.aIInstance.count({
+      where: {
+        userId: session.user.id,
+        id: { not: id }, // exclude current instance (draft)
+        OR: [
+          { provisionStatus: "provisioning" },
+          { provisionStatus: "ready" },
+        ],
+      },
+    });
+    if (existingCount >= limit) {
+      return NextResponse.json(
+        { error: `Plan limit reached: ${effectivePlan} allows ${limit} instance${limit === 1 ? "" : "s"}. Upgrade to add more.`, limit, plan: effectivePlan },
+        { status: 403 }
+      );
+    }
+  }
+
   // Validate readiness — need at least one LLM credential
   const credKeys = instance.credentials.map((c) => c.key);
   const hasLLM = credKeys.some((k) =>
