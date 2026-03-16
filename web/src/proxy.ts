@@ -49,21 +49,8 @@ function getLimitForPath(pathname: string): { max: number; windowMs: number } {
 // Combined middleware: auth + i18n + rate limiting
 export default auth(function middleware(req) {
   const { pathname } = req.nextUrl;
-  const bare = stripLocale(pathname);
-  const locale = getLocaleFromPath(pathname);
-  const session = (req as unknown as { auth: unknown }).auth;
 
-  const isProtected = PROTECTED.some(p => bare === p || bare.startsWith(p + '/'));
-  const isAuthOnly  = AUTH_ONLY.some(p => bare === p || bare.startsWith(p + '/'));
-
-  if (isProtected && !session) {
-    return NextResponse.redirect(new URL(`/${locale}/sign-in`, req.url));
-  }
-  if (isAuthOnly && session) {
-    return NextResponse.redirect(new URL(`/${locale}/dashboard`, req.url));
-  }
-
-  // Apply rate limiting to API routes
+  // API routes: rate limiting only (skip i18n + auth redirects)
   if (pathname.startsWith('/api/')) {
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
                req.headers.get('x-real-ip') ?? 'unknown';
@@ -82,11 +69,30 @@ export default auth(function middleware(req) {
       console.error('[Rate limit] Error:', error);
       // Continue even if rate limit fails (Redis down, etc.)
     }
+    return NextResponse.next();
+  }
+
+  // Page routes: i18n + auth
+  const bare = stripLocale(pathname);
+  const locale = getLocaleFromPath(pathname);
+  const session = (req as unknown as { auth: unknown }).auth;
+
+  const isProtected = PROTECTED.some(p => bare === p || bare.startsWith(p + '/'));
+  const isAuthOnly  = AUTH_ONLY.some(p => bare === p || bare.startsWith(p + '/'));
+
+  if (isProtected && !session) {
+    return NextResponse.redirect(new URL(`/${locale}/sign-in`, req.url));
+  }
+  if (isAuthOnly && session) {
+    return NextResponse.redirect(new URL(`/${locale}/dashboard`, req.url));
   }
 
   return intlMiddleware(req as unknown as NextRequest);
 });
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)'],
+  matcher: [
+    '/api/:path*',
+    '/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)',
+  ],
 };
