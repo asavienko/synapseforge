@@ -58,6 +58,25 @@ export async function retrieveContext(
 
     if (!kb || kb.documents.length === 0) return "";
 
+    // Check if there are legacy JSON embeddings that need migration
+    const legacyCount = await prisma.$queryRaw<Array<{ count: bigint }>>`
+      SELECT COUNT(*) as "count"
+      FROM "KnowledgeChunk" k
+      JOIN "KnowledgeDoc" d ON k."docId" = d."id"
+      JOIN "KnowledgeBase" b ON d."knowledgeBaseId" = b."id"
+      WHERE b."instanceId" = ${instanceId}
+        AND k."embedding" IS NOT NULL
+        AND pg_typeof(k."embedding") = 'text'::regtype
+      LIMIT 1
+    `;
+    if (Number(legacyCount[0]?.count ?? 0) > 0) {
+      // Trigger background migration (fire and forget)
+      fetch(`${process.env.NEXTAUTH_URL}/api/instances/${instanceId}/knowledge/migrate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      }).catch(() => {}); // ignore errors
+    }
+
     // Try embedding-based similarity via pgvector
     const queryEmbedding = await getQueryEmbedding(query);
 
