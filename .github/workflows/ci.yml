@@ -41,7 +41,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd web
-          npm ci
+          npm install
 
       - name: Generate Prisma client
         run: |
@@ -130,7 +130,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd web
-          npm ci
+          npm install
 
       - name: Generate Prisma client
         run: |
@@ -192,7 +192,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd web
-          npm ci
+          npm install
 
       - name: Run Snyk security scan
         uses: snyk/actions/node@master
