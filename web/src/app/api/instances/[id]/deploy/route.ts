@@ -15,6 +15,34 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   });
   if (!instance) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
+  // Handle retry for failed provisions — clean up old server first
+  if (instance.provisionStatus === "failed" && instance.vpsServerId) {
+    const hetznerKey = process.env.HETZNER_API_KEY;
+    if (hetznerKey) {
+      try {
+        // Delete the failed Hetzner server
+        const deleteRes = await fetch(
+          `https://api.hetzner.cloud/v1/servers/${instance.vpsServerId}`,
+          { method: "DELETE", headers: { Authorization: `Bearer ${hetznerKey}` } }
+        );
+        console.log(`[deploy-retry] Cleaned up failed server ${instance.vpsServerId} (HTTP ${deleteRes.status})`);
+      } catch (err) {
+        console.error(`[deploy-retry] Failed to delete old server: ${err}`);
+        // Non-fatal: continue with retry even if cleanup fails
+      }
+    }
+    // Reset instance state for retry
+    await prisma.aIInstance.update({
+      where: { id },
+      data: {
+        vpsServerId: null,
+        vpsUrl: null,
+        provisionStatus: null,
+        status: "draft",
+      },
+    });
+  }
+
   // Already provisioned or in progress?
   if (instance.provisionStatus === "provisioning") {
     return NextResponse.json({ error: "Provisioning already in progress", status: "provisioning" }, { status: 409 });
