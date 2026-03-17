@@ -54,6 +54,7 @@ jobs:
           npx prisma migrate deploy
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/synapseforge_test
+          DIRECT_URL: postgresql://postgres:postgres@localhost:5432/synapseforge_test
 
       - name: Run type checking
         run: |
@@ -77,6 +78,7 @@ jobs:
           npm start &
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/synapseforge_test
+          DIRECT_URL: postgresql://postgres:postgres@localhost:5432/synapseforge_test
           NEXTAUTH_SECRET: test-secret
           NEXTAUTH_URL: http://localhost:3000
         timeout-minutes: 5
@@ -98,6 +100,7 @@ jobs:
         env:
           CYPRESS_BASE_URL: http://localhost:3000
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/synapseforge_test
+          DIRECT_URL: postgresql://postgres:postgres@localhost:5432/synapseforge_test
           NEXTAUTH_SECRET: test-secret
           NEXTAUTH_URL: http://localhost:3000
 
@@ -133,6 +136,9 @@ jobs:
         run: |
           cd web
           npx prisma generate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DATABASE_URL }}
 
       - name: Build application
         run: |
@@ -140,6 +146,7 @@ jobs:
           npm run build
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DATABASE_URL }}
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
           NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
 
