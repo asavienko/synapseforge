@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { Button, Table, Input, Select, Modal, Badge, Tag } from '@/components/ui';
-import { useAuth } from '@/lib/auth';
+import { auth } from '@/lib/auth';
 import { adminOnly } from '@/lib/permissions';
 
 interface Manager {
@@ -31,7 +31,6 @@ export default function ManagerPage() {
   const [filterPlan, setFilterPlan] = useState<string | null>(null);
 
   const router = useRouter();
-  const { user } = useAuth();
 
   useEffect(() => {
     if (!user) return;
@@ -282,156 +281,6 @@ export const generateMetadata = async () => {
   }
   return {};
 };
-
-// Admin-only route guard
-export async function generateStaticParams() {
-  return [{ id: 'manager' }];
-}
-
-export async function generateMetadata() {
-  const { user } = await auth();
-  if (!user || user.role !== 'admin') {
-    return {
-      notFound: true,
-    };
-  }
-  return {};
-}
-
-// Admin-only route guard
-export async function generateStaticParams() {
-  return [{ id: 'manager' }];
-}
-
-export async function generateMetadata() {
-  const { user } = await auth();
-  if (!user || user.role !== 'admin') {
-    return {
-      notFound: true,
-    };
-  }
-  return {};
-}
-
-// Admin-only route guard
-export async function generateStaticParams() {
-  return [{ id: 'manager' }];
-}
-
-export async function generateMetadata() {
-  const { user } = await auth();
-  if (!user || user.role !== 'admin') {
-    return {
-      notFound: true,
-    };
-  }
-  return {};
-}
-
-// Admin-only route guard
-export async function generateStaticParams() {
-  return [{ id: 'manager' }];
-}
-
-export async function generateMetadata() {
-  const { user } = await auth();
-  if (!user || user.role !== 'admin') {
-    return {
-      notFound: true,
-    };
-  }
-  return {};
-}
-
-// Admin-only route guard
-export async function generateStaticParams() {
-  return [{ id: 'manager' }];
-}
-
-export async function generateMetadata() {
-  const { user } = await auth();
-  if (!user || user.role !== 'admin') {
-    return {
-      notFound: true,
-    };
-  }
-  return {};
-}
-
-// Admin-only route guard
-export async function generateStaticParams() {
-  return [{ id: 'manager' }];
-}
-
-export async function generateMetadata() {
-  const { user } = await auth();
-  if (!user || user.role !== 'admin') {
-    return {
-      notFound: true,
-    };
-  }
-  return {};
-}
-
-// Admin-only route guard
-export async function generateStaticParams() {
-  return [{ id: 'manager' }];
-}
-
-export async function generateMetadata() {
-  const { user } = await auth();
-  if (!user || user.role !== 'admin') {
-    return {
-      notFound: true,
-    };
-  }
-  return {};
-}
-
-// Admin-only route guard
-export async function generateStaticParams() {
-  return [{ id: 'manager' }];
-}
-
-export async function generateMetadata() {
-  const { user } = await auth();
-  if (!user || user.role !== 'admin') {
-    return {
-      notFound: true,
-    };
-  }
-  return {};
-}
-
-// Admin-only route guard
-export async function generateStaticParams() {
-  return [{ id: 'manager' }];
-}
-
-export async function generateMetadata() {
-  const { user } = await auth();
-  if (!user || user.role !== 'admin') {
-    return {
-      notFound: true,
-    };
-  }
-  return {};
-}
-
-// Admin-only route guard
-export async function generateStaticParams() {
-  return [{ id: 'manager' }];
-}
-
-export async function generateMetadata() {
-  const { user } = await auth();
-  if (!user || user.role !== 'admin') {
-    return {
-      notFound: true,
-    };
-  }
-  return {};
-}
 
 // Admin-only route guard
 export async function generateStaticParams() {
