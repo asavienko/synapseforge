@@ -98,7 +98,7 @@ export function ManagerClient({ manager, clients: initialClients }: {
   const totalUnread = clients.reduce((s, c) => s + c.unreadMessages, 0);
   const running = clients.flatMap((c) => c.instances).filter((i) => i.status === "running").length;
 
-  // Load instances when tab is opened
+  // Load instances when tab is opened, and poll every 30s while on Instances or Alerts tab
   useEffect(() => {
     if ((activeTab === "instances" || activeTab === "alerts") && !instancesData) {
       setInstancesLoading(true);
@@ -106,6 +106,19 @@ export function ManagerClient({ manager, clients: initialClients }: {
         .then((r) => r.json())
         .then((d) => setInstancesData(d))
         .finally(() => setInstancesLoading(false));
+    }
+  }, [activeTab, instancesData]);
+
+  // Poll every 30s while on Instances or Alerts tab to keep health status fresh
+  useEffect(() => {
+    if ((activeTab === "instances" || activeTab === "alerts") && instancesData) {
+      const interval = setInterval(() => {
+        fetch("/api/manager/instances")
+          .then((r) => r.json())
+          .then((d) => setInstancesData(d))
+          .catch(() => {}); // ignore poll errors
+      }, 30_000);
+      return () => clearInterval(interval);
     }
   }, [activeTab, instancesData]);
 
