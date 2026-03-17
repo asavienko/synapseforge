@@ -234,7 +234,7 @@ interface AdminReferralConversion {
   convertedAt: string | null;
 }
 
-export function AdminClient({ users: initialUsers, managers: initialManagers, stats, healthSummary }: {
+export function AdminClient({ users: initialUsers, managers: initialManagers, stats, healthSummary: initialHealthSummary }: {
   users: UserRow[];
   managers: ManagerRow[];
   stats: Stats;
@@ -243,6 +243,7 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
   const t = useTranslations("admin");
   const [users, setUsers] = useState(initialUsers);
   const [managers, setManagers] = useState(initialManagers);
+  const [healthSummary, setHealthSummary] = useState<HealthSummary>(initialHealthSummary);
 
   // Manager creation
   const [showCreateManager, setShowCreateManager] = useState(false);
@@ -358,6 +359,17 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
         .finally(() => setLeadsLoading(false));
     }
   }, [activeTab, leads.length]);
+
+  // Poll health summary every 30s for real-time updates
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetch("/api/admin/health-summary")
+        .then((r) => r.json())
+        .then((d) => setHealthSummary(d))
+        .catch(() => {}); // ignore errors
+    }, 30_000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (activeTab === "referrals" && !referralLoaded) {
