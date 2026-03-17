@@ -6,7 +6,7 @@ import { prisma } from '@/lib/prisma';
  *
  * Usage: npx tsx src/lib/migrate-embeddings.ts
  */
-export async function migrateEmbeddings() {
+export async function migrateEmbeddings({ dryRun = false } = {}) {
   console.log('Starting embedding migration...');
 
   // Count total chunks with JSON embeddings using raw SQL (bypass Prisma type limitation)
@@ -41,6 +41,12 @@ export async function migrateEmbeddings() {
         if (!Array.isArray(vector) || vector.length !== 1536) {
           console.warn(`Chunk ${chunk.id}: invalid embedding vector length ${vector?.length}, skipping`);
           skipped++;
+          continue;
+        }
+
+        if (dryRun) {
+          console.log(`[DRY RUN] Would migrate chunk ${chunk.id} (vector length: ${vector.length})`);
+          migrated++;
           continue;
         }
 
