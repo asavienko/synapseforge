@@ -109,6 +109,20 @@ export function ManagerClient({ manager, clients: initialClients }: {
     }
   }, [activeTab, instancesData]);
 
+  // Poll instances every 30s when on instances or alerts tab to keep health status fresh
+  useEffect(() => {
+    if (activeTab !== "instances" && activeTab !== "alerts") return;
+    if (!instancesData) return; // wait until first load done
+    const poll = async () => {
+      try {
+        const res = await fetch("/api/manager/instances");
+        if (res.ok) setInstancesData(await res.json());
+      } catch (e) { /* ignore */ }
+    };
+    const interval = setInterval(poll, 30_000);
+    return () => clearInterval(interval);
+  }, [activeTab, instancesData]);
+
   // Create instance for client state
   const [showCreateInstance, setShowCreateInstance] = useState(false);
   const [createStep, setCreateStep] = useState<"template" | "details">("template");
