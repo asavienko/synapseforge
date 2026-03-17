@@ -95,7 +95,13 @@ export default function InstancesPage() {
 
   useEffect(() => { loadInstances(); }, [loadInstances]);
 
-  // Poll every 10s if any instance is provisioning
+  // Poll every 30s to keep health status fresh (even without provisioning)
+  useEffect(() => {
+    const interval = setInterval(loadInstances, 30_000);
+    return () => clearInterval(interval);
+  }, [loadInstances]);
+
+  // Poll every 10s if any instance is provisioning (more frequent)
   useEffect(() => {
     const hasProvisioning = instances.some((i) => i.provisionStatus === "provisioning");
     if (!hasProvisioning) return;
