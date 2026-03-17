@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-// Internal auth middleware
-import { internalAuth } from "@/lib/internal-auth";
-
 export async function GET(req: NextRequest) {
-  // Require internal API key for manager access
-  const authResult = internalAuth(req);
-  if (authResult !== null) {
-    return authResult;
+  // Internal API key auth
+  const authHeader = req.headers.get("authorization") ?? "";
+  const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
+  const internalKey = process.env.INTERNAL_API_KEY;
+
+  if (!internalKey || token !== internalKey) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const allInstances = await prisma.aIInstance.findMany({
