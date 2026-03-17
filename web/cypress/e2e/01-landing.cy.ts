@@ -62,7 +62,7 @@ describe("01 · Landing Page", () => {
   it("pricing section shows all 3 plans with prices", () => {
     cy.contains("Simple, transparent pricing").should("be.visible");
     cy.contains("$0").should("be.visible");
-    cy.contains("$499").should("be.visible");
+    cy.contains("$49").should("be.visible");
     cy.contains("Custom").should("be.visible");
     cy.snap("01-landing-06-pricing");
   });

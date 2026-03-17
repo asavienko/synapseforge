@@ -60,14 +60,14 @@
     },
     "pro": {
       "name": "Pro",
-      "price": "$499",
+      "price": "$49",
       "desc": "por mes",
       "cta": "Obtener Pro →",
       "period": "/ mes"
     },
     "enterprise": {
       "name": "Enterprise",
-      "price": "Personalizado",
+      "price": "$299",
       "desc": "para grandes equipos",
       "cta": "Contactar →",
       "period": "/ mes"

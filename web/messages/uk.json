@@ -60,14 +60,14 @@
     },
     "pro": {
       "name": "Pro",
-      "price": "$499",
+      "price": "$49",
       "desc": "на місяць",
       "cta": "Отримати Pro →",
       "period": "/ місяць"
     },
     "enterprise": {
       "name": "Enterprise",
-      "price": "Індивідуально",
+      "price": "$299",
       "desc": "для великих команд",
       "cta": "Зв'язатися →",
       "period": "/ місяць"

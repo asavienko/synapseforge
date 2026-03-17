@@ -24,7 +24,7 @@ const PLANS = [
   {
     key: "pro",
     name: "Pro",
-    price: "$499",
+    price: "$49",
     period: "/ month",
     description: "Full-service AI management with priority support.",
     features: [
@@ -42,7 +42,7 @@ const PLANS = [
   {
     key: "enterprise",
     name: "Enterprise",
-    price: "$2,999",
+    price: "$299",
     period: "/ month",
     description: "Unlimited AI with a dedicated team and full SLA.",
     features: [

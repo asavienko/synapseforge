@@ -60,14 +60,14 @@
     },
     "pro": {
       "name": "Pro",
-      "price": "$499",
+      "price": "$49",
       "desc": "в месяц",
       "cta": "Получить Pro →",
       "period": "/ месяц"
     },
     "enterprise": {
       "name": "Enterprise",
-      "price": "Индивидуально",
+      "price": "$299",
       "desc": "для крупных команд",
       "cta": "Связаться →",
       "period": "/ месяц"

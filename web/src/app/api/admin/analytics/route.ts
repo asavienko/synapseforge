@@ -66,7 +66,7 @@ export async function GET() {
     else if (u.plan === "enterprise") planCounts.enterprise++;
     else planCounts.free++;
   }
-  const mrr = planCounts.pro * 499 + planCounts.enterprise * 2499;
+  const mrr = planCounts.pro * 49 + planCounts.enterprise * 299;
 
   // Users this week
   const newThisWeek = users.filter((u) => new Date(u.createdAt) >= sevenDaysAgo).length;
