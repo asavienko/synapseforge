@@ -1,43 +1,31 @@
-name: CI/CD — Test & Deploy
+name: CI/CD Pipeline
 
 on:
   push:
-    branches: [develop]
-    paths:
-      - "web/**"
-      - ".github/workflows/ci.yml"
+    branches: [develop, main]
   pull_request:
     branches: [develop, main]
-    paths:
-      - "web/**"
 
-defaults:
-  run:
-    working-directory: web
+env:
+  NODE_VERSION: '20'
 
 jobs:
   test:
-    name: Cypress E2E Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-
-    env:
-      DATABASE_URL:       ${{ secrets.DATABASE_URL }}
-      DIRECT_URL:         ${{ secrets.DIRECT_URL }}
-      AUTH_SECRET:        ${{ secrets.AUTH_SECRET }}
-      NEXTAUTH_URL:       http://localhost:3000
-      AUTH_TRUST_HOST:    true
-      DISABLE_RATE_LIMIT: true
-      RESEND_API_KEY:     ${{ secrets.RESEND_API_KEY }}
-      ADMIN_EMAILS:       ${{ secrets.ADMIN_EMAILS }}
-      STRIPE_SECRET_KEY:  ${{ secrets.STRIPE_SECRET_KEY }}
-      STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
-      STRIPE_PRO_PRICE_ID: ${{ secrets.STRIPE_PRO_PRICE_ID }}
-      STRIPE_ENTERPRISE_PRICE_ID: ${{ secrets.STRIPE_ENTERPRISE_PRICE_ID }}
-      INTERNAL_API_KEY:         test-internal-key
-      ENCRYPTION_KEY:           test-encryption-key-32-chars-ok!
-      SYNAPSEFORGE_OPENAI_KEY:  ${{ secrets.SYNAPSEFORGE_OPENAI_KEY }}
-      DISABLE_EMAILS:           true
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: synapseforge_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout
@@ -46,78 +34,84 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24
-          cache: npm
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
           cache-dependency-path: web/package-lock.json
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          cd web
+          npm ci
 
       - name: Generate Prisma client
-        run: npx prisma generate
+        run: |
+          cd web
+          npx prisma generate
 
-      - name: Apply DB migrations
-        run: npx prisma migrate deploy
-        working-directory: web
+      - name: Run database migrations
+        run: |
+          cd web
+          npx prisma migrate deploy
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/synapseforge_test
 
-      - name: Seed test user
-        run: npx tsx cypress/support/seed.ts
+      - name: Run type checking
+        run: |
+          cd web
+          npm run type-check
 
-      - name: Build app
-        run: npm run build
+      - name: Run linter
+        run: |
+          cd web
+          npm run lint
 
-      - name: Run Cypress tests
+      - name: Run unit tests
+        run: |
+          cd web
+          npm run test:unit
+
+      - name: Start application
+        run: |
+          cd web
+          npm run build &
+          npm start &
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/synapseforge_test
+          NEXTAUTH_SECRET: test-secret
+          NEXTAUTH_URL: http://localhost:3000
+        timeout-minutes: 5
+
+      - name: Wait for server
+        run: |
+          npx wait-on http://localhost:3000/api/health --timeout 60000
+
+      - name: Run Cypress E2E tests
         uses: cypress-io/github-action@v6
         with:
           working-directory: web
-          start: npm run start
-          wait-on: http://localhost:3000
+          build: npm run build
+          start: npm start
+          wait-on: 'http://localhost:3000'
           wait-on-timeout: 120
           browser: chrome
-          record: false
+          headless: true
         env:
-          DATABASE_URL:            ${{ secrets.DATABASE_URL }}
-          DIRECT_URL:              ${{ secrets.DIRECT_URL }}
-          AUTH_SECRET:             ${{ secrets.AUTH_SECRET }}
-          NEXTAUTH_URL:            http://localhost:3000
-          AUTH_TRUST_HOST:         true
-          DISABLE_RATE_LIMIT:      true
-          INTERNAL_API_KEY:        test-internal-key
-          ENCRYPTION_KEY:          test-encryption-key-32-chars-ok!
-          SYNAPSEFORGE_OPENAI_KEY: ${{ secrets.SYNAPSEFORGE_OPENAI_KEY }}
-          DISABLE_EMAILS:          true
+          CYPRESS_BASE_URL: http://localhost:3000
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/synapseforge_test
+          NEXTAUTH_SECRET: test-secret
+          NEXTAUTH_URL: http://localhost:3000
 
-      - name: Upload screenshots
-        uses: actions/upload-artifact@v4
+      - name: Upload test results
         if: always()
-        with:
-          name: cypress-screenshots
-          path: web/cypress/screenshots
-          if-no-files-found: ignore
-          retention-days: 30
-
-      - name: Upload test results summary
         uses: actions/upload-artifact@v4
-        if: always()
         with:
           name: cypress-results
           path: web/cypress/results
-          if-no-files-found: ignore
-          retention-days: 14
 
-  deploy:
-    name: Deploy to Vercel
+  build:
     runs-on: ubuntu-latest
     needs: test
-    # Only deploy on push to develop (not on PRs)
-    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
-    timeout-minutes: 15
-    defaults:
-      run:
-        working-directory: web
-    env:
-      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout
@@ -126,34 +120,108 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24
-          cache: npm
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
           cache-dependency-path: web/package-lock.json
 
-      - name: Install Vercel CLI
-        run: npm install -g vercel@latest
-        working-directory: web
+      - name: Install dependencies
+        run: |
+          cd web
+          npm ci
+
+      - name: Generate Prisma client
+        run: |
+          cd web
+          npx prisma generate
+
+      - name: Build application
+        run: |
+          cd web
+          npm run build
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+
+      - name: Run pre-deployment checks
+        run: |
+          cd web
+          npm run test:integration
+
+      - name: Deploy to Vercel
+        if: github.ref == 'refs/heads/develop'
+        uses: amondnet/vercel-action@v20
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./web
+          # Deploy to staging for develop branch
+          environment: preview
+
+      - name: Deploy to production
+        if: github.ref == 'refs/heads/main'
+        uses: amondnet/vercel-action@v20
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./web
+          environment: production
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
 
       - name: Install dependencies
-        run: npm install
-
-      - name: Pull Vercel environment
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Apply DB migrations (production)
         run: |
-          # vercel pull wrote production env vars to .vercel/.env.production.local
-          # source them so prisma can connect to the production database
-          if [ -f .vercel/.env.production.local ]; then
-            set -a && source .vercel/.env.production.local && set +a
+          cd web
+          npm ci
+
+      - name: Run Snyk security scan
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: >
+            --all-projects
+            --severity-threshold=high
+            --fail-on=all
+
+      - name: Run Trivy vulnerability scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'HIGH,CRITICAL'
+
+      - name: Upload security scan results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: [test, build, security]
+    if: always()
+    
+    steps:
+      - name: Check status
+        run: |
+          if [ "${{ needs.test.result }}" == "success" ] && [ "${{ needs.build.result }}" == "success" ] && [ "${{ needs.security.result }}" == "success" ]; then
+            echo "✅ All checks passed"
+            exit 0
+          else
+            echo "❌ Some checks failed"
+            exit 1
           fi
-          npx prisma migrate deploy
-
-      - name: Build for Vercel
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Deploy to Vercel (production)
-        run: vercel deploy --prebuilt --prod --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Deployment complete
-        run: echo "✅ Deployed to https://synapseforge-mu.vercel.app"
