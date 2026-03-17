@@ -1336,11 +1336,11 @@ export default function InstanceDetailPage() {
       .catch(() => {});
   }, []);
 
-  // Poll health every 30s when on Infrastructure tab
+  // Poll health every 30s when on Infrastructure tab (no live ping — just stored status)
   useEffect(() => {
     if (tab !== "Infrastructure") return;
     const pollHealth = async () => {
-      const res = await fetch(`/api/instances/${id}/health`);
+      const res = await fetch(`/api/instances/${id}/health?live=false`);
       if (res.ok) setHealthData(await res.json());
     };
     const interval = setInterval(pollHealth, 30_000);
