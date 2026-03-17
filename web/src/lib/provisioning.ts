@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { PLANS } from "@/lib/utils";
+import { randomBytes } from "crypto";
 
 export const REGION_LABELS = {
   nbg1: "Nässheim, DE",
@@ -47,6 +48,73 @@ export interface ProvisionResult {
 }
 
 /**
+ * Generate a cloud-init user_data script that installs OpenClaw and
+ * calls back to SynapseForge to mark provisioning as complete.
+ */
+function makeUserDataScript(instanceId: string, gatewayToken: string, sfApiUrl: string): string {
+  return `#!/bin/bash
+set -euo pipefail
+
+# SynapseForge VPS bootstrap
+log() {
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" | systemd-cat -t synapseforge-bootstrap
+}
+
+log "Starting SynapseForge bootstrap for instance ${instanceId}"
+
+# Install dependencies
+export DEBIAN_FRONTEND=noninteractive
+apt-get update
+apt-get install -y curl docker.io docker-compose-plugin
+
+# Start Docker
+systemctl enable docker
+systemctl start docker
+
+# Create OpenClaw directory
+mkdir -p /opt/openclaw
+cd /opt/openclaw
+
+# Pull latest OpenClaw Docker image
+docker pull ghcr.io/openclaw/openclaw:latest
+
+# Generate OpenClaw config
+cat > .env <<EOF
+GATEWAY_TOKEN=${gatewayToken}
+INSTANCE_ID=${instanceId}
+SYNAPSEFORGE_API_URL=${sfApiUrl}
+EOF
+
+# Run OpenClaw gateway container
+docker run -d \\
+  --name openclaw-gateway \\
+  --restart unless-stopped \\
+  -p 18789:18789 \\
+  -v /opt/openclaw/.env:/app/.env \\
+  -v /opt/openclaw/data:/app/data \\
+  ghcr.io/openclaw/openclaw:latest
+
+log "OpenClaw gateway container started"
+
+# Wait for gateway to become healthy, then notify SynapseForge
+for i in {1..60}; do
+  if curl -s -f -H "Authorization: Bearer ${gatewayToken}" ${sfApiUrl}/api/internal/health-check/${instanceId} > /dev/null 2>&1; then
+    log "Gateway health check passed, notifying SynapseForge"
+    curl -s -X POST -H "Authorization: Bearer ${gatewayToken}" -H "Content-Type: application/json" \\
+      -d '{"openclaw_version":"latest","ip":"$(hostname -I | awk "{print $1}")"}' \\
+      ${sfApiUrl}/api/internal/provision-complete/${instanceId} || true
+    exit 0
+  fi
+  log "Waiting for gateway... ($i/60)"
+  sleep 5
+done
+
+log "Timed out waiting for gateway health check"
+exit 1
+`;
+}
+
+/**
  * Provision a new VPS instance on Hetzner for the given AIInstance.
  * Creates the server and updates the DB record.
  */
@@ -90,17 +158,22 @@ export async function provisionInstance(
 
   // If user has reached limit and this is a new instance, block provisioning
   if (limit !== -1 && runningCount >= limit) {
-    return { 
-      ok: false, 
-      error: `Plan limit reached (${limit} instance${limit !== 1 ? "s" : ""} max)` 
+    return {
+      ok: false,
+      error: `Plan limit reached (${limit} instance${limit !== 1 ? "s" : ""} max)`
     };
   }
 
   const serverType = TIER_SERVER_TYPE[instance.tier] ?? TIER_SERVER_TYPE.minimal;
   const serverName = `sf-${instance.id.slice(0, 8)}-${Date.now().toString(36)}`;
 
+  // Generate a secure gateway token for this instance
+  const gatewayToken = `sk-gw-${randomBytes(24).toString("hex")}`;
+
   try {
     // Create server on Hetzner
+    const userData = makeUserDataScript(instanceId, gatewayToken, process.env.NEXTAUTH_URL || "https://synapseforge.ai");
+
     const res = await fetch("https://api.hetzner.cloud/v1/servers", {
       method: "POST",
       headers: {
@@ -117,12 +190,7 @@ export async function provisionInstance(
           synapseforge_instance: instanceId,
           synapseforge_user: instance.userId,
         },
-        user_data: `#!/bin/bash
-# SynapseForge VPS bootstrap script
-# Will be executed after first boot
-echo "Starting SynapseForge bootstrap for instance ${instanceId}" > /var/log/synapseforge-bootstrap.log
-# Actual installation happens via OpenClaw bootstrap endpoint
-`,
+        user_data: userData,
       }),
     });
 
@@ -135,14 +203,14 @@ echo "Starting SynapseForge bootstrap for instance ${instanceId}" > /var/log/syn
     const server = data.server;
     const ip = server.public_net?.ipv4?.ip;
 
-    // Update instance with VPS details
+    // Update instance with VPS details and gateway token
     await prisma.aIInstance.update({
       where: { id: instanceId },
       data: {
         vpsServerId: String(server.id),
         vpsProvider: "hetzner",
         provisionStatus: "provisioning",
-        // vpsUrl will be set by the cron job after gateway becomes healthy
+        gatewayToken: gatewayToken,
       },
     });
 
