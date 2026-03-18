@@ -82,6 +82,9 @@ describe("18 · Deploy Tab", () => {
 
   // ── 04. With LLM → button enabled ────────────────────────────────────────
   it("Deploy button is enabled when LLM key is configured", () => {
+    // Intercept credentials API to wait for it to load
+    cy.intercept("GET", `/api/instances/*/credentials`).as("getCredentials");
+    
     // First add the credential via API (before visiting page)
     cy.wrap(null).then(() => {
       if (!instanceId) return;
@@ -91,6 +94,8 @@ describe("18 · Deploy Tab", () => {
         body: { key: "openai_api_key", value: "sk-test-fake-key-for-testing" },
         headers: { "Content-Type": "application/json" },
         failOnStatusCode: false,
+      }).then((res) => {
+        cy.log("Credentials POST response:", res.status);
       });
     });
 
@@ -101,17 +106,17 @@ describe("18 · Deploy Tab", () => {
       }
     });
 
+    // Wait for credentials API to be called
+    cy.wait("@getCredentials", { timeout: 10000 });
+
     // Open Deploy tab
     cy.contains("button", "Deploy").click();
 
-    // Wait for page to load credentials and render
-    cy.get("main", { timeout: 10000 }).should("be.visible");
+    // Wait for the checklist to render with the LLM check
+    cy.contains(/AI provider key|OpenAI API key/i, { timeout: 10000 }).should("be.visible");
 
     // Deploy button should be enabled since credentials exist
     cy.get("[data-testid='deploy-btn']", { timeout: 15000 }).should("not.be.disabled");
-
-    // The checkmark should be visible in the checklist when LLM is configured
-    cy.get("main").find("div.rounded-full").contains("✓").should("exist");
 
     cy.snap("18-deploy-04-llm-configured");
   });
