@@ -53,6 +53,8 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers,
+  // Trust localhost in development and CI environments
+  trustHost: process.env.NODE_ENV !== "production" || process.env.CI === "true",
   callbacks: {
     async signIn({ user, account }) {
       // For Google OAuth: upsert user into DB
