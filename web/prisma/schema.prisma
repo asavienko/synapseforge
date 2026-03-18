@@ -164,6 +164,14 @@ model AIInstance {
   discordBotId        String? // Discord bot application ID — used to build invite URL
   slackBotName        String? // Slack bot display name — set after successful Slack setup
   slackTeamName       String? // Slack workspace name — set after successful Slack setup
+  // WhatsApp Business API (Meta)
+  whatsappEnabled      Boolean? @default(false)
+  whatsappPhoneNumber  String? // Business phone number
+  whatsappAccountId    String? // Meta Business account ID (WABA ID)
+  whatsappBusinessName String? // Display name for the business
+  whatsappApiKey       String? // Encrypted - Meta app secret for webhook verification
+  whatsappAccessToken  String? // Encrypted - Meta access token
+  whatsappWebhookSecret String? // Encrypted - Webhook verification secret
   sshPrivateKey       String? // Encrypted ED25519 private key for config updates
   currentVersion      String? // Currently running OpenClaw version tag
   targetVersion       String? // Desired version (set by admin or auto-update)
