@@ -56,6 +56,16 @@ jobs:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/synapseforge_test
           DIRECT_URL: postgresql://postgres:postgres@localhost:5432/synapseforge_test
 
+      - name: Seed test user for Cypress
+        run: |
+          cd web
+          # Remove .env to prevent it from overriding CI DATABASE_URL
+          rm -f .env
+          npx tsx cypress/support/seed.ts
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/synapseforge_test
+          DIRECT_URL: postgresql://postgres:postgres@localhost:5432/synapseforge_test
+
       - name: Run type checking
         run: |
           cd web
