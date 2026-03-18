@@ -587,7 +587,7 @@ interface DeployTabProps {
   onDeploy: () => void;
   onSync: () => void;
   onGoToCredentials: () => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   t: (key: string) => string;
 }
 
@@ -1034,7 +1034,7 @@ function QRCard({ instanceId, t }: { instanceId: string; t: (key: string) => str
 
 // ─── EmbedCard ───────────────────────────────────────────────────────────────
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 function EmbedCard({ instanceId, t }: { instanceId: string; t: (key: string) => string }) {
   const [copied, setCopied] = useState<"iframe" | "script" | null>(null);
   const [tab, setTab] = useState<"iframe" | "script">("iframe");

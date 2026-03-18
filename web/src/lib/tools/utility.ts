@@ -29,7 +29,7 @@ export const utilityTools: AgentTool[] = [
       try {
         // Safe eval: only allow numbers and operators
         const safe = (expression as string).replace(/[^0-9+\-*/.() ]/g, "");
-        // eslint-disable-next-line no-new-func
+         
         const result = Function(`"use strict"; return (${safe})`)();
         return String(result);
       } catch {
