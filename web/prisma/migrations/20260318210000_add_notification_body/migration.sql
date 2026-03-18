@@ -1,0 +1,5 @@
+-- Add missing columns to Notification table
+ALTER TABLE "Notification" ADD COLUMN IF NOT EXISTS "body" TEXT;
+ALTER TABLE "Notification" ADD COLUMN IF NOT EXISTS "href" TEXT;
+ALTER TABLE "Notification" ADD COLUMN IF NOT EXISTS "read" BOOLEAN DEFAULT false;
+ALTER TABLE "Notification" ADD COLUMN IF NOT EXISTS "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP;
