@@ -824,8 +824,8 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                     <div>
                       <p className="text-sm font-semibold text-amber-300">No managers configured</p>
                       <p className="text-xs text-amber-400/80 mt-0.5">
-                        New signups won't get a manager or welcome message until you add one.
-                        Click "Add Manager" to create your account — you'll be auto-assigned to all new users.
+                        New signups won&apos;t get a manager or welcome message until you add one.
+                        Click &quot;Add Manager&quot; to create your account — you&apos;ll be auto-assigned to all new users.
                       </p>
                     </div>
                   </div>
@@ -1612,7 +1612,7 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
           {leadsLoading ? (
             <div className="p-8 flex justify-center"><Loader2 className="w-5 h-5 text-zinc-500 animate-spin" /></div>
           ) : leads.length === 0 ? (
-            <div className="p-8 text-center text-zinc-500 text-sm">No leads yet. They'll appear when sandbox users submit their email.</div>
+            <div className="p-8 text-center text-zinc-500 text-sm">No leads yet. They&apos;ll appear when sandbox users submit their email.</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
