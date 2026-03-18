@@ -2,9 +2,11 @@ import { Link } from "@/i18n/navigation";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
 import { MobileNav } from "@/components/MobileNav";
 import { LandingDemoChat } from "@/components/LandingDemoChat";
+import { getFeaturedTemplates, categoryColors } from "@/lib/templates";
 import {
   Zap, Bot, ArrowRight, Check, Shield, RefreshCw,
   MessageSquare, Code2, Activity, Users, Key, Settings, Rocket,
+  Sparkles,
 } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
@@ -18,6 +20,8 @@ export default async function LandingPage() {
   const userPlan = isLoggedIn && session?.user?.id
     ? await prisma.user.findUnique({ where: { id: session.user.id }, select: { plan: true } }).then(u => u?.plan ?? "free").catch(() => "free")
     : "free";
+
+  const featuredTemplates = getFeaturedTemplates().slice(0, 4);
 
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white grid-bg">
