@@ -82,16 +82,7 @@ describe("18 · Deploy Tab", () => {
 
   // ── 04. With LLM → button enabled ────────────────────────────────────────
   it("Deploy button is enabled when LLM key is configured", () => {
-    // Intercept the credentials API to know when credentials are loaded
-    cy.intercept("GET", `/api/instances/*/credentials`).as("getCredentials");
-    cy.wrap(null).then(() => {
-      if (instanceId) {
-        cy.visit(`/en/dashboard/instances/${instanceId}`);
-      }
-    });
-    cy.contains("button", "Deploy").click();
-
-    // Add a fake LLM key via API and wait for it to complete
+    // First add the credential via API (before visiting page)
     cy.wrap(null).then(() => {
       if (!instanceId) return;
       return cy.request({
@@ -101,19 +92,24 @@ describe("18 · Deploy Tab", () => {
         headers: { "Content-Type": "application/json" },
         failOnStatusCode: false,
       });
-    }).then(() => {
-      // Reload to pick up the new credentials
-      cy.reload();
     });
 
-    // Wait for credentials API call after reload
-    cy.wait("@getCredentials", { timeout: 10000 });
+    // Now visit the page fresh (credentials already exist)
+    cy.wrap(null).then(() => {
+      if (instanceId) {
+        cy.visit(`/en/dashboard/instances/${instanceId}`);
+      }
+    });
 
-    // Re-open Deploy tab after reload
+    // Open Deploy tab
     cy.contains("button", "Deploy").click();
 
-    // LLM check should show ✓ — wait for credentials to load then verify
+    // Wait for page to load credentials and render
+    cy.get("main", { timeout: 10000 }).should("be.visible");
+
+    // Deploy button should be enabled since credentials exist
     cy.get("[data-testid='deploy-btn']", { timeout: 15000 }).should("not.be.disabled");
+
     // The checkmark should be visible in the checklist when LLM is configured
     cy.get("main").find("div.rounded-full").contains("✓").should("exist");
 
