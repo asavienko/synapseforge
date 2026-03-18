@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
@@ -106,7 +107,7 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
     const data = await res.json();
     setLoading(null);
     if (data.url) {
-      window.location.href = data.url;
+      window.location.assign(data.url);
     } else if (data.stripeUnavailable) {
       setShowContactUpgrade(true);
     } else {
@@ -456,12 +457,12 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
               >
                 📅 Book a 15-min setup call
               </a>
-              <a
+              <Link
                 href="/contact"
                 className="flex items-center justify-center gap-2 w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 font-medium text-sm rounded-xl transition-colors"
               >
                 ✉️ Send us a message
-              </a>
+              </Link>
             </div>
 
             <p className="text-center text-xs text-zinc-600 mt-5">

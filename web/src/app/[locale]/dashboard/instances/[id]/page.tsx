@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import {
   Bot, ArrowLeft, Play, Square, Trash2, Loader2,
@@ -336,9 +336,12 @@ function ProvisioningBanner({ instance, onDismiss, onReady, onFailed }: Provisio
   const id = instance.id;
   const [dismissed, setDismissed] = useState(false);
   const [failedBanner, setFailedBanner] = useState(false);
+  const [elapsedSec, setElapsedSec] = useState(0);
 
-  // Calculate elapsed seconds since createdAt
-  const elapsedSec = Math.max(0, Math.floor((Date.now() - new Date(instance.createdAt).getTime()) / 1000));
+  // Calculate elapsed seconds since createdAt via effect to avoid impure render
+  useEffect(() => {
+    setElapsedSec(Math.max(0, Math.floor((Date.now() - new Date(instance.createdAt).getTime()) / 1000)));
+  }, [instance.createdAt]);
 
   function getStep(sec: number): string {
     if (sec < 30) return t("provisioning.step1");

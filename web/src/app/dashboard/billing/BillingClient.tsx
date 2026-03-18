@@ -80,7 +80,7 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
     });
     const data = await res.json();
     if (data.url) {
-      window.location.href = data.url;
+      window.location.assign(data.url);
     } else {
       setLoading(null);
       alert(data.error || "Something went wrong.");
