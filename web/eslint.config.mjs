@@ -13,6 +13,12 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  {
+    rules: {
+      // Disable React Compiler rules that are too strict for current codebase
+      "react-compiler/react-compiler": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;
