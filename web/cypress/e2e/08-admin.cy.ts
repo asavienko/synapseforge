@@ -16,7 +16,7 @@ describe("08 · Admin Panel", () => {
   it("renders admin panel or redirects non-admins", () => {
     cy.get("body").then(($body) => {
       if ($body.text().includes("Access denied") || 
-          (!$body.text().includes("Admin Panel") && !$body.text().includes("Total Users"))) {
+          (!$body.text().includes("Admin Panel") && !$body.text().includes("Total users"))) {
         // Non-admin — expected redirect/denial
         cy.log("Non-admin user — access denied as expected");
         cy.snap("08-admin-01-access-denied");
@@ -30,9 +30,12 @@ describe("08 · Admin Panel", () => {
   it("shows stats cards when admin", () => {
     cy.get("body").then(($body) => {
       const isAdmin = !$body.text().includes("Access denied") && 
-                      ($body.text().includes("Admin Panel") || $body.text().includes("Total Users"));
+                      ($body.text().includes("Admin Panel") || 
+                       $body.text().includes("Total Users") ||
+                       $body.text().includes("Total users"));
       if (isAdmin) {
-        cy.contains("Total Users").should("be.visible");
+        // Check for either casing of "Total users"
+        cy.contains(/Total Users|Total users/i).should("be.visible");
         cy.snap("08-admin-02-stats");
       } else {
         cy.log("Skipped — not admin");
