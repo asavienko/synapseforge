@@ -110,7 +110,7 @@ describe("18 · Deploy Tab", () => {
     cy.wait("@getCredentials", { timeout: 10000 });
 
     // Open Deploy tab
-    cy.contains("button", "Deploy").click();
+    cy.contains("button", /Deploy/i, { timeout: 10000 }).click();
 
     // Wait for the checklist to render with the LLM check
     cy.contains(/AI provider key|OpenAI API key/i, { timeout: 10000 }).should("be.visible");
@@ -119,12 +119,12 @@ describe("18 · Deploy Tab", () => {
     // Look for the LLM check item and verify it shows as done
     cy.get("main").contains(/AI provider key|OpenAI API key/i)
       .closest("div[class*='rounded-xl']")
-      .then(($el) => {
+      .should(($el) => {
         // Check if it has green styling or checkmark
         const hasCheck = $el.find("[class*='bg-emerald']").length > 0 || 
                          $el.find("[class*='text-emerald']").length > 0 ||
                          $el.text().includes("✓");
-        expect(hasCheck).to.be.true;
+        expect(hasCheck, "LLM should show as configured with green indicator or checkmark").to.be.true;
       });
 
     cy.snap("18-deploy-04-llm-configured");
@@ -234,12 +234,22 @@ describe("18 · Deploy Tab", () => {
       });
     });
 
+    // Visit the page and wait for it to load
     cy.wrap(null).then(() => {
-      if (instanceId) cy.visit(`/en/dashboard/instances/${instanceId}`);
+      if (instanceId) {
+        cy.visit(`/en/dashboard/instances/${instanceId}`);
+      }
     });
-    cy.contains("button", "Deploy").click();
+    
+    // Wait for main content to load
+    cy.get("main", { timeout: 10000 }).should("be.visible");
+    
+    // Find and click Deploy tab (use case-insensitive regex)
+    cy.contains("button", /Deploy/i, { timeout: 10000 }).click();
 
+    // Click Add key button
     cy.get("main").contains("button", /add key/i).click();
+    
     // Should navigate to Credentials tab
     cy.get("main").contains("OpenClaw Config").should("be.visible");
     cy.snap("18-deploy-08-goto-credentials");
