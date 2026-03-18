@@ -1355,7 +1355,7 @@
     }
   },
   "how": {
-    "title": "Up and running in minutes",
+    "title": "Everything AI, handled.",
     "subtitle": "Three steps from signup to live agent.",
     "step1title": "Add your AI provider key",
     "step1desc": "Paste your OpenAI, Anthropic, or OpenRouter API key. Stored encrypted, used only for your agent.",
@@ -1365,7 +1365,7 @@
     "step3desc": "Your AI agent starts responding on Telegram, Discord, or Slack — plus a web chat interface and a REST API."
   },
   "features": {
-    "title": "Everything you need to run AI at scale",
+    "title": "Everything AI, handled.",
     "subtitle": "Built for teams that want results, not complexity.",
     "f1title": "Multi-channel by default",
     "f1desc": "Telegram, Discord, Slack, and a web chat — all powered by the same agent, same config.",
