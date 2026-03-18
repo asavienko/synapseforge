@@ -6,13 +6,13 @@ describe("01 · Landing Page", () => {
   beforeEach(() => cy.visit("/en"));
 
   it("renders hero section with product-focused headline", () => {
-    cy.contains("Your AI Agent").should("be.visible");
-    cy.contains("Live in 3 Minutes").should("be.visible");
+    cy.contains("We forge the AI stack").should("be.visible");
+    cy.contains("so you don't have to.").should("be.visible");
     cy.snap("01-landing-01-hero");
   });
 
   it("shows CTA buttons in hero", () => {
-    cy.contains("Deploy free").should("be.visible");
+    cy.contains("Start for free").should("be.visible");
     cy.contains("See how it works").should("be.visible");
     cy.snap("01-landing-01b-hero-cta");
   });
@@ -37,10 +37,8 @@ describe("01 · Landing Page", () => {
   });
 
   it("How it works section shows steps", () => {
-    cy.contains("How it works").should("be.visible");
-    cy.contains("Connect").should("be.visible");
-    cy.contains("Configure").should("be.visible");
-    cy.contains("Launch").should("be.visible");
+    cy.contains("Everything AI, handled.").should("be.visible");
+    cy.contains("Add your AI provider key").should("be.visible");
     cy.snap("01-landing-04-how-it-works");
   });
 
@@ -59,7 +57,7 @@ describe("01 · Landing Page", () => {
   });
 
   it("about section shows content", () => {
-    cy.contains("Built different").should("be.visible");
+    cy.contains("Who we are.").should("be.visible");
     cy.contains("Time to first live agent").should("be.visible");
     cy.snap("01-landing-07-about");
   });
@@ -102,7 +100,7 @@ describe("01 · Landing Page", () => {
     cy.clearCookies();
     cy.clearAllSessionStorage();
     cy.visit("/en");
-    cy.contains("Deploy free").first().click();
+    cy.contains("Start for free").first().click();
     cy.url().should("include", "/sign-up");
     cy.snap("01-landing-11-cta-to-signup");
   });
