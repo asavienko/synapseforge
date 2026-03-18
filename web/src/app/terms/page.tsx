@@ -45,7 +45,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">6. Limitation of Liability</h2>
-            <p>SynapseForge is provided "as is." We are not liable for indirect or consequential damages arising from use of the service. Our total liability is limited to the amount paid by you in the three months preceding the claim.</p>
+            <p>SynapseForge is provided &quot;as is.&quot; We are not liable for indirect or consequential damages arising from use of the service. Our total liability is limited to the amount paid by you in the three months preceding the claim.</p>
           </section>
 
           <section>

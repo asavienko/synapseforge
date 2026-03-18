@@ -42,14 +42,14 @@ export default function ForgotPasswordPage() {
 
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-white mb-2">Forgot your password?</h1>
-          <p className="text-zinc-400 text-sm">Enter your email and we'll send a reset link.</p>
+          <p className="text-zinc-400 text-sm">Enter your email and we&apos;ll send a reset link.</p>
         </div>
 
         {sent ? (
           <div className="glow-border rounded-2xl p-8 bg-white/[0.02] text-center">
             <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto mb-4" />
             <h2 className="text-lg font-semibold text-white mb-2">Check your inbox</h2>
-            <p className="text-zinc-400 text-sm mb-6">If an account exists for <strong className="text-zinc-200">{emailVal}</strong>, you'll receive a password reset link shortly.</p>
+            <p className="text-zinc-400 text-sm mb-6">If an account exists for <strong className="text-zinc-200">{emailVal}</strong>, you&apos;ll receive a password reset link shortly.</p>
             <Link href="/sign-in" className="text-violet-400 hover:text-violet-300 text-sm transition-colors">
               ← Back to sign in
             </Link>

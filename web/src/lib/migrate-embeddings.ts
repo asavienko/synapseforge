@@ -86,7 +86,7 @@ export async function verifyMigration() {
   `;
   const vectorNull = Number(nullResult[0]?.count ?? 0);
 
-  const sample = await prisma.$queryRaw<any[]>`
+  const sample = await prisma.$queryRaw<Array<{ id: string; type: string }>>`
     SELECT "id", pg_typeof("embedding") as type
     FROM "KnowledgeChunk"
     WHERE "embedding" IS NOT NULL

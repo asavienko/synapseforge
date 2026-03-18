@@ -87,7 +87,7 @@ export async function searchByKeywords(
     .join(' OR ');
 
   // This is a rough implementation; actual fallback is handled in rag.ts differently
-  return prisma.$queryRaw<any[]>`
+  return prisma.$queryRaw<unknown[]>`
     SELECT 
       "KnowledgeChunk"."id",
       "KnowledgeChunk"."content",

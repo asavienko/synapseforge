@@ -375,16 +375,16 @@ export default function OnboardingPage() {
             <div className="w-20 h-20 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center mx-auto mb-6">
               <Bell className="w-10 h-10 text-emerald-400" />
             </div>
-            <h2 className="text-2xl font-bold text-white mb-3">You're all set! 🎉</h2>
+            <h2 className="text-2xl font-bold text-white mb-3">You&apos;re all set! 🎉</h2>
             <p className="text-zinc-400 mb-2">Your dedicated manager will reach out within 24 hours.</p>
             <p className="text-zinc-500 text-sm mb-8">
-              They'll help you set up your AI assistant for <strong className="text-zinc-300">{business}</strong> and answer any questions.
+              They&apos;ll help you set up your AI assistant for <strong className="text-zinc-300">{business}</strong> and answer any questions.
             </p>
             
             <div className="bg-violet-500/10 border border-violet-500/20 rounded-xl p-4 mb-8">
               <div className="flex items-center justify-center gap-2 text-violet-300 text-sm mb-1">
                 <Sparkles className="w-4 h-4" />
-                <span className="font-medium">What's next?</span>
+                <span className="font-medium">What&apos;s next?</span>
               </div>
               <p className="text-zinc-400 text-sm">
                 Your manager will help you connect your chosen channels and configure your AI.

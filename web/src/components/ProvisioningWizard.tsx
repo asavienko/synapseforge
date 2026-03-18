@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import {
   X,
   Rocket,
@@ -100,7 +100,12 @@ export function ProvisioningWizard({
     };
   }, []);
 
-  function startTimerAndPolling() {
+  const stopAll = useCallback(() => {
+    if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null; }
+    if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
+  }, []);
+
+  const startTimerAndPolling = useCallback(() => {
     startTimeRef.current = Date.now();
     setElapsedSec(0);
     setCurrentProgressStep(0);
@@ -135,12 +140,7 @@ export function ProvisioningWizard({
         // swallow poll errors
       }
     }, 5000);
-  }
-
-  function stopAll() {
-    if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null; }
-    if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
-  }
+  }, [instanceId, onDone, stopAll]);
 
   async function handleProvision() {
     setProvisioning(true);
