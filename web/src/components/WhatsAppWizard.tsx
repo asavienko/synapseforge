@@ -52,11 +52,7 @@ export function WhatsAppWizard({ instanceId, initialCreds, className }: WhatsApp
     businessName: string | null;
   } | null>(null);
 
-  // Check Meta WhatsApp status on mount
-  useEffect(() => {
-    checkMetaStatus();
-  }, []);
-
+  // Check Meta WhatsApp status
   async function checkMetaStatus() {
     try {
       const res = await fetch(`/api/instances/${instanceId}/whatsapp/status`);
@@ -75,6 +71,11 @@ export function WhatsAppWizard({ instanceId, initialCreds, className }: WhatsApp
       // Ignore errors - Meta integration might not be available
     }
   }
+
+  // Check Meta WhatsApp status on mount
+  useEffect(() => {
+    checkMetaStatus();
+  }, []);
 
   // ─── Provider Selection ─────────────────────────────────────────────────────
 

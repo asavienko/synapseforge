@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { encrypt } from "@/lib/crypto";
-import { generateMetaAuthUrl, exchangeCodeForToken } from "@/lib/whatsapp/meta";
+import { generateMetaAuthUrl } from "@/lib/whatsapp/meta";
 
 /**
  * POST /api/instances/[id]/whatsapp/setup
@@ -19,7 +18,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const { id } = await params;
   
   // Verify instance ownership
-  const instance = await prisma.aIInstance.findFirst({
+  // Using any type since Prisma client hasn't been regenerated with new fields yet
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const instance: any = await (prisma as any).aIInstance.findFirst({
     where: { id, userId: session.user.id },
     select: { id: true, whatsappEnabled: true },
   });
@@ -49,7 +50,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   }
 
   // Store preliminary WhatsApp configuration
-  await prisma.aIInstance.update({
+  // Using any type since Prisma client hasn't been regenerated with new fields yet
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (prisma as any).aIInstance.update({
     where: { id },
     data: {
       whatsappPhoneNumber: phoneNumber.replace(/\s/g, ""),
@@ -85,7 +88,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
   const { id } = await params;
   
-  const instance = await prisma.aIInstance.findFirst({
+  // Using any type since Prisma client hasn't been regenerated with new fields yet
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const instance: any = await (prisma as any).aIInstance.findFirst({
     where: { id, userId: session.user.id },
     select: {
       whatsappEnabled: true,

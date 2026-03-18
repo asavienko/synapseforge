@@ -27,7 +27,9 @@ export async function POST(req: NextRequest) {
     }
 
     // Find instance by WhatsApp phone number ID
-    const instance = await prisma.aIInstance.findFirst({
+    // Using any type since Prisma client hasn't been regenerated with new fields yet
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const instance: any = await (prisma as any).aIInstance.findFirst({
       where: { 
         whatsappEnabled: true,
         whatsappPhoneNumber: { not: null },
@@ -41,7 +43,8 @@ export async function POST(req: NextRequest) {
     }
 
     // Verify webhook signature
-    const encryptedSecret = instance.whatsappWebhookSecret;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const encryptedSecret = (instance as any).whatsappWebhookSecret;
     if (!encryptedSecret) {
       console.warn("[WhatsApp Webhook] No webhook secret configured");
       return NextResponse.json({ error: "Not configured" }, { status: 400 });
@@ -74,7 +77,8 @@ export async function POST(req: NextRequest) {
 
     // Check for LLM credentials
     const llmKeys = ["openai_api_key", "anthropic_api_key", "openrouter_api_key"];
-    const hasLLMCreds = instance.credentials.some((c) => llmKeys.includes(c.key));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const hasLLMCreds = (instance as any).credentials?.some((c: { key: string }) => llmKeys.includes(c.key));
 
     // Handle sandbox exhaustion
     if (!hasLLMCreds && instance.sandboxMode && isSandboxExhausted(instance.sandboxUsed ?? 0)) {
@@ -171,7 +175,9 @@ export async function GET(req: NextRequest) {
   }
 
   // Find instance by verify token
-  const instances = await prisma.aIInstance.findMany({
+  // Using any type since Prisma client hasn't been regenerated with new fields yet
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const instances: any[] = await (prisma as any).aIInstance.findMany({
     where: { 
       whatsappEnabled: true,
       whatsappWebhookSecret: { not: null },
@@ -200,7 +206,7 @@ async function sendWhatsAppResponse({
   to,
   message,
 }: {
-  instance: { id: string; whatsappAccessToken: string | null; whatsappPhoneNumber: string | null };
+  instance: { id: string; whatsappAccessToken: string | null | undefined; whatsappPhoneNumber: string | null | undefined };
   to: string;
   message: string;
 }) {

@@ -8,6 +8,8 @@
  * - Connection health checks
  */
 
+import crypto from "crypto";
+
 const META_GRAPH_API_VERSION = "v18.0";
 const META_GRAPH_API_BASE = `https://graph.facebook.com/${META_GRAPH_API_VERSION}`;
 
@@ -302,8 +304,6 @@ export function verifyWebhookSignature({
   body: string;
   appSecret: string;
 }): boolean {
-  const crypto = require("crypto");
-  
   const expectedSignature = crypto
     .createHmac("sha256", appSecret)
     .update(body)

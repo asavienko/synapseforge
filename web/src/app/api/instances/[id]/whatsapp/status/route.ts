@@ -19,7 +19,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   const { id } = await params;
   
   // Verify instance ownership
-  const instance = await prisma.aIInstance.findFirst({
+  // Using any type since Prisma client hasn't been regenerated with new fields yet
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const instance: any = await (prisma as any).aIInstance.findFirst({
     where: { id, userId: session.user.id },
     select: {
       whatsappEnabled: true,
