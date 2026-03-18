@@ -38,14 +38,15 @@ describe("01 · Landing Page", () => {
 
   it("How it works section shows steps", () => {
     cy.contains("Everything AI, handled.").should("be.visible");
-    cy.contains("Agent Deployment").should("be.visible");
-    cy.contains("LLM Integrations").should("be.visible");
+    cy.contains("Add your AI provider key").should("be.visible");
+    cy.contains("Deploy to the cloud").should("be.visible");
+    cy.contains("Go live on your channels").should("be.visible");
     cy.snap("01-landing-04-how-it-works");
   });
 
   it("features section shows service cards", () => {
-    cy.contains("Multi-Channel").should("be.visible");
-    cy.contains("Own Your Infrastructure").should("be.visible");
+    cy.contains("Multi-channel by default").should("be.visible");
+    cy.contains("Your keys, your data").should("be.visible");
     cy.snap("01-landing-05-features");
   });
 
