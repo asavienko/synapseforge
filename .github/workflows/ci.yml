@@ -144,6 +144,7 @@ jobs:
           NEXTAUTH_SECRET: test-secret
           NEXTAUTH_URL: http://localhost:3000
           AUTH_TRUST_HOST: true
+          ENCRYPTION_KEY: test-encryption-key-for-ci-minimum-32-chars-long
 
       - name: Upload test results
         if: always()
@@ -223,6 +224,7 @@ jobs:
           NEXTAUTH_SECRET: test-secret
           NEXTAUTH_URL: http://localhost:3000
           AUTH_TRUST_HOST: true
+          ENCRYPTION_KEY: test-encryption-key-for-ci-minimum-32-chars-long
 
       - name: Upload test results
         if: always()
@@ -304,6 +306,7 @@ jobs:
           AUTH_TRUST_HOST: true
           ADMIN_EMAILS: cypress@synapseforge.ai
           INTERNAL_API_KEY: test-internal-key
+          ENCRYPTION_KEY: test-encryption-key-for-ci-minimum-32-chars-long
 
       - name: Upload test results
         if: always()
@@ -385,6 +388,7 @@ jobs:
           AUTH_TRUST_HOST: true
           INTERNAL_API_KEY: test-internal-key
           ADMIN_EMAILS: cypress@synapseforge.ai
+          ENCRYPTION_KEY: test-encryption-key-for-ci-minimum-32-chars-long
 
       - name: Upload test results
         if: always()
@@ -466,6 +470,7 @@ jobs:
           AUTH_TRUST_HOST: true
           INTERNAL_API_KEY: test-internal-key
           ADMIN_EMAILS: cypress@synapseforge.ai
+          ENCRYPTION_KEY: test-encryption-key-for-ci-minimum-32-chars-long
 
       - name: Upload test results
         if: always()

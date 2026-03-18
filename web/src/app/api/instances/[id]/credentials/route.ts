@@ -126,6 +126,15 @@ async function validateLLMKey(key: string, value: string): Promise<{ valid: bool
 }
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  // Check if encryption is configured
+  if (!process.env.ENCRYPTION_KEY) {
+    console.error("ENCRYPTION_KEY environment variable is not set");
+    return NextResponse.json(
+      { error: "Server configuration error: encryption not configured" },
+      { status: 500 }
+    );
+  }
+
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 

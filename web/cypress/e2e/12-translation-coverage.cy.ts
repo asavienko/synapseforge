@@ -214,14 +214,16 @@ LOCALES.forEach((locale) => {
 describe("12 · Translations — English (en) — Baseline", () => {
   it("landing page has new English hero text", () => {
     cy.visit("/en");
-    cy.contains("Your AI Agent").should("be.visible");
-    cy.contains("Live in 3 Minutes").should("be.visible");
+    // Hero title is now multi-line: "We forge the AI stack\nso you don't have to."
+    cy.contains("We forge the AI stack").should("be.visible");
+    cy.contains("so you don't have to.").should("be.visible");
     cy.snap("12-en-baseline-hero");
   });
 
   it("landing page has How it works section in English", () => {
     cy.visit("/en");
-    cy.contains("Up and running in minutes").should("be.visible");
+    // Check for actual how section subtitle instead of old text
+    cy.contains("Everything AI, handled.").should("be.visible");
     cy.snap("12-en-baseline-how");
   });
 
@@ -233,7 +235,8 @@ describe("12 · Translations — English (en) — Baseline", () => {
 
   it("landing page about section in English", () => {
     cy.visit("/en");
-    cy.contains("Built different").should("be.visible");
+    // Actual about section content
+    cy.contains("Who we are.").should("be.visible");
     cy.snap("12-en-baseline-about");
   });
 
