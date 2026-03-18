@@ -82,7 +82,7 @@ describe("19 · Onboarding — 5-step flow", () => {
     cy.contains("Customer Support").click();
     cy.get("button").contains("Continue").click();
 
-    cy.contains(/Connect channels|Connect a channel/, { timeout: 10000 }).should("be.visible");
+    cy.contains(/Connect channels|Connect a channel|Where should your AI live/, { timeout: 10000 }).should("be.visible");
     cy.snap("19-onboarding-05-step3");
   });
 
@@ -109,8 +109,8 @@ describe("19 · Onboarding — 5-step flow", () => {
     cy.get("button").contains("Continue").click();
     cy.contains("Customer Support").click();
     cy.get("button").contains("Continue").click();
-    // Skip channel selection
-    cy.contains(/skip/i).last().click();
+    // Continue past channel selection (no channels selected)
+    cy.get("button").contains("Continue").click();
 
     // Step 4: AI provider key
     cy.contains(/Add your AI provider key|AI provider/, { timeout: 10000 }).should("be.visible");
@@ -121,8 +121,8 @@ describe("19 · Onboarding — 5-step flow", () => {
   });
 
   // ── 08. Step 3 → Step 4 with key ─────────────────────────────────────────
-  it("fills key and navigates to step 4 — channel", () => {
-    // Intercept validate-key so fake key passes and step advances to 4
+  it("fills channel and navigates to step 4 — AI provider", () => {
+    // Intercept validate-key so fake key passes and step advances to 5
     cy.intercept("POST", "/api/onboarding/validate-key", {
       statusCode: 200,
       body: { valid: true },
@@ -135,10 +135,16 @@ describe("19 · Onboarding — 5-step flow", () => {
     cy.contains("Customer Support").click();
     cy.get("button").contains("Continue").click();
 
-    cy.get("[data-testid='provider-openai_api_key']").click();
-    cy.get("input[placeholder='sk-...']").type("sk-test-fake-key-abc123");
+    // Step 3: Select Telegram channel
+    cy.contains("Telegram").first().click();
+    cy.get("input[placeholder*='1234567890']").type("123456:testtoken");
+
+    // Continue to step 4
     cy.get("button").contains("Continue").click();
-    cy.wait("@validateKey");
+
+    // Step 4: Now we should see AI provider selection
+    cy.contains(/Add your AI provider key|AI provider/, { timeout: 10000 }).should("be.visible");
+    cy.snap("19-onboarding-08-step4-from-channel");
   });
 
   // ── 08. Step 4 — selecting provider shows key input ─────────────────────────
@@ -149,7 +155,8 @@ describe("19 · Onboarding — 5-step flow", () => {
     cy.get("button").contains("Continue").click();
     cy.contains("Customer Support").click();
     cy.get("button").contains("Continue").click();
-    cy.contains(/skip/i).last().click();
+    // Continue past channel selection (no channels selected)
+    cy.get("button").contains("Continue").click();
 
     // Step 4: Select OpenAI provider
     cy.get("[data-testid='provider-openai_api_key']").click();
@@ -165,7 +172,8 @@ describe("19 · Onboarding — 5-step flow", () => {
     cy.get("button").contains("Continue").click();
     cy.contains("Customer Support").click();
     cy.get("button").contains("Continue").click();
-    cy.contains(/skip/i).last().click();
+    // Continue past channel selection
+    cy.get("button").contains("Continue").click();
 
     cy.get("[data-testid='provider-openai_api_key']").click();
     cy.contains(/Finish setup|Finish/i).should("be.disabled");
@@ -185,10 +193,10 @@ describe("19 · Onboarding — 5-step flow", () => {
     cy.get("button").contains("Continue").click();
     cy.contains("Customer Support").click();
     cy.get("button").contains("Continue").click();
-    // Skip channels
-    cy.contains(/skip/i).last().click();
+    // Continue past channel selection (no channels)
+    cy.get("button").contains("Continue").click();
     // Skip API key (try 20 free)
-    cy.contains(/try 20 free|skip/i).last().click();
+    cy.contains(/try 20 free|Try 20 free/i).last().click();
 
     cy.wait("@onboardingPost");
     cy.contains(/You're all set|ready to launch/i, { timeout: 10000 }).should("be.visible");
@@ -209,11 +217,11 @@ describe("19 · Onboarding — 5-step flow", () => {
     cy.contains("Customer Support").click();
     cy.get("button").contains("Continue").click();
     
-    // Step 3: Skip channel selection
-    cy.contains(/skip/i).last().click();
+    // Step 3: Continue past channel selection (no channels selected)
+    cy.get("button").contains("Continue").click();
 
     // Step 4: Skip API key
-    cy.contains(/try 20 free|skip/i).last().click();
+    cy.contains(/try 20 free|Try 20 free/i).last().click();
 
     cy.wait("@onboardingPost");
     cy.contains(/You're all set|ready to launch/i, { timeout: 10000 }).should("be.visible");
@@ -272,10 +280,10 @@ describe("19 · Onboarding — 5-step flow", () => {
     cy.get("button").contains("Continue").click();
     cy.contains("Customer Support").click();
     cy.get("button").contains("Continue").click();
-    // Skip channels
-    cy.contains(/skip/i).last().click();
+    // Continue past channel selection (no channels)
+    cy.get("button").contains("Continue").click();
     // Skip API key
-    cy.contains(/try 20 free|skip/i).last().click();
+    cy.contains(/try 20 free|Try 20 free/i).last().click();
 
     cy.wait("@onboardingPost3");
     cy.contains(/Go to dashboard|Launch/i, { timeout: 10000 }).click();

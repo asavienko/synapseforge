@@ -15,7 +15,8 @@ describe("08 · Admin Panel", () => {
 
   it("renders admin panel or redirects non-admins", () => {
     cy.get("body").then(($body) => {
-      if ($body.text().includes("Access denied") || !$body.text().includes("Admin Panel")) {
+      if ($body.text().includes("Access denied") || 
+          (!$body.text().includes("Admin Panel") && !$body.text().includes("Total Users"))) {
         // Non-admin — expected redirect/denial
         cy.log("Non-admin user — access denied as expected");
         cy.snap("08-admin-01-access-denied");
@@ -28,8 +29,10 @@ describe("08 · Admin Panel", () => {
 
   it("shows stats cards when admin", () => {
     cy.get("body").then(($body) => {
-      if (!$body.text().includes("Access denied") && $body.text().includes("Admin Panel")) {
-        cy.contains("Total users").should("be.visible");
+      const isAdmin = !$body.text().includes("Access denied") && 
+                      ($body.text().includes("Admin Panel") || $body.text().includes("Total Users"));
+      if (isAdmin) {
+        cy.contains("Total Users").should("be.visible");
         cy.snap("08-admin-02-stats");
       } else {
         cy.log("Skipped — not admin");
@@ -39,7 +42,9 @@ describe("08 · Admin Panel", () => {
 
   it("shows user list when admin", () => {
     cy.get("body").then(($body) => {
-      if (!$body.text().includes("Access denied") && $body.text().includes("Admin Panel")) {
+      const isAdmin = !$body.text().includes("Access denied") && 
+                      ($body.text().includes("Admin Panel") || $body.text().includes("Total Users"));
+      if (isAdmin) {
         cy.contains("Users").should("be.visible");
         cy.get("table, [class*='user'], [class*='list']").should("exist");
         cy.snap("08-admin-03-users-list");
@@ -51,8 +56,10 @@ describe("08 · Admin Panel", () => {
 
   it("shows create manager button when admin", () => {
     cy.get("body").then(($body) => {
-      if (!$body.text().includes("Access denied") && $body.text().includes("Admin Panel")) {
-        cy.contains(/add manager/i).should("be.visible");
+      const isAdmin = !$body.text().includes("Access denied") && 
+                      ($body.text().includes("Admin Panel") || $body.text().includes("Total Users"));
+      if (isAdmin) {
+        cy.contains("Add Manager").should("be.visible");
         cy.snap("08-admin-04-create-manager-btn");
       } else {
         cy.log("Skipped — not admin");
@@ -62,8 +69,10 @@ describe("08 · Admin Panel", () => {
 
   it("can open create manager form", () => {
     cy.get("body").then(($body) => {
-      if (!$body.text().includes("Access denied") && $body.text().includes("Admin Panel")) {
-        cy.contains(/add manager/i).click();
+      const isAdmin = !$body.text().includes("Access denied") && 
+                      ($body.text().includes("Admin Panel") || $body.text().includes("Total Users"));
+      if (isAdmin) {
+        cy.contains("Add Manager").click();
         cy.get('input[type="text"], input[name="name"]').should("be.visible");
         cy.snap("08-admin-05-create-manager-form");
       } else {

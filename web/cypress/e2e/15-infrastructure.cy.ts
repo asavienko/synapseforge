@@ -168,7 +168,7 @@ describe("15 · Infrastructure — Health Checks & Backups", () => {
         // Check if we have admin access by looking for unique admin elements
         const isAdmin = text.includes("Admin Panel") || 
                         text.includes("Infrastructure Health") ||
-                        text.includes("Total users") ||
+                        text.includes("Total Users") ||
                         $body.find("h1:contains('Admin')").length > 0;
         
         if (isAdmin) {
@@ -243,7 +243,7 @@ describe("15 · Gateway Connectivity", () => {
     cy.get("body", { timeout: 10000 }).then(($body) => {
       const isAdminPage = $body.text().includes("Admin Panel") || 
                           $body.text().includes("Infrastructure Health") ||
-                          $body.text().includes("Total users");
+                          $body.text().includes("Total Users");
       
       if (isAdminPage) {
         // Look for Connect VPS button in the instances list
