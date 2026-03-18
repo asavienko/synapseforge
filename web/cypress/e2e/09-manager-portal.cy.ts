@@ -23,10 +23,11 @@ describe("09 · Manager Portal", () => {
     cy.get("body").then(($body) => {
       // Should either redirect or show access denied
       const text = $body.text();
-      const url = cy.url();
-      if (!text.includes("My Clients") && !text.includes("Clients")) {
-        cy.log("Non-manager redirected/denied — expected");
-      }
+      cy.url().then((url) => {
+        if (!text.includes("My Clients") && !text.includes("Clients")) {
+          cy.log("Non-manager redirected/denied — expected");
+        }
+      });
     });
     cy.snap("09-manager-02-regular-user");
   });

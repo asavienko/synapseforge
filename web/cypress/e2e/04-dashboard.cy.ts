@@ -229,7 +229,8 @@ describe("04 · Settings", () => {
     // Use a unique name each run so we always have a real change to submit
     const tempName = `CI Test ${Date.now()}`;
     cy.intercept("PATCH", "/api/user").as("saveProfile");
-    cy.get('input[type="text"]').first().should("not.be.disabled").clear().type(tempName);
+    cy.get('input[type="text"]').first().should("not.be.disabled").clear();
+    cy.get('input[type="text"]').first().type(tempName);
     cy.get('button[type="submit"]').contains("Save changes").click({ force: true });
     cy.wait("@saveProfile", { timeout: 10000 }).its("response.statusCode").should("eq", 200);
     cy.snap("04-settings-04-saved");

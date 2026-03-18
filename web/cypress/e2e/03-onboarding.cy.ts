@@ -15,7 +15,6 @@ describe("03 · Onboarding", () => {
     const email = `cypress-ob-${Date.now()}@synapseforge.ai`;
     cy.clearCookies();
     cy.clearAllSessionStorage();
-    cy.wait(100);
     cy.visit("/en/sign-up");
     cy.url({ timeout: 8000 }).should("include", "/sign-up");
     cy.get('input[type="text"]', { timeout: 8000 }).first().type("Onboard Tester");

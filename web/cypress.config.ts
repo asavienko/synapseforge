@@ -10,7 +10,7 @@ export default defineConfig({
     screenshotsFolder: "cypress/screenshots",
     video: false,
     defaultCommandTimeout: 15000,
-    setupNodeEvents(on, _config) {
+    setupNodeEvents(on, config) {
       on("task", {
         /**
          * Directly set sandbox state on an instance via Prisma.

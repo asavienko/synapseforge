@@ -111,14 +111,16 @@ describe("07 · Instance Detail", () => {
 
     it("can edit system prompt", () => {
       // Target the Custom Instructions textarea (first textarea in the Configuration tab)
-      cy.get('textarea[placeholder*="Always ask"]').clear().type("You are a sales assistant for Cypress Corp.");
+      cy.get('textarea[placeholder*="Always ask"]').clear();
+      cy.get('textarea[placeholder*="Always ask"]').type("You are a sales assistant for Cypress Corp.");
       cy.get('textarea[placeholder*="Always ask"]').should("contain.value", "sales assistant");
       cy.snap("07-detail-09-config-prompt");
     });
 
     it("saves configuration and shows success toast", () => {
       // Target the Custom Instructions textarea specifically, then save
-      cy.get('textarea[placeholder*="Always ask"]').clear().type("Updated by Cypress test.");
+      cy.get('textarea[placeholder*="Always ask"]').clear();
+      cy.get('textarea[placeholder*="Always ask"]').type("Updated by Cypress test.");
       cy.contains("button", /save/i).click();
       cy.contains("saved", { matchCase: false, timeout: 8000 }).should("be.visible");
       cy.snap("07-detail-10-config-saved");
@@ -167,7 +169,6 @@ describe("07 · Instance Detail", () => {
       cy.get('input[placeholder*="Key name"]').type("To Be Revoked");
       cy.contains("button", "Generate").click();
       cy.contains("New key generated", { timeout: 8000 }).should("be.visible");
-      cy.wait(300);
       cy.reload();
       cy.contains("API Keys").click();
       // The key name appears in the list after reload
