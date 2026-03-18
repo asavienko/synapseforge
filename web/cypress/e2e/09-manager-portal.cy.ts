@@ -24,7 +24,7 @@ describe("09 · Manager Portal", () => {
       // Should either redirect or show access denied
       const text = $body.text();
       cy.url().then((url) => {
-        if (!text.includes("My Clients") && !text.includes("Clients")) {
+        if (!text.includes("Clients & Messages") && !text.includes("Manager Portal")) {
           cy.log("Non-manager redirected/denied — expected");
         }
       });
