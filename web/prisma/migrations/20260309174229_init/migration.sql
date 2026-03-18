@@ -177,14 +177,6 @@ CREATE UNIQUE INDEX "VerificationToken_token_key" ON "VerificationToken"("token"
 -- CreateIndex
 CREATE UNIQUE INDEX "VerificationToken_identifier_token_key" ON "VerificationToken"("identifier", "token");
 
--- CreateIndex
-CREATE UNIQUE INDEX "Referral_code_key" ON "Referral"("code");
-
--- CreateIndex
-CREATE UNIQUE INDEX "ReferralConversion_referredUserId_key" ON "ReferralConversion"("referredUserId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "PasswordResetToken_token_key" ON "PasswordResetToken"("token");
-
--- CreateIndex
-CREATE UNIQUE INDEX "WhiteLabelConfig_customDomain_key" ON "WhiteLabelConfig"("customDomain");
+-- Note: Referral.code, ReferralConversion.referredUserId, PasswordResetToken.token,
+-- and WhiteLabelConfig columns already have UNIQUE constraints in their table definitions,
+-- which automatically create indexes. No need for explicit CREATE UNIQUE INDEX.
