@@ -46,7 +46,9 @@ describe("08 · Admin Panel", () => {
   it("shows user list when admin", () => {
     cy.get("body").then(($body) => {
       const isAdmin = !$body.text().includes("Access denied") && 
-                      ($body.text().includes("Admin Panel") || $body.text().includes("Total Users"));
+                      ($body.text().includes("Admin Panel") || 
+                       $body.text().includes("Total Users") ||
+                       $body.text().includes("Total users"));
       if (isAdmin) {
         cy.contains("Users").should("be.visible");
         cy.get("table, [class*='user'], [class*='list']").should("exist");
@@ -60,7 +62,9 @@ describe("08 · Admin Panel", () => {
   it("shows create manager button when admin", () => {
     cy.get("body").then(($body) => {
       const isAdmin = !$body.text().includes("Access denied") && 
-                      ($body.text().includes("Admin Panel") || $body.text().includes("Total Users"));
+                      ($body.text().includes("Admin Panel") || 
+                       $body.text().includes("Total Users") ||
+                       $body.text().includes("Total users"));
       if (isAdmin) {
         cy.contains("Add Manager").should("be.visible");
         cy.snap("08-admin-04-create-manager-btn");
@@ -73,7 +77,9 @@ describe("08 · Admin Panel", () => {
   it("can open create manager form", () => {
     cy.get("body").then(($body) => {
       const isAdmin = !$body.text().includes("Access denied") && 
-                      ($body.text().includes("Admin Panel") || $body.text().includes("Total Users"));
+                      ($body.text().includes("Admin Panel") || 
+                       $body.text().includes("Total Users") ||
+                       $body.text().includes("Total users"));
       if (isAdmin) {
         cy.contains("Add Manager").click();
         cy.get('input[type="text"], input[name="name"]').should("be.visible");

@@ -178,19 +178,10 @@ describe("27 · Managed Instance Journey — happy path", () => {
     });
     cy.contains("button", "Deploy").click();
 
-    // LLM key row should show a checkmark or be marked as done
-    cy.get("main").contains(/AI provider key/i)
-      .closest("[class*='rounded-xl']")
-      .then(($el) => {
-        // Checkmark might be ✓ or text indicating completion
-        const text = $el.text();
-        const hasCheckmark = text.includes("✓") || text.includes("Configured") || text.includes("Done");
-        expect(hasCheckmark || $el.find("[class*='bg-green']").length > 0 || 
-               $el.find("svg").length > 0).to.be.true;
-      });
-
-    // Deploy button should be enabled
+    // LLM key row should show a checkmark — verify deploy button is enabled (means check passed)
     cy.get("[data-testid='deploy-btn']", { timeout: 10000 }).should("not.be.disabled");
+    // Also verify the checkmark is visible in the checklist
+    cy.get("main").find("div.rounded-full").contains("✓").should("exist");
 
     cy.snap("27-journey-03-checklist-complete");
   });

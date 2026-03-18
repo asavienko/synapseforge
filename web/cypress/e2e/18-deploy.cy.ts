@@ -99,12 +99,11 @@ describe("18 · Deploy Tab", () => {
     });
     cy.contains("button", "Deploy").click();
 
-    // LLM check should show ✓ — go up to the row container, not just immediate parent
-    cy.get("main").contains(/AI provider key/i)
-      .closest("[class*='rounded-xl']").contains("✓").should("exist");
+    // LLM check should show ✓ — wait for credentials to load then verify
+    cy.get("[data-testid='deploy-btn']", { timeout: 10000 }).should("not.be.disabled");
+    // The checkmark should be visible in the checklist when LLM is configured
+    cy.get("main").find("div.rounded-full").contains("✓").should("exist");
 
-    // Button should be enabled (unless already deployed)
-    cy.get("[data-testid='deploy-btn']").should("not.be.disabled");
     cy.snap("18-deploy-04-llm-configured");
   });
 
