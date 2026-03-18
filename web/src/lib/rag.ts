@@ -1,6 +1,19 @@
 import { prisma } from '@/lib/prisma';
-import { searchSimilarChunks } from '@/lib/knowledge';
+import { searchSimilarChunks, getKnowledgeBaseStorage } from '@/lib/knowledge';
 import { randomUUID } from 'crypto';
+
+interface SimilarChunk {
+  id: string;
+  content: string;
+  score: number;
+  filename: string;
+  docId: string;
+  metadata?: {
+    page?: number;
+    startChar?: number;
+    endChar?: number;
+  } | null;
+}
 
 async function getQueryEmbedding(query: string): Promise<number[] | null> {
   if (!process.env.OPENAI_API_KEY) return null;
@@ -52,7 +65,6 @@ async function startBackgroundMigration(instanceId: string) {
   });
 
   // Fire-and-forget: the actual migration runs in a separate process
-  // In production, this would be a proper background job (e.g., BullMQ, Upstash)
   const apiKey = process.env.INTERNAL_API_KEY;
   if (!apiKey) {
     console.error('[migration] INTERNAL_API_KEY not set, cannot start background migration');
@@ -70,6 +82,20 @@ async function startBackgroundMigration(instanceId: string) {
 }
 
 /**
+ * Format context with source citations
+ */
+function formatContextWithCitations(chunks: SimilarChunk[]): string {
+  return chunks
+    .map((chunk, index) => {
+      const citation = `[${index + 1}]`;
+      const source = chunk.filename;
+      const page = chunk.metadata?.page ? ` (p.${chunk.metadata.page})` : '';
+      return `${citation} ${chunk.content}\n   — Source: ${source}${page}`;
+    })
+    .join('\n\n');
+}
+
+/**
  * Retrieve relevant knowledge base context for a given query.
  * Uses pgvector similarity when available, with cosine similarity fallback.
  */
@@ -77,7 +103,7 @@ export async function retrieveContext(
   instanceId: string,
   query: string,
   topK = 3
-): Promise<string> {
+): Promise<{ context: string; sources: string[] }> {
   try {
     const kb = await prisma.knowledgeBase.findUnique({
       where: { instanceId },
@@ -89,18 +115,19 @@ export async function retrieveContext(
       },
     });
 
-    if (!kb || kb.documents.length === 0) return "";
+    if (!kb || kb.documents.length === 0) {
+      return { context: "", sources: [] };
+    }
 
     // Check if migration is needed and trigger it once
     const migrationNeeded = await needsMigration(instanceId);
     if (migrationNeeded) {
-      // Check if there's already a recent migration job running
       const recentJob = await prisma.migrationJob.findFirst({
         where: {
           instanceId,
           type: 'knowledge_embeddings',
           status: { in: ['queued', 'running'] },
-          createdAt: { gte: new Date(Date.now() - 10 * 60 * 1000) }, // last 10 min
+          createdAt: { gte: new Date(Date.now() - 10 * 60 * 1000) },
         },
       });
 
@@ -113,22 +140,33 @@ export async function retrieveContext(
     const queryEmbedding = await getQueryEmbedding(query);
 
     if (queryEmbedding) {
-      const results = await searchSimilarChunks(instanceId, queryEmbedding, topK * 2); // get extra to filter
-      // Convert distance to similarity and filter by threshold
-      const filtered = results
-        .map(r => ({ ...r, similarity: 1 - r.distance }))
-        .filter(r => r.similarity > 0.5)
+      const results = await searchSimilarChunks(instanceId, queryEmbedding, topK * 2);
+      
+      // Parse metadata from results and filter by threshold
+      const filtered: SimilarChunk[] = results
+        .map(r => ({
+          ...r,
+          score: 1 - r.distance,
+          metadata: r.metadata ? JSON.parse(r.metadata) : null,
+        }))
+        .filter(r => r.score > 0.5)
         .slice(0, topK);
+
       if (filtered.length > 0) {
-        return filtered.map(r => r.content).join("\n\n---\n\n");
+        const sources = [...new Set(filtered.map(r => r.filename))];
+        return {
+          context: formatContextWithCitations(filtered),
+          sources,
+        };
       }
     }
 
-    // Fallback: simple keyword search within already-fetched chunks
+    // Fallback: simple keyword search
     const allChunks = kb.documents.flatMap(d => d.chunks);
-    if (allChunks.length === 0) return "";
+    if (allChunks.length === 0) {
+      return { context: "", sources: [] };
+    }
 
-    // Simple keyword fallback if no vector results
     const queryLower = query.toLowerCase();
     const keywords = queryLower
       .split(/\s+/)
@@ -139,20 +177,53 @@ export async function retrieveContext(
       .map(chunk => {
         const contentLower = chunk.content.toLowerCase();
         const score = keywords.reduce((acc, kw) => acc + (contentLower.includes(kw) ? 1 : 0), 0);
-        return { content: chunk.content, score };
+        return { content: chunk.content, score, filename: chunk.docId };
       })
       .filter(c => c.score > 0)
       .sort((a, b) => b.score - a.score)
       .slice(0, topK);
 
     if (scored.length > 0) {
-      return scored.map(s => s.content).join("\n\n---\n\n");
+      // Get filenames for fallback results
+      const docIds = [...new Set(scored.map(s => s.filename))];
+      const docs = await prisma.knowledgeDoc.findMany({
+        where: { id: { in: docIds } },
+        select: { id: true, filename: true },
+      });
+      const docMap = new Map(docs.map(d => [d.id, d.filename]));
+      
+      const sources = [...new Set(scored.map(s => docMap.get(s.filename) || 'Unknown'))];
+      
+      return {
+        context: scored.map(s => s.content).join('\n\n---\n\n'),
+        sources,
+      };
     }
 
-    // Last resort: return first N chunks
-    return allChunks.slice(0, topK).map(c => c.content).join("\n\n---\n\n");
+    return { context: "", sources: [] };
   } catch (err) {
     console.error("[rag] retrieval error:", err);
-    return "";
+    return { context: "", sources: [] };
+  }
+}
+
+/**
+ * Get knowledge base stats for an instance
+ */
+export async function getKnowledgeBaseStats(instanceId: string): Promise<{
+  documentCount: number;
+  chunkCount: number;
+  totalSize: number;
+}> {
+  try {
+    const storage = await getKnowledgeBaseStorage(instanceId);
+    return {
+      documentCount: storage.documentCount,
+      chunkCount: storage.chunkCount,
+      totalSize: storage.totalBytes,
+    };
+  } catch (err) {
+    console.error("[rag] stats error:", err);
+    return { documentCount: 0, chunkCount: 0, totalSize: 0 };
   }
 }

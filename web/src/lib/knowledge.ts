@@ -1,6 +1,12 @@
 import { prisma } from '@/lib/prisma';
 import { randomUUID } from 'crypto';
 
+export interface ChunkMetadata {
+  page?: number;
+  startChar: number;
+  endChar: number;
+}
+
 /**
  * Insert a knowledge chunk with its embedding vector using raw SQL.
  * Bypasses Prisma's type system since `embedding` is Unsupported("vector").
@@ -8,12 +14,15 @@ import { randomUUID } from 'crypto';
 export async function insertChunkWithEmbedding(
   docId: string,
   content: string,
-  embedding: number[]
+  embedding: number[],
+  metadata?: ChunkMetadata
 ) {
   const embeddingStr = `[${embedding.join(',')}]`;
+  const metadataStr = metadata ? JSON.stringify(metadata) : null;
+  
   await prisma.$executeRaw`
-    INSERT INTO "KnowledgeChunk" ("id", "docId", "content", "embedding", "createdAt")
-    VALUES (${randomUUID()}, ${docId}, ${content}, ${embeddingStr}::vector, NOW())
+    INSERT INTO "KnowledgeChunk" ("id", "docId", "content", "embedding", "metadata", "createdAt")
+    VALUES (${randomUUID()}, ${docId}, ${content}, ${embeddingStr}::vector, ${metadataStr}, NOW())
   `;
 }
 
@@ -24,7 +33,14 @@ export async function searchSimilarChunks(
   instanceId: string,
   queryEmbedding: number[],
   limit: number = 5
-) {
+): Promise<Array<{
+  id: string;
+  content: string;
+  distance: number;
+  filename: string;
+  docId: string;
+  metadata: string | null;
+}>> {
   // Get instance to verify ownership and get userId
   const instance = await prisma.aIInstance.findUnique({
     where: { id: instanceId },
@@ -35,21 +51,14 @@ export async function searchSimilarChunks(
   }
 
   const embeddingsArrayStr = `[${queryEmbedding.join(',')}]`;
-  return prisma.$queryRaw<
-    Array<{
-      id: string;
-      content: string;
-      distance: number;
-      filename: string;
-      docId: string;
-    }>
-  >`
+  return prisma.$queryRaw`
     SELECT 
       "KnowledgeChunk"."id",
       "KnowledgeChunk"."content",
       "KnowledgeChunk"."embedding" <=> ${embeddingsArrayStr}::vector as "distance",
       "KnowledgeDoc"."filename",
-      "KnowledgeDoc"."id" as "docId"
+      "KnowledgeDoc"."id" as "docId",
+      "KnowledgeChunk"."metadata"
     FROM "KnowledgeChunk"
     JOIN "KnowledgeDoc" ON "KnowledgeChunk"."docId" = "KnowledgeDoc"."id"
     JOIN "KnowledgeBase" ON "KnowledgeDoc"."knowledgeBaseId" = "KnowledgeBase"."id"
@@ -64,41 +73,45 @@ export async function searchSimilarChunks(
 }
 
 /**
- * Simple keyword-based fallback search (used when embeddings unavailable).
+ * Calculate total storage used by knowledge base for an instance
  */
-export async function searchByKeywords(
-  instanceId: string,
-  query: string,
-  limit: number = 5
-) {
-  const keywords = query
-    .toLowerCase()
-    .split(/\s+/)
-    .filter((w) => w.length > 3)
-    .slice(0, 10);
-
-  if (keywords.length === 0) {
-    return [];
-  }
-
-  // Build simple WHERE clauses with ILIKE for each keyword
-  const conditions = keywords
-    .map(() => `"KnowledgeChunk"."content" ILIKE ${'%' + keywords[0] + '%'}`) // simplified; in practice would need OR
-    .join(' OR ');
-
-  // This is a rough implementation; actual fallback is handled in rag.ts differently
-  return prisma.$queryRaw<unknown[]>`
+export async function getKnowledgeBaseStorage(instanceId: string): Promise<{
+  totalBytes: number;
+  documentCount: number;
+  chunkCount: number;
+}> {
+  const result = await prisma.$queryRaw<[{ totalBytes: bigint; documentCount: bigint; chunkCount: bigint }]>`
     SELECT 
-      "KnowledgeChunk"."id",
-      "KnowledgeChunk"."content",
-      "KnowledgeDoc"."filename",
-      "KnowledgeDoc"."id" as "docId"
-    FROM "KnowledgeChunk"
-    JOIN "KnowledgeDoc" ON "KnowledgeChunk"."docId" = "KnowledgeDoc"."id"
-    JOIN "KnowledgeBase" ON "KnowledgeDoc"."knowledgeBaseId" = "KnowledgeBase"."id"
-    JOIN "AIInstance" ON "KnowledgeBase"."instanceId" = "AIInstance"."id"
-    WHERE "AIInstance"."id" = ${instanceId}
-      AND (${conditions})
-    LIMIT ${limit}
+      COALESCE(SUM(d."fileSize"), 0) as "totalBytes",
+      COUNT(DISTINCT d."id") as "documentCount",
+      COUNT(c."id") as "chunkCount"
+    FROM "KnowledgeBase" b
+    LEFT JOIN "KnowledgeDoc" d ON b."id" = d."knowledgeBaseId"
+    LEFT JOIN "KnowledgeChunk" c ON d."id" = c."docId"
+    WHERE b."instanceId" = ${instanceId}
   `;
+
+  return {
+    totalBytes: Number(result[0]?.totalBytes ?? 0),
+    documentCount: Number(result[0]?.documentCount ?? 0),
+    chunkCount: Number(result[0]?.chunkCount ?? 0),
+  };
+}
+
+/**
+ * Get storage limits based on user plan
+ */
+export function getStorageLimits(plan: string): {
+  maxBytesPerFile: number;
+  maxTotalBytes: number;
+} {
+  // Max 10MB per file for all plans
+  const maxBytesPerFile = 10 * 1024 * 1024;
+  
+  // Total storage: 50MB for free, 100MB for pro/enterprise
+  const maxTotalBytes = plan === 'free' 
+    ? 50 * 1024 * 1024 
+    : 100 * 1024 * 1024;
+  
+  return { maxBytesPerFile, maxTotalBytes };
 }

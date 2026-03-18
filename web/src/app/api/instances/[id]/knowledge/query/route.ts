@@ -1,25 +1,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
-
-async function getEmbedding(text: string): Promise<number[] | null> {
-  if (!process.env.OPENAI_API_KEY) return null;
-  try {
-    const res = await fetch("https://api.openai.com/v1/embeddings", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-      },
-      body: JSON.stringify({ input: text, model: "text-embedding-3-small" }),
-    });
-    const data = await res.json();
-    return data.data?.[0]?.embedding ?? null;
-  } catch (error) {
-    console.error("[knowledge-query] embedding error:", error);
-    return null;
-  }
-}
+import { generateEmbedding } from '@/lib/knowledge/embeddings';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,7 +25,11 @@ export async function POST(
     return NextResponse.json({ error: "Query required" }, { status: 400 });
 
   // Generate embedding for query
-  const queryEmbedding = await getEmbedding(query);
+  const queryEmbedding = await generateEmbedding(query).catch(err => {
+    console.error('[knowledge-query] embedding error:', err);
+    return null;
+  });
+  
   if (!queryEmbedding) {
     return NextResponse.json({ error: "Failed to generate embedding" }, { status: 500 });
   }
@@ -51,14 +37,22 @@ export async function POST(
   // Use raw SQL with pgvector <=> operator for efficient cosine similarity search
   const embeddingsArrayStr = `[${queryEmbedding.join(',')}]`;
   const results = await prisma.$queryRaw<
-    Array<{ id: string; content: string; distance: number; filename: string; docId: string }>
+    Array<{ 
+      id: string; 
+      content: string; 
+      distance: number; 
+      filename: string; 
+      docId: string;
+      metadata: string | null;
+    }>
   >`
     SELECT 
       "KnowledgeChunk"."id",
       "KnowledgeChunk"."content",
       "KnowledgeChunk"."embedding" <=> ${embeddingsArrayStr}::vector as "distance",
       "KnowledgeDoc"."filename",
-      "KnowledgeDoc"."id" as "docId"
+      "KnowledgeDoc"."id" as "docId",
+      "KnowledgeChunk"."metadata"
     FROM "KnowledgeChunk"
     JOIN "KnowledgeDoc" ON "KnowledgeChunk"."docId" = "KnowledgeDoc"."id"
     JOIN "KnowledgeBase" ON "KnowledgeDoc"."knowledgeBaseId" = "KnowledgeBase"."id"
@@ -72,13 +66,21 @@ export async function POST(
   `;
 
   // Convert distance to similarity score (1 - distance for cosine)
-  const topResults = results.map((r) => ({
-    id: r.id,
-    content: r.content,
-    score: 1 - r.distance,
-    filename: r.filename,
-    docId: r.docId,
-  }));
+  // Filter by relevance threshold (0.7 similarity = 0.3 distance)
+  const topResults = results
+    .map((r) => ({
+      id: r.id,
+      content: r.content,
+      score: 1 - r.distance,
+      filename: r.filename,
+      docId: r.docId,
+      metadata: r.metadata ? JSON.parse(r.metadata) : null,
+    }))
+    .filter(r => r.score > 0.5); // Only return relevant results
 
-  return NextResponse.json({ results: topResults });
+  return NextResponse.json({ 
+    results: topResults,
+    query,
+    count: topResults.length 
+  });
 }

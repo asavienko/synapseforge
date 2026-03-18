@@ -205,8 +205,12 @@ model KnowledgeDoc {
   knowledgeBaseId String
   filename        String
   fileSize        Int
+  type            String           @default("txt") // "pdf" | "docx" | "txt" | "md"
   status          String           @default("processing") // "processing" | "ready" | "error"
+  contentText     String?          // Full extracted text (optional, for search/debug)
+  chunkCount      Int              @default(0)
   createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
   knowledgeBase   KnowledgeBase    @relation(fields: [knowledgeBaseId], references: [id], onDelete: Cascade)
   chunks          KnowledgeChunk[]
 }
@@ -216,6 +220,7 @@ model KnowledgeChunk {
   docId     String
   content   String
   embedding Unsupported("vector")?
+  metadata  String? // JSON: { page?: number, startChar?: number, endChar?: number }
   createdAt DateTime               @default(now())
   doc       KnowledgeDoc           @relation(fields: [docId], references: [id], onDelete: Cascade)
 }

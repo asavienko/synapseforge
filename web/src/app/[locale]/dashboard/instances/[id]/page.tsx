@@ -19,6 +19,7 @@ import remarkGfm from "remark-gfm";
 import { IntegrationCard } from "@/components/IntegrationCard";
 import { SandboxUpgradeCard } from "@/components/SandboxUpgradeCard";
 import { WhatsAppWizard } from "@/components/WhatsAppWizard";
+import { KnowledgeBaseManager } from "@/components/KnowledgeBaseManager";
 import { SANDBOX_LIMIT, getSandboxRemaining } from "@/lib/sandbox";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -3966,99 +3967,7 @@ print(resp.choices[0].message.content)`}</pre>
 
       {/* ── Knowledge Base ── */}
       {tab === "Knowledge" && (
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-semibold text-white">{t("knowledge.title")}</h2>
-              <p className="text-sm text-zinc-400 mt-0.5">{t("knowledge.uploadHint")}</p>
-            </div>
-            <div>
-              <input
-                ref={knowledgeFileRef}
-                type="file"
-                accept=".txt,.md"
-                className="hidden"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) handleKnowledgeUpload(file);
-                  e.target.value = "";
-                }}
-              />
-              <button
-                onClick={() => knowledgeFileRef.current?.click()}
-                disabled={knowledgeUploading}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-sm font-medium text-white transition-colors"
-              >
-                {knowledgeUploading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    {t("knowledge.uploading")}
-                  </>
-                ) : (
-                  <>
-                    <Plus className="w-4 h-4" />
-                    {t("knowledge.upload")}
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-
-          {knowledgeLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="w-6 h-6 animate-spin text-violet-400" />
-            </div>
-          ) : knowledgeDocs.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-center border border-dashed border-white/10 rounded-xl">
-              <Database className="w-10 h-10 text-zinc-600 mb-3" />
-              <p className="text-zinc-400 text-sm">{t("knowledge.empty")}</p>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {knowledgeDocs.map((doc) => (
-                <div
-                  key={doc.id}
-                  className="flex items-center justify-between gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3"
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <Database className="w-4 h-4 text-zinc-400 shrink-0" />
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-white truncate">{doc.filename}</p>
-                      <p className="text-xs text-zinc-500">
-                        {(doc.fileSize / 1024).toFixed(1)} KB · {formatDate(doc.createdAt)}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span
-                      className={cn(
-                        "text-xs px-2 py-0.5 rounded-full font-medium",
-                        doc.status === "ready"
-                          ? "bg-green-500/20 text-green-400"
-                          : doc.status === "error"
-                          ? "bg-red-500/20 text-red-400"
-                          : "bg-amber-500/20 text-amber-400"
-                      )}
-                    >
-                      {doc.status === "ready"
-                        ? t("knowledge.ready")
-                        : doc.status === "error"
-                        ? t("knowledge.error")
-                        : t("knowledge.processing")}
-                    </span>
-                    <button
-                      onClick={() => handleKnowledgeDelete(doc.id, doc.filename)}
-                      className="text-zinc-500 hover:text-red-400 transition-colors p-1"
-                      title={t("knowledge.delete")}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <KnowledgeBaseManager instanceId={id} />
       )}
 
       {/* ── Credentials ── */}

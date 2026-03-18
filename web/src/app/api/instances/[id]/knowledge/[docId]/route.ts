@@ -32,5 +32,5 @@ export async function DELETE(
 
   await prisma.knowledgeDoc.delete({ where: { id: docId } });
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, deleted: docId });
 }

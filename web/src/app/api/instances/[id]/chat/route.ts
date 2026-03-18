@@ -139,9 +139,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   }
 
   // ── RAG: inject knowledge base context into system prompt ──────────────────
-  const kbContext = await retrieveContext(id, userContent).catch(() => "");
-  if (kbContext) {
-    instanceConfig.systemPrompt = `${instanceConfig.systemPrompt}\n\n## Relevant Knowledge\n\n${kbContext}`;
+  const ragResult = await retrieveContext(id, userContent).catch(() => ({ context: "", sources: [] }));
+  if (ragResult.context) {
+    const citationsSection = ragResult.sources.length > 0 
+      ? `\n\nSources: ${ragResult.sources.join(', ')}` 
+      : '';
+    instanceConfig.systemPrompt = `${instanceConfig.systemPrompt}\n\n## Relevant Knowledge\n\nUse the following information to answer the user's question. Cite sources using [1], [2], etc. when using specific information.\n\n${ragResult.context}${citationsSection}`;
   }
 
   // ── VPS routing: if instance has a live VPS, try it first ──────────────────
