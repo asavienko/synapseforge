@@ -213,6 +213,115 @@ function groupLogsByDay(logs: LogRow[]): Array<{ label: string; logs: LogRow[] }
   return Array.from(groups.entries()).map(([label, logs]) => ({ label, logs }));
 }
 
+// ─── User Credential Vault Preview Component ─────────────────────────────────
+
+interface UserCredential {
+  id: string;
+  provider: "openai" | "anthropic" | "openrouter";
+  lastFour: string;
+  createdAt: string;
+}
+
+function UserCredentialVaultPreview({ instanceId }: { instanceId: string }) {
+  const [credentials, setCredentials] = useState<UserCredential[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadCredentials();
+  }, []);
+
+  async function loadCredentials() {
+    try {
+      const res = await fetch("/api/user/credentials");
+      if (!res.ok) throw new Error("Failed to load credentials");
+      const data = await res.json();
+      setCredentials(data);
+    } catch (err) {
+      console.error("Failed to load user credentials:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const PROVIDER_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
+    openai: {
+      label: "OpenAI",
+      color: "text-emerald-400",
+      bg: "bg-emerald-500/10",
+      border: "border-emerald-500/20",
+    },
+    anthropic: {
+      label: "Anthropic",
+      color: "text-amber-400",
+      bg: "bg-amber-500/10",
+      border: "border-amber-500/20",
+    },
+    openrouter: {
+      label: "OpenRouter",
+      color: "text-violet-400",
+      bg: "bg-violet-500/10",
+      border: "border-violet-500/20",
+    },
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <Loader2 className="w-5 h-5 text-zinc-500 animate-spin" />
+      </div>
+    );
+  }
+
+  if (credentials.length === 0) {
+    return (
+      <div className="text-center py-6">
+        <p className="text-sm text-zinc-400 mb-2">No global API keys stored</p>
+        <p className="text-xs text-zinc-500">
+          Add API keys in Settings to use them across all your instances
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid gap-3">
+      {credentials.map((cred) => {
+        const config = PROVIDER_CONFIG[cred.provider];
+        return (
+          <div
+            key={cred.id}
+            className={cn(
+              "flex items-center justify-between p-3 rounded-xl border",
+              config.bg,
+              config.border
+            )}
+          >
+            <div className="flex items-center gap-3">
+              <Key className={cn("w-4 h-4", config.color)} />
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-medium text-white">{config.label}</span>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400">
+                    Global
+                  </span>
+                </div>
+                <p className="text-xs text-zinc-500 font-mono">
+                  ••••••••••••{cred.lastFour}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-emerald-400 flex items-center gap-1">
+                <Check className="w-3 h-3" /> Available
+              </span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 // ─── Provisioning Banner ─────────────────────────────────────────────────────
 
 interface ProvisioningBannerProps {
@@ -3952,6 +4061,30 @@ print(resp.choices[0].message.content)`}</pre>
       {/* ── Credentials ── */}
       {tab === "Credentials" && (
         <div className="space-y-5">
+          {/* User-level Credential Vault section */}
+          <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+            <div className="p-4 border-b border-white/5 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center shrink-0">
+                  <ShieldCheck className="w-4 h-4 text-violet-400" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-white">Your API Key Vault</h3>
+                  <p className="text-xs text-zinc-500">Global API keys available to all instances</p>
+                </div>
+              </div>
+              <Link
+                href="/dashboard/settings"
+                className="flex items-center gap-1.5 text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 px-3 py-1.5 rounded-lg transition-colors"
+              >
+                Manage in Settings →
+              </Link>
+            </div>
+            <div className="p-4">
+              <UserCredentialVaultPreview instanceId={id} />
+            </div>
+          </div>
+
           {/* Out of sync banner — with Sync Now button if VPS is provisioned */}
           {instance.configSynced === false && (
             <div className="flex items-center gap-3 bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3">

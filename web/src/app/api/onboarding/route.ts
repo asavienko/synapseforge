@@ -4,6 +4,7 @@ import { auth } from '@/lib/auth';
 import { z } from 'zod';
 import { encrypt } from '@/lib/crypto';
 import { PLANS } from '@/lib/utils';
+import { createNotification } from '@/lib/notifications';
 
 // Initialize Prisma client
 const prisma = new PrismaClient();
@@ -12,6 +13,8 @@ const formSchema = z.object({
   business: z.string().min(1),
   industry: z.string().min(1),
   useCase: z.string().min(1),
+  useCaseDescription: z.string().optional(),
+  channelsWanted: z.array(z.string()).optional(),
   credentials: z.record(z.string(), z.string()).optional(),
   instanceName: z.string().optional(),
 });
@@ -31,8 +34,9 @@ function generateSystemPrompt(data: {
   business: string;
   industry: string;
   useCase: string;
+  useCaseDescription?: string;
 }): string {
-  const { business, industry, useCase } = data;
+  const { business, industry, useCase, useCaseDescription } = data;
 
   // Base prompt
   let prompt = `You are a helpful AI assistant for ${business}, a ${industry} company.`;
@@ -82,6 +86,11 @@ function generateSystemPrompt(data: {
       prompt += '\n\nAssist users with their inquiries in a helpful, professional manner.';
   }
 
+  // Add use case description if provided
+  if (useCaseDescription?.trim()) {
+    prompt += `\n\nAdditional context from the user: ${useCaseDescription.trim()}`;
+  }
+
   prompt += '\n\nAlways be concise, accurate, and helpful.';
 
   return prompt;
@@ -100,27 +109,87 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Build onboarding data JSON
+    const onboardingData = {
+      business: validatedData.business,
+      industry: validatedData.industry,
+      useCase: validatedData.useCase,
+      useCaseDescription: validatedData.useCaseDescription,
+      channelsWanted: validatedData.channelsWanted,
+      completedAt: new Date().toISOString(),
+    };
+
     // Update user with onboarding data as JSON
     await prisma.user.update({
       where: { id: session.user.id },
       data: {
-        onboardingData: JSON.stringify({
-          business: validatedData.business,
-          industry: validatedData.industry,
-          useCase: validatedData.useCase,
-        }),
+        onboardingData: JSON.stringify(onboardingData),
         onboardingDone: true,
       },
     });
 
-    // Fetch the updated user to get their plan
+    // Fetch the updated user to get their plan and assign a manager
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
-      select: { plan: true, name: true },
+      select: { 
+        id: true,
+        plan: true, 
+        name: true, 
+        email: true,
+        managerId: true,
+      },
     });
 
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 401 });
+    }
+
+    // Assign a manager if not already assigned
+    let managerAssigned = false;
+    if (!user.managerId) {
+      // Find the manager with the fewest assigned users
+      const managers = await prisma.manager.findMany({
+        select: { id: true, _count: { select: { users: true } } },
+        orderBy: { users: { _count: 'asc' } },
+        take: 1,
+      });
+
+      if (managers.length > 0) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { managerId: managers[0].id },
+        });
+        managerAssigned = true;
+      }
+    }
+
+    // Create manager notification if manager was assigned
+    if (managerAssigned) {
+      const assignedManager = await prisma.manager.findFirst({
+        where: { users: { some: { id: user.id } } },
+      });
+
+      if (assignedManager) {
+        // Create notification for the user about their manager
+        await createNotification({
+          userId: user.id,
+          type: 'manager.assigned',
+          title: 'Your dedicated manager has been assigned',
+          body: `${assignedManager.name} will be your point of contact. They will reach out soon to help you get started.`,
+          href: '/dashboard/messages',
+        });
+
+        // Create a message from the manager to the user
+        await prisma.message.create({
+          data: {
+            userId: user.id,
+            managerId: assignedManager.id,
+            senderType: 'manager',
+            body: `Hi ${user.name?.split(' ')[0] || 'there'}! Welcome to SynapseForge! 👋\n\nI'm ${assignedManager.name}, your dedicated manager. I've reviewed your onboarding information:\n\n• Business: ${validatedData.business}\n• Industry: ${validatedData.industry}\n• Use case: ${validatedData.useCase}${validatedData.useCaseDescription ? '\n• Details: ' + validatedData.useCaseDescription.substring(0, 100) + (validatedData.useCaseDescription.length > 100 ? '...' : '') : ''}\n\nI'll be reaching out shortly to help you get your AI agent set up perfectly for your needs. Feel free to message me here anytime!`,
+            read: false,
+          },
+        });
+      }
     }
 
     // Determine instance type from use case
@@ -138,6 +207,7 @@ export async function POST(request: Request) {
       business: validatedData.business,
       industry: validatedData.industry,
       useCase: validatedData.useCase,
+      useCaseDescription: validatedData.useCaseDescription,
     });
 
     // Build initial config
@@ -214,6 +284,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       instanceId: instance.id,
+      managerAssigned,
       redirectTo: `/dashboard/instances/${instance.id}?firstRun=1`,
     }, { status: 201 });
   } catch (error) {

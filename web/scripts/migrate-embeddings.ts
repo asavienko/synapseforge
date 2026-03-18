@@ -54,7 +54,7 @@ async function main() {
   const afterTotal = Number(afterStatus[0]?.count ?? 0);
   console.log(`   Total chunks with embedding: ${afterTotal}`);
 
-  const sample = await prisma.$queryRaw<any[]>`
+  const sample = await prisma.$queryRaw<Array<{ id: string; type: string }>>`
     SELECT "id", pg_typeof("embedding") as "type"
     FROM "KnowledgeChunk"
     WHERE "embedding" IS NOT NULL

@@ -8,6 +8,7 @@ import { CalBookingButton } from "@/components/CalBookingButton";
 import { DashboardRefresher } from "@/components/DashboardRefresher";
 import { getTranslations } from "next-intl/server";
 import { captureServerEvent } from "@/lib/posthog-server";
+import { OnboardingToast } from "@/components/OnboardingToast";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -74,7 +75,7 @@ export default async function DashboardPage() {
     ? await prisma.instanceCredential.count({
         where: {
           instanceId: firstInstance.id,
-          key: { in: ["telegram_bot_token", "discord_bot_token", "slack_app_token", "slack_bot_token"] },
+          key: { in: ["telegram_bot_token", "discord_bot_token", "slack_app_token", "slack_bot_token", "whatsapp_business_token"] },
         },
       }) > 0
     : false;
@@ -128,6 +129,9 @@ export default async function DashboardPage() {
 
   return (
     <div className="p-6 md:p-8">
+      {/* Onboarding completion toast */}
+      <OnboardingToast />
+      
       {/* Live stats — refreshes every 30s and on window focus */}
       <DashboardRefresher />
       <div className="mb-8">

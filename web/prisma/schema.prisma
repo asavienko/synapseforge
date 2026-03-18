@@ -43,6 +43,7 @@ model User {
   notifications Notification[]
   webhooks      Webhook[]
   whiteLabelConfig WhiteLabelConfig?
+  credentials   UserCredential[]
 }
 
 model Referral {
@@ -403,5 +404,22 @@ model MigrationJob {
   instance     AIInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
 
   @@index([instanceId, createdAt])
+}
+
+// User-level credential vault for LLM provider API keys
+model UserCredential {
+  id            String   @id @default(cuid())
+  userId        String
+  provider      String   // "openai" | "anthropic" | "openrouter"
+  encryptedKey  String   // AES-256-GCM encrypted API key
+  lastFour      String   // Last 4 chars of key for display (e.g., "x7k2")
+  isDefault     Boolean  @default(false) // Whether this is the default key for the provider
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, provider])
+  @@index([userId])
 }
 

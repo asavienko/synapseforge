@@ -10,6 +10,7 @@
     "lint": "eslint",
     "type-check": "tsc --noEmit",
     "test:unit": "echo 'No unit tests yet'",
+    "test:integration": "echo 'No integration tests yet'",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
     "cy:run:headed": "cypress run --headed",
@@ -58,6 +59,7 @@
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
     "resend": "^6.9.3",
+    "sonner": "^2.0.7",
     "stripe": "^20.4.1",
     "tailwind-merge": "^3.5.0",
     "zxcvbn": "^4.4.2"
@@ -76,8 +78,10 @@
     "dotenv": "^17.3.1",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "eslint-plugin-cypress": "^6.2.0",
     "husky": "^9.1.7",
     "mocha-junit-reporter": "^2.2.1",
+    "start-server-and-test": "^2.1.5",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

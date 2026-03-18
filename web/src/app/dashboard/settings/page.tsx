@@ -1,9 +1,10 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { User, Shield, Zap } from "lucide-react";
+import { User, Shield, Zap, Key } from "lucide-react";
 import { PLANS } from "@/lib/utils";
 import { ProfileForm } from "@/components/ProfileForm";
 import { DashboardUpgrade } from "@/components/DashboardUpgrade";
+import { ApiKeySettings } from "@/components/ApiKeySettings";
 
 export default async function SettingsPage() {
   const session = await auth();
@@ -29,6 +30,15 @@ export default async function SettingsPage() {
           <h2 className="font-semibold text-white">Profile</h2>
         </div>
         <ProfileForm initialName={user.name ?? ""} email={user.email} />
+      </section>
+
+      {/* API Keys */}
+      <section className="glow-border rounded-2xl bg-white/[0.02] p-6 mb-6">
+        <div className="flex items-center gap-3 mb-6">
+          <Key className="w-5 h-5 text-emerald-400" />
+          <h2 className="font-semibold text-white">API Keys</h2>
+        </div>
+        <ApiKeySettings />
       </section>
 
       {/* Plan */}

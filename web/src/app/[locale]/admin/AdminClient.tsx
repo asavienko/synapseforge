@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Users, Bot, Activity, AlertCircle, Plus, X, Shield, ChevronDown, MessageCircle, Send, Loader2, Server, Link, Unlink, CheckCircle2, Rocket, RefreshCw, Copy, Check, Gift, DollarSign, BarChart2, TrendingUp, Tag, Camera, RotateCcw } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { STATUS_COLORS, PLANS, formatDate, formatRelativeTime } from "@/lib/utils";
@@ -331,16 +331,18 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
   }
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  const analyticsLoadedRef = useRef(false);
 
   useEffect(() => {
-    if (activeTab === "analytics" && !analyticsData) {
+    if (activeTab === "analytics" && !analyticsLoadedRef.current) {
+      analyticsLoadedRef.current = true;
       setAnalyticsLoading(true);
       fetch("/api/admin/analytics")
         .then((r) => r.json())
         .then((d) => { setAnalyticsData(d); })
         .finally(() => setAnalyticsLoading(false));
     }
-  }, [activeTab, analyticsData]);
+  }, [activeTab]);
 
   // Referrals tab
   const [referralConversions, setReferralConversions] = useState<AdminReferralConversion[]>([]);
@@ -350,15 +352,17 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
   const [markingPaid, setMarkingPaid] = useState<string | null>(null);
 
   // Leads tab
+  const leadsLoadedRef = useRef(false);
   useEffect(() => {
-    if (activeTab === "leads" && leads.length === 0) {
+    if (activeTab === "leads" && !leadsLoadedRef.current) {
+      leadsLoadedRef.current = true;
       setLeadsLoading(true);
       fetch("/api/admin/waitlist")
         .then((r) => r.json())
         .then((d) => { if (Array.isArray(d)) setLeads(d); })
         .finally(() => setLeadsLoading(false));
     }
-  }, [activeTab, leads.length]);
+  }, [activeTab]);
 
   // Poll health summary every 30s for real-time updates
   useEffect(() => {
