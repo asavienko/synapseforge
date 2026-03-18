@@ -85,6 +85,7 @@ jobs:
           DIRECT_URL: postgresql://postgres:postgres@localhost:5432/synapseforge_test
           NEXTAUTH_SECRET: test-secret
           NEXTAUTH_URL: http://localhost:3000
+          AUTH_TRUST_HOST: true
 
       - name: Upload test results
         if: always()
