@@ -6,22 +6,21 @@ describe("01 · Landing Page", () => {
   beforeEach(() => cy.visit("/en"));
 
   it("renders hero section with product-focused headline", () => {
-    cy.contains("We forge the AI stack").should("be.visible");
-    cy.contains("so you don't have to.").should("be.visible");
+    cy.contains("Your AI Agent").should("be.visible");
+    cy.contains("Live in 3 Minutes").should("be.visible");
     cy.snap("01-landing-01-hero");
   });
 
   it("shows CTA buttons in hero", () => {
-    cy.contains("Start for free").should("be.visible");
-    cy.contains("See what we build").should("be.visible");
+    cy.contains("Deploy free").should("be.visible");
+    cy.contains("See how it works").should("be.visible");
     cy.snap("01-landing-01b-hero-cta");
   });
 
-  it("shows services section", () => {
-    cy.contains("Agent Deployment").should("be.visible");
-    cy.contains("LLM Integrations").should("be.visible");
-    cy.contains("Automation Pipelines").should("be.visible");
-    cy.snap("01-landing-01c-services");
+  it("shows trust signals bar", () => {
+    cy.contains("12+").should("be.visible");
+    cy.contains("24/7").should("be.visible");
+    cy.snap("01-landing-01c-trust");
   });
 
   it("shows nav with sign in and get started links", () => {
@@ -37,18 +36,17 @@ describe("01 · Landing Page", () => {
     cy.snap("01-landing-03-locale-switcher");
   });
 
-  it("How it works section shows services", () => {
-    cy.contains("Everything AI, handled.").should("be.visible");
-    cy.contains("Agent Deployment").should("be.visible");
-    cy.contains("LLM Integrations").should("be.visible");
-    cy.contains("Automation Pipelines").should("be.visible");
+  it("How it works section shows steps", () => {
+    cy.contains("How it works").should("be.visible");
+    cy.contains("Connect").should("be.visible");
+    cy.contains("Configure").should("be.visible");
+    cy.contains("Launch").should("be.visible");
     cy.snap("01-landing-04-how-it-works");
   });
 
   it("features section shows service cards", () => {
-    cy.contains("Everything AI, handled.").should("be.visible");
-    cy.contains("Agent Deployment").should("be.visible");
-    cy.contains("LLM Integrations").should("be.visible");
+    cy.contains("Multi-Channel").should("be.visible");
+    cy.contains("Own Your Infrastructure").should("be.visible");
     cy.snap("01-landing-05-features");
   });
 
@@ -56,18 +54,18 @@ describe("01 · Landing Page", () => {
     cy.contains("Simple, transparent pricing").should("be.visible");
     cy.contains("$0").should("be.visible");
     cy.contains("$49").should("be.visible");
-    cy.contains("Custom").should("be.visible");
+    cy.contains("$299").should("be.visible");
     cy.snap("01-landing-06-pricing");
   });
 
   it("about section shows content", () => {
-    cy.contains("Who we are.").should("be.visible");
-    cy.contains("Dedicated managers").should("be.visible");
+    cy.contains("Built different").should("be.visible");
+    cy.contains("Time to first live agent").should("be.visible");
     cy.snap("01-landing-07-about");
   });
 
   it("CTA banner at bottom has get started button", () => {
-    cy.contains("Get started free").should("be.visible");
+    cy.contains("Ready to deploy your AI agent?").should("be.visible");
     cy.snap("01-landing-07b-cta-banner");
   });
 
@@ -81,7 +79,6 @@ describe("01 · Landing Page", () => {
     cy.get("nav").find("button").contains(/EN/i).click();
     cy.contains("ES").click();
     cy.url({ timeout: 8000 }).should("include", "/es");
-    // Just verify we're on the Spanish version - don't check specific text
     cy.snap("01-landing-09-locale-es");
   });
 
@@ -105,7 +102,7 @@ describe("01 · Landing Page", () => {
     cy.clearCookies();
     cy.clearAllSessionStorage();
     cy.visit("/en");
-    cy.contains("Start for free").first().click();
+    cy.contains("Deploy free").first().click();
     cy.url().should("include", "/sign-up");
     cy.snap("01-landing-11-cta-to-signup");
   });
