@@ -11,7 +11,7 @@
  *  4. Stale instance gets marked "failed"
  */
 
-const INTERNAL_KEY = () => Cypress.env("INTERNAL_API_KEY") as string;
+const INTERNAL_KEY = () => Cypress.env("INTERNAL_API_KEY") || "test-internal-key";
 
 describe("23 · Provision Timeout", () => {
   // ── 01. No auth → 401 ─────────────────────────────────────────────────────
@@ -84,7 +84,7 @@ describe("23 · Provision Timeout", () => {
     }
 
     // Create a test instance and force it into a stale provisioning state via API
-    cy.login(Cypress.env("TEST_EMAIL"), Cypress.env("TEST_PASSWORD"));
+    cy.login(Cypress.env("TEST_EMAIL") || Cypress.env("CYPRESS_USER_EMAIL") || "cypress@synapseforge.ai", Cypress.env("TEST_PASSWORD") || Cypress.env("CYPRESS_USER_PASS") || "cypress123");
 
     let staleId: string;
 

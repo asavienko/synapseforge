@@ -22,8 +22,8 @@
  * so chatMessages.length > 0, which makes the textarea visible.
  */
 
-const EMAIL = () => Cypress.env("CYPRESS_USER_EMAIL") || Cypress.env("TEST_EMAIL") || "cypress@synapseforge.ai";
-const PASS  = () => Cypress.env("CYPRESS_USER_PASS")  || Cypress.env("TEST_PASSWORD") || "cypress123";
+const EMAIL = () => Cypress.env("TEST_EMAIL") || Cypress.env("CYPRESS_USER_EMAIL") || "cypress@synapseforge.ai";
+const PASS  = () => Cypress.env("TEST_PASSWORD") || Cypress.env("CYPRESS_USER_PASS") || "cypress123";
 
 // Fake OpenAI key format — passes save (no ?validate=true), triggers sandboxMode=false
 const FAKE_OPENAI_KEY = "sk-proj-testkeyfortestingpurposes1234567890abcdef";

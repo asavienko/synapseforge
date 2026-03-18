@@ -252,10 +252,13 @@ describe("16 · Credentials API — validation", () => {
   });
 
   it("credentials API returns 401 without session", () => {
-    // Login to get instanceId, then clear cookies so request is truly unauthenticated
-    cy.login(EMAIL(), PASS());
+    // Login to get instanceId first
     getFirstInstanceId().then((id) => {
+      // Clear cookies to simulate unauthenticated request
       cy.clearCookies();
+      cy.clearLocalStorage();
+      // Small wait to ensure cookies are cleared
+      cy.wait(100);
       cy.request({
         url: `/api/instances/${id}/credentials`,
         failOnStatusCode: false,
@@ -286,16 +289,20 @@ describe("16 · Bootstrap API", () => {
       headers: { Authorization: "Bearer wrong-token" },
       failOnStatusCode: false,
     }).then((r) => {
+      // Wrong token should return 401; if instance not found, it could return 404
       expect(r.status).to.be.oneOf([401, 404]);
     });
   });
 
-  it("returns 404 for non-existent instance even with a token", () => {
+  it("returns 401/404 for non-existent instance even with a token", () => {
+    // When INTERNAL_API_KEY is set, invalid token returns 401
+    // When INTERNAL_API_KEY is not set, all tokens fail with 401
     cy.request({
       url: "/api/internal/bootstrap/doesnotexist123",
       headers: { Authorization: "Bearer some-token-value" },
       failOnStatusCode: false,
     }).then((r) => {
+      // 401 = unauthorized, 404 = authorized but instance not found
       expect(r.status).to.be.oneOf([401, 404]);
     });
   });

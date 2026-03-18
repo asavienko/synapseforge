@@ -9,7 +9,7 @@
  *  5. Billing page renders without crashing
  */
 
-const INTERNAL_KEY = () => Cypress.env("INTERNAL_API_KEY") as string;
+const INTERNAL_KEY = () => Cypress.env("INTERNAL_API_KEY") || "test-internal-key";
 
 describe("26 · Plan Enforcement", () => {
   // ── 01. No auth → 401 ────────────────────────────────────────────────────
@@ -57,7 +57,7 @@ describe("26 · Plan Enforcement", () => {
 
   // ── 04. Instance start blocked when plan limit exceeded ───────────────────
   it("PATCH status=running is rejected when plan limit is exceeded", () => {
-    cy.login(Cypress.env("TEST_EMAIL"), Cypress.env("TEST_PASSWORD"));
+    cy.login(Cypress.env("TEST_EMAIL") || Cypress.env("CYPRESS_USER_EMAIL") || "cypress@synapseforge.ai", Cypress.env("TEST_PASSWORD") || Cypress.env("CYPRESS_USER_PASS") || "cypress123");
 
     cy.request("/api/instances").then((res) => {
       const instances = res.body as { id: string; status: string }[];
@@ -93,7 +93,7 @@ describe("26 · Plan Enforcement", () => {
 
   // ── 05. Billing page renders ──────────────────────────────────────────────
   it("billing page loads without crashing", () => {
-    cy.login(Cypress.env("TEST_EMAIL"), Cypress.env("TEST_PASSWORD"));
+    cy.login(Cypress.env("TEST_EMAIL") || Cypress.env("CYPRESS_USER_EMAIL") || "cypress@synapseforge.ai", Cypress.env("TEST_PASSWORD") || Cypress.env("CYPRESS_USER_PASS") || "cypress123");
     cy.visit("/en/dashboard/billing");
     cy.contains(/current plan|plan/i, { timeout: 8000 }).should("exist");
     cy.snap("26-enforce-05-billing-page");

@@ -74,7 +74,7 @@ describe("19 · Onboarding — 5-step flow", () => {
   });
 
   // ── 05. Step 2 → Step 3 ───────────────────────────────────────────────────
-  it("navigates to step 3 — AI provider key", () => {
+  it("navigates to step 3 — Connect channels", () => {
     cy.visit("/en/onboarding");
     cy.get("input[placeholder='Acme Corp']").type("TestCo");
     cy.get("select").select("SaaS / Software");
@@ -82,15 +82,12 @@ describe("19 · Onboarding — 5-step flow", () => {
     cy.contains("Customer Support").click();
     cy.get("button").contains("Continue").click();
 
-    cy.contains("Add your AI provider key").should("be.visible");
-    cy.get("[data-testid='provider-openai_api_key']").should("be.visible");
-    cy.get("[data-testid='provider-anthropic_api_key']").should("be.visible");
-    cy.get("[data-testid='provider-openrouter_api_key']").should("be.visible");
+    cy.contains(/Connect channels|Connect a channel/, { timeout: 10000 }).should("be.visible");
     cy.snap("19-onboarding-05-step3");
   });
 
-  // ── 06. Step 3 — provider picker shows key input ──────────────────────────
-  it("selecting OpenAI shows key input field", () => {
+  // ── 06. Step 3 — channel selection shows token input ─────────────────────
+  it("selecting Telegram in step 3 shows token input", () => {
     cy.visit("/en/onboarding");
     cy.get("input[placeholder='Acme Corp']").type("TestCo");
     cy.get("select").select("SaaS / Software");
@@ -98,23 +95,29 @@ describe("19 · Onboarding — 5-step flow", () => {
     cy.contains("Customer Support").click();
     cy.get("button").contains("Continue").click();
 
-    cy.get("[data-testid='provider-openai_api_key']").click();
-    cy.get("input[placeholder='sk-...']").should("be.visible");
-    cy.snap("19-onboarding-06-step3-openai-selected");
+    // Step 3: Channels - select Telegram
+    cy.contains("Telegram").first().click();
+    cy.get("input[placeholder*='1234567890']").should("be.visible");
+    cy.snap("19-onboarding-06-step3-telegram");
   });
 
-  // ── 07. Step 3 — Continue disabled without key ────────────────────────────
-  it("Continue is disabled when provider selected but key empty", () => {
+  // ── 07. Step 3 → Step 4 ───────────────────────────────────────────────────
+  it("navigates from step 3 to step 4 — AI provider key", () => {
     cy.visit("/en/onboarding");
     cy.get("input[placeholder='Acme Corp']").type("TestCo");
     cy.get("select").select("SaaS / Software");
     cy.get("button").contains("Continue").click();
     cy.contains("Customer Support").click();
     cy.get("button").contains("Continue").click();
+    // Skip channel selection
+    cy.contains(/skip/i).last().click();
 
-    cy.get("[data-testid='provider-openai_api_key']").click();
-    cy.get("button").contains("Continue").should("be.disabled");
-    cy.snap("19-onboarding-07-step3-disabled");
+    // Step 4: AI provider key
+    cy.contains(/Add your AI provider key|AI provider/, { timeout: 10000 }).should("be.visible");
+    cy.get("[data-testid='provider-openai_api_key']").should("be.visible");
+    cy.get("[data-testid='provider-anthropic_api_key']").should("be.visible");
+    cy.get("[data-testid='provider-openrouter_api_key']").should("be.visible");
+    cy.snap("19-onboarding-07-step4");
   });
 
   // ── 08. Step 3 → Step 4 with key ─────────────────────────────────────────

@@ -9,8 +9,8 @@
  *  5. Widget bubble opens and closes the iframe on click
  */
 
-const EMAIL = "cypress@synapseforge.ai";
-const PASS = "cypress123";
+const EMAIL = Cypress.env("TEST_EMAIL") || Cypress.env("CYPRESS_USER_EMAIL") || "cypress@synapseforge.ai";
+const PASS = Cypress.env("TEST_PASSWORD") || Cypress.env("CYPRESS_USER_PASS") || "cypress123";
 
 describe("30 · Public Chat Page + Widget", () => {
   let instanceId: string;

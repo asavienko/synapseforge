@@ -1,17 +1,14 @@
+const EMAIL = () => Cypress.env("TEST_EMAIL") || Cypress.env("CYPRESS_USER_EMAIL") || "cypress@synapseforge.ai";
+const PASS = () => Cypress.env("TEST_PASSWORD") || Cypress.env("CYPRESS_USER_PASS") || "cypress123";
+
 describe("28 — Agent Tool Integrations", () => {
   beforeEach(() => {
-    cy.session("user", () => {
-      cy.visit("/en/sign-in");
-      cy.get('input[type="email"]').type("cypress@synapseforge.ai");
-      cy.get('input[type="password"]').type("cypress123");
-      cy.get('button[type="submit"]').click();
-      cy.url().should("include", "/dashboard");
-    });
+    cy.login(EMAIL(), PASS());
   });
 
   it("GET /api/instances/:id/tools returns tool list with utility + crypto tools", () => {
     cy.request("GET", "/api/instances").then((res) => {
-      const id = res.body.instances?.[0]?.id;
+      const id = res.body[0]?.id || res.body.instances?.[0]?.id;
       if (!id) return cy.log("No instances found");
       cy.request("GET", `/api/instances/${id}/tools`).then((r) => {
         expect(r.status).to.eq(200);
@@ -27,7 +24,7 @@ describe("28 — Agent Tool Integrations", () => {
 
   it("calculate tool returns correct result", () => {
     cy.request("GET", "/api/instances").then((res) => {
-      const id = res.body.instances?.[0]?.id;
+      const id = res.body[0]?.id || res.body.instances?.[0]?.id;
       if (!id) return;
       cy.request("POST", `/api/instances/${id}/tools/test`, { toolName: "calculate", args: { expression: "42 * 100" } })
         .then((r) => { expect(r.status).to.eq(200); expect(r.body.result).to.eq("4200"); });
@@ -36,7 +33,7 @@ describe("28 — Agent Tool Integrations", () => {
 
   it("get_current_time returns a string", () => {
     cy.request("GET", "/api/instances").then((res) => {
-      const id = res.body.instances?.[0]?.id;
+      const id = res.body[0]?.id || res.body.instances?.[0]?.id;
       if (!id) return;
       cy.request("POST", `/api/instances/${id}/tools/test`, { toolName: "get_current_time", args: { timezone: "UTC" } })
         .then((r) => { expect(r.status).to.eq(200); expect(r.body.result).to.be.a("string").and.not.be.empty; });
@@ -45,7 +42,7 @@ describe("28 — Agent Tool Integrations", () => {
 
   it("crypto_price tool works without API key", () => {
     cy.request("GET", "/api/instances").then((res) => {
-      const id = res.body.instances?.[0]?.id;
+      const id = res.body[0]?.id || res.body.instances?.[0]?.id;
       if (!id) return;
       cy.request("POST", `/api/instances/${id}/tools/test`, { toolName: "crypto_price", args: { coins: "bitcoin" } })
         .then((r) => { expect(r.status).to.eq(200); expect(r.body.result).to.contain("BITCOIN"); });

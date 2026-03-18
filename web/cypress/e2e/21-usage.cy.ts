@@ -9,8 +9,8 @@
  *  - 14-day bar chart renders
  */
 
-const EMAIL = () => Cypress.env("TEST_EMAIL") as string;
-const PASS = () => Cypress.env("TEST_PASSWORD") as string;
+const EMAIL = () => (Cypress.env("TEST_EMAIL") || Cypress.env("CYPRESS_USER_EMAIL") || "cypress@synapseforge.ai") as string;
+const PASS = () => (Cypress.env("TEST_PASSWORD") || Cypress.env("CYPRESS_USER_PASS") || "cypress123") as string;
 
 function getInstanceId(): Cypress.Chainable<string> {
   return cy.request("/api/instances").then((res) => res.body[0]?.id as string);

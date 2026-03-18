@@ -11,8 +11,8 @@
  *  4. Source breakdown is present in usage response
  */
 
-const EMAIL = () => Cypress.env("TEST_EMAIL");
-const PASS  = () => Cypress.env("TEST_PASSWORD");
+const EMAIL = () => Cypress.env("TEST_EMAIL") || Cypress.env("CYPRESS_USER_EMAIL") || "cypress@synapseforge.ai";
+const PASS  = () => Cypress.env("TEST_PASSWORD") || Cypress.env("CYPRESS_USER_PASS") || "cypress123";
 
 function getInstanceId() {
   return cy.request("/api/instances").then((res) => {

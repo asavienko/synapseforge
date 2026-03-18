@@ -13,7 +13,7 @@
  *  7. Response includes transition key in all cases
  */
 
-const INTERNAL_KEY = () => Cypress.env("INTERNAL_API_KEY") as string;
+const INTERNAL_KEY = () => Cypress.env("INTERNAL_API_KEY") || "test-internal-key";
 
 function ping(instanceId: string, status: "healthy" | "degraded" | "down", extras = {}) {
   return cy.request({
@@ -73,7 +73,7 @@ describe("25 · Health Alerts", () => {
 
     before(() => {
       if (!INTERNAL_KEY()) return;
-      cy.login(Cypress.env("TEST_EMAIL"), Cypress.env("TEST_PASSWORD"));
+      cy.login(Cypress.env("TEST_EMAIL") || Cypress.env("CYPRESS_USER_EMAIL") || "cypress@synapseforge.ai", Cypress.env("TEST_PASSWORD") || Cypress.env("CYPRESS_USER_PASS") || "cypress123");
       cy.request("/api/instances").then((res) => {
         if (res.body.length > 0) instanceId = res.body[0].id;
       });
@@ -138,7 +138,7 @@ describe("25 · Health Alerts", () => {
 
     it("activity log shows health transition event", () => {
       if (!INTERNAL_KEY() || !instanceId) { cy.log("skip"); return; }
-      cy.login(Cypress.env("TEST_EMAIL"), Cypress.env("TEST_PASSWORD"));
+      cy.login(Cypress.env("TEST_EMAIL") || Cypress.env("CYPRESS_USER_EMAIL") || "cypress@synapseforge.ai", Cypress.env("TEST_PASSWORD") || Cypress.env("CYPRESS_USER_PASS") || "cypress123");
 
       // Trigger a down transition
       ping(instanceId, "healthy").then(() => {

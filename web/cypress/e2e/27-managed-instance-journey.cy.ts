@@ -15,8 +15,8 @@
  * Cleanup: delete the created instance + reset plan to free.
  */
 
-const EMAIL = () => Cypress.env("CYPRESS_USER_EMAIL") || "cypress@synapseforge.ai";
-const PASS  = () => Cypress.env("CYPRESS_USER_PASS")  || "cypress123";
+const EMAIL = () => Cypress.env("TEST_EMAIL") || Cypress.env("CYPRESS_USER_EMAIL") || "cypress@synapseforge.ai";
+const PASS  = () => Cypress.env("TEST_PASSWORD") || Cypress.env("CYPRESS_USER_PASS") || "cypress123";
 
 describe("27 · Managed Instance Journey — happy path", () => {
   let journeyInstanceId: string;

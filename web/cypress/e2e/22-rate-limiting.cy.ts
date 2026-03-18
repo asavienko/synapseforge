@@ -8,8 +8,8 @@
  * In production (DISABLE_RATE_LIMIT unset), the limits are active.
  */
 
-const EMAIL = () => Cypress.env("TEST_EMAIL") as string;
-const PASS = () => Cypress.env("TEST_PASSWORD") as string;
+const EMAIL = () => (Cypress.env("TEST_EMAIL") || Cypress.env("CYPRESS_USER_EMAIL") || "cypress@synapseforge.ai") as string;
+const PASS = () => (Cypress.env("TEST_PASSWORD") || Cypress.env("CYPRESS_USER_PASS") || "cypress123") as string;
 
 function getApiKey(): Cypress.Chainable<{ instanceId: string; key: string }> {
   return cy.request("/api/instances").then((res) => {
