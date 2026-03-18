@@ -702,10 +702,10 @@ export default async function LandingPage() {
             <Link href="/terms" className="hover:text-white transition-colors">{t("footer.terms")}</Link>
             <Link href="/contact" className="hover:text-white transition-colors">{t("footer.contact")}</Link>
           </div>
-          <div className="flex items-center gap-1.5">
+          <Link href="/status" className="flex items-center gap-1.5 hover:text-white transition-colors">
             <span className="w-2 h-2 rounded-full bg-emerald-500" />
             <span className="text-xs">All systems operational</span>
-          </div>
+          </Link>
         </div>
       </footer>
 
