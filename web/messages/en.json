@@ -21,25 +21,25 @@
   },
   "hero": {
     "badge": "Now in early access",
-    "title": "Your AI Agent.\nLive in 3 Minutes.",
+    "title": "We forge the AI stack\nso you don't have to.",
     "subtitle": "Add your OpenAI key. One click deploys a 24/7 AI agent to your own cloud server — ready to chat on Telegram, Discord, or Slack.",
-    "cta": "Deploy free →",
-    "ctaSecondary": "See how it works",
+    "cta": "Start for free →",
+    "ctaSecondary": "See what we build",
     "footnote": "Free plan · No credit card required · Your keys, your data"
   },
   "services": {
-    "title": "What We Build For You",
+    "title": "Everything AI, handled.",
     "subtitle": "Every client gets a dedicated manager and a custom AI stack. No DIY, no guesswork.",
     "agents": {
-      "title": "AI Agents",
+      "title": "Agent Deployment",
       "desc": "Custom-configured AI assistants deployed to your channels. From customer support to internal automation."
     },
     "integrations": {
-      "title": "Integrations",
+      "title": "LLM Integrations",
       "desc": "Connect your AI agent to Telegram, Discord, Slack, your CRM, or any tool via our OpenAI-compatible API."
     },
     "automation": {
-      "title": "Automation",
+      "title": "Automation Pipelines",
       "desc": "Automate repetitive tasks, workflows, and responses. Your agent handles it 24/7 without human intervention."
     },
     "consulting": {
@@ -94,9 +94,9 @@
     "upgradeToPro": "Upgrade to Pro"
   },
   "about": {
-    "title": "Built different",
+    "title": "Who we are.",
     "subtitle": "SynapseForge is not a wrapper around the OpenAI API. It is a full deployment platform — your agent runs on dedicated infrastructure, syncs config automatically, and connects to the channels your users are already on.",
-    "setup": "<3 min",
+    "setup": "Dedicated managers",
     "setupLabel": "Time to first live agent",
     "response": "24h",
     "responseLabel": "Manager response time",
