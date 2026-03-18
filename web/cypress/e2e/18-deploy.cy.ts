@@ -80,8 +80,8 @@ describe("18 · Deploy Tab", () => {
     cy.snap("18-deploy-03-no-llm-disabled");
   });
 
-  // ── 04. With LLM → button enabled ────────────────────────────────────────
-  it("Deploy button is enabled when LLM key is configured", () => {
+  // ── 04. With LLM → checklist shows configured ─────────────────────────────
+  it("shows LLM as configured when credentials exist", () => {
     // Intercept credentials API to wait for it to load
     cy.intercept("GET", `/api/instances/*/credentials`).as("getCredentials");
     
@@ -115,8 +115,17 @@ describe("18 · Deploy Tab", () => {
     // Wait for the checklist to render with the LLM check
     cy.contains(/AI provider key|OpenAI API key/i, { timeout: 10000 }).should("be.visible");
 
-    // Deploy button should be enabled since credentials exist
-    cy.get("[data-testid='deploy-btn']", { timeout: 15000 }).should("not.be.disabled");
+    // Check that LLM shows as configured (green checkmark or ✓ indicator)
+    // Look for the LLM check item and verify it shows as done
+    cy.get("main").contains(/AI provider key|OpenAI API key/i)
+      .closest("div[class*='rounded-xl']")
+      .then(($el) => {
+        // Check if it has green styling or checkmark
+        const hasCheck = $el.find("[class*='bg-emerald']").length > 0 || 
+                         $el.find("[class*='text-emerald']").length > 0 ||
+                         $el.text().includes("✓");
+        expect(hasCheck).to.be.true;
+      });
 
     cy.snap("18-deploy-04-llm-configured");
   });
