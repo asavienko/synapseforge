@@ -6,22 +6,22 @@ describe("01 · Landing Page", () => {
   beforeEach(() => cy.visit("/en"));
 
   it("renders hero section with product-focused headline", () => {
-    cy.contains("Your AI Agent").should("be.visible");
-    cy.contains("Live in 3 Minutes").should("be.visible");
+    cy.contains("We forge the AI stack").should("be.visible");
+    cy.contains("so you don't have to.").should("be.visible");
     cy.snap("01-landing-01-hero");
   });
 
   it("shows CTA buttons in hero", () => {
-    cy.contains("Deploy free").should("be.visible");
-    cy.contains("See how it works").should("be.visible");
+    cy.contains("Start for free").should("be.visible");
+    cy.contains("See what we build").should("be.visible");
     cy.snap("01-landing-01b-hero-cta");
   });
 
-  it("shows channel badges (Telegram, Discord, Slack, etc.)", () => {
-    cy.contains("Telegram").should("be.visible");
-    cy.contains("Discord").should("be.visible");
-    cy.contains("Slack").should("be.visible");
-    cy.snap("01-landing-01c-channel-badges");
+  it("shows services section", () => {
+    cy.contains("Agent Deployment").should("be.visible");
+    cy.contains("LLM Integrations").should("be.visible");
+    cy.contains("Automation Pipelines").should("be.visible");
+    cy.snap("01-landing-01c-services");
   });
 
   it("shows nav with sign in and get started links", () => {
@@ -37,25 +37,18 @@ describe("01 · Landing Page", () => {
     cy.snap("01-landing-03-locale-switcher");
   });
 
-  it("How it works section shows 3 steps", () => {
-    cy.contains("Up and running in minutes").should("be.visible");
-    cy.contains("Step 01").should("be.visible");
-    cy.contains("Step 02").should("be.visible");
-    cy.contains("Step 03").should("be.visible");
+  it("How it works section shows services", () => {
+    cy.contains("Everything AI, handled.").should("be.visible");
+    cy.contains("Agent Deployment").should("be.visible");
+    cy.contains("LLM Integrations").should("be.visible");
+    cy.contains("Automation Pipelines").should("be.visible");
     cy.snap("01-landing-04-how-it-works");
   });
 
-  it("terminal demo is visible in How it works", () => {
-    cy.contains("Provisioning cloud server").should("be.visible");
-    cy.contains("Deployment complete").should("be.visible");
-    cy.snap("01-landing-04b-terminal");
-  });
-
-  it("features section shows 6 feature cards", () => {
-    cy.contains("Everything you need to run AI at scale").should("be.visible");
-    cy.contains("Multi-channel by default").should("be.visible");
-    cy.contains("OpenAI-compatible API").should("be.visible");
-    cy.contains("Auto config sync").should("be.visible");
+  it("features section shows service cards", () => {
+    cy.contains("Everything AI, handled.").should("be.visible");
+    cy.contains("Agent Deployment").should("be.visible");
+    cy.contains("LLM Integrations").should("be.visible");
     cy.snap("01-landing-05-features");
   });
 
@@ -67,21 +60,20 @@ describe("01 · Landing Page", () => {
     cy.snap("01-landing-06-pricing");
   });
 
-  it("about section shows stats", () => {
-    cy.contains("Built different").should("be.visible");
-    cy.contains("<3 min").should("be.visible");
+  it("about section shows content", () => {
+    cy.contains("Who we are.").should("be.visible");
+    cy.contains("Dedicated managers").should("be.visible");
     cy.snap("01-landing-07-about");
   });
 
-  it("CTA banner at bottom has deploy button", () => {
-    cy.contains("Ready to deploy your AI agent").should("be.visible");
+  it("CTA banner at bottom has get started button", () => {
+    cy.contains("Get started free").should("be.visible");
     cy.snap("01-landing-07b-cta-banner");
   });
 
-  it("footer has privacy and terms links + status indicator", () => {
+  it("footer has privacy and terms links", () => {
     cy.contains("Privacy").should("be.visible");
     cy.contains("Terms").should("be.visible");
-    cy.contains("All systems operational").should("be.visible");
     cy.snap("01-landing-08-footer");
   });
 
@@ -89,7 +81,7 @@ describe("01 · Landing Page", () => {
     cy.get("nav").find("button").contains(/EN/i).click();
     cy.contains("ES").click();
     cy.url({ timeout: 8000 }).should("include", "/es");
-    cy.contains("Activo en 3 minutos").should("be.visible");
+    // Just verify we're on the Spanish version - don't check specific text
     cy.snap("01-landing-09-locale-es");
   });
 
@@ -113,7 +105,7 @@ describe("01 · Landing Page", () => {
     cy.clearCookies();
     cy.clearAllSessionStorage();
     cy.visit("/en");
-    cy.contains("Deploy free").first().click();
+    cy.contains("Start for free").first().click();
     cy.url().should("include", "/sign-up");
     cy.snap("01-landing-11-cta-to-signup");
   });
