@@ -257,13 +257,14 @@ describe("16 · Credentials API — validation", () => {
       // Clear cookies to simulate unauthenticated request
       cy.clearCookies();
       cy.clearLocalStorage();
-      // Small wait to ensure cookies are cleared
-      cy.wait(100);
-      cy.request({
-        url: `/api/instances/${id}/credentials`,
-        failOnStatusCode: false,
-      }).then((r) => {
-        expect(r.status).to.be.oneOf([401, 403]);
+      // Use cy.wrap to ensure cookies are cleared before request
+      cy.wrap(null).then(() => {
+        cy.request({
+          url: `/api/instances/${id}/credentials`,
+          failOnStatusCode: false,
+        }).then((r) => {
+          expect(r.status).to.be.oneOf([401, 403]);
+        });
       });
     });
   });
