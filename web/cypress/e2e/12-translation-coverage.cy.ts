@@ -25,7 +25,7 @@ const LOCALES = [
     },
     // A unique phrase from the new hero title (second line)
     hero: "Activo en 3 minutos",
-    heroCTA: "Desplegar",
+    heroCTA: "Desplegar gratis",
     howTitle: "En funcionamiento en minutos",
     pricingTitle: "Precios",
     aboutTitle: "diferente",   // substring match from about.title
@@ -48,7 +48,7 @@ const LOCALES = [
       getStarted: "Почати",
     },
     hero: "Живий за 3 хвилини",
-    heroCTA: "Розгорнути",
+    heroCTA: "Розгорнути безкоштовно",
     howTitle: "Запуск за хвилини",
     pricingTitle: "ціноутворення",
     aboutTitle: "інакше",   // substring of "Збудовано інакше"
@@ -71,7 +71,7 @@ const LOCALES = [
       getStarted: "Начать",
     },
     hero: "Живой за 3 минуты",
-    heroCTA: "Развернуть",
+    heroCTA: "Развернуть бесплатно",
     howTitle: "Запуск за минуты",
     pricingTitle: "ценообразование",
     aboutTitle: "иначе",   // substring — "Построено иначе" or similar
@@ -88,7 +88,7 @@ const LOCALES = [
 
 // Strings that must NOT appear on non-English pages (English fallback detection)
 const ENGLISH_ONLY = [
-  "Deploy free",
+  "Start for free",
   "Up and running in minutes",
   "Simple, transparent pricing",
   "Welcome back",

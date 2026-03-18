@@ -2,10 +2,10 @@
  * i18n — Locale routing and translations
  */
 const LOCALES = [
-  { code: "en", hero: "Deploy free",            signIn: "Welcome back"         },
-  { code: "es", hero: "Empieza gratis",         signIn: "Bienvenido de nuevo"  },
-  { code: "uk", hero: "Почати безкоштовно",     signIn: "З поверненням"        },
-  { code: "ru", hero: "Начать бесплатно",        signIn: "С возвращением"       },
+  { code: "en", hero: "Start for free",         signIn: "Welcome back"         },
+  { code: "es", hero: "Desplegar gratis",       signIn: "Bienvenido de nuevo"  },
+  { code: "uk", hero: "Розгорнути безкоштовно", signIn: "З поверненням"        },
+  { code: "ru", hero: "Развернуть бесплатно",   signIn: "С возвращением"       },
 ];
 
 describe("05 · i18n — Landing Page", () => {
