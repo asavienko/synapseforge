@@ -368,7 +368,9 @@ describe("16 · Instance Setup Wizard", () => {
     // Fill name on step 1 (input appears after template selection)
     cy.get("input[placeholder*='Bot'], input[placeholder*='bot'], input[name='name'], input[type='text']")
       .first()
-      .clear()
+      .clear();
+    cy.get("input[placeholder*='Bot'], input[placeholder*='bot'], input[name='name'], input[type='text']")
+      .first()
       .type("Test Wizard Bot");
     cy.contains("button", /next/i).click();
     // Step 2: AI Provider
@@ -382,7 +384,8 @@ describe("16 · Instance Setup Wizard", () => {
     // Select a template first (required by the template gallery UX)
     cy.contains(/customer support bot|custom agent/i).first().click();
     // Fill name on step 1 (input appears after template selection)
-    cy.get("input[type='text']").first().clear().type("Channel Test Bot");
+    cy.get("input[type='text']").first().clear();
+    cy.get("input[type='text']").first().type("Channel Test Bot");
     cy.contains("button", /next/i).click();
     // Step 2: AI Provider — must select a provider and enter an API key before Next is enabled
     cy.contains(/openai/i).first().click();

@@ -292,7 +292,7 @@ export async function POST(request: Request) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({
         error: 'Validation failed',
-        details: (error as any).errors.map((e: any) => e.message)
+        details: error.issues.map((e) => e.message)
       }, { status: 400 });
     }
 

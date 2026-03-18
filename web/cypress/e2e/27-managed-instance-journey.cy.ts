@@ -89,7 +89,8 @@ describe("27 · Managed Instance Journey — happy path", () => {
     // Step 1 — select a template, wait for name field to appear, type name
     cy.contains("button", "Customer Support Bot").click();
     // Name input only renders after template is selected
-    cy.get("input[placeholder='My Support Bot']", { timeout: 5000 }).clear().type("Journey Agent");
+    cy.get("input[placeholder='My Support Bot']", { timeout: 5000 }).clear();
+    cy.get("input[placeholder='My Support Bot']", { timeout: 5000 }).type("Journey Agent");
 
     // Next must be enabled now
     cy.contains("button", "Next").should("not.be.disabled").click();

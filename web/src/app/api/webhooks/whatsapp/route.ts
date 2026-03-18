@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { decrypt } from "@/lib/crypto";
 import { callLLM } from "@/lib/llm";
 import { isSandboxExhausted } from "@/lib/sandbox";
+import crypto from "crypto";
 
 export const maxDuration = 60;
 
@@ -42,7 +43,6 @@ function verifyTwilioSignature(
   signatureHeader: string
 ): boolean {
   try {
-    const crypto = require("crypto");
     const expected = crypto.createHmac("sha1", authToken);
     expected.update(url);
     const sortedKeys = Object.keys(params).sort();
