@@ -4,8 +4,8 @@
  * Tests the 5-step onboarding wizard:
  *   1. Business info (name + industry)
  *   2. Use case selection
- *   3. AI provider key (optional, can skip)
- *   4. Channel integration (optional, can skip)
+ *   3. Channel integration (optional, can skip)
+ *   4. AI provider key (optional, can skip)
  *   5. Launch screen → redirect to dashboard
  *
  * Each test registers a fresh user so the onboarding is never "done".
@@ -79,89 +79,91 @@ describe("03 · Onboarding", () => {
     cy.snap("03-onboard-05-step2-selected");
   });
 
-  // ── Step 3 — AI provider key ─────────────────────────────────────────────
+  // ── Step 3 — Channels ────────────────────────────────────────────────────
 
-  it("step 2 → step 3 — shows AI provider key screen", () => {
+  it("step 2 → step 3 — shows channel selection screen", () => {
     registerFreshUser();
     cy.get("input[placeholder='Acme Corp']").type("My Co");
     cy.get("select").select("Finance");
     cy.contains("Continue").click();
     cy.contains("Customer Support").click();
     cy.contains("Continue").click();
+    cy.contains("Connect channels").should("be.visible");
+    cy.contains("Telegram").should("be.visible");
+    cy.contains("Discord").should("be.visible");
+    cy.contains("Slack").should("be.visible");
+    cy.snap("03-onboard-06-step3-channels");
+  });
+
+  it("step 3 — can go back to step 2", () => {
+    registerFreshUser();
+    cy.get("input[placeholder='Acme Corp']").type("My Co");
+    cy.get("select").select("Finance");
+    cy.contains("Continue").click();
+    cy.contains("Customer Support").click();
+    cy.contains("Continue").click();
+    cy.contains("Back").click();
+    cy.contains("What do you need AI for?").should("be.visible");
+    cy.snap("03-onboard-07-step3-back");
+  });
+
+  // ── Step 4 — AI provider key ─────────────────────────────────────────────
+
+  it("step 3 → step 4 — shows AI provider key screen", () => {
+    registerFreshUser();
+    cy.get("input[placeholder='Acme Corp']").type("My Co");
+    cy.get("select").select("Finance");
+    cy.contains("Continue").click();
+    cy.contains("Customer Support").click();
+    cy.contains("Continue").click();
+    cy.contains("Continue").click(); // Continue through channels step
     cy.contains("Add your AI provider key").should("be.visible");
     cy.get("[data-testid='provider-openai_api_key']").should("be.visible");
     cy.get("[data-testid='provider-anthropic_api_key']").should("be.visible");
     cy.get("[data-testid='provider-openrouter_api_key']").should("be.visible");
-    cy.snap("03-onboard-06-step3-ai-key");
+    cy.snap("03-onboard-08-step4-ai-key");
   });
 
-  it("step 3 — selecting provider shows key input", () => {
+  it("step 4 — selecting provider shows key input", () => {
     registerFreshUser();
     cy.get("input[placeholder='Acme Corp']").type("My Co");
     cy.get("select").select("Finance");
     cy.contains("Continue").click();
     cy.contains("Customer Support").click();
     cy.contains("Continue").click();
+    cy.contains("Continue").click(); // Continue through channels step
     cy.get("[data-testid='provider-openai_api_key']").click();
     cy.get("input[placeholder='sk-...']", { timeout: 8000 }).should("be.visible");
-    cy.snap("03-onboard-07-step3-provider-selected");
+    cy.snap("03-onboard-09-step4-provider-selected");
   });
 
-  it("step 3 — can skip API key", () => {
+  it("step 4 — can skip API key and go to launch screen", () => {
     registerFreshUser();
     cy.get("input[placeholder='Acme Corp']").type("My Co");
     cy.get("select").select("Finance");
     cy.contains("Continue").click();
     cy.contains("Customer Support").click();
     cy.contains("Continue").click();
-    cy.contains(/try 20 free|skip for now/i).click();
-    cy.contains("Connect a channel").should("be.visible");
-    cy.snap("03-onboard-08-step3-skipped");
-  });
-
-  // ── Step 4 — Channel ─────────────────────────────────────────────────────
-
-  it("step 4 — shows channel options (Telegram, Discord, Slack)", () => {
-    registerFreshUser();
-    cy.get("input[placeholder='Acme Corp']").type("My Co");
-    cy.get("select").select("Finance");
-    cy.contains("Continue").click();
-    cy.contains("Customer Support").click();
-    cy.contains("Continue").click();
-    cy.contains(/try 20 free|skip for now/i).click();
-    cy.contains("Telegram").should("be.visible");
-    cy.contains("Discord").should("be.visible");
-    cy.contains("Slack").should("be.visible");
-    cy.snap("03-onboard-09-step4-channels");
-  });
-
-  it("step 4 — can go back to step 3", () => {
-    registerFreshUser();
-    cy.get("input[placeholder='Acme Corp']").type("My Co");
-    cy.get("select").select("Finance");
-    cy.contains("Continue").click();
-    cy.contains("Customer Support").click();
-    cy.contains("Continue").click();
-    cy.contains(/try 20 free|skip for now/i).click();
-    cy.contains("Back").click();
-    cy.contains("Add your AI provider key").should("be.visible");
-    cy.snap("03-onboard-10-step4-back");
+    cy.contains("Continue").click(); // Continue through channels step
+    cy.contains(/try 20 free sandbox messages first/i).click();
+    cy.contains("You're all set!").should("be.visible");
+    cy.snap("03-onboard-10-step4-skipped");
   });
 
   // ── Step 5 — Launch screen ────────────────────────────────────────────────
 
-  it("step 4 → step 5 — shows launch screen after skipping channel", () => {
+  it("shows launch screen after skipping API key", () => {
     registerFreshUser();
     cy.get("input[placeholder='Acme Corp']").type("Acme Inc");
     cy.get("select").select("Healthcare");
     cy.contains("Continue").click();
     cy.contains("Sales Assistant").click();
     cy.contains("Continue").click();
-    cy.contains(/try 20 free|skip for now/i).click();    // skip API key
-    cy.contains("Skip").last().click();      // skip channel
+    cy.contains("Continue").click(); // Continue through channels step
+    cy.contains(/try 20 free sandbox messages first/i).click(); // skip API key
 
-    cy.contains("ready to launch", { matchCase: false }).should("be.visible");
-    cy.contains("Deploy my agent").should("be.visible");
+    cy.contains("You're all set!").should("be.visible");
+    cy.contains("Go to Dashboard").should("be.visible");
     cy.snap("03-onboard-11-step5-launch");
   });
 
@@ -172,8 +174,8 @@ describe("03 · Onboarding", () => {
     cy.contains("Continue").click();
     cy.contains("Sales Assistant").click();
     cy.contains("Continue").click();
-    cy.contains(/try 20 free|skip for now/i).click();
-    cy.contains("Skip").last().click();
+    cy.contains("Continue").click(); // Continue through channels step
+    cy.contains(/try 20 free sandbox messages first/i).click(); // skip API key
 
     cy.contains("Acme Business").should("be.visible");
     cy.snap("03-onboard-12-step5-summary");
@@ -181,18 +183,18 @@ describe("03 · Onboarding", () => {
 
   // ── Full flow → dashboard ─────────────────────────────────────────────────
 
-  it("completes full onboarding and reaches dashboard via 'Go to dashboard instead'", () => {
+  it("completes full onboarding and reaches dashboard via 'Go to Dashboard'", () => {
     registerFreshUser();
     cy.get("input[placeholder='Acme Corp']").type("My Business");
     cy.get("select").select("SaaS / Software");
     cy.contains("Continue").click();
     cy.contains("Customer Support").click();
     cy.contains("Continue").click();
-    cy.contains(/try 20 free|skip for now/i).click();    // skip API key
-    cy.contains("Skip").last().click();      // skip channel
+    cy.contains("Continue").click(); // Continue through channels step
+    cy.contains(/try 20 free sandbox messages first/i).click(); // skip API key
 
-    // Launch screen — use "Go to dashboard instead" (secondary CTA)
-    cy.contains("Go to dashboard instead").click();
+    // Launch screen — use "Go to Dashboard" button
+    cy.contains("Go to Dashboard").click();
     cy.url({ timeout: 15000 }).should("include", "/dashboard");
     cy.snap("03-onboard-13-complete");
   });
@@ -204,7 +206,7 @@ describe("03 · Onboarding", () => {
       body: { ok: true, instanceId: "mock-instance-id" },
     }).as("onboardingPost");
 
-    // Intercept validate-key so fake key passes and step advances to 4
+    // Intercept validate-key so fake key passes and step advances to 5
     cy.intercept("POST", "/api/onboarding/validate-key", {
       statusCode: 200,
       body: { valid: true },
@@ -216,18 +218,16 @@ describe("03 · Onboarding", () => {
     cy.contains("Continue").click();
     cy.contains("Data & Analytics").click();
     cy.contains("Continue").click();
+    cy.contains("Continue").click(); // Continue through channels step
 
-    // Step 3: pick OpenAI + enter key
+    // Step 4: pick OpenAI + enter key
     cy.get("[data-testid='provider-openai_api_key']").click();
     cy.get("input[placeholder='sk-...']", { timeout: 8000 }).type("sk-test-key-1234");
-    cy.contains("Continue").click();
+    cy.contains("Finish setup").click();
     cy.wait("@validateKey");
 
-    // Wait for step 4 to appear (validateAndAdvance has a 600ms setTimeout before setStep(4))
-    cy.contains("Connect a channel", { timeout: 5000 }).should("be.visible");
-
-    // Step 4: skip channel
-    cy.contains("Skip").last().click();
+    // Wait for step 5 to appear (validateAndFinish has a 400ms setTimeout before setStep(5))
+    cy.contains("You're all set!", { timeout: 5000 }).should("be.visible");
 
     cy.wait("@onboardingPost");
 
