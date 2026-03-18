@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import Link from "next/link";
-import { Bot, Plus, Loader2, X } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Bot, Plus, Loader2, X, Sparkles, ArrowRight, Search } from "lucide-react";
 import { STATUS_COLORS, INSTANCE_TYPES, formatRelativeTime } from "@/lib/utils";
+import { agentTemplates, categoryColors, difficultyColors, getTemplateById, type AgentTemplate } from "@/lib/templates";
 import { useTranslations } from "next-intl";
 import { InstanceSetupWizard } from "@/components/InstanceSetupWizard";
 
@@ -71,15 +73,32 @@ function Toast({ text, type }: { text: string; type: "success" | "error" }) {
 
 export default function InstancesPage() {
   const t = useTranslations("dashboard.instances");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const templateIdFromUrl = searchParams.get("template");
+
   const [instances, setInstances] = useState<Instance[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [showWizard, setShowWizard] = useState(false);
+  const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState("");
   const [planLimitHit, setPlanLimitHit] = useState(false);
   const [form, setForm] = useState({ name: "", type: "assistant", description: "" });
   const [toast, setToast] = useState<{ text: string; type: "success" | "error" } | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<AgentTemplate | null>(null);
+
+  // Handle template from URL
+  useEffect(() => {
+    if (templateIdFromUrl) {
+      const template = getTemplateById(templateIdFromUrl);
+      if (template) {
+        setSelectedTemplate(template);
+        setShowTemplateSelector(true);
+      }
+    }
+  }, [templateIdFromUrl]);
 
   function showToast(text: string, type: "success" | "error" = "success") {
     setToast({ text, type });
@@ -108,6 +127,38 @@ export default function InstancesPage() {
     const interval = setInterval(loadInstances, 10_000);
     return () => clearInterval(interval);
   }, [instances, loadInstances]);
+
+  async function handleCreateFromTemplate(template: AgentTemplate) {
+    setError("");
+    setPlanLimitHit(false);
+    setCreating(true);
+
+    const res = await fetch("/api/instances", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: template.name,
+        type: "assistant",
+        description: template.shortDescription,
+        templateId: template.id,
+      }),
+    });
+
+    const data = await res.json();
+    setCreating(false);
+
+    if (!res.ok) {
+      if (res.status === 403) setPlanLimitHit(true);
+      setError(data.error || t("modal.failedError"));
+    } else {
+      setShowTemplateSelector(false);
+      setSelectedTemplate(null);
+      loadInstances();
+      showToast(t("createdSuccess"));
+      // Navigate to the new instance
+      router.push(`/dashboard/instances/${data.id}`);
+    }
+  }
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
@@ -144,6 +195,20 @@ export default function InstancesPage() {
           <p className="text-zinc-400 mt-1">{t("subtitle")}</p>
         </div>
         <div className="flex items-center gap-2">
+          <Link
+            href="/templates"
+            className="hidden sm:flex items-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] transition-colors px-4 py-2.5 rounded-lg text-sm font-semibold text-zinc-300"
+          >
+            <Sparkles className="w-4 h-4" />
+            Browse Templates
+          </Link>
+          <button
+            onClick={() => setShowTemplateSelector(true)}
+            className="flex items-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] transition-colors px-4 py-2.5 rounded-lg text-sm font-semibold text-zinc-300"
+          >
+            <Sparkles className="w-4 h-4" />
+            From Template
+          </button>
           <button
             onClick={() => setShowWizard(true)}
             className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2.5 rounded-lg text-sm font-semibold text-white"

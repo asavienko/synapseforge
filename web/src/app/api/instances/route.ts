@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { PLANS } from "@/lib/utils";
+import { getTemplateById } from "@/lib/templates";
 
 export async function GET() {
   const session = await auth();
@@ -32,16 +33,20 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { name, type, description, systemPrompt, agentTemplateName, agentTemplateId } = await req.json();
+  const { name, type, description, systemPrompt, agentTemplateName, agentTemplateId, templateId } = await req.json();
 
-  // Build initial config — use template system prompt if provided
+  // If templateId is provided, get template data
+  const template = templateId ? getTemplateById(templateId) : null;
+
+  // Build initial config — use template data if provided
   const initialConfig = JSON.stringify({
-    model: "gpt-4o",
-    systemPrompt: systemPrompt ?? "You are a helpful AI assistant.",
+    model: template?.suggestedModel ?? "gpt-4o",
+    systemPrompt: systemPrompt ?? template?.systemPrompt ?? "You are a helpful AI assistant.",
     temperature: 0.7,
     maxTokens: 1024,
     ...(agentTemplateName ? { agentTemplateName } : {}),
     ...(agentTemplateId ? { agentTemplateId } : {}),
+    ...(templateId ? { templateId, templateName: template?.name } : {}),
   });
 
   const instance = await prisma.aIInstance.create({
@@ -50,7 +55,7 @@ export async function POST(req: NextRequest) {
       type: type || "assistant",
       status: "stopped",
       tier: plan.tier,
-      description,
+      description: description || template?.shortDescription,
       config: initialConfig,
       userId: user.id,
     },
@@ -72,7 +77,7 @@ export async function POST(req: NextRequest) {
       const firstName = (fullUser.name ?? "there").split(" ")[0];
       const business = od?.business || "your business";
       const industry = od?.industry || "your industry";
-      const templateLabel = agentTemplateName ?? "AI assistant";
+      const templateLabel = template?.name ?? agentTemplateName ?? "AI assistant";
       const welcomeBody = `Hi ${firstName}! 🎉 Your new **${name}** (${templateLabel}) is all set up!\n\nBased on your ${industry} context at ${business}, I've pre-configured the agent's system prompt to get you started quickly. You can fine-tune it any time in the Configuration tab.\n\nNext step: add your API keys in the Credentials tab so you can deploy and start chatting. Let me know if you need any help! 🚀`;
 
       await prisma.message.create({

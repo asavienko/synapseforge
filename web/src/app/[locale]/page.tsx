@@ -34,6 +34,7 @@ export default async function LandingPage() {
             <span className="font-bold text-lg tracking-tight">SynapseForge</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-zinc-400">
+            <Link href="/templates" className="hover:text-white transition-colors">Templates</Link>
             <a href="#how" className="hover:text-white transition-colors">{t("nav.services")}</a>
             <a href="#pricing" className="hover:text-white transition-colors">{t("nav.pricing")}</a>
             <a href="#about" className="hover:text-white transition-colors">{t("nav.about")}</a>
@@ -94,12 +95,13 @@ export default async function LandingPage() {
           >
             {isLoggedIn ? t("nav.dashboard") : t("hero.cta")} <ArrowRight className="w-5 h-5" />
           </Link>
-          <a
-            href="#how"
-            className="flex items-center gap-2 border border-white/10 hover:border-white/20 transition-colors px-8 py-4 rounded-xl font-semibold text-lg text-zinc-300"
+          <Link
+            href="/templates"
+            className="flex items-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] transition-colors px-8 py-4 rounded-xl font-semibold text-lg text-zinc-300"
           >
-            {t("hero.ctaSecondary")}
-          </a>
+            <Sparkles className="w-5 h-5" />
+            Browse Templates
+          </Link>
         </div>
 
         <p className="text-sm text-zinc-600">{t("hero.footnote")}</p>
@@ -166,6 +168,69 @@ export default async function LandingPage() {
               <h3 className="font-semibold text-base mb-2 text-white">{step.title}</h3>
               <p className="text-zinc-400 text-sm leading-relaxed">{step.desc}</p>
             </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Templates Section ────────────────────────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-6 py-20">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 text-xs font-medium mb-4">
+              <Sparkles className="w-3.5 h-3.5" />
+              Pre-Built Templates
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold">
+              Deploy in Minutes, Not Days
+            </h2>
+            <p className="text-zinc-400 mt-2 max-w-xl">
+              Skip the setup. Start with a proven template and customize it to fit your needs.
+            </p>
+          </div>
+          <Link
+            href="/templates"
+            className="inline-flex items-center gap-2 text-violet-400 hover:text-violet-300 font-medium"
+          >
+            View All Templates
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {featuredTemplates.map((template) => (
+            <Link key={template.id} href={`/templates/${template.id}`} className="group">
+              <div className="glow-border rounded-2xl p-6 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-300 h-full flex flex-col">
+                <div className="flex items-start justify-between mb-4">
+                  <span className="text-3xl group-hover:scale-110 transition-transform duration-300">
+                    {template.icon}
+                  </span>
+                  <span className={`text-xs px-2 py-1 rounded-full font-medium border ${categoryColors[template.category]}`}>
+                    {template.category}
+                  </span>
+                </div>
+                <h3 className="font-semibold text-white mb-2 group-hover:text-violet-300 transition-colors">
+                  {template.name}
+                </h3>
+                <p className="text-sm text-zinc-400 flex-1 line-clamp-2">
+                  {template.shortDescription}
+                </p>
+                <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/5">
+                  <span className={`text-xs px-2 py-1 rounded-full font-medium border ${
+                    template.difficulty === "beginner"
+                      ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                      : template.difficulty === "intermediate"
+                      ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                      : "bg-red-500/10 text-red-400 border-red-500/20"
+                  }`}>
+                    {template.difficulty}
+                  </span>
+                  <span className="text-sm text-violet-400 font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
+                    Use
+                    <ArrowRight className="w-4 h-4" />
+                  </span>
+                </div>
+              </div>
+            </Link>
           ))}
         </div>
       </section>
