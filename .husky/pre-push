@@ -11,10 +11,10 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-echo "🏗️  Building Next.js..."
-npm run build
+echo "🧹 Running linter..."
+npm run lint
 if [ $? -ne 0 ]; then
-  echo "❌ Build failed. Push aborted. Fix the build first."
+  echo "❌ Lint errors found. Push aborted. Fix lint errors first."
   exit 1
 fi
 
