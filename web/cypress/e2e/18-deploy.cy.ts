@@ -82,7 +82,8 @@ describe("18 · Deploy Tab", () => {
 
   // ── 04. With LLM → button enabled ────────────────────────────────────────
   it("Deploy button is enabled when LLM key is configured", () => {
-    // First, ensure we're on a fresh state by visiting the Deploy tab
+    // Intercept the credentials API to know when credentials are loaded
+    cy.intercept("GET", `/api/instances/*/credentials`).as("getCredentials");
     cy.wrap(null).then(() => {
       if (instanceId) {
         cy.visit(`/en/dashboard/instances/${instanceId}`);
@@ -104,6 +105,9 @@ describe("18 · Deploy Tab", () => {
       // Reload to pick up the new credentials
       cy.reload();
     });
+
+    // Wait for credentials API call after reload
+    cy.wait("@getCredentials", { timeout: 10000 });
 
     // Re-open Deploy tab after reload
     cy.contains("button", "Deploy").click();
