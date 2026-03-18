@@ -71,42 +71,16 @@ jobs:
           cd web
           npm run test:unit
 
-      - name: Build application
-        run: |
-          cd web
-          npm run build
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/synapseforge_test
-          DIRECT_URL: postgresql://postgres:postgres@localhost:5432/synapseforge_test
-          NEXTAUTH_SECRET: test-secret
-          NEXTAUTH_URL: http://localhost:3000
-
-      - name: Start application
-        run: |
-          cd web
-          npm start &
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/synapseforge_test
-          DIRECT_URL: postgresql://postgres:postgres@localhost:5432/synapseforge_test
-          NEXTAUTH_SECRET: test-secret
-          NEXTAUTH_URL: http://localhost:3000
-
-      - name: Wait for server
-        run: |
-          npx wait-on http://localhost:3000/api/health --timeout 120000
-
       - name: Run Cypress E2E tests
         uses: cypress-io/github-action@v6
         with:
           working-directory: web
           build: npm run build
           start: npm start
-          wait-on: 'http://localhost:3000'
+          wait-on: 'http://localhost:3000/api/health'
           wait-on-timeout: 120
           browser: chrome
-          headless: true
         env:
-          CYPRESS_BASE_URL: http://localhost:3000
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/synapseforge_test
           DIRECT_URL: postgresql://postgres:postgres@localhost:5432/synapseforge_test
           NEXTAUTH_SECRET: test-secret
