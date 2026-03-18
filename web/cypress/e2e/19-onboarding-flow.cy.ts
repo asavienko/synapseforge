@@ -139,6 +139,7 @@ describe("19 · Onboarding — 5-step flow", () => {
     cy.get("input[placeholder='sk-...']").type("sk-test-fake-key-abc123");
     cy.get("button").contains("Continue").click();
     cy.wait("@validateKey");
+  });
 
   // ── 08. Step 4 — selecting provider shows key input ─────────────────────────
   it("selecting OpenAI in step 4 shows key input field", () => {
