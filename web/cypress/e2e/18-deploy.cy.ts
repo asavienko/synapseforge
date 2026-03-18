@@ -95,7 +95,11 @@ describe("18 · Deploy Tab", () => {
     });
 
     cy.wrap(null).then(() => {
-      if (instanceId) cy.visit(`/en/dashboard/instances/${instanceId}`);
+      if (instanceId) {
+        cy.visit(`/en/dashboard/instances/${instanceId}`);
+        // Reload to ensure credentials are loaded
+        cy.reload();
+      }
     });
     cy.contains("button", "Deploy").click();
 
