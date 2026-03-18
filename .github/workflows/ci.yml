@@ -10,7 +10,7 @@ env:
   NODE_VERSION: '22'
 
 jobs:
-  # Setup job: install deps, build, prepare for parallel tests
+  # Setup job: type check, lint, unit tests
   setup:
     runs-on: ubuntu-latest
     services:
@@ -57,15 +57,6 @@ jobs:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/synapseforge_test
           DIRECT_URL: postgresql://postgres:postgres@localhost:5432/synapseforge_test
 
-      - name: Seed test user for Cypress
-        run: |
-          cd web
-          rm -f .env
-          npx tsx cypress/support/seed.ts
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/synapseforge_test
-          DIRECT_URL: postgresql://postgres:postgres@localhost:5432/synapseforge_test
-
       - name: Run type checking
         run: |
           cd web
@@ -80,24 +71,6 @@ jobs:
         run: |
           cd web
           npm run test:unit
-
-      - name: Build application
-        run: |
-          cd web
-          npm run build
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/synapseforge_test
-          DIRECT_URL: postgresql://postgres:postgres@localhost:5432/synapseforge_test
-          NEXTAUTH_SECRET: test-secret
-          NEXTAUTH_URL: http://localhost:3000
-          AUTH_TRUST_HOST: true
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-output
-          path: web/.next
-          retention-days: 1
 
   # Parallel E2E Test Groups
   e2e-group-1:
@@ -138,12 +111,6 @@ jobs:
           cd web
           npx prisma generate
 
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-output
-          path: web/.next
-
       - name: Run database migrations
         run: |
           cd web
@@ -165,6 +132,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           working-directory: web
+          build: npm run build
           start: npm start
           wait-on: 'http://localhost:3000/api/health'
           wait-on-timeout: 120
@@ -222,12 +190,6 @@ jobs:
           cd web
           npx prisma generate
 
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-output
-          path: web/.next
-
       - name: Run database migrations
         run: |
           cd web
@@ -249,6 +211,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           working-directory: web
+          build: npm run build
           start: npm start
           wait-on: 'http://localhost:3000/api/health'
           wait-on-timeout: 120
@@ -306,12 +269,6 @@ jobs:
           cd web
           npx prisma generate
 
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-output
-          path: web/.next
-
       - name: Run database migrations
         run: |
           cd web
@@ -333,6 +290,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           working-directory: web
+          build: npm run build
           start: npm start
           wait-on: 'http://localhost:3000/api/health'
           wait-on-timeout: 120
@@ -390,12 +348,6 @@ jobs:
           cd web
           npx prisma generate
 
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-output
-          path: web/.next
-
       - name: Run database migrations
         run: |
           cd web
@@ -417,6 +369,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           working-directory: web
+          build: npm run build
           start: npm start
           wait-on: 'http://localhost:3000/api/health'
           wait-on-timeout: 120
@@ -474,12 +427,6 @@ jobs:
           cd web
           npx prisma generate
 
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-output
-          path: web/.next
-
       - name: Run database migrations
         run: |
           cd web
@@ -501,6 +448,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           working-directory: web
+          build: npm run build
           start: npm start
           wait-on: 'http://localhost:3000/api/health'
           wait-on-timeout: 120
