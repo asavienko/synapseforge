@@ -16,13 +16,16 @@ model User {
   emailVerified          DateTime?
   image                  String?
   password               String?
-  plan                   String    @default("free") // free | pro | enterprise
+  plan                   String    @default("free") // free | starter_10k | growth_30k | scale_100k | business_200k | managed_*
   onboardingDone         Boolean   @default(false)
   onboardingData         String? // JSON: { business, industry, useCase }
   stripeCustomerId       String?   @unique
   stripeSubscriptionId   String?   @unique
   stripePriceId          String?
   stripeCurrentPeriodEnd DateTime?
+  stripeCancelAtPeriodEnd Boolean  @default(false)
+  stripePaymentFailedAt  DateTime?
+  stripePaymentFailedInvoiceId String?
   activatedAt            DateTime? // Set when first real chat message sent
   healthScore            Int? // 0-100, computed by cron daily
   createdAt              DateTime  @default(now())
