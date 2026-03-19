@@ -28,7 +28,7 @@ export default async function LandingPage() {
     <div className="min-h-screen bg-[#0a0a0f] text-white grid-bg">
 
       {/* ── Nav ──────────────────────────────────────────────────────────── */}
-      <nav className="border-b border-white/5 backdrop-blur-sm sticky top-0 z-50 bg-[#0a0a0f]/80">
+      <nav className="border-b border-white/5 backdrop-blur-md sticky top-0 z-50 bg-[#0a0a0f]/80">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between relative">
           <div className="flex items-center gap-2">
             <Zap className="w-6 h-6 text-violet-400" />
@@ -76,47 +76,68 @@ export default async function LandingPage() {
       </nav>
 
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-6 pt-24 pb-16 text-center">
+      <section className="max-w-7xl mx-auto px-6 pt-16 md:pt-24 pb-12 md:pb-16 text-center relative overflow-hidden">
+        {/* Glowing radial gradient backdrop */}
+        <div className="absolute inset-0 -z-10 flex items-center justify-center">
+          <div className="w-[600px] h-[600px] rounded-full bg-violet-600/10 blur-[120px]" />
+        </div>
+
+        {/* Animated floating orbs */}
+        <div className="absolute top-20 left-1/4 w-72 h-72 bg-violet-500/5 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}} />
+
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 text-xs font-medium mb-8">
           <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse" />
           {t("hero.badge")}
         </div>
 
-        <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-[1.1] whitespace-pre-line">
-          {t("hero.title")}
+        <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-[1.1]">
+          <span className="bg-gradient-to-r from-white via-violet-200 to-violet-400 bg-clip-text text-transparent">
+            {t("hero.title").split('\n')[0]}
+          </span>
+          {t("hero.title").includes('\n') && (
+            <>
+              <br />
+              <span className="text-zinc-300">{t("hero.title").split('\n')[1]}</span>
+            </>
+          )}
         </h1>
 
         <p className="text-xl text-zinc-400 max-w-2xl mx-auto mb-10 leading-relaxed">
           {t("hero.subtitle")}
         </p>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
+        <div className="flex flex-col items-center gap-3 mb-6">
+          {/* Primary CTA — full width on mobile */}
           <Link
             href={isLoggedIn ? "/dashboard" : "/sign-up"}
-            className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 transition-all px-8 py-4 rounded-xl font-semibold text-lg shadow-lg shadow-violet-500/20"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 transition-all px-8 py-4 rounded-xl font-semibold text-lg shadow-lg shadow-violet-500/20"
           >
             {isLoggedIn ? t("nav.dashboard") : t("hero.cta")} <ArrowRight className="w-5 h-5" />
           </Link>
-          <Link
-            href="/templates"
-            className="flex items-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] transition-colors px-8 py-4 rounded-xl font-semibold text-lg text-zinc-300"
-          >
-            <Sparkles className="w-5 h-5" />
-            {t("hero.ctaSecondary")}
-          </Link>
-          <Link
-            href="/contact?subject=Demo+Request"
-            className="flex items-center gap-2 border border-violet-500/30 hover:border-violet-500/60 bg-violet-500/5 hover:bg-violet-500/10 transition-colors px-8 py-4 rounded-xl font-semibold text-lg text-violet-300 hover:text-violet-200"
-          >
-            <CalendarDays className="w-5 h-5" />
-            {t("hero.bookDemo")}
-          </Link>
+          {/* Secondary CTAs — row on mobile */}
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <Link
+              href="/templates"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] transition-colors px-6 sm:px-8 py-4 rounded-xl font-semibold text-base sm:text-lg text-zinc-300"
+            >
+              <Sparkles className="w-5 h-5" />
+              {t("hero.ctaSecondary")}
+            </Link>
+            <Link
+              href="/contact?subject=Demo+Request"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 border border-violet-500/30 hover:border-violet-500/60 bg-violet-500/5 hover:bg-violet-500/10 transition-colors px-6 sm:px-8 py-4 rounded-xl font-semibold text-base sm:text-lg text-violet-300 hover:text-violet-200"
+            >
+              <CalendarDays className="w-5 h-5" />
+              {t("hero.bookDemo")}
+            </Link>
+          </div>
         </div>
 
         <p className="text-sm text-zinc-600">{t("hero.footnote")}</p>
 
         {/* Channel badges */}
-        <div className="flex items-center justify-center gap-3 mt-10">
+        <div className="flex flex-wrap items-center justify-center gap-2 mt-10">
           {["✈️ Telegram", "🎮 Discord", "💬 Slack", "🌐 Web Chat", "⚡ REST API"].map((ch) => (
             <span
               key={ch}
@@ -133,25 +154,25 @@ export default async function LandingPage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-wrap items-center justify-center gap-8 text-sm text-zinc-500">
             <div className="flex items-center gap-2">
-              <span className="text-violet-400 font-bold">12+</span>
+              <span className="text-3xl font-bold bg-gradient-to-r from-violet-400 to-violet-200 bg-clip-text text-transparent">12+</span>
               <span>{t("trust.businessesRunning")}</span>
             </div>
-            <div className="hidden sm:block w-px h-4 bg-white/10" />
+            <div className="hidden sm:block w-px h-8 bg-white/10" />
             <div className="flex items-center gap-2">
-              <span className="text-violet-400 font-bold">24/7</span>
+              <span className="text-3xl font-bold bg-gradient-to-r from-violet-400 to-violet-200 bg-clip-text text-transparent">24/7</span>
               <span>{t("trust.alwaysOn")}</span>
             </div>
-            <div className="hidden sm:block w-px h-4 bg-white/10" />
+            <div className="hidden sm:block w-px h-8 bg-white/10" />
             <div className="flex items-center gap-2">
-              <span className="text-violet-400 font-bold">{"<3min"}</span>
+              <span className="text-3xl font-bold bg-gradient-to-r from-violet-400 to-violet-200 bg-clip-text text-transparent">{"<3min"}</span>
               <span>{t("trust.setupTime")}</span>
             </div>
-            <div className="hidden sm:block w-px h-4 bg-white/10" />
+            <div className="hidden sm:block w-px h-8 bg-white/10" />
             <div className="flex items-center gap-2">
-              <span className="text-violet-400 font-bold">€0</span>
+              <span className="text-3xl font-bold bg-gradient-to-r from-violet-400 to-violet-200 bg-clip-text text-transparent">€0</span>
               <span>{t("trust.startFree")}</span>
             </div>
-            <div className="hidden sm:block w-px h-4 bg-white/10" />
+            <div className="hidden sm:block w-px h-8 bg-white/10" />
             <div className="flex items-center gap-2">
               <span className="text-emerald-400">✓</span>
               <span>{t("trust.noCard")}</span>
@@ -171,9 +192,11 @@ export default async function LandingPage() {
             { num: tl("howItWorks.step2.num"), icon: Settings,      title: tl("howItWorks.step2.title"), desc: tl("howItWorks.step2.desc") },
             { num: tl("howItWorks.step3.num"), icon: Rocket,        title: tl("howItWorks.step3.title"), desc: tl("howItWorks.step3.desc") },
           ].map((step, i) => (
-            <div key={i} className="bg-white/[0.02] border border-white/5 rounded-2xl p-6">
+            <div key={i} className="glow-border rounded-2xl p-6 bg-gradient-to-b from-white/[0.05] to-transparent backdrop-blur-sm border border-white/10 hover:border-violet-500/30 hover:bg-white/[0.05] transition-all duration-300">
               <div className="text-5xl font-bold text-violet-600/20 mb-4">{step.num}</div>
-              <step.icon className="w-6 h-6 text-violet-400 mb-4" />
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500/20 to-violet-600/10 flex items-center justify-center mb-4">
+                <step.icon className="w-6 h-6 text-violet-400" />
+              </div>
               <h3 className="font-semibold text-base mb-2 text-white">{step.title}</h3>
               <p className="text-zinc-400 text-sm leading-relaxed">{step.desc}</p>
             </div>
@@ -448,8 +471,10 @@ export default async function LandingPage() {
             { icon: Shield,        color: "text-amber-400",  title: t("features.f5title"), desc: t("features.f5desc") },
             { icon: Activity,      color: "text-cyan-400",   title: t("features.f6title"), desc: t("features.f6desc") },
           ].map((f, i) => (
-            <div key={i} className="glow-border rounded-2xl p-6 bg-white/[0.02] hover:bg-white/[0.04] transition-colors">
-              <f.icon className={`w-7 h-7 ${f.color} mb-4`} />
+            <div key={i} className="glow-border rounded-2xl p-6 bg-gradient-to-b from-white/[0.05] to-transparent backdrop-blur-sm border border-white/10 hover:border-violet-500/30 hover:bg-white/[0.05] transition-all duration-300">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500/20 to-violet-600/10 flex items-center justify-center mb-4">
+                <f.icon className={`w-7 h-7 ${f.color}`} />
+              </div>
               <h3 className="font-semibold text-base mb-2">{f.title}</h3>
               <p className="text-zinc-400 text-sm leading-relaxed">{f.desc}</p>
             </div>
@@ -564,15 +589,15 @@ export default async function LandingPage() {
             return (
               <div
                 key={plan}
-                className={`rounded-2xl p-8 flex flex-col ${
+                className={`rounded-2xl p-8 flex flex-col relative ${
                   highlighted
-                    ? "bg-violet-600/20 border border-violet-500/50 shadow-lg shadow-violet-500/10 relative"
+                    ? "bg-violet-600/20 border border-violet-500/50 shadow-lg shadow-violet-500/10 ring-2 ring-violet-500/50"
                     : "glow-border bg-white/[0.02]"
                 }`}
               >
                 {highlighted && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-xs font-semibold text-white bg-violet-600 px-3 py-1 rounded-full uppercase tracking-widest">
-                    {t("pricing.popular")}
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-violet-600 text-white text-xs font-semibold rounded-full">
+                    Most Popular
                   </div>
                 )}
                 <div className="font-bold text-xl mb-1">{t(`pricing.${plan}.name` as Parameters<typeof t>[0])}</div>
@@ -692,7 +717,7 @@ export default async function LandingPage() {
 
       {/* ── CTA banner ───────────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-6 py-12 mb-8">
-        <div className="rounded-2xl border border-violet-500/30 bg-violet-600/10 p-12 text-center relative overflow-hidden">
+        <div className="rounded-2xl border border-violet-500/20 bg-gradient-to-r from-violet-900/50 via-violet-800/30 to-indigo-900/50 p-12 text-center relative overflow-hidden shadow-2xl shadow-violet-500/10">
           <div className="absolute inset-0 bg-gradient-to-br from-violet-600/5 to-transparent pointer-events-none" />
           <h2 className="text-3xl md:text-4xl font-bold mb-4 relative">
             Ready to deploy your AI agent?
