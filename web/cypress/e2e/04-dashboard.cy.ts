@@ -193,6 +193,8 @@ describe("04 · Billing", () => {
   });
 
   it("shows managed plans contact link (not a Stripe checkout button)", () => {
+    // Click on Managed tab first
+    cy.contains("button", /Managed/i).click();
     // Managed plans use mailto link — "Contact Sales"
     cy.contains("button", /Contact Sales/i)
       .should("be.visible");
