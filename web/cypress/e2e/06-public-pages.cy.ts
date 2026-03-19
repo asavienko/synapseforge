@@ -56,7 +56,7 @@ describe("06 · Pricing Page", () => {
   });
 
   it("Starter plan links to sign-up", () => {
-    cy.contains("a", /Get Started/i)
+    cy.contains("a", /Get Starter/i)
       .first()
       .should("be.visible")
       .and("have.attr", "href")

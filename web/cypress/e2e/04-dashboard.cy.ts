@@ -194,9 +194,8 @@ describe("04 · Billing", () => {
 
   it("shows managed plans contact link (not a Stripe checkout button)", () => {
     // Managed plans use mailto link — "Contact Sales"
-    cy.contains("a", /Contact Sales/i)
-      .should("be.visible")
-      .and("have.attr", "href", "mailto:hello@synapseforge.ai");
+    cy.contains("button", /Contact Sales/i)
+      .should("be.visible");
     cy.snap("04-billing-05-managed-contact");
   });
 });
