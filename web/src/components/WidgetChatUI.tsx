@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Bot, Send, X, Loader2 } from "lucide-react";
+import { Bot, Send, X, Loader2, Zap } from "lucide-react";
 
 interface Message {
   role: "user" | "assistant";
@@ -27,6 +27,7 @@ export function WidgetChatUI({
   agentName = "AI Assistant",
   onClose,
 }: WidgetChatUIProps) {
+  const [sandboxExhausted, setSandboxExhausted] = useState(false);
   const [messages, setMessages] = useState<Message[]>(() => [
     {
       role: "assistant",
@@ -89,6 +90,11 @@ export function WidgetChatUI({
       });
 
       if (!res.ok) {
+        if (res.status === 402) {
+          setSandboxExhausted(true);
+          setSending(false);
+          return;
+        }
         const errorData = await res.json().catch(() => ({ error: "Unknown error" }));
         setMessages((prev) => [
           ...prev,
@@ -305,6 +311,31 @@ export function WidgetChatUI({
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Sandbox exhausted upsell */}
+      {sandboxExhausted && (
+        <div className="mx-4 mb-3 rounded-2xl border border-violet-500/30 bg-violet-600/10 p-4">
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 rounded-full bg-violet-600/30 border border-violet-500/30 flex items-center justify-center shrink-0">
+              <Zap className="w-4 h-4 text-violet-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-white mb-0.5">Free messages used up</p>
+              <p className="text-xs text-zinc-400 leading-relaxed mb-3">
+                Add your own API key to keep chatting — it only takes a minute.
+              </p>
+              <a
+                href={`/dashboard/instances/${instanceId}?tab=Credentials`}
+                target="_parent"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-violet-300 hover:text-white bg-violet-600/30 hover:bg-violet-600/50 border border-violet-500/40 px-3 py-1.5 rounded-lg transition-colors"
+              >
+                <Zap className="w-3 h-3" />
+                Add API Key →
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Input */}
       <div className="px-4 py-3 border-t border-white/10 bg-[#0a0a0f]">
         <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-2"
@@ -320,13 +351,13 @@ export function WidgetChatUI({
                 handleSend();
               }
             }}
-            placeholder="Type a message..."
-            disabled={sending}
+            placeholder={sandboxExhausted ? "Add an API key to continue..." : "Type a message..."}
+            disabled={sending || sandboxExhausted}
             className="flex-1 bg-transparent text-sm text-white placeholder-zinc-600 focus:outline-none disabled:opacity-50"
           />
           <button
             onClick={handleSend}
-            disabled={sending || !input.trim()}
+            disabled={sending || !input.trim() || sandboxExhausted}
             className="p-2 rounded-lg bg-violet-600 hover:bg-violet-500 disabled:opacity-40 disabled:hover:bg-violet-600 transition-colors"
             style={{ backgroundColor: sending ? undefined : brandColor }}
             aria-label="Send message"
