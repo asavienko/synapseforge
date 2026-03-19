@@ -392,6 +392,23 @@ model Webhook {
   createdAt  DateTime    @default(now())
   user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   instance   AIInstance? @relation(fields: [instanceId], references: [id], onDelete: SetNull)
+  deliveries WebhookDelivery[]
+}
+
+model WebhookDelivery {
+  id         String   @id @default(cuid())
+  webhookId  String
+  event      String
+  payload    String
+  statusCode Int?
+  response   String?
+  success    Boolean
+  error      String?
+  createdAt  DateTime @default(now())
+  webhook    Webhook  @relation(fields: [webhookId], references: [id], onDelete: Cascade)
+
+  @@index([webhookId])
+  @@index([createdAt])
 }
 
 model WaitlistEntry {

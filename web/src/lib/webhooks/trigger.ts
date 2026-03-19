@@ -60,13 +60,33 @@ export async function triggerWebhooks(
           const duration = Date.now() - startTime;
           const responseBody = await response.text();
 
-          // TODO: Implement webhook delivery logging when webhookDelivery model is added
-          // For now, just log to console
+          // Log delivery to database
+          await prisma.webhookDelivery.create({
+            data: {
+              webhookId: webhook.id,
+              event,
+              payload: payloadString,
+              statusCode: response.status,
+              response: responseBody.slice(0, 10000), // Limit response size
+              success: response.ok,
+            },
+          });
+
           console.log(
             `[webhook] ${event} to ${webhook.url} - ${response.status} (${duration}ms)`
           );
         } catch (error) {
-          // TODO: Implement webhook delivery logging when webhookDelivery model is added
+          // Log failed delivery
+          await prisma.webhookDelivery.create({
+            data: {
+              webhookId: webhook.id,
+              event,
+              payload: payloadString,
+              success: false,
+              error: error instanceof Error ? error.message : "Unknown error",
+            },
+          });
+
           console.error(`[webhook] Failed to send ${event} to ${webhook.url}:`, error);
         }
       })
@@ -74,4 +94,26 @@ export async function triggerWebhooks(
   } catch (error) {
     console.error("[triggerWebhooks] Error:", error);
   }
+}
+
+/**
+ * Get recent webhook deliveries for a webhook
+ */
+export async function getWebhookDeliveries(
+  webhookId: string,
+  limit: number = 50
+) {
+  return prisma.webhookDelivery.findMany({
+    where: { webhookId },
+    orderBy: { createdAt: "desc" },
+    take: limit,
+    select: {
+      id: true,
+      event: true,
+      statusCode: true,
+      success: true,
+      error: true,
+      createdAt: true,
+    },
+  });
 }
