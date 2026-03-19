@@ -214,9 +214,10 @@ LOCALES.forEach((locale) => {
 describe("12 · Translations — English (en) — Baseline", () => {
   it("landing page has new English hero text", () => {
     cy.visit("/en");
-    // Hero title is now multi-line: "Deploy AI agents in minutes\nso you don't have to."
+    // Hero tagline: "Deploy AI agents in minutes,
+not months."
     cy.contains("Deploy AI agents in minutes").should("be.visible");
-    cy.contains("so you don't have to.").should("be.visible");
+    cy.contains("not months.").should("be.visible");
     cy.snap("12-en-baseline-hero");
   });
 

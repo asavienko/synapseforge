@@ -7,7 +7,7 @@ describe("01 · Landing Page", () => {
 
   it("renders hero section with product-focused headline", () => {
     cy.contains("Deploy AI agents in minutes").should("be.visible");
-    cy.contains("so you don't have to.").should("be.visible");
+    cy.contains("not months.").should("be.visible");
     cy.snap("01-landing-01-hero");
   });
 

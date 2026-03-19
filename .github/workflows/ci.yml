@@ -64,7 +64,14 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           DIRECT_URL: ${{ secrets.DATABASE_URL }}
       - name: Run production migrations
-        run: cd web && npx prisma migrate deploy
+        # Only run when migration files actually changed — avoids prod DB timeouts on every push
+        run: |
+          if git diff --name-only HEAD~1 HEAD 2>/dev/null | grep -q "prisma/migrations/"; then
+            echo "New migrations detected — running migrate deploy"
+            cd web && npx prisma migrate deploy
+          else
+            echo "No migration changes — skipping migrate deploy"
+          fi
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           DIRECT_URL: ${{ secrets.DATABASE_URL }}
