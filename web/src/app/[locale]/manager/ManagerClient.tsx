@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, MessageCircle, Send, Loader2, X, Shield, Activity, Server, AlertTriangle, ExternalLink, Rocket, ChevronDown, ChevronUp, StickyNote, Trash2, Zap } from "lucide-react";
+import { Users, MessageCircle, Send, Loader2, X, Shield, Activity, Server, AlertTriangle, ExternalLink, Rocket, ChevronDown, ChevronUp, StickyNote, Trash2, Zap, ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { STATUS_COLORS, PLANS, formatDate, formatRelativeTime } from "@/lib/utils";
@@ -402,7 +402,7 @@ export function ManagerClient({ manager, clients: initialClients }: {
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white">
       {/* Header */}
-      <div className="border-b border-white/5 px-8 py-5 flex items-center justify-between">
+      <div className="border-b border-white/5 px-4 md:px-8 py-4 md:py-5 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-violet-600/30 border border-violet-500/30 flex items-center justify-center">
             <Shield className="w-4 h-4 text-violet-400" />
@@ -445,7 +445,7 @@ export function ManagerClient({ manager, clients: initialClients }: {
       </div>
 
       {/* Tab bar */}
-      <div className="border-b border-white/5 px-8 flex gap-1">
+      <div className="border-b border-white/5 px-4 md:px-8 flex gap-1">
         <button
           onClick={() => setActiveTab("clients")}
           className={cn(
@@ -485,8 +485,8 @@ export function ManagerClient({ manager, clients: initialClients }: {
       {/* ── Clients & Messages tab ── */}
       {activeTab === "clients" && (
         <div className="flex h-[calc(100vh-121px)]">
-          {/* Client list */}
-          <div className="w-80 border-r border-white/5 overflow-y-auto shrink-0 flex flex-col">
+          {/* Client list — hidden on mobile when a client is selected */}
+          <div className={`${activeClient ? "hidden md:flex" : "flex"} w-full md:w-80 border-r border-white/5 overflow-y-auto shrink-0 flex-col`}>
             {/* Sort buttons */}
             {clients.length > 0 && (
               <div className="px-3 py-2 border-b border-white/5 flex items-center gap-1 text-xs">
@@ -634,6 +634,14 @@ export function ManagerClient({ manager, clients: initialClients }: {
           {/* Thread / detail */}
           {activeClient ? (
             <div className="flex-1 flex flex-col overflow-hidden">
+              {/* Mobile back button */}
+              <button
+                onClick={() => setActiveClient(null)}
+                className="md:hidden flex items-center gap-2 px-4 py-3 text-sm text-zinc-400 hover:text-white border-b border-white/5 transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                All clients
+              </button>
               {/* Client header */}
               <div className="p-5 border-b border-white/5 shrink-0">
                 <div className="flex items-start justify-between">

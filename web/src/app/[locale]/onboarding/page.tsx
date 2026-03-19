@@ -303,7 +303,7 @@ export default function OnboardingPage() {
 
         {/* ── Step 1 — Business + Industry ── */}
         {step === 1 && (
-          <div className="glow-border rounded-2xl p-8 bg-white/[0.02]">
+          <div className="glow-border rounded-2xl p-5 sm:p-8 bg-white/[0.02]">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center">
                 <Building2 className="w-5 h-5 text-violet-400" />
@@ -348,7 +348,7 @@ export default function OnboardingPage() {
 
         {/* ── Step 2 — Use case selection + description ── */}
         {step === 2 && (
-          <div className="glow-border rounded-2xl p-8 bg-white/[0.02]">
+          <div className="glow-border rounded-2xl p-5 sm:p-8 bg-white/[0.02]">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center">
                 <Sparkles className="w-5 h-5 text-violet-400" />
@@ -410,7 +410,7 @@ export default function OnboardingPage() {
 
         {/* ── Step 3 — Channels wanted (multi-select) ── */}
         {step === 3 && (
-          <div className="glow-border rounded-2xl p-8 bg-white/[0.02]">
+          <div className="glow-border rounded-2xl p-5 sm:p-8 bg-white/[0.02]">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-10 h-10 rounded-xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center">
                 <MessageSquare className="w-5 h-5 text-violet-400" />
@@ -495,7 +495,7 @@ export default function OnboardingPage() {
 
         {/* ── Step 4 — AI Provider key ── */}
         {step === 4 && (
-          <div className="glow-border rounded-2xl p-8 bg-white/[0.02]">
+          <div className="glow-border rounded-2xl p-5 sm:p-8 bg-white/[0.02]">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-10 h-10 rounded-xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center">
                 <Key className="w-5 h-5 text-violet-400" />
@@ -612,7 +612,7 @@ export default function OnboardingPage() {
 
         {/* ── Step 5 — Launch ── */}
         {step === 5 && (
-          <div className="glow-border rounded-2xl p-8 bg-white/[0.02] text-center">
+          <div className="glow-border rounded-2xl p-5 sm:p-8 bg-white/[0.02] text-center">
             <div className="w-20 h-20 rounded-2xl bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center mx-auto mb-6">
               <Bot className="w-10 h-10 text-emerald-400" />
             </div>
