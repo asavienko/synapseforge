@@ -380,6 +380,7 @@
 
   function createContainer() {
     var container = document.createElement('div');
+    container.id = '_sf_frame_wrap';
     container.className = 'sf-widget-container position-' + widgetConfig.position;
     container.setAttribute('role', 'dialog');
     container.setAttribute('aria-label', 'Chat window');
