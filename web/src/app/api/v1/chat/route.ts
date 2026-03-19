@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
     // Check if instance is running
     if (instance.status !== "running") {
       return NextResponse.json(
-        { error: "Instance is not running", status: instance.status },
+        { error: "Instance is stopped", status: instance.status },
         { status: 400 }
       );
     }
@@ -123,7 +123,7 @@ export async function POST(req: NextRequest) {
     if (!openAiKey) {
       return NextResponse.json(
         { error: "OpenAI API key not configured. Set SYNAPSEFORGE_OPENAI_KEY environment variable." },
-        { status: 503 }
+        { status: 502 }
       );
     }
 
