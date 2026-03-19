@@ -535,7 +535,7 @@ function SetupChecklistCard({ instance, credentials, onGoToCredentials, onGoToDe
   );
 }
 
-const TABS = ["Overview", "Credentials", "Deploy", "Chat", "Configuration", "Knowledge", "API Keys", "Activity Log", "Infrastructure"] as const;
+const TABS = ["Overview", "Credentials", "Deploy", "Chat", "Configuration", "Knowledge", "API Keys", "Activity Log", "Infrastructure", "Embed"] as const;
 type Tab = (typeof TABS)[number];
 
 interface ChatMsg {
@@ -2180,6 +2180,7 @@ export default function InstanceDetailPage() {
               "Infrastructure": t("infrastructure.tab"),
               "Credentials": t("credentials.tab"),
               "Knowledge": t("knowledge.tab"),
+              "Embed": "Embed",
             };
             return (
               <button key={tabKey} data-tab={tabKey} onClick={() => setTab(tabKey)}
