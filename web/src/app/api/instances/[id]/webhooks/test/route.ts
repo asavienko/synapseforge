@@ -32,7 +32,7 @@ export async function POST(
       instanceId: id,
       instanceName: instance.name,
       timestamp: new Date().toISOString(),
-      message: "This is a test webhook from SynapseForge",
+      message: "This is a test webhook from OpenHelix AI",
     };
 
     try {
@@ -40,8 +40,8 @@ export async function POST(
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-SynapseForge-Event": "test",
-          "X-SynapseForge-Signature": "test-signature",
+          "X-OpenHelix AI-Event": "test",
+          "X-OpenHelix AI-Signature": "test-signature",
         },
         body: JSON.stringify(testPayload),
       });

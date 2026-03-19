@@ -8,7 +8,7 @@ export default function TermsPage() {
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <Zap className="w-6 h-6 text-violet-400" />
-            <span className="font-bold text-lg tracking-tight">SynapseForge</span>
+            <span className="font-bold text-lg tracking-tight">OpenHelix AI</span>
           </Link>
         </div>
       </nav>
@@ -20,12 +20,12 @@ export default function TermsPage() {
         <div className="prose prose-invert prose-zinc max-w-none space-y-8 text-zinc-300 leading-relaxed">
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">1. Acceptance</h2>
-            <p>By creating an account on SynapseForge, you agree to these Terms of Service. If you do not agree, do not use the service.</p>
+            <p>By creating an account on OpenHelix AI, you agree to these Terms of Service. If you do not agree, do not use the service.</p>
           </section>
 
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">2. Service Description</h2>
-            <p>SynapseForge provides AI infrastructure management services, including AI instance deployment, LLM integrations, automation pipelines, and dedicated manager support. The free plan includes one minimal AI instance and access to a dedicated manager.</p>
+            <p>OpenHelix AI provides AI infrastructure management services, including AI instance deployment, LLM integrations, automation pipelines, and dedicated manager support. The free plan includes one minimal AI instance and access to a dedicated manager.</p>
           </section>
 
           <section>
@@ -35,7 +35,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">4. Acceptable Use</h2>
-            <p>You may not use SynapseForge to engage in illegal activities, send spam, violate third-party rights, or attempt to gain unauthorized access to our systems. We reserve the right to terminate accounts that violate these terms.</p>
+            <p>You may not use OpenHelix AI to engage in illegal activities, send spam, violate third-party rights, or attempt to gain unauthorized access to our systems. We reserve the right to terminate accounts that violate these terms.</p>
           </section>
 
           <section>
@@ -45,13 +45,13 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">6. Limitation of Liability</h2>
-            <p>SynapseForge is provided &quot;as is.&quot; We are not liable for indirect or consequential damages arising from use of the service. Our total liability is limited to the amount paid by you in the three months preceding the claim.</p>
+            <p>OpenHelix AI is provided &quot;as is.&quot; We are not liable for indirect or consequential damages arising from use of the service. Our total liability is limited to the amount paid by you in the three months preceding the claim.</p>
           </section>
 
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">7. Contact</h2>
             <p>Questions about these terms? Email{" "}
-              <a href="mailto:hello@synapseforge.ai" className="text-violet-400 hover:text-violet-300">hello@synapseforge.ai</a>.
+              <a href="mailto:hello@openhelixai.com" className="text-violet-400 hover:text-violet-300">hello@openhelixai.com</a>.
             </p>
           </section>
         </div>

@@ -46,7 +46,7 @@ export const MILESTONES: Milestone[] = [
   {
     key: "week_one",
     label: "First week",
-    description: "You've been building with SynapseForge for a full week.",
+    description: "You've been building with OpenHelix AI for a full week.",
     check: (s) => s.daysActive >= 7,
   },
   {

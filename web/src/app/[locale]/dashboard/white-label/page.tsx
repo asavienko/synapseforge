@@ -16,7 +16,7 @@ export default async function WhiteLabelPage() {
   });
 
   const config = user?.whiteLabelConfig ?? {
-    brandName: "SynapseForge",
+    brandName: "OpenHelix AI",
     brandColor: "#7c3aed",
     logoUrl: null,
     customDomain: null,

@@ -63,7 +63,7 @@ export default async function PricingPage() {
       supportHours: 4,
       features: ["messages10k", "instances3", "support4h", "humanManager", "customConfig", "sla99"],
       highlight: false,
-      href: "mailto:hello@synapseforge.ai",
+      href: "mailto:hello@openhelixai.com",
       isEmail: true,
     },
     {
@@ -73,7 +73,7 @@ export default async function PricingPage() {
       supportHours: 8,
       features: ["messages30k", "instances3", "support8h", "humanManager", "weeklyCheckins", "sla99"],
       highlight: true,
-      href: "mailto:hello@synapseforge.ai",
+      href: "mailto:hello@openhelixai.com",
       isEmail: true,
     },
     {
@@ -83,7 +83,7 @@ export default async function PricingPage() {
       supportHours: 18,
       features: ["messages100k", "instances5", "support18h", "humanManager", "weeklyCheckins", "customIntegrations", "teamTraining", "sla99"],
       highlight: false,
-      href: "mailto:hello@synapseforge.ai",
+      href: "mailto:hello@openhelixai.com",
       isEmail: true,
     },
   ];
@@ -97,7 +97,7 @@ export default async function PricingPage() {
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <Zap className="w-6 h-6 text-violet-400" />
-            <span className="font-bold text-lg tracking-tight">SynapseForge</span>
+            <span className="font-bold text-lg tracking-tight">OpenHelix AI</span>
           </Link>
           <div className="flex items-center gap-3">
             <Link href="/" className="text-sm text-zinc-400 hover:text-white transition-colors px-4 py-2">
@@ -288,7 +288,7 @@ export default async function PricingPage() {
       {/* Annual note */}
       <p className="text-sm text-zinc-500 mt-10 text-center pb-20">
         Annual plans available — 2 months free.{" "}
-        <a href="mailto:hello@synapseforge.ai" className="text-violet-400 hover:text-violet-300 transition-colors">
+        <a href="mailto:hello@openhelixai.com" className="text-violet-400 hover:text-violet-300 transition-colors">
           Contact us
         </a>{" "}
         for details.
@@ -299,7 +299,7 @@ export default async function PricingPage() {
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-zinc-500">
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4 text-violet-400" />
-            <span>SynapseForge © 2026</span>
+            <span>OpenHelix AI © 2026</span>
           </div>
           <div className="flex gap-6">
             <Link href="/privacy" className="hover:text-white transition-colors">
@@ -308,7 +308,7 @@ export default async function PricingPage() {
             <Link href="/terms" className="hover:text-white transition-colors">
               {t("footer.terms")}
             </Link>
-            <a href="mailto:hello@synapseforge.ai" className="hover:text-white transition-colors">
+            <a href="mailto:hello@openhelixai.com" className="hover:text-white transition-colors">
               {t("footer.contact")}
             </a>
           </div>

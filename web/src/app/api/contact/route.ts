@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
   const html = `
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:32px;background:#12121a;border-radius:12px;color:#e2e8f0;">
       <h2 style="color:#a78bfa;margin:0 0 8px;">📩 New Contact Message</h2>
-      <p style="color:#94a3b8;margin:0 0 24px;">Via SynapseForge contact form</p>
+      <p style="color:#94a3b8;margin:0 0 24px;">Via OpenHelix AI contact form</p>
       <table style="width:100%;border-collapse:collapse;">
         <tr><td style="padding:8px 0;color:#6b7280;width:80px;vertical-align:top;">From</td><td style="padding:8px 0;color:#e2e8f0;">${name.trim()}</td></tr>
         <tr><td style="padding:8px 0;color:#6b7280;vertical-align:top;">Email</td><td style="padding:8px 0;"><a href="mailto:${email}" style="color:#a78bfa;">${email}</a></td></tr>
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
     </div>`;
 
   await sendEmail({
-    to: "hello@synapseforge.ai",
+    to: "hello@openhelixai.com",
     replyTo: email,
     subject: `[Contact] ${subject?.trim() || `Message from ${name.trim()}`}`,
     html,

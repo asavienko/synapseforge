@@ -6,7 +6,7 @@ import { sendEmail } from "@/lib/email";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-const APP_URL = process.env.NEXTAUTH_URL ?? "https://synapseforge.ai";
+const APP_URL = process.env.NEXTAUTH_URL ?? "https://openhelixai.com";
 
 export async function GET(req: Request) {
   // Allow Vercel Cron invocations (x-vercel-cron: 1) OR explicit Bearer CRON_SECRET
@@ -156,7 +156,7 @@ export async function GET(req: Request) {
     </a>
 
     <p style="color:#475569;font-size:12px;margin-top:32px;">
-      You're receiving this because you have an active SynapseForge account.
+      You're receiving this because you have an active OpenHelix AI account.
       <a href="${APP_URL}/dashboard/settings" style="color:#7c3aed;">Manage email preferences</a>
     </p>
   </div>

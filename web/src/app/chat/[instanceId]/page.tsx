@@ -33,7 +33,7 @@ async function loadBranding(instanceId: string): Promise<{
   return { instance, branding };
 }
 
-const APP_URL = process.env.NEXTAUTH_URL ?? "https://synapseforge-mu.vercel.app";
+const APP_URL = process.env.NEXTAUTH_URL ?? "https://openhelixai.com";
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { instanceId } = await params;
@@ -102,8 +102,8 @@ export default async function PublicChatPage({ params }: PageProps) {
 
         {!hidePoweredBy && (
           <div className="flex justify-center py-3 border-t border-white/5">
-            <a href="https://synapseforge.ai" target="_blank" rel="noopener noreferrer" className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors">
-              Powered by SynapseForge
+            <a href="https://openhelixai.com" target="_blank" rel="noopener noreferrer" className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors">
+              Powered by OpenHelix AI
             </a>
           </div>
         )}

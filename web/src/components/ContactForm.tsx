@@ -141,8 +141,8 @@ export function ContactForm({ labels: l }: { labels: Labels }) {
 
           <p className="mt-6 text-center text-sm text-zinc-600">
             {l.fallback}{" "}
-            <a href="mailto:hello@synapseforge.ai" className="text-violet-400 hover:text-violet-300 transition-colors">
-              hello@synapseforge.ai
+            <a href="mailto:hello@openhelixai.com" className="text-violet-400 hover:text-violet-300 transition-colors">
+              hello@openhelixai.com
             </a>
           </p>
         </>

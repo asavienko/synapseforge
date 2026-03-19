@@ -16,7 +16,7 @@ export function EmbedTab({ instanceId, instanceName, referralCode }: EmbedTabPro
   const [greeting, setGreeting] = useState(`Hi! I'm ${instanceName}. How can I help you today?`);
   const [showBranding, setShowBranding] = useState(true);
 
-  const embedCode = `<!-- SynapseForge AI Chat Widget -->
+  const embedCode = `<!-- OpenHelix AI AI Chat Widget -->
 <script 
   src="${typeof window !== 'undefined' ? window.location.origin : ''}/widget.js"
   data-instance-id="${instanceId}"
@@ -24,7 +24,7 @@ export function EmbedTab({ instanceId, instanceName, referralCode }: EmbedTabPro
   data-color="${color}"
   data-greeting="${greeting}"
   data-branding="${showBranding}"${referralCode ? `\n  data-ref="${referralCode}"` : ''}></script>
-<!-- End SynapseForge AI Chat Widget -->`.trim();
+<!-- End OpenHelix AI AI Chat Widget -->`.trim();
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(embedCode);
@@ -147,7 +147,7 @@ export function EmbedTab({ instanceId, instanceName, referralCode }: EmbedTabPro
 
           {/* Branding */}
           <div className="flex items-center justify-between">
-            <span className="text-sm text-zinc-400">Show &quot;Powered by SynapseForge&quot;</span>
+            <span className="text-sm text-zinc-400">Show &quot;Powered by OpenHelix AI&quot;</span>
             <button
               onClick={() => setShowBranding(!showBranding)}
               className={`w-11 h-6 rounded-full transition-colors relative ${

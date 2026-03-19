@@ -49,18 +49,18 @@ export interface ProvisionResult {
 
 /**
  * Generate a cloud-init user_data script that installs OpenClaw and
- * calls back to SynapseForge to mark provisioning as complete.
+ * calls back to OpenHelix AI to mark provisioning as complete.
  */
 function makeUserDataScript(instanceId: string, gatewayToken: string, sfApiUrl: string): string {
   return `#!/bin/bash
 set -euo pipefail
 
-# SynapseForge VPS bootstrap
+# OpenHelix AI VPS bootstrap
 log() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" | systemd-cat -t synapseforge-bootstrap
 }
 
-log "Starting SynapseForge bootstrap for instance ${instanceId}"
+log "Starting OpenHelix AI bootstrap for instance ${instanceId}"
 
 # Install dependencies
 export DEBIAN_FRONTEND=noninteractive
@@ -96,10 +96,10 @@ docker run -d \\
 
 log "OpenClaw gateway container started"
 
-# Wait for gateway to become healthy, then notify SynapseForge
+# Wait for gateway to become healthy, then notify OpenHelix AI
 for i in {1..60}; do
   if curl -s -f -H "Authorization: Bearer ${gatewayToken}" ${sfApiUrl}/api/internal/health-check/${instanceId} > /dev/null 2>&1; then
-    log "Gateway health check passed, notifying SynapseForge"
+    log "Gateway health check passed, notifying OpenHelix AI"
     curl -s -X POST -H "Authorization: Bearer ${gatewayToken}" -H "Content-Type: application/json" \\
       -d '{"openclaw_version":"latest","ip":"$(hostname -I | awk "{print $1}")"}' \\
       ${sfApiUrl}/api/internal/provision-complete/${instanceId} || true
@@ -172,7 +172,7 @@ export async function provisionInstance(
 
   try {
     // Create server on Hetzner
-    const userData = makeUserDataScript(instanceId, gatewayToken, process.env.NEXTAUTH_URL || "https://synapseforge.ai");
+    const userData = makeUserDataScript(instanceId, gatewayToken, process.env.NEXTAUTH_URL || "https://openhelixai.com");
 
     const res = await fetch("https://api.hetzner.cloud/v1/servers", {
       method: "POST",

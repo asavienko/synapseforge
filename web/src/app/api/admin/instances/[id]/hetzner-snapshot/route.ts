@@ -46,7 +46,7 @@ export async function POST(
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        description: `SynapseForge snapshot — ${instance.name} — ${new Date().toISOString()}`,
+        description: `OpenHelix AI snapshot — ${instance.name} — ${new Date().toISOString()}`,
         type: "snapshot",
         labels: { instanceId: id, instanceName: instance.name },
       }),

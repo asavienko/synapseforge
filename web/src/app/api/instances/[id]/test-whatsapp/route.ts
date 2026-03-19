@@ -48,7 +48,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const formData = new URLSearchParams({
     From: fromNumber,
     To: toNumber,
-    Body: "👋 Test message from your SynapseForge AI agent. Your WhatsApp channel is configured and working!",
+    Body: "👋 Test message from your OpenHelix AI AI agent. Your WhatsApp channel is configured and working!",
   });
 
   try {

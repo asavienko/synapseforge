@@ -50,9 +50,9 @@ export async function triggerWebhooks(
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "X-SynapseForge-Event": event,
-              "X-SynapseForge-Signature": `sha256=${signature}`,
-              "X-SynapseForge-Timestamp": payload.timestamp,
+              "X-OpenHelix AI-Event": event,
+              "X-OpenHelix AI-Signature": `sha256=${signature}`,
+              "X-OpenHelix AI-Timestamp": payload.timestamp,
             },
             body: payloadString,
           });

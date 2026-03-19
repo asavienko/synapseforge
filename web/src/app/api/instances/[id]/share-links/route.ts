@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-const APP_URL = process.env.NEXTAUTH_URL ?? process.env.APP_URL ?? "https://synapseforge.ai";
+const APP_URL = process.env.NEXTAUTH_URL ?? process.env.APP_URL ?? "https://openhelixai.com";
 
 export async function GET(
   _req: NextRequest,

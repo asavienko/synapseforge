@@ -13,7 +13,7 @@ export default async function ContactPage() {
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <Zap className="w-6 h-6 text-violet-400" />
-            <span className="font-bold text-lg tracking-tight">SynapseForge</span>
+            <span className="font-bold text-lg tracking-tight">OpenHelix AI</span>
           </Link>
           <Link
             href="/"
@@ -37,7 +37,7 @@ export default async function ContactPage() {
               </div>
               <h1 className="text-4xl md:text-5xl font-bold mb-4">Contact Us</h1>
               <p className="text-zinc-400 text-lg leading-relaxed">
-                Have a question about SynapseForge? We&apos;re here to help you deploy your AI agents.
+                Have a question about OpenHelix AI? We&apos;re here to help you deploy your AI agents.
               </p>
             </div>
 
@@ -50,10 +50,10 @@ export default async function ContactPage() {
                   <h3 className="font-semibold text-white mb-1">Email us</h3>
                   <p className="text-zinc-400 text-sm mb-2">For general inquiries and support</p>
                   <a 
-                    href="mailto:hello@synapseforge.ai" 
+                    href="mailto:hello@openhelixai.com" 
                     className="text-violet-400 hover:text-violet-300 transition-colors text-sm"
                   >
-                    hello@synapseforge.ai
+                    hello@openhelixai.com
                   </a>
                 </div>
               </div>
@@ -107,7 +107,7 @@ export default async function ContactPage() {
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-zinc-500">
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4 text-violet-400" />
-            <span className="font-semibold text-zinc-400">SynapseForge</span>
+            <span className="font-semibold text-zinc-400">OpenHelix AI</span>
             <span>© 2026</span>
           </div>
           <div className="flex gap-6">

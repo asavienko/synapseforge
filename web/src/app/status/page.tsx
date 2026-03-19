@@ -103,7 +103,7 @@ export default function StatusPage() {
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm">Back to SynapseForge</span>
+            <span className="text-sm">Back to OpenHelix AI</span>
           </Link>
           <div className="flex items-center gap-2">
             <Zap className="w-5 h-5 text-violet-400" />

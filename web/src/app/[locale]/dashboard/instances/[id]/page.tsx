@@ -974,7 +974,7 @@ function DeployTab({
 
 function QRCard({ instanceId, t }: { instanceId: string; t: (key: string) => string }) {
   const [copied, setCopied] = useState(false);
-  const origin = typeof window !== "undefined" ? window.location.origin : "https://synapseforge.ai";
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://openhelixai.com";
   const chatUrl = `${origin}/chat/${instanceId}`;
   const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&color=7c3aed&bgcolor=111118&data=${encodeURIComponent(chatUrl)}`;
 
@@ -1044,7 +1044,7 @@ function EmbedCard({ instanceId, t }: { instanceId: string; t: (key: string) => 
   const [tab, setTab] = useState<"link" | "embed" | "api">("link");
   const [apiKey, setApiKey] = useState<string | null>(null);
   const [apiKeysLoading, setApiKeysLoading] = useState(false);
-  const origin = typeof window !== "undefined" ? window.location.origin : "https://synapseforge.ai";
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://openhelixai.com";
 
   // Fetch API keys when API tab is selected
   useEffect(() => {
@@ -2661,7 +2661,7 @@ export default function InstanceDetailPage() {
                 {sandboxRemaining === 0 && (
                   <div className="flex gap-2 shrink-0 ml-3">
                     <a
-                      href="https://cal.com/synapseforge/setup"
+                      href="https://cal.com/openhelixai/setup"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-xs px-3 py-1.5 bg-violet-600 text-white rounded-lg hover:bg-violet-500 transition-colors"

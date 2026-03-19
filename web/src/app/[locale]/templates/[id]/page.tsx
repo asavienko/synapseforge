@@ -31,12 +31,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!template) {
     return {
-      title: "Template Not Found | SynapseForge",
+      title: "Template Not Found | OpenHelix AI",
     };
   }
 
   return {
-    title: `${template.name} | AI Agent Template | SynapseForge`,
+    title: `${template.name} | AI Agent Template | OpenHelix AI`,
     description: template.description,
     keywords: [...template.tags, "AI agent", "template", "chatbot"],
     openGraph: {
@@ -96,7 +96,7 @@ export default async function TemplateDetailPage({ params }: Props) {
 
           <div className="flex items-center gap-2">
             <Zap className="w-5 h-5 text-violet-400" />
-            <span className="font-bold">SynapseForge</span>
+            <span className="font-bold">OpenHelix AI</span>
           </div>
 
           {isLoggedIn ? (
@@ -444,7 +444,7 @@ export default async function TemplateDetailPage({ params }: Props) {
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-zinc-500">
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4 text-violet-400" />
-            <span className="font-semibold text-zinc-400">SynapseForge</span>
+            <span className="font-semibold text-zinc-400">OpenHelix AI</span>
             <span>© 2026</span>
           </div>
           <div className="flex gap-6">

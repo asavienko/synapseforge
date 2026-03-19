@@ -61,7 +61,7 @@ export function SandboxUpgradeCard({ onAddKey }: SandboxUpgradeCardProps) {
           {t("addApiKey")}
         </button>
         <a
-          href="https://cal.com/synapseforge/setup"
+          href="https://cal.com/openhelixai/setup"
           target="_blank"
           rel="noopener noreferrer"
           className="w-full text-center text-sm px-4 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-white/10 rounded-xl transition-colors"

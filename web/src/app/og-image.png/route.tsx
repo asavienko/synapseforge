@@ -50,7 +50,7 @@ export async function GET() {
             ⚡
           </div>
           <span style={{ fontSize: "28px", fontWeight: "700", color: "white", letterSpacing: "-0.5px" }}>
-            SynapseForge
+            OpenHelix AI
           </span>
         </div>
 

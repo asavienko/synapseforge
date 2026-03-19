@@ -530,7 +530,7 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
         <p className="text-xs text-zinc-400">
           Purchase additional support hours at $100/hour, or bundled at $50/hour with managed plans.
           {" "}
-          <a href="mailto:hello@synapseforge.ai" className="text-violet-400 hover:text-violet-300">
+          <a href="mailto:hello@openhelixai.com" className="text-violet-400 hover:text-violet-300">
             Contact us to add support hours.
           </a>
         </p>
@@ -642,7 +642,7 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
 
             <div className="space-y-3">
               <a
-                href="https://cal.com/synapseforge/setup"
+                href="https://cal.com/openhelixai/setup"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 w-full py-3 bg-violet-600 hover:bg-violet-500 text-white font-semibold text-sm rounded-xl transition-colors"
@@ -659,8 +659,8 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
 
             <p className="text-center text-xs text-zinc-600 mt-5">
               Questions? Email us at{" "}
-              <a href="mailto:hello@synapseforge.ai" className="text-violet-400 hover:text-violet-300">
-                hello@synapseforge.ai
+              <a href="mailto:hello@openhelixai.com" className="text-violet-400 hover:text-violet-300">
+                hello@openhelixai.com
               </a>
             </p>
           </div>

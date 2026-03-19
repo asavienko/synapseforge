@@ -12,7 +12,7 @@ interface Message {
 const STARTER_PROMPTS = [
   "What can you do?",
   "How do I integrate you?",
-  "Tell me about SynapseForge",
+  "Tell me about OpenHelix AI",
 ];
 
 export function DemoChat() {
@@ -174,7 +174,7 @@ export function DemoChat() {
           <Bot className="w-5 h-5 text-white" />
         </div>
         <div>
-          <div className="font-semibold text-white">SynapseForge Demo Agent</div>
+          <div className="font-semibold text-white">OpenHelix AI Demo Agent</div>
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span className="text-xs text-zinc-400">Online and ready to chat</span>

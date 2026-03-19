@@ -508,13 +508,13 @@ export default function ShareAgentPage() {
               </p>
               <div className="relative bg-black/40 border border-white/10 rounded-xl p-4">
                 <pre className="text-xs text-zinc-300 overflow-x-auto whitespace-pre">{`<script>
-  window.SynapseForge = { instanceId: "${id}" };
+  window.OpenHelix = { instanceId: "${id}" };
 </script>
-<script src="https://app.synapseforge.ai/widget.js" async></script>`}</pre>
+<script src="https://app.openhelixai.com/widget.js" async></script>`}</pre>
                 <button
                   onClick={() =>
                     copyToClipboard(
-                      `<script>\n  window.SynapseForge = { instanceId: "${id}" };\n</script>\n<script src="https://app.synapseforge.ai/widget.js" async></script>`,
+                      `<script>\n  window.OpenHelix = { instanceId: "${id}" };\n</script>\n<script src="https://app.openhelixai.com/widget.js" async></script>`,
                       "embed-widget"
                     )
                   }

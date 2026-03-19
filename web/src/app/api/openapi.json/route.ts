@@ -3,17 +3,17 @@ import { NextResponse } from "next/server";
 const spec = {
   openapi: "3.0.0",
   info: {
-    title: "SynapseForge API",
+    title: "OpenHelix AI API",
     version: "1.0.0",
     description:
       "Integrate your AI agents into any application. All endpoints require an API key.",
     contact: {
-      name: "SynapseForge Support",
-      email: "support@synapseforge.ai",
-      url: "https://synapseforge.ai",
+      name: "OpenHelix AI Support",
+      email: "support@openhelixai.com",
+      url: "https://openhelixai.com",
     },
   },
-  servers: [{ url: "https://synapseforge.ai", description: "Production" }],
+  servers: [{ url: "https://openhelixai.com", description: "Production" }],
   security: [{ apiKey: [] }],
   components: {
     securitySchemes: {

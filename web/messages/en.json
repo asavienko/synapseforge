@@ -21,7 +21,7 @@
   },
   "hero": {
     "badge": "Now in early access",
-    "title": "We forge the AI stack\nso you don't have to.",
+    "title": "Deploy AI agents in minutes,\nnot months.",
     "subtitle": "Add your OpenAI key. One click deploys a 24/7 AI agent to your own cloud server — ready to chat on Telegram, Discord, or Slack.",
     "cta": "Start for free →",
     "ctaSecondary": "See what we build",
@@ -167,7 +167,7 @@
   },
   "about": {
     "title": "Who we are.",
-    "subtitle": "SynapseForge is not a wrapper around the OpenAI API. It is a full deployment platform — your agent runs on dedicated infrastructure, syncs config automatically, and connects to the channels your users are already on.",
+    "subtitle": "OpenHelix AI is not a wrapper around the OpenAI API. It is a full deployment platform — your agent runs on dedicated infrastructure, syncs config automatically, and connects to the channels your users are already on.",
     "setup": "Dedicated managers",
     "setupLabel": "Time to first live agent",
     "response": "24h",
@@ -183,7 +183,7 @@
   "auth": {
     "signIn": {
       "title": "Welcome back",
-      "subtitle": "Sign in to your SynapseForge account",
+      "subtitle": "Sign in to your OpenHelix AI account",
       "email": "Email address",
       "password": "Password",
       "forgotPassword": "Forgot password?",
@@ -501,7 +501,7 @@
     "copied": "Copied!",
     "upgrade": "Upgrade plan",
     "learnMore": "Learn more",
-    "synapseforge": "SynapseForge",
+    "synapseforge": "OpenHelix AI",
     "emailVerifiedSuccess": "Email verified successfully! Your account is fully activated.",
     "upgradeRequestSent": "Upgrade request sent!",
     "requestUpgradePro": "Request upgrade to Pro",
@@ -568,7 +568,7 @@
   "privacy": {
     "title": "Privacy Policy",
     "lastUpdated": "Last updated: March 2025",
-    "intro": "SynapseForge ('we', 'us', 'our') is committed to protecting your privacy. This policy explains what data we collect, why we collect it, and how we use it.",
+    "intro": "OpenHelix AI ('we', 'us', 'our') is committed to protecting your privacy. This policy explains what data we collect, why we collect it, and how we use it.",
     "sections": {
       "collect": {
         "title": "Information We Collect",
@@ -576,7 +576,7 @@
       },
       "use": {
         "title": "How We Use Your Information",
-        "body": "We use your data to provide the SynapseForge service, communicate with you about your account, improve our platform, and send service-related notifications."
+        "body": "We use your data to provide the OpenHelix AI service, communicate with you about your account, improve our platform, and send service-related notifications."
       },
       "share": {
         "title": "Data Sharing",
@@ -599,11 +599,11 @@
   "terms": {
     "title": "Terms of Service",
     "lastUpdated": "Last updated: March 2025",
-    "intro": "By using SynapseForge ('Service'), you agree to these Terms of Service. Please read them carefully.",
+    "intro": "By using OpenHelix AI ('Service'), you agree to these Terms of Service. Please read them carefully.",
     "sections": {
       "service": {
         "title": "Use of Service",
-        "body": "SynapseForge provides managed AI infrastructure services. You may use the Service only in compliance with these terms and applicable laws."
+        "body": "OpenHelix AI provides managed AI infrastructure services. You may use the Service only in compliance with these terms and applicable laws."
       },
       "account": {
         "title": "Account Responsibility",
@@ -615,7 +615,7 @@
       },
       "ip": {
         "title": "Intellectual Property",
-        "body": "The Service and its content are owned by SynapseForge. You retain ownership of any data you provide."
+        "body": "The Service and its content are owned by OpenHelix AI. You retain ownership of any data you provide."
       },
       "termination": {
         "title": "Termination",
@@ -623,7 +623,7 @@
       },
       "liability": {
         "title": "Limitation of Liability",
-        "body": "SynapseForge is not liable for indirect, incidental, or consequential damages. Our liability is limited to the amount paid for the Service in the past 12 months."
+        "body": "OpenHelix AI is not liable for indirect, incidental, or consequential damages. Our liability is limited to the amount paid for the Service in the past 12 months."
       },
       "contact": {
         "title": "Contact",
@@ -738,7 +738,7 @@
       "activeKeys": "Active keys",
       "usageExamples": "Usage examples",
       "apiDocs": "API docs ↗",
-      "simpleChatLabel": "Simple chat (SynapseForge API)",
+      "simpleChatLabel": "Simple chat (OpenHelix AI API)",
       "openaiCompatLabel": "OpenAI-compatible (drop-in replacement)",
       "pythonLabel": "Python (OpenAI SDK)",
       "createdLabel": "Created",
@@ -1320,7 +1320,7 @@
     "send": "Send →",
     "sending": "…",
     "online": "Online",
-    "poweredBy": "Powered by SynapseForge",
+    "poweredBy": "Powered by OpenHelix AI",
     "typeMessage": "Type a message…",
     "connectionError": "Connection error. Please check your connection and try again.",
     "starterQ1": "What can you help me with?",
@@ -1460,7 +1460,7 @@
     "f1title": "Multi-channel by default",
     "f1desc": "Telegram, Discord, Slack, and a web chat — all powered by the same agent, same config.",
     "f2title": "OpenAI-compatible API",
-    "f2desc": "Point any OpenAI SDK at your SynapseForge endpoint. Drop-in replacement for your existing integrations.",
+    "f2desc": "Point any OpenAI SDK at your OpenHelix AI endpoint. Drop-in replacement for your existing integrations.",
     "f3title": "Auto config sync",
     "f3desc": "Update your credentials or model in the dashboard — your deployed agent syncs automatically within 5 minutes.",
     "f4title": "Dedicated manager",
@@ -1550,7 +1550,7 @@
     "brandColor": "Brand Color",
     "logoUrl": "Logo URL",
     "customDomain": "Custom Domain",
-    "hidePoweredBy": "Hide \"Powered by SynapseForge\"",
+    "hidePoweredBy": "Hide \"Powered by OpenHelix AI\"",
     "agencyRequired": "Agency plan required",
     "save": "Save Changes",
     "saved": "Changes saved"
@@ -1637,7 +1637,7 @@
     },
     "step2": {
       "title": "Create an API key",
-      "desc": "Once logged in: API Keys in the left sidebar → Create new secret key → name it 'SynapseForge' → Create. Copy it immediately — you won't see it again.",
+      "desc": "Once logged in: API Keys in the left sidebar → Create new secret key → name it 'OpenHelix AI' → Create. Copy it immediately — you won't see it again.",
       "link": "Go directly to API Keys"
     },
     "step3": {
@@ -1656,11 +1656,11 @@
   },
   "testimonials": {
     "title": "What our customers say",
-    "subtitle": "Real businesses running on SynapseForge",
+    "subtitle": "Real businesses running on OpenHelix AI",
     "quote1": "We set up a customer support agent in one afternoon. It now handles 70% of our incoming WhatsApp messages without any human involvement. Our team finally has time to focus on actual work.",
     "name1": "Maria Gonzalez",
     "role1": "Operations Manager, Retail SME",
-    "quote2": "I was skeptical — I thought AI agents were for big tech companies. SynapseForge proved me wrong. The onboarding was genuinely 3 minutes and the agent started answering questions immediately.",
+    "quote2": "I was skeptical — I thought AI agents were for big tech companies. OpenHelix AI proved me wrong. The onboarding was genuinely 3 minutes and the agent started answering questions immediately.",
     "name2": "James Whitfield",
     "role2": "Founder, E-commerce store",
     "quote3": "Our Telegram bot now qualifies leads 24/7. We stopped missing inquiries that come in at night. Revenue from those leads covers the subscription cost many times over.",

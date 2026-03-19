@@ -20,7 +20,7 @@ export function ZapierIntegrationClient() {
   const apiBase =
     typeof window !== "undefined"
       ? window.location.origin
-      : "https://synapseforge.ai";
+      : "https://openhelixai.com";
 
   function copyApiUrl() {
     navigator.clipboard.writeText(`${apiBase}/api/v1/chat`);

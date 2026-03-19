@@ -73,7 +73,7 @@ export async function GET() {
     });
   }
 
-  const APP_URL = process.env.NEXTAUTH_URL ?? "https://synapseforge.ai";
+  const APP_URL = process.env.NEXTAUTH_URL ?? "https://openhelixai.com";
   const link = `${APP_URL}/r/${referral.code}`;
 
   // Stats

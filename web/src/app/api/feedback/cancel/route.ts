@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
   // Send notification email (ActivityLog requires instanceId so we use email instead)
   await email
     .newSignupAlert(
-      ["hello@synapseforge.ai"],
+      ["hello@openhelixai.com"],
       `Cancellation feedback from ${session.user.name ?? session.user.email}`,
       `${session.user.email ?? ""} | Reason: ${reason}${feedback ? ` | Feedback: ${feedback}` : ""}`
     )

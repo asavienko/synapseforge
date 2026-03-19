@@ -126,7 +126,7 @@ export default function ReferralsPage() {
   const handleTwitterShare = () => {
     if (!data?.referralUrl) return;
     const text = encodeURIComponent(
-      `Build AI agents with SynapseForge! 🤖 Get 1 free month when you upgrade using my referral link:`
+      `Build AI agents with OpenHelix AI! 🤖 Get 1 free month when you upgrade using my referral link:`
     );
     const url = encodeURIComponent(data.referralUrl);
     window.open(
@@ -139,7 +139,7 @@ export default function ReferralsPage() {
   const handleWhatsAppShare = () => {
     if (!data?.referralUrl) return;
     const text = encodeURIComponent(
-      `Build AI agents with SynapseForge! 🤖 Get 1 free month when you upgrade using my referral link: ${data.referralUrl}`
+      `Build AI agents with OpenHelix AI! 🤖 Get 1 free month when you upgrade using my referral link: ${data.referralUrl}`
     );
     window.open(`https://wa.me/?text=${text}`, "_blank");
   };

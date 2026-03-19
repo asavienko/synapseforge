@@ -57,8 +57,8 @@ export default async function SettingsPage() {
           <div className="mt-4 flex items-center gap-3">
             <DashboardUpgrade currentPlan={user.plan} hasManager={true} />
             <span className="text-sm text-zinc-500">or email{" "}
-              <a href="mailto:hello@synapseforge.ai" className="text-violet-400 hover:text-violet-300 transition-colors">
-                hello@synapseforge.ai
+              <a href="mailto:hello@openhelixai.com" className="text-violet-400 hover:text-violet-300 transition-colors">
+                hello@openhelixai.com
               </a>
             </span>
           </div>
@@ -66,8 +66,8 @@ export default async function SettingsPage() {
         {user.plan === "free" && !user.manager && (
           <p className="text-sm text-zinc-500 mt-3">
             {t("managerWillBeAssigned")}{" "}
-            <a href="mailto:hello@synapseforge.ai" className="text-violet-400 hover:text-violet-300 transition-colors">
-              hello@synapseforge.ai
+            <a href="mailto:hello@openhelixai.com" className="text-violet-400 hover:text-violet-300 transition-colors">
+              hello@openhelixai.com
             </a>
           </p>
         )}

@@ -87,7 +87,7 @@ export async function GET(req: Request) {
     <div style="font-size:48px;margin-bottom:16px;">🎉</div>
     <h1 style="color:#a78bfa;font-size:24px;">${milestoneLabel}</h1>
     <p style="color:#94a3b8;">${milestoneDescription}</p>
-    <a href="https://synapseforge.ai/dashboard" style="display:inline-block;background:#7c3aed;color:white;text-decoration:none;padding:12px 24px;border-radius:8px;font-weight:600;margin-top:16px;">
+    <a href="https://openhelixai.com/dashboard" style="display:inline-block;background:#7c3aed;color:white;text-decoration:none;padding:12px 24px;border-radius:8px;font-weight:600;margin-top:16px;">
       See your progress →
     </a>
   </div>

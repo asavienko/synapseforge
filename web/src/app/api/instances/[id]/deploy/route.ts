@@ -125,7 +125,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   });
 
   const appUrl =
-    process.env.NEXTAUTH_URL ?? process.env.APP_URL ?? "https://synapseforge-mu.vercel.app";
+    process.env.NEXTAUTH_URL ?? process.env.APP_URL ?? "https://openhelixai.com";
   const sfApiKey = process.env.INTERNAL_API_KEY ?? randomBytes(16).toString("hex");
 
   const cloudInit = generateCloudInit({ instanceId: id, gatewayToken, appUrl, bootstrapToken, sfApiKey });

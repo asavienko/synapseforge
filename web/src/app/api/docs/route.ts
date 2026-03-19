@@ -2,10 +2,10 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   const docs = {
-    name: "SynapseForge API",
+    name: "OpenHelix AI API",
     version: "1.0.0",
     description: "API for managing AI instances and chat interactions",
-    baseUrl: "https://api.synapseforge.ai",
+    baseUrl: "https://api.openhelixai.com",
     
     authentication: {
       type: "Bearer Token",
@@ -32,7 +32,7 @@ export async function GET() {
           latencyMs: "number - Response time in milliseconds",
         },
         example: {
-          request: `curl -X POST https://synapseforge.ai/api/instances/inst_123/chat \\
+          request: `curl -X POST https://openhelixai.com/api/instances/inst_123/chat \\
   -H "Authorization: Bearer sk_test_xxx" \\
   -H "Content-Type: application/json" \\
   -d '{"message": "Hello!"}'`,
@@ -102,7 +102,7 @@ export async function GET() {
       description: "Embed AI chat on any website",
       usage: "Add this script tag to your HTML:",
       code: `<script 
-  src="https://synapseforge.ai/widget.js" 
+  src="https://openhelixai.com/widget.js" 
   data-instance-id="YOUR_INSTANCE_ID"
   data-position="bottom-right"
   data-color="#8b5cf6"
@@ -118,9 +118,9 @@ export async function GET() {
     },
 
     support: {
-      email: "support@synapseforge.ai",
-      docs: "https://docs.synapseforge.ai",
-      status: "https://synapseforge.ai/status",
+      email: "support@openhelixai.com",
+      docs: "https://docs.openhelixai.com",
+      status: "https://openhelixai.com/status",
     },
   };
 

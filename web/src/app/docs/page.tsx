@@ -2,8 +2,8 @@ import { Metadata } from "next";
 import { ApiDocsClient } from "./ApiDocsClient";
 
 export const metadata: Metadata = {
-  title: "API Documentation | SynapseForge",
-  description: "Integrate with the SynapseForge API to build AI-powered applications",
+  title: "API Documentation | OpenHelix AI",
+  description: "Integrate with the OpenHelix AI API to build AI-powered applications",
 };
 
 export default function ApiDocsPage() {

@@ -9,7 +9,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Zap className="w-6 h-6 text-violet-400" />
-            <span className="font-bold text-lg tracking-tight">SynapseForge</span>
+            <span className="font-bold text-lg tracking-tight">OpenHelix AI</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-zinc-400">
             <a href="#services" className="hover:text-white transition-colors">Services</a>
@@ -165,7 +165,7 @@ export default function LandingPage() {
               </ul>
               {plan.name === "Enterprise" ? (
                 <a
-                  href="mailto:hello@synapseforge.ai"
+                  href="mailto:hello@openhelixai.com"
                   className="block text-center py-3 rounded-xl font-semibold text-sm transition-colors border border-white/10 hover:border-white/20 text-zinc-300"
                 >
                   {plan.cta}
@@ -237,8 +237,8 @@ export default function LandingPage() {
         <div className="text-center mt-12">
           <p className="text-zinc-400 text-sm">
             Questions?{" "}
-            <a href="mailto:hello@synapseforge.ai" className="text-violet-400 hover:text-violet-300 transition-colors">
-              hello@synapseforge.ai
+            <a href="mailto:hello@openhelixai.com" className="text-violet-400 hover:text-violet-300 transition-colors">
+              hello@openhelixai.com
             </a>
           </p>
         </div>
@@ -249,12 +249,12 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-zinc-500">
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4 text-violet-400" />
-            <span>SynapseForge © 2026</span>
+            <span>OpenHelix AI © 2026</span>
           </div>
           <div className="flex gap-6">
             <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
             <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
-            <a href="mailto:hello@synapseforge.ai" className="hover:text-white transition-colors">Contact</a>
+            <a href="mailto:hello@openhelixai.com" className="hover:text-white transition-colors">Contact</a>
           </div>
         </div>
       </footer>

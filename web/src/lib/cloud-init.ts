@@ -5,7 +5,7 @@
 export function generateCloudInit(params: {
   instanceId: string;
   gatewayToken: string;
-  appUrl: string;         // e.g. "https://synapseforge.ai"
+  appUrl: string;         // e.g. "https://openhelixai.com"
   bootstrapToken: string; // one-time token to fetch openclaw.json
   sfApiKey: string;       // INTERNAL_API_KEY for health check reporting
   sshPublicKey?: string;  // ED25519 public key in OpenSSH format for authorized_keys
@@ -19,7 +19,7 @@ export function generateCloudInit(params: {
   return `#!/bin/bash
 set -euo pipefail
 exec > /var/log/synapseforge-provision.log 2>&1
-echo "[$(date)] Starting SynapseForge provisioning for instance ${instanceId}..."
+echo "[$(date)] Starting OpenHelix AI provisioning for instance ${instanceId}..."
 
 # ── 1. System setup ────────────────────────────────────────────────────────────
 apt-get update -qq
@@ -148,7 +148,7 @@ HEALTH
 chmod +x /opt/synapseforge/scripts/health-check.sh
 
 # ── 9. Config sync script ─────────────────────────────────────────────────────
-# Fetches latest config from SynapseForge (credentials may have changed),
+# Fetches latest config from OpenHelix AI (credentials may have changed),
 # compares hash, restarts OpenClaw if updated.
 cat > /opt/synapseforge/scripts/sync-config.sh << 'SYNC'
 #!/bin/bash
@@ -194,7 +194,7 @@ SYNC
 chmod +x /opt/synapseforge/scripts/sync-config.sh
 
 # ── 9b. Poll-commands script ──────────────────────────────────────────────────
-# Called every minute by cron — fetches next pending command from SynapseForge
+# Called every minute by cron — fetches next pending command from OpenHelix AI
 # and executes it (update_version, rollback_restic, take_restic_snapshot, restart)
 cat > /opt/synapseforge/scripts/poll-commands.sh << 'POLL'
 #!/bin/bash

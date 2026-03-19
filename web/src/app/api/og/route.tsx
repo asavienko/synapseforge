@@ -87,7 +87,7 @@ export async function GET(req: Request) {
               ⚡
             </div>
             <span style={{ color: "#ffffff", fontSize: "22px", fontWeight: "700", letterSpacing: "-0.5px" }}>
-              SynapseForge
+              OpenHelix AI
             </span>
           </div>
 
@@ -147,7 +147,7 @@ export async function GET(req: Request) {
                     fontSize: "16px",
                   }}
                 >
-                  Powered by SynapseForge
+                  Powered by OpenHelix AI
                 </div>
               </>
             ) : (
@@ -196,7 +196,7 @@ export async function GET(req: Request) {
             justifyContent: "space-between",
           }}
         >
-          <span style={{ color: "#52525b", fontSize: "15px" }}>synapseforge.ai</span>
+          <span style={{ color: "#52525b", fontSize: "15px" }}>openhelixai.com</span>
           <span style={{ color: "#52525b", fontSize: "15px" }}>No developers needed · Setup in 10 min</span>
         </div>
       </div>

@@ -46,7 +46,7 @@ export default function SignInPage() {
         <div className="flex justify-center mb-8">
           <Link href="/" className="flex items-center gap-2">
             <Zap className="w-6 h-6 text-violet-400" />
-            <span className="text-xl font-bold text-white tracking-tight">SynapseForge</span>
+            <span className="text-xl font-bold text-white tracking-tight">OpenHelix AI</span>
           </Link>
         </div>
 

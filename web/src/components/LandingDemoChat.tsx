@@ -11,7 +11,7 @@ interface Message {
 }
 
 const QUICK_PROMPTS = [
-  "How does SynapseForge work?",
+  "How does OpenHelix AI work?",
   "What can my AI agent do?",
   "How much does it cost?",
 ];
@@ -162,7 +162,7 @@ export function LandingDemoChat() {
                   <Bot className="w-3.5 h-3.5 text-white" />
                 </div>
                 <div className="bg-zinc-800 text-zinc-100 text-sm rounded-2xl rounded-tl-sm px-3 py-2 max-w-[85%]">
-                  Hi! I&apos;m SynapseForge&apos;s demo agent. Ask me anything!
+                  Hi! I&apos;m OpenHelix AI&apos;s demo agent. Ask me anything!
                 </div>
               </div>
             )}

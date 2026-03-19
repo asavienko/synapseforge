@@ -341,12 +341,12 @@ export function WidgetChatUI({
         <p className="text-[10px] text-zinc-600 text-center mt-2">
           Powered by{" "}
           <a
-            href="https://synapseforge-mu.vercel.app"
+            href="https://openhelixai.com"
             target="_blank"
             rel="noopener noreferrer"
             className="text-violet-400 hover:text-violet-300"
           >
-            SynapseForge
+            OpenHelix AI
           </a>
         </p>
       </div>

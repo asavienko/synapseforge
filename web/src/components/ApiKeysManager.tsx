@@ -282,7 +282,7 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
         </p>
         <code className="block bg-black/30 rounded p-3 text-xs font-mono mt-2">
           curl -H &quot;Authorization: Bearer YOUR_API_KEY&quot; \\n<br />
-          &nbsp;&nbsp;https://synapseforge.ai/api/instances/{instanceId}/chat
+          &nbsp;&nbsp;https://openhelixai.com/api/instances/{instanceId}/chat
         </code>
       </div>
     </div>

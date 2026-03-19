@@ -55,7 +55,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   const config = generateOpenClawConfig(instanceConfig, fullCredMap);
 
-  const appUrl = process.env.NEXTAUTH_URL ?? process.env.APP_URL ?? "https://synapseforge-mu.vercel.app";
+  const appUrl = process.env.NEXTAUTH_URL ?? process.env.APP_URL ?? "https://openhelixai.com";
   const adminApiKey = process.env.ADMIN_API_KEY ?? "";
 
   // Extract VPS IP from vpsUrl

@@ -3,7 +3,7 @@
 
   // Get configuration from data attributes or global config
   var scriptTag = document.currentScript || document.querySelector('script[src*="widget.js"]');
-  var config = window.SynapseForge || {};
+  var config = window.OpenHelix || {};
   
   // Parse data attributes from script tag
   if (scriptTag) {
@@ -16,11 +16,11 @@
   }
 
   if (!config.instanceId) {
-    console.error('[SynapseForge Widget] data-instance-id is required');
+    console.error('[OpenHelix Widget] data-instance-id is required');
     return;
   }
 
-  var BASE_URL = config.baseUrl || (typeof window !== 'undefined' && window.location.origin) || "https://synapseforge-mu.vercel.app";
+  var BASE_URL = config.baseUrl || (typeof window !== 'undefined' && window.location.origin) || "https://openhelixai.com";
   var WIDGET_VERSION = "1.0.0";
 
   // Configuration state
@@ -339,7 +339,7 @@
       
       updateStyles();
     } catch (err) {
-      console.warn('[SynapseForge Widget] Using default config');
+      console.warn('[OpenHelix Widget] Using default config');
       widgetConfig.loaded = true;
     }
   }
@@ -432,8 +432,8 @@
     if (!widgetConfig.hideBranding) {
       var branding = document.createElement('div');
       branding.className = 'sf-widget-branding';
-      var brandUrl = 'https://synapseforge-mu.vercel.app' + (widgetConfig.ref ? '?ref=' + encodeURIComponent(widgetConfig.ref) : '');
-      branding.innerHTML = '<a href="' + brandUrl + '" target="_blank" rel="noopener noreferrer">Powered by SynapseForge</a>';
+      var brandUrl = 'https://openhelixai.com' + (widgetConfig.ref ? '?ref=' + encodeURIComponent(widgetConfig.ref) : '');
+      branding.innerHTML = '<a href="' + brandUrl + '" target="_blank" rel="noopener noreferrer">Powered by OpenHelix AI</a>';
       container.appendChild(branding);
     }
     
@@ -533,8 +533,8 @@
   // ── Initialize ─────────────────────────────────────────────────────────────
   async function init() {
     // Don't initialize twice
-    if (window.SynapseForgeWidgetInitialized) return;
-    window.SynapseForgeWidgetInitialized = true;
+    if (window.OpenHelixWidgetInitialized) return;
+    window.OpenHelixWidgetInitialized = true;
     
     // Load config from API
     await loadWidgetConfig();
@@ -567,7 +567,7 @@
       var iframeOrigin = new URL(BASE_URL).origin;
       if (e.origin !== iframeOrigin) return;
       
-      if (e.data && e.data.type === 'synapseforge-chat') {
+      if (e.data && e.data.type === 'openhelix-chat') {
         switch (e.data.action) {
           case 'close':
             toggleChat();
@@ -590,7 +590,7 @@
     });
     
     // Expose API
-    window.SynapseForgeWidget = {
+    window.OpenHelixWidget = {
       open: function() { if (!isOpen) toggleChat(); },
       close: function() { if (isOpen) toggleChat(); },
       toggle: toggleChat,
@@ -600,7 +600,7 @@
       version: WIDGET_VERSION
     };
     
-    console.log('[SynapseForge Widget] v' + WIDGET_VERSION + ' initialized');
+    console.log('[OpenHelix Widget] v' + WIDGET_VERSION + ' initialized');
   }
 
   // Start initialization

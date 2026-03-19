@@ -131,7 +131,7 @@ export function PublicChatUI({ instanceId, branding }: Props) {
         {!branding.hidePoweredBy && (
           <div className="ml-auto">
             <a
-              href="https://synapseforge.ai"
+              href="https://openhelixai.com"
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors"

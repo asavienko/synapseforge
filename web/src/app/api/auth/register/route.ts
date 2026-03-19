@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
     const firstName = name.split(" ")[0];
     await prisma.message.create({
       data: {
-        body: `Hi ${firstName}! 👋 I'm ${defaultManager.name}, your dedicated manager at SynapseForge. I'll be helping you get your AI agent set up and running. To get started, head to the Chat tab and add your OpenAI (or Anthropic) API key — you'll be chatting with your AI in under a minute. Let me know if you have any questions!`,
+        body: `Hi ${firstName}! 👋 I'm ${defaultManager.name}, your dedicated manager at OpenHelix AI. I'll be helping you get your AI agent set up and running. To get started, head to the Chat tab and add your OpenAI (or Anthropic) API key — you'll be chatting with your AI in under a minute. Let me know if you have any questions!`,
         senderType: "manager",
         userId: user.id,
         managerId: defaultManager.id,

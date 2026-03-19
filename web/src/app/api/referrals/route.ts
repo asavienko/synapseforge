@@ -127,7 +127,7 @@ export async function GET() {
     pendingEarnings = Math.round(pendingEarnings * 100) / 100;
     paidEarnings = Math.round(paidEarnings * 100) / 100;
 
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://synapseforge-mu.vercel.app";
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://openhelixai.com";
 
     return NextResponse.json({
       code: referral.code,

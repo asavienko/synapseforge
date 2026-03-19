@@ -17,7 +17,7 @@ export function CalBookingButton({
 }: CalBookingButtonProps) {
   useEffect(() => {
     (async function () {
-      const cal = await getCalApi({ namespace: "synapseforge" });
+      const cal = await getCalApi({ namespace: "openhelixai" });
       cal("ui", { hideEventTypeDetails: false, layout: "month_view" });
     })();
   }, []);
@@ -34,7 +34,7 @@ export function CalBookingButton({
 
   return (
     <button
-      data-cal-namespace="synapseforge"
+      data-cal-namespace="openhelixai"
       data-cal-link={calLink}
       data-cal-config='{"layout":"month_view"}'
       className={`${baseClasses} ${variants[variant]}`}

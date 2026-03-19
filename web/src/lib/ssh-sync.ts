@@ -38,7 +38,7 @@ export interface SshSyncOptions {
   vpsUrl: string;
   /** The gateway token for authenticating against the config endpoint */
   gatewayToken: string;
-  /** The SynapseForge app URL (for pulling updated config) */
+  /** The OpenHelix AI app URL (for pulling updated config) */
   appUrl: string;
   /** The instance ID */
   instanceId: string;
@@ -63,7 +63,7 @@ export async function sshSyncConfig(opts: SshSyncOptions): Promise<SshSyncResult
   const host = extractVpsHost(vpsUrl);
 
   // Command to run on the remote server:
-  // 1. Pull latest config from the SynapseForge API
+  // 1. Pull latest config from the OpenHelix AI API
   // 2. Atomically replace openclaw.json
   // 3. Restart the openclaw Docker container
   const remoteCmd = [

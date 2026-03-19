@@ -45,7 +45,7 @@ export async function GET(req: Request) {
     const subject =
       runningCount > 0
         ? "Your AI agents are running — we miss you"
-        : "Come back to SynapseForge — we miss you";
+        : "Come back to OpenHelix AI — we miss you";
 
     const html = `<!DOCTYPE html>
 <html>
@@ -55,11 +55,11 @@ export async function GET(req: Request) {
     <p style="color:#94a3b8;line-height:1.6;">
       You haven't logged in for a while. ${agentNote}
     </p>
-    <a href="https://synapseforge.ai/dashboard" style="display:inline-block;background:#7c3aed;color:white;text-decoration:none;padding:12px 24px;border-radius:8px;font-weight:600;margin-top:20px;">
+    <a href="https://openhelixai.com/dashboard" style="display:inline-block;background:#7c3aed;color:white;text-decoration:none;padding:12px 24px;border-radius:8px;font-weight:600;margin-top:20px;">
       Check your dashboard →
     </a>
     <p style="color:#475569;font-size:12px;margin-top:24px;">
-      <a href="https://synapseforge.ai/dashboard/settings" style="color:#7c3aed;">Unsubscribe from emails</a>
+      <a href="https://openhelixai.com/dashboard/settings" style="color:#7c3aed;">Unsubscribe from emails</a>
     </p>
   </div>
 </body>

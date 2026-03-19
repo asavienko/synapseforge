@@ -8,7 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
  * /chat/{instanceId} when clicked.
  *
  * Usage:
- *   <script src="https://synapseforge.ai/embed.js?id=INSTANCE_ID" async></script>
+ *   <script src="https://openhelixai.com/embed.js?id=INSTANCE_ID" async></script>
  */
 export async function GET(req: NextRequest) {
   const instanceId = req.nextUrl.searchParams.get("id");

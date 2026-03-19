@@ -12,7 +12,7 @@ export default async function PrivacyPage() {
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <Zap className="w-6 h-6 text-violet-400" />
-            <span className="font-bold text-lg tracking-tight">SynapseForge</span>
+            <span className="font-bold text-lg tracking-tight">OpenHelix AI</span>
           </Link>
           <Link
             href="/"
@@ -61,7 +61,7 @@ export default async function PrivacyPage() {
             <div className="space-y-3 text-zinc-400 leading-relaxed">
               <p>We use your data to:</p>
               <ul className="list-disc list-inside space-y-2 ml-2">
-                <li>Provide and maintain the SynapseForge service</li>
+                <li>Provide and maintain the OpenHelix AI service</li>
                 <li>Process transactions and manage billing</li>
                 <li>Improve AI response quality and platform features</li>
                 <li>Communicate with you about your account and service updates</li>
@@ -122,8 +122,8 @@ export default async function PrivacyPage() {
               </ul>
               <p className="mt-3">
                 To exercise these rights, contact us at{" "}
-                <a href="mailto:privacy@synapseforge.ai" className="text-violet-400 hover:text-violet-300 transition-colors">
-                  privacy@synapseforge.ai
+                <a href="mailto:privacy@openhelixai.com" className="text-violet-400 hover:text-violet-300 transition-colors">
+                  privacy@openhelixai.com
                 </a>
                 . We respond to all requests within 30 days.
               </p>
@@ -158,10 +158,10 @@ export default async function PrivacyPage() {
                 For privacy-related questions or to exercise your rights, contact our Data Protection Officer:
               </p>
               <p className="text-zinc-300">
-                Email: <a href="mailto:privacy@synapseforge.ai" className="text-violet-400 hover:text-violet-300 transition-colors">privacy@synapseforge.ai</a>
+                Email: <a href="mailto:privacy@openhelixai.com" className="text-violet-400 hover:text-violet-300 transition-colors">privacy@openhelixai.com</a>
               </p>
               <p className="text-sm text-zinc-500">
-                SynapseForge — Alicante, Spain
+                OpenHelix AI — Alicante, Spain
               </p>
             </div>
           </section>
@@ -173,7 +173,7 @@ export default async function PrivacyPage() {
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-zinc-500">
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4 text-violet-400" />
-            <span className="font-semibold text-zinc-400">SynapseForge</span>
+            <span className="font-semibold text-zinc-400">OpenHelix AI</span>
             <span>© 2026</span>
           </div>
           <div className="flex gap-6">

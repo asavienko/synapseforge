@@ -77,7 +77,7 @@ export default function ReferralPage() {
   const { code, link, stats, conversions } = data;
 
   const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-    `I've been using SynapseForge to deploy AI agents — it's great! Sign up with my link and get 1 free month:\n${link}`
+    `I've been using OpenHelix AI to deploy AI agents — it's great! Sign up with my link and get 1 free month:\n${link}`
   )}`;
 
   return (

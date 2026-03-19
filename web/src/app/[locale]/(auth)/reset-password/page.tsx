@@ -2,8 +2,8 @@ import { Metadata } from "next";
 import { ResetPasswordClient } from "./ResetPasswordClient";
 
 export const metadata: Metadata = {
-  title: "Reset Password | SynapseForge",
-  description: "Create a new password for your SynapseForge account",
+  title: "Reset Password | OpenHelix AI",
+  description: "Create a new password for your OpenHelix AI account",
 };
 
 interface PageProps {

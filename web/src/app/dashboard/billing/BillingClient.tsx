@@ -222,8 +222,8 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
       {/* Annual note */}
       <p className="text-xs text-zinc-600 mt-6 text-center">
         Annual plans available — 2 months free. Contact your manager or{" "}
-        <a href="mailto:hello@synapseforge.ai" className="text-violet-400 hover:text-violet-300 transition-colors">
-          hello@synapseforge.ai
+        <a href="mailto:hello@openhelixai.com" className="text-violet-400 hover:text-violet-300 transition-colors">
+          hello@openhelixai.com
         </a>{" "}
         to set up.
       </p>

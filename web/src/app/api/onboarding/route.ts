@@ -185,7 +185,7 @@ export async function POST(request: Request) {
             userId: user.id,
             managerId: assignedManager.id,
             senderType: 'manager',
-            body: `Hi ${user.name?.split(' ')[0] || 'there'}! Welcome to SynapseForge! 👋\n\nI'm ${assignedManager.name}, your dedicated manager. I've reviewed your onboarding information:\n\n• Business: ${validatedData.business}\n• Industry: ${validatedData.industry}\n• Use case: ${validatedData.useCase}${validatedData.useCaseDescription ? '\n• Details: ' + validatedData.useCaseDescription.substring(0, 100) + (validatedData.useCaseDescription.length > 100 ? '...' : '') : ''}\n\nI'll be reaching out shortly to help you get your AI agent set up perfectly for your needs. Feel free to message me here anytime!`,
+            body: `Hi ${user.name?.split(' ')[0] || 'there'}! Welcome to OpenHelix AI! 👋\n\nI'm ${assignedManager.name}, your dedicated manager. I've reviewed your onboarding information:\n\n• Business: ${validatedData.business}\n• Industry: ${validatedData.industry}\n• Use case: ${validatedData.useCase}${validatedData.useCaseDescription ? '\n• Details: ' + validatedData.useCaseDescription.substring(0, 100) + (validatedData.useCaseDescription.length > 100 ? '...' : '') : ''}\n\nI'll be reaching out shortly to help you get your AI agent set up perfectly for your needs. Feel free to message me here anytime!`,
             read: false,
           },
         });

@@ -39,8 +39,8 @@ export async function deliverWebhook({
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "X-SynapseForge-Event": event,
-            "X-SynapseForge-Signature": `sha256=${signature}`,
+            "X-OpenHelix AI-Event": event,
+            "X-OpenHelix AI-Signature": `sha256=${signature}`,
           },
           body: payload,
           signal: AbortSignal.timeout(10000), // 10s timeout

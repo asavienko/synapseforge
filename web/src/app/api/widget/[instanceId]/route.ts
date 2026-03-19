@@ -34,7 +34,7 @@ export async function OPTIONS() {
  * - greeting: Custom greeting message
  * - avatarUrl: URL to avatar image (optional)
  * - brandColor: Primary brand color
- * - hidePoweredBy: Whether to hide "Powered by SynapseForge" branding
+ * - hidePoweredBy: Whether to hide "Powered by OpenHelix AI" branding
  */
 export async function GET(
   _request: NextRequest,

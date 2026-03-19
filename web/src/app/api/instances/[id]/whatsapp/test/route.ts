@@ -80,7 +80,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       accessToken,
       phoneNumberId,
       to: to.replace(/\s/g, ""),
-      message: "👋 Test message from your SynapseForge AI agent. Your WhatsApp Business API integration is working!",
+      message: "👋 Test message from your OpenHelix AI AI agent. Your WhatsApp Business API integration is working!",
     });
 
     return NextResponse.json({

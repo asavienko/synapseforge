@@ -55,7 +55,7 @@ export function WhiteLabelForm({ initialConfig, isAgency }: WhiteLabelFormProps)
           value={form.brandName}
           onChange={(e) => setForm({ ...form, brandName: e.target.value })}
           className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-colors"
-          placeholder="SynapseForge"
+          placeholder="OpenHelix AI"
         />
       </div>
 

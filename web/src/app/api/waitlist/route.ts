@@ -4,7 +4,7 @@ import { sendEmail } from "@/lib/email";
 
 async function notifyEmail(email: string, source: string) {
   const html = `
-    <h2>New SynapseForge lead</h2>
+    <h2>New OpenHelix AI lead</h2>
     <p><strong>Email:</strong> ${email}</p>
     <p><strong>Source:</strong> ${source}</p>
     <p><strong>Time:</strong> ${new Date().toISOString()}</p>

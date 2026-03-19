@@ -4,12 +4,12 @@ import { rateLimit } from "@/lib/ratelimit";
 export const maxDuration = 30;
 
 const SYSTEM_PROMPT =
-  "Hi! I'm a demo of what your customers will experience. Ask me anything! I'm a friendly SynapseForge demo agent — helpful, concise, and excited to show you what's possible with custom AI agents.";
+  "Hi! I'm a demo of what your customers will experience. Ask me anything! I'm a friendly OpenHelix AI demo agent — helpful, concise, and excited to show you what's possible with custom AI agents.";
 
 const FALLBACK_REPLIES = [
-  "Hi! I'm SynapseForge's demo assistant. You can deploy your own AI agent just like me in under 3 minutes at SynapseForge! What would you like to know?",
-  "SynapseForge lets you build and deploy custom AI agents with no infrastructure headaches. You can have your own agent live in under 3 minutes — no DevOps required!",
-  "Great question! With SynapseForge, you configure your system prompt, choose a model, and your AI agent is live. Ready to try it yourself?",
+  "Hi! I'm OpenHelix AI's demo assistant. You can deploy your own AI agent just like me in under 3 minutes at OpenHelix AI! What would you like to know?",
+  "OpenHelix AI lets you build and deploy custom AI agents with no infrastructure headaches. You can have your own agent live in under 3 minutes — no DevOps required!",
+  "Great question! With OpenHelix AI, you configure your system prompt, choose a model, and your AI agent is live. Ready to try it yourself?",
 ];
 
 // In-memory session store (serverless = short-lived anyway)

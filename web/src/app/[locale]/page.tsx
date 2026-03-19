@@ -32,7 +32,7 @@ export default async function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between relative">
           <div className="flex items-center gap-2">
             <Zap className="w-6 h-6 text-violet-400" />
-            <span className="font-bold text-lg tracking-tight">SynapseForge</span>
+            <span className="font-bold text-lg tracking-tight">OpenHelix AI</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-zinc-400">
             <Link href="/templates" className="hover:text-white transition-colors">Templates</Link>
@@ -339,7 +339,7 @@ export default async function LandingPage() {
               <span className="w-3 h-3 rounded-full bg-emerald-500/60" />
               <div className="flex-1 mx-4">
                 <div className="bg-white/5 border border-white/10 rounded-md px-3 py-1 text-xs text-zinc-500 font-mono max-w-xs mx-auto text-center">
-                  app.synapseforge.ai/dashboard
+                  app.openhelixai.com/dashboard
                 </div>
               </div>
             </div>
@@ -352,7 +352,7 @@ export default async function LandingPage() {
                   <div className="w-6 h-6 rounded bg-violet-600 flex items-center justify-center">
                     <span className="text-white text-xs font-bold">S</span>
                   </div>
-                  <span className="text-xs font-semibold text-white">SynapseForge</span>
+                  <span className="text-xs font-semibold text-white">OpenHelix AI</span>
                 </div>
                 {[
                   { label: "Overview", active: false, dot: null },
@@ -406,7 +406,7 @@ export default async function LandingPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-[11px] text-zinc-500 mb-0.5">Your dedicated manager</div>
-                    <div className="text-xs font-medium text-white">Alex Kim · alex@synapseforge.ai</div>
+                    <div className="text-xs font-medium text-white">Alex Kim · alex@openhelixai.com</div>
                   </div>
                   <div className="text-[11px] bg-violet-600/20 text-violet-300 px-2 py-1 rounded-lg">Message</div>
                 </div>
@@ -698,7 +698,7 @@ export default async function LandingPage() {
             Ready to deploy your AI agent?
           </h2>
           <p className="text-zinc-400 mb-8 max-w-lg mx-auto relative">
-            Join teams that use SynapseForge to run AI agents 24/7 — without managing infrastructure.
+            Join teams that use OpenHelix AI to run AI agents 24/7 — without managing infrastructure.
           </p>
           <Link
             href="/sign-up"
@@ -715,7 +715,7 @@ export default async function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-zinc-500">
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4 text-violet-400" />
-            <span className="font-semibold text-zinc-400">SynapseForge</span>
+            <span className="font-semibold text-zinc-400">OpenHelix AI</span>
             <span>© 2026</span>
           </div>
           <div className="flex gap-6">

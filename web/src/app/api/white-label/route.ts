@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 const DEFAULTS = {
-  brandName: "SynapseForge",
+  brandName: "OpenHelix AI",
   brandColor: "#7c3aed",
   logoUrl: null as string | null,
   customDomain: null as string | null,
@@ -31,7 +31,7 @@ export async function PATCH(req: NextRequest) {
   const { brandName, brandColor, logoUrl, customDomain, hidePoweredBy } = body;
 
   const data: Record<string, unknown> = {};
-  if (brandName !== undefined) data.brandName = String(brandName).trim() || "SynapseForge";
+  if (brandName !== undefined) data.brandName = String(brandName).trim() || "OpenHelix AI";
   if (brandColor !== undefined) data.brandColor = String(brandColor);
   if (logoUrl !== undefined) data.logoUrl = logoUrl ? String(logoUrl) : null;
   if (customDomain !== undefined) data.customDomain = customDomain ? String(customDomain) : null;

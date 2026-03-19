@@ -415,7 +415,7 @@ export function ProvisioningWizard({
 
             <div className="flex gap-3">
               <a
-                href="mailto:support@synapseforge.ai"
+                href="mailto:support@openhelixai.com"
                 className="flex-1 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors px-4 py-3 rounded-xl text-sm font-semibold text-zinc-300"
               >
                 {t("contactSupport")}

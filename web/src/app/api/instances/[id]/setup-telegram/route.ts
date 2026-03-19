@@ -115,7 +115,7 @@ export async function POST(
   }
 
   // ── Register Vercel webhook (serverless bot — no VPS needed) ─────────────
-  const appUrl = process.env.NEXTAUTH_URL ?? process.env.APP_URL ?? "https://synapseforge-mu.vercel.app";
+  const appUrl = process.env.NEXTAUTH_URL ?? process.env.APP_URL ?? "https://openhelixai.com";
   const webhookUrl = `${appUrl}/api/telegram/${id}`;
   let webhookSet = false;
   try {

@@ -63,7 +63,7 @@ function SidebarContent({ userName, userEmail, unreadCount, isAdmin, isManager, 
       <div className="p-4 border-b border-white/5 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2" onClick={onClose}>
           <Zap className="w-5 h-5 text-violet-400" />
-          <span className="font-bold text-sm tracking-tight text-white">SynapseForge</span>
+          <span className="font-bold text-sm tracking-tight text-white">OpenHelix AI</span>
         </Link>
         <div className="flex items-center gap-1">
           {!onClose && <NotificationCenter />}
@@ -150,7 +150,7 @@ export function DashboardSidebar({ userName, userEmail, isAdmin, isManager }: Si
       <div className="md:hidden flex items-center justify-between px-4 h-14 border-b border-white/5 bg-[#0a0a0f] fixed top-0 left-0 right-0 z-40">
         <Link href="/" className="flex items-center gap-2">
           <Zap className="w-5 h-5 text-violet-400" />
-          <span className="font-bold text-sm tracking-tight text-white">SynapseForge</span>
+          <span className="font-bold text-sm tracking-tight text-white">OpenHelix AI</span>
         </Link>
         <div className="flex items-center gap-2">
           <NotificationCenter />

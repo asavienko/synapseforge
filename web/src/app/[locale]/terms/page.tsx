@@ -12,7 +12,7 @@ export default async function TermsPage() {
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <Zap className="w-6 h-6 text-violet-400" />
-            <span className="font-bold text-lg tracking-tight">SynapseForge</span>
+            <span className="font-bold text-lg tracking-tight">OpenHelix AI</span>
           </Link>
           <Link
             href="/"
@@ -38,7 +38,7 @@ export default async function TermsPage() {
         <div className="glow-border rounded-2xl bg-white/[0.02] p-8 md:p-10 space-y-10">
           <section>
             <p className="text-zinc-400 leading-relaxed">
-              Welcome to SynapseForge. By accessing or using our service, you agree to be bound by these Terms of Service. 
+              Welcome to OpenHelix AI. By accessing or using our service, you agree to be bound by these Terms of Service. 
               If you disagree with any part of these terms, you may not access the service.
             </p>
           </section>
@@ -50,7 +50,7 @@ export default async function TermsPage() {
             </h2>
             <div className="space-y-3 text-zinc-400 leading-relaxed">
               <p>
-                SynapseForge provides a managed AI agent platform that allows users to deploy, configure, and manage 
+                OpenHelix AI provides a managed AI agent platform that allows users to deploy, configure, and manage 
                 AI-powered chat agents across multiple channels including Telegram, Discord, Slack, and web widgets.
               </p>
               <p>The service includes:</p>
@@ -80,7 +80,7 @@ export default async function TermsPage() {
               </ul>
               <p className="mt-3">
                 <strong className="text-zinc-300">API Key Security:</strong> You are solely responsible for securing any API keys, bot tokens, or credentials 
-                associated with your account. Never share these credentials. SynapseForge encrypts stored credentials 
+                associated with your account. Never share these credentials. OpenHelix AI encrypts stored credentials 
                 but cannot be held liable for breaches resulting from your failure to maintain security.
               </p>
             </div>
@@ -131,7 +131,7 @@ export default async function TermsPage() {
                 You grant us a limited license to host and process this data solely to provide the service.
               </p>
               <p>
-                <strong className="text-zinc-300">Our Content:</strong> The SynapseForge platform, including code, designs, logos, and trademarks, 
+                <strong className="text-zinc-300">Our Content:</strong> The OpenHelix AI platform, including code, designs, logos, and trademarks, 
                 is our property and protected by copyright and other laws.
               </p>
             </div>
@@ -160,7 +160,7 @@ export default async function TermsPage() {
             </h2>
             <div className="space-y-3 text-zinc-400 leading-relaxed">
               <p>
-                To the maximum extent permitted by law, SynapseForge shall not be liable for any indirect, incidental, 
+                To the maximum extent permitted by law, OpenHelix AI shall not be liable for any indirect, incidental, 
                 special, consequential, or punitive damages, including lost profits, data loss, or business interruption.
               </p>
               <p>
@@ -216,10 +216,10 @@ export default async function TermsPage() {
             <div className="space-y-3 text-zinc-400 leading-relaxed">
               <p>For questions about these Terms, contact us at:</p>
               <p className="text-zinc-300">
-                Email: <a href="mailto:hello@synapseforge.ai" className="text-violet-400 hover:text-violet-300 transition-colors">hello@synapseforge.ai</a>
+                Email: <a href="mailto:hello@openhelixai.com" className="text-violet-400 hover:text-violet-300 transition-colors">hello@openhelixai.com</a>
               </p>
               <p className="text-sm text-zinc-500">
-                SynapseForge — Alicante, Spain
+                OpenHelix AI — Alicante, Spain
               </p>
             </div>
           </section>
@@ -231,7 +231,7 @@ export default async function TermsPage() {
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-zinc-500">
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4 text-violet-400" />
-            <span className="font-semibold text-zinc-400">SynapseForge</span>
+            <span className="font-semibold text-zinc-400">OpenHelix AI</span>
             <span>© 2026</span>
           </div>
           <div className="flex gap-6">

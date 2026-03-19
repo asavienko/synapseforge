@@ -1452,7 +1452,7 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
               <div>
                 <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-1">Email</label>
                 <input type="email" value={managerForm.email} onChange={(e) => setManagerForm((p) => ({ ...p, email: e.target.value }))}
-                  placeholder="jane@synapseforge.ai"
+                  placeholder="jane@openhelixai.com"
                   className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors" />
               </div>
               <div>
@@ -1638,7 +1638,7 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                       </td>
                       <td className="px-5 py-3">
                         <a
-                          href={`mailto:${lead.email}?subject=Your%20SynapseForge%20trial&body=Hi!%20I%20saw%20you%20tried%20out%20SynapseForge%20and%20I%20wanted%20to%20reach%20out%20personally.`}
+                          href={`mailto:${lead.email}?subject=Your%20OpenHelix AI%20trial&body=Hi!%20I%20saw%20you%20tried%20out%20OpenHelix AI%20and%20I%20wanted%20to%20reach%20out%20personally.`}
                           className="text-xs text-violet-400 hover:text-violet-300 transition-colors"
                         >
                           Email →

@@ -23,7 +23,7 @@ import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
 
 export const metadata: Metadata = {
-  title: "AI Agent Templates | SynapseForge",
+  title: "AI Agent Templates | OpenHelix AI",
   description:
     "Browse 10+ pre-built AI agent templates. Deploy customer support bots, sales assistants, content creators, and more in minutes. No coding required.",
   keywords: [
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     "AI automation",
   ],
   openGraph: {
-    title: "AI Agent Templates | SynapseForge",
+    title: "AI Agent Templates | OpenHelix AI",
     description:
       "Deploy pre-built AI agents in minutes. Browse our template gallery.",
     type: "website",
@@ -314,7 +314,7 @@ export default async function TemplatesPage({
               Ready to deploy your first AI agent?
             </h2>
             <p className="text-zinc-400 mb-8 max-w-lg mx-auto relative">
-              Join thousands of businesses using SynapseForge to automate their
+              Join thousands of businesses using OpenHelix AI to automate their
               workflows with AI agents.
             </p>
 
@@ -346,7 +346,7 @@ export default async function TemplatesPage({
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-zinc-500">
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4 text-violet-400" />
-            <span className="font-semibold text-zinc-400">SynapseForge</span>
+            <span className="font-semibold text-zinc-400">OpenHelix AI</span>
             <span>© 2026</span>
           </div>
           <div className="flex gap-6">

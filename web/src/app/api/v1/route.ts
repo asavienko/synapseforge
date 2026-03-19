@@ -8,7 +8,7 @@ import { CORS_HEADERS } from "@/lib/api-auth";
 export async function GET() {
   return NextResponse.json(
     {
-      name: "SynapseForge Public API",
+      name: "OpenHelix AI Public API",
       version: "1.0.0",
       baseUrl: "/api/v1",
       authentication: {
@@ -20,7 +20,7 @@ export async function GET() {
         {
           method: "POST",
           path: "/api/v1/chat",
-          description: "Send a message to your AI agent (SynapseForge format)",
+          description: "Send a message to your AI agent (OpenHelix AI format)",
           body: {
             message: "string — single message (shorthand)",
             messages: "array — full conversation history [{ role, content }]",
@@ -36,7 +36,7 @@ export async function GET() {
           method: "POST",
           path: "/api/v1/chat/completions",
           description: "OpenAI-compatible chat completions endpoint. Drop-in replacement for any OpenAI SDK.",
-          note: "Set base_url to your SynapseForge API URL and use your sf-live-* key as the API key.",
+          note: "Set base_url to your OpenHelix AI API URL and use your sf-live-* key as the API key.",
           body: {
             messages: "array — [{ role: 'user'|'assistant'|'system', content: string }]",
             model: "string — optional, overrides instance default",

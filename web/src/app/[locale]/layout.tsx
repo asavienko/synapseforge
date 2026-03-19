@@ -20,8 +20,8 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: "SynapseForge — AI Agent for Your Business on Telegram & WhatsApp",
-    template: "%s | SynapseForge",
+    default: "OpenHelix AI — AI Agent for Your Business on Telegram & WhatsApp",
+    template: "%s | OpenHelix AI",
   },
   description:
     "Deploy a 24/7 AI agent that answers customer questions on Telegram and WhatsApp. Set up in under 10 minutes. No developers needed. Start free.",
@@ -30,21 +30,21 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "SynapseForge",
+    title: "OpenHelix AI",
   },
   openGraph: {
     type: "website",
-    siteName: "SynapseForge",
+    siteName: "OpenHelix AI",
     title: "AI Agent for Your Business — Live on Telegram & WhatsApp in 10 Minutes",
     description:
       "Stop missing customer messages. Deploy a 24/7 AI agent that handles FAQs, bookings, and support on Telegram and WhatsApp. Start free, no card required.",
-    url: "https://synapseforge-mu.vercel.app",
+    url: "https://openhelixai.com",
     images: [
       {
         url: "/api/og",
         width: 1200,
         height: 630,
-        alt: "SynapseForge — AI Agent for Telegram & WhatsApp",
+        alt: "OpenHelix AI — AI Agent for Telegram & WhatsApp",
       },
     ],
   },

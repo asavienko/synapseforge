@@ -295,7 +295,7 @@ export default function OnboardingPage() {
         <div className="flex justify-center mb-10">
           <div className="flex items-center gap-2">
             <Zap className="w-6 h-6 text-violet-400" />
-            <span className="text-xl font-bold text-white tracking-tight">SynapseForge</span>
+            <span className="text-xl font-bold text-white tracking-tight">OpenHelix AI</span>
           </div>
         </div>
 

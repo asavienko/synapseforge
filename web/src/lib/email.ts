@@ -2,10 +2,10 @@ import { Resend } from "resend";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
-const FROM = process.env.RESEND_FROM ?? "SynapseForge <onboarding@resend.dev>";
-const APP_URL = process.env.NEXTAUTH_URL ?? "https://synapseforge.ai";
+const FROM = process.env.RESEND_FROM ?? "OpenHelix AI <onboarding@resend.dev>";
+const APP_URL = process.env.NEXTAUTH_URL ?? "https://openhelixai.com";
 const BRAND_COLOR = "#7c3aed";
-const FOOTER_EMAIL = "hello@synapseforge.ai";
+const FOOTER_EMAIL = "hello@openhelixai.com";
 
 // ─── Core send ────────────────────────────────────────────────────────────────
 
@@ -62,7 +62,7 @@ function base(title: string, body: string, cta?: { href: string; label: string }
   <div style="max-width:600px;margin:40px auto;padding:0 16px">
     <!-- Logo -->
     <div style="margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid #27272a">
-      <span style="font-size:18px;font-weight:700;color:#fff;letter-spacing:-0.01em">⚡ SynapseForge</span>
+      <span style="font-size:18px;font-weight:700;color:#fff;letter-spacing:-0.01em">⚡ OpenHelix AI</span>
     </div>
 
     <!-- Card -->
@@ -75,7 +75,7 @@ function base(title: string, body: string, cta?: { href: string; label: string }
     <!-- Footer -->
     <div style="text-align:center;margin-top:24px">
       <p style="color:#52525b;font-size:12px;margin:0">
-        SynapseForge &nbsp;·&nbsp;
+        OpenHelix AI &nbsp;·&nbsp;
         <a href="mailto:${FOOTER_EMAIL}" style="color:#52525b;text-decoration:none">${FOOTER_EMAIL}</a>
       </p>
     </div>
@@ -103,7 +103,7 @@ export const email = {
     const url = `${APP_URL}/verify-email?token=${token}`;
     return send(
       to,
-      "Verify your SynapseForge email",
+      "Verify your OpenHelix AI email",
       base(
         `Verify your email, ${name} 👋`,
         `<p>Thanks for signing up! Click the button below to verify your email address.</p>
@@ -116,7 +116,7 @@ export const email = {
   async passwordReset(to: string, resetUrl: string) {
     return send(
       to,
-      "Reset your SynapseForge password",
+      "Reset your OpenHelix AI password",
       base(
         "Reset your password 🔑",
         `<p>Someone requested a password reset for your account. Click the button below to choose a new password.</p>
@@ -131,7 +131,7 @@ export const email = {
   async welcome(to: string, name: string) {
     return send(
       to,
-      "Welcome to SynapseForge ⚡",
+      "Welcome to OpenHelix AI ⚡",
       base(
         `Welcome, ${name}! 🚀`,
         `<p>Your account is set up. Here's what happens next:</p>
@@ -171,7 +171,7 @@ export const email = {
           `🆕 New signup: ${userName}`,
           base(
             `New user signed up: ${userName}`,
-            `<p>A new user just created a SynapseForge account and needs a manager assigned.</p>
+            `<p>A new user just created an OpenHelix AI account and needs a manager assigned.</p>
              ${row("Name", userName)}
              ${row("Email", userEmail)}
              <p style="font-size:13px;color:#71717a;margin-top:16px">Go to the admin panel to assign a manager and kick off their onboarding.</p>`,
@@ -417,7 +417,7 @@ export const email = {
       `Welcome to ${toPlan}! Your plan has been upgraded.`,
       base(
         `Plan changed: ${fromPlan} → ${toPlan}`,
-        `<p>Hi ${userName}, your SynapseForge subscription has been updated.</p>
+        `<p>Hi ${userName}, your OpenHelix AI subscription has been updated.</p>
          ${row("Previous plan", fromPlan)}
          ${row("New plan", toPlan)}
          ${instancesBlock}
@@ -446,7 +446,7 @@ export const email = {
       `Your plan has changed to ${toPlan}`,
       base(
         `Plan changed: ${fromPlan} → ${toPlan}`,
-        `<p>Hi ${userName}, your SynapseForge subscription has been updated.</p>
+        `<p>Hi ${userName}, your OpenHelix AI subscription has been updated.</p>
          ${row("Previous plan", fromPlan)}
          ${row("New plan", toPlan)}
          ${stoppedBlock}
@@ -467,7 +467,7 @@ export const email = {
       `💰 You earned $${commissionUsd.toFixed(2)} from ${referredName}'s subscription!`,
       base(
         `You earned a referral commission!`,
-        `<p>Hi ${referrerName}, great news! <strong style="color:#e4e4e7">${referredName}</strong> just upgraded their SynapseForge subscription using your referral link.</p>
+        `<p>Hi ${referrerName}, great news! <strong style="color:#e4e4e7">${referredName}</strong> just upgraded their OpenHelix AI subscription using your referral link.</p>
          ${row("Commission earned", `<strong style="color:#34d399">$${commissionUsd.toFixed(2)}</strong>`)}
          <p>This commission will be credited to your account. Keep sharing your referral link to earn more!</p>
          <p style="color:#71717a;font-size:13px">You earn 10% of every subscription you refer for 6 months. Commissions are paid out manually — contact us if you have questions.</p>`,
@@ -575,10 +575,10 @@ export const email = {
   async trialEnding(to: string, name: string, daysLeft: number) {
     return send(
       to,
-      `Your SynapseForge trial ends in ${daysLeft} day${daysLeft !== 1 ? 's' : ''}`,
+      `Your OpenHelix AI trial ends in ${daysLeft} day${daysLeft !== 1 ? 's' : ''}`,
       base(
         `Your trial is ending soon ⏰`,
-        `<p>Hi ${name}, your SynapseForge trial ends in <strong style="color:#e4e4e7">${daysLeft} day${daysLeft !== 1 ? 's' : ''}</strong>.</p>
+        `<p>Hi ${name}, your OpenHelix AI trial ends in <strong style="color:#e4e4e7">${daysLeft} day${daysLeft !== 1 ? 's' : ''}</strong>.</p>
          <p>Upgrade to Pro to keep your AI agent running without interruption. It takes less than 2 minutes.</p>`,
         { href: `${APP_URL}/dashboard/billing`, label: "Upgrade to Pro →" }
       )

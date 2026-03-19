@@ -8,7 +8,7 @@ export default function PrivacyPage() {
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <Zap className="w-6 h-6 text-violet-400" />
-            <span className="font-bold text-lg tracking-tight">SynapseForge</span>
+            <span className="font-bold text-lg tracking-tight">OpenHelix AI</span>
           </Link>
         </div>
       </nav>
@@ -25,7 +25,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">2. How We Use Your Information</h2>
-            <p>We use your information to provide and improve the SynapseForge service, communicate with you about your account, assign a dedicated manager, and send transactional emails (welcome, manager assignment, password reset). We do not sell your data to third parties.</p>
+            <p>We use your information to provide and improve the OpenHelix AI service, communicate with you about your account, assign a dedicated manager, and send transactional emails (welcome, manager assignment, password reset). We do not sell your data to third parties.</p>
           </section>
 
           <section>
@@ -36,14 +36,14 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">4. Communications</h2>
             <p>We send transactional emails related to your account (welcome, manager assignment, system notifications). You can contact us at{" "}
-              <a href="mailto:hello@synapseforge.ai" className="text-violet-400 hover:text-violet-300">hello@synapseforge.ai</a>{" "}
+              <a href="mailto:hello@openhelixai.com" className="text-violet-400 hover:text-violet-300">hello@openhelixai.com</a>{" "}
               to request data export or deletion.</p>
           </section>
 
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">5. Contact</h2>
             <p>Questions about this policy? Email us at{" "}
-              <a href="mailto:hello@synapseforge.ai" className="text-violet-400 hover:text-violet-300">hello@synapseforge.ai</a>.
+              <a href="mailto:hello@openhelixai.com" className="text-violet-400 hover:text-violet-300">hello@openhelixai.com</a>.
             </p>
           </section>
         </div>
