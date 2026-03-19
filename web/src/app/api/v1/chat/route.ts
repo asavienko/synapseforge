@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
     if (instance.status !== "running") {
       return NextResponse.json(
         { error: "Instance is not running", status: instance.status },
-        { status: 503 }
+        { status: 400 }
       );
     }
 
@@ -118,6 +118,15 @@ export async function POST(req: NextRequest) {
       data: { lastUsedAt: new Date() },
     }).catch(() => {});
 
+    // Validate OpenAI API key is configured
+    const openAiKey = process.env.SYNAPSEFORGE_OPENAI_KEY || process.env.OPENAI_API_KEY;
+    if (!openAiKey) {
+      return NextResponse.json(
+        { error: "OpenAI API key not configured. Set SYNAPSEFORGE_OPENAI_KEY environment variable." },
+        { status: 503 }
+      );
+    }
+
     // Call the LLM
     const stream = await callLLM({
       message,
@@ -125,6 +134,7 @@ export async function POST(req: NextRequest) {
       model: config.model || "gpt-4o-mini",
       temperature: config.temperature || 0.7,
       maxTokens: config.maxTokens || 1000,
+      apiKey: openAiKey,
     });
 
     // Return streaming response
@@ -192,22 +202,16 @@ async function callLLM({
   model,
   temperature,
   maxTokens,
+  apiKey,
 }: {
   message: string;
   systemPrompt: string;
   model: string;
   temperature: number;
   maxTokens: number;
+  apiKey: string;
 }): Promise<ReadableStream> {
   const encoder = new TextEncoder();
-
-  // Get user's OpenAI API key or use platform key
-  // This is a simplified version - in production you'd use the instance's credentials
-  const apiKey = process.env.OPENAI_API_KEY;
-
-  if (!apiKey) {
-    throw new Error("OpenAI API key not configured");
-  }
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -286,6 +290,7 @@ async function callLLM({
  */
 export async function OPTIONS() {
   return new Response(null, {
+    status: 204,
     headers: {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "POST, OPTIONS",
