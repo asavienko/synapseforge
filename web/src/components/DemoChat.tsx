@@ -25,12 +25,15 @@ export function DemoChat() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Generate sessionId on mount
+  // Generate sessionId on mount — safe across all browsers/WebViews
   useEffect(() => {
-    if (typeof crypto !== "undefined") {
-      setSessionId(crypto.randomUUID());
-    } else {
-      // Fallback for older browsers
+    try {
+      setSessionId(
+        typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+          ? crypto.randomUUID()
+          : `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${Math.random().toString(36).substr(2, 9)}`
+      );
+    } catch {
       setSessionId(`${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
     }
   }, []);
