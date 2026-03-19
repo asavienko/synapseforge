@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
+import { email } from "@/lib/email";
 import { revalidatePath } from "next/cache";
 import Stripe from "stripe";
 
@@ -301,9 +302,14 @@ async function handleTrialWillEnd(subscription: Stripe.Subscription) {
 
   if (!user || !user.email) return;
 
-  // Send trial ending email (implement with your email service)
-  console.log(`[stripe/webhook] Trial ending soon for user ${user.id}`);
+  // Calculate days left until trial ends
+  const trialEnd = subscription.trial_end;
+  if (!trialEnd) return;
 
-  // TODO: Send email notification
-  // await emailService.sendTrialEndingEmail(user.email, user.name);
+  const daysLeft = Math.ceil((trialEnd * 1000 - Date.now()) / (1000 * 60 * 60 * 24));
+
+  // Send trial ending email
+  console.log(`[stripe/webhook] Trial ending soon for user ${user.id} - ${daysLeft} days left`);
+
+  await email.trialEnding(user.email, user.name || "there", Math.max(0, daysLeft));
 }

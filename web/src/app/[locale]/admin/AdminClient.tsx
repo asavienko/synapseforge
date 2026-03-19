@@ -1205,7 +1205,7 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                         <span className="text-emerald-400 font-bold text-sm">
                           ${analyticsData.mrr.toLocaleString()}
                         </span>
-                        <span className="text-zinc-600 ml-2">(mock — connect Stripe for real data)</span>
+                        <span className="text-zinc-600 ml-2">(based on plan counts)</span>
                       </div>
                     </div>
                   </div>

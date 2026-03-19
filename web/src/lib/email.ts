@@ -571,4 +571,17 @@ export const email = {
       )
     );
   },
+
+  async trialEnding(to: string, name: string, daysLeft: number) {
+    return send(
+      to,
+      `Your SynapseForge trial ends in ${daysLeft} day${daysLeft !== 1 ? 's' : ''}`,
+      base(
+        `Your trial is ending soon ⏰`,
+        `<p>Hi ${name}, your SynapseForge trial ends in <strong style="color:#e4e4e7">${daysLeft} day${daysLeft !== 1 ? 's' : ''}</strong>.</p>
+         <p>Upgrade to Pro to keep your AI agent running without interruption. It takes less than 2 minutes.</p>`,
+        { href: `${APP_URL}/dashboard/billing`, label: "Upgrade to Pro →" }
+      )
+    );
+  },
 };
