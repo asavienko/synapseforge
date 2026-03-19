@@ -22,6 +22,7 @@ import { WhatsAppWizard } from "@/components/WhatsAppWizard";
 import { KnowledgeBaseManager } from "@/components/KnowledgeBaseManager";
 import { EmbedTab } from "@/components/EmbedTab";
 import { AnalyticsTab } from "@/components/AnalyticsTab";
+import { ApiKeysManager } from "@/components/ApiKeysManager";
 import { SANDBOX_LIMIT, getSandboxRemaining } from "@/lib/sandbox";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -5036,6 +5037,11 @@ print(resp.choices[0].message.content)`}</pre>
       {/* ── Analytics ── */}
       {tab === "Analytics" && (
         <AnalyticsTab instanceId={id} />
+      )}
+
+      {/* ── API Keys ── */}
+      {tab === "API Keys" && (
+        <ApiKeysManager instanceId={id} />
       )}
     </>
   );
