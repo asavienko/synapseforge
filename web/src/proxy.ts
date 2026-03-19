@@ -75,15 +75,16 @@ export default auth(async function middleware(req) {
   // Page routes: i18n + auth
   const bare = stripLocale(pathname);
   const locale = getLocaleFromPath(pathname);
-  const session = (req as unknown as { auth: unknown }).auth;
+  const session = (req as unknown as { auth: { user?: { id?: string } } | null }).auth;
+  const hasValidSession = !!(session?.user?.id);
 
   const isProtected = PROTECTED.some(p => bare === p || bare.startsWith(p + '/'));
   const isAuthOnly  = AUTH_ONLY.some(p => bare === p || bare.startsWith(p + '/'));
 
-  if (isProtected && !session) {
+  if (isProtected && !hasValidSession) {
     return NextResponse.redirect(new URL(`/${locale}/sign-in`, req.url));
   }
-  if (isAuthOnly && session) {
+  if (isAuthOnly && hasValidSession) {
     return NextResponse.redirect(new URL(`/${locale}/dashboard`, req.url));
   }
 
