@@ -7,7 +7,7 @@ import { getFeaturedTemplates, categoryColors } from "@/lib/templates";
 import {
   Zap, Bot, ArrowRight, Check, Shield, RefreshCw,
   MessageSquare, Code2, Activity, Users, Key, Settings, Rocket,
-  Sparkles,
+  Sparkles, CalendarDays,
 } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
@@ -103,6 +103,13 @@ export default async function LandingPage() {
           >
             <Sparkles className="w-5 h-5" />
             {t("hero.ctaSecondary")}
+          </Link>
+          <Link
+            href="/contact?subject=Demo+Request"
+            className="flex items-center gap-2 border border-violet-500/30 hover:border-violet-500/60 bg-violet-500/5 hover:bg-violet-500/10 transition-colors px-8 py-4 rounded-xl font-semibold text-lg text-violet-300 hover:text-violet-200"
+          >
+            <CalendarDays className="w-5 h-5" />
+            {t("hero.bookDemo")}
           </Link>
         </div>
 

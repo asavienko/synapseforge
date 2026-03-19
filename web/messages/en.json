@@ -25,7 +25,8 @@
     "subtitle": "Add your OpenAI key. One click deploys a 24/7 AI agent to your own cloud server — ready to chat on Telegram, Discord, or Slack.",
     "cta": "Start for free →",
     "ctaSecondary": "See what we build",
-    "footnote": "Free plan · No credit card required · Your keys, your data"
+    "footnote": "Free plan · No credit card required · Your keys, your data",
+    "bookDemo": "Book a Demo"
   },
   "services": {
     "title": "Everything AI, handled.",

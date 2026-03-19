@@ -25,7 +25,8 @@
     "subtitle": "Añade tu clave de OpenAI. Un clic despliega un agente de IA 24/7 en tu propio servidor — listo para chatear en Telegram, Discord o Slack.",
     "cta": "Desplegar gratis →",
     "ctaSecondary": "Ver cómo funciona",
-    "footnote": "Plan gratuito · Sin tarjeta de crédito · Tus claves, tus datos"
+    "footnote": "Plan gratuito · Sin tarjeta de crédito · Tus claves, tus datos",
+    "bookDemo": "Reservar Demo"
   },
   "services": {
     "title": "Lo Que Construimos Para Ti",
