@@ -6,9 +6,10 @@ import { Copy, Check, Code, Palette, MessageSquare } from "lucide-react";
 interface EmbedTabProps {
   instanceId: string;
   instanceName: string;
+  referralCode?: string;
 }
 
-export function EmbedTab({ instanceId, instanceName }: EmbedTabProps) {
+export function EmbedTab({ instanceId, instanceName, referralCode }: EmbedTabProps) {
   const [copied, setCopied] = useState(false);
   const [position, setPosition] = useState<"bottom-right" | "bottom-left">("bottom-right");
   const [color, setColor] = useState("#8b5cf6");
@@ -22,7 +23,7 @@ export function EmbedTab({ instanceId, instanceName }: EmbedTabProps) {
   data-position="${position}"
   data-color="${color}"
   data-greeting="${greeting}"
-  data-branding="${showBranding}"></script>
+  data-branding="${showBranding}"${referralCode ? `\n  data-ref="${referralCode}"` : ''}></script>
 <!-- End SynapseForge AI Chat Widget -->`.trim();
 
   const copyToClipboard = () => {

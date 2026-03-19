@@ -1298,6 +1298,10 @@ export default function InstanceDetailPage() {
   const [syncing, setSyncing] = useState(false);
   const [syncDone, setSyncDone] = useState(false);
 
+  // Referral code for widget embed
+  const [referralCode, setReferralCode] = useState<string | undefined>(undefined);
+  const [referralLoading, setReferralLoading] = useState(false);
+
   // Full chat tab state
   const [chatMessages, setChatMessages] = useState<ChatMsg[]>([]);
   const [chatInput, setChatInput] = useState("");
@@ -1552,6 +1556,14 @@ export default function InstanceDetailPage() {
     if (tab === "Credentials") loadCredentials();
     if (tab === "Deploy" && credentials.length === 0) loadCredentials();
     if (tab === "Chat") loadChatHistory();
+    if (tab === "Embed" && !referralCode && !referralLoading) {
+      setReferralLoading(true);
+      fetch("/api/referrals")
+        .then((r) => r.ok ? r.json() : null)
+        .then((d) => { if (d?.code) setReferralCode(d.code); })
+        .catch(() => {})
+        .finally(() => setReferralLoading(false));
+    }
   }, [tab]);
 
   useEffect(() => {
@@ -5063,7 +5075,7 @@ print(resp.choices[0].message.content)`}</pre>
 
       {/* ── Embed ── */}
       {tab === "Embed" && (
-        <EmbedTab instanceId={id} instanceName={instance.name} />
+        <EmbedTab instanceId={id} instanceName={instance.name} referralCode={referralCode} />
       )}
 
       {/* ── Analytics ── */}

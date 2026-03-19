@@ -14,6 +14,7 @@
     config.color = scriptTag.getAttribute('data-color') || config.color;
     config.greeting = scriptTag.getAttribute('data-greeting') || config.greeting;
     config.hideBranding = scriptTag.getAttribute('data-hide-branding') === 'true' || config.hideBranding;
+    config.ref = scriptTag.getAttribute('data-ref') || config.ref;
   }
   
   // Parse query string from script src for ?id= support
@@ -46,6 +47,7 @@
     avatarUrl: null,
     agentName: null,
     hideBranding: config.hideBranding || false,
+    ref: config.ref || null,
     loaded: false
   };
 
@@ -445,7 +447,8 @@
     if (!widgetConfig.hideBranding) {
       var branding = document.createElement('div');
       branding.className = 'sf-widget-branding';
-      branding.innerHTML = '<a href="https://synapseforge-mu.vercel.app" target="_blank" rel="noopener noreferrer">Powered by SynapseForge</a>';
+      var brandUrl = 'https://synapseforge-mu.vercel.app' + (widgetConfig.ref ? '?ref=' + encodeURIComponent(widgetConfig.ref) : '');
+      branding.innerHTML = '<a href="' + brandUrl + '" target="_blank" rel="noopener noreferrer">Powered by SynapseForge</a>';
       container.appendChild(branding);
     }
     
