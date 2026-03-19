@@ -109,7 +109,7 @@ describe("18 · Deploy Tab", () => {
     cy.get("main", { timeout: 10000 }).should("be.visible");
 
     // Open Deploy tab
-    cy.contains("button", /Deploy/i, { timeout: 10000 }).click();
+    cy.contains("button", "Deploy", { timeout: 10000 }).click();
 
     // Wait for the checklist to render with the LLM check
     cy.contains(/AI provider key|OpenAI API key|LLM|OpenAI/i, { timeout: 10000 }).should("be.visible");
@@ -235,8 +235,8 @@ describe("18 · Deploy Tab", () => {
     // Wait for main content to load
     cy.get("main", { timeout: 10000 }).should("be.visible");
     
-    // Find and click Deploy tab (use case-insensitive regex)
-    cy.contains("button", /Deploy/i, { timeout: 10000 }).click();
+    // Find and click Deploy tab
+    cy.contains("button", "Deploy", { timeout: 10000 }).click();
 
     // Click Add key button
     cy.get("main").contains("button", /add key/i).click();
