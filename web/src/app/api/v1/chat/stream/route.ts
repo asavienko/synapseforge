@@ -119,10 +119,10 @@ export async function POST(req: NextRequest) {
     }).catch(() => {});
 
     // Validate OpenAI API key is configured
-    const openAiKey = process.env.SYNAPSEFORGE_OPENAI_KEY || process.env.OPENAI_API_KEY;
+    const openAiKey = process.env.OPENHELIX_OPENAI_KEY || process.env.OPENAI_API_KEY;
     if (!openAiKey) {
       return NextResponse.json(
-        { error: "OpenAI API key not configured. Set SYNAPSEFORGE_OPENAI_KEY environment variable." },
+        { error: "OpenAI API key not configured. Set OPENHELIX_OPENAI_KEY environment variable." },
         { status: 502 }
       );
     }
