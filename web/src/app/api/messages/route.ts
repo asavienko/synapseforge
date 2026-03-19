@@ -9,7 +9,12 @@ function isAdmin(email?: string | null) {
   return adminEmails.includes(email ?? "");
 }
 
-// GET: user fetches their own messages; admin fetches by ?userId=
+async function getManagerRecord(email?: string | null) {
+  if (!email) return null;
+  return prisma.manager.findUnique({ where: { email } });
+}
+
+// GET: user fetches their own messages; admin/manager fetches by ?userId=
 export async function GET(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -19,8 +24,18 @@ export async function GET(req: NextRequest) {
 
   let userId = session.user.id;
 
-  if (queryUserId && isAdmin(session.user.email)) {
-    userId = queryUserId;
+  if (queryUserId) {
+    const admin = isAdmin(session.user.email);
+    const manager = admin ? null : await getManagerRecord(session.user.email);
+
+    if (admin) {
+      userId = queryUserId;
+    } else if (manager) {
+      // Verify this client belongs to the requesting manager
+      const client = await prisma.user.findFirst({ where: { id: queryUserId, managerId: manager.id } });
+      if (!client) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      userId = queryUserId;
+    }
   }
 
   const user = await prisma.user.findUnique({
@@ -29,11 +44,18 @@ export async function GET(req: NextRequest) {
   });
   if (!user?.managerId) return NextResponse.json({ noManager: true }, { status: 200 });
 
-  // Mark messages sent by manager as read
-  await prisma.message.updateMany({
-    where: { userId, senderType: "manager", read: false },
-    data: { read: true },
-  });
+  // Mark messages sent by manager as read (when manager opens the thread)
+  if (queryUserId && userId !== session.user.id) {
+    await prisma.message.updateMany({
+      where: { userId, senderType: "user", read: false },
+      data: { read: true },
+    });
+  } else {
+    await prisma.message.updateMany({
+      where: { userId, senderType: "manager", read: false },
+      data: { read: true },
+    });
+  }
 
   const messages = await prisma.message.findMany({
     where: { userId },
@@ -55,10 +77,19 @@ export async function POST(req: NextRequest) {
   const { body } = await req.json();
   if (!body?.trim()) return NextResponse.json({ error: "Message cannot be empty." }, { status: 400 });
 
-  if (asManager && isAdmin(session.user.email) && queryUserId) {
-    // Admin replying as manager
+  const managerRecord = (!isAdmin(session.user.email) && asManager && queryUserId)
+    ? await getManagerRecord(session.user.email)
+    : null;
+
+  if (asManager && queryUserId && (isAdmin(session.user.email) || managerRecord)) {
+    // Admin or manager replying to a client
     const user = await prisma.user.findUnique({ where: { id: queryUserId } });
     if (!user?.managerId) return NextResponse.json({ error: "User has no manager assigned." }, { status: 400 });
+
+    // Managers can only message their own clients
+    if (managerRecord && user.managerId !== managerRecord.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
     const msg = await prisma.message.create({
       data: { body: body.trim(), senderType: "manager", userId: queryUserId, managerId: user.managerId },
