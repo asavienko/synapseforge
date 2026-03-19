@@ -376,6 +376,7 @@
 
   function createButton() {
     var btn = document.createElement('button');
+    btn.id = '_sf_bubble';
     btn.className = 'sf-widget-btn position-' + widgetConfig.position;
     btn.setAttribute('aria-label', 'Open chat with ' + (widgetConfig.agentName || 'AI Assistant'));
     btn.innerHTML = 
@@ -553,16 +554,20 @@
     // Create elements
     elements.button = createButton();
     elements.container = createContainer();
-    
+
+    // Root wrapper for test/identification
+    var root = document.createElement('div');
+    root.id = '_sf_widget_root';
+    root.appendChild(elements.button);
+    root.appendChild(elements.container);
+
     // Add to DOM when ready
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', function() {
-        document.body.appendChild(elements.button);
-        document.body.appendChild(elements.container);
+        document.body.appendChild(root);
       });
     } else {
-      document.body.appendChild(elements.button);
-      document.body.appendChild(elements.container);
+      document.body.appendChild(root);
     }
     
     // Listen for messages from iframe
