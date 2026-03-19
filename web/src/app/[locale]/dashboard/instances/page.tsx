@@ -187,14 +187,14 @@ export default function InstancesPage() {
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 pt-14 md:p-8 md:pt-6">
       {toast && <Toast text={toast.text} type={toast.type} />}
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-white">{t("title")}</h1>
           <p className="text-zinc-400 mt-1">{t("subtitle")}</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Link
             href="/templates"
             className="hidden sm:flex items-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] transition-colors px-4 py-2.5 rounded-lg text-sm font-semibold text-zinc-300"
@@ -204,14 +204,14 @@ export default function InstancesPage() {
           </Link>
           <button
             onClick={() => setShowTemplateSelector(true)}
-            className="flex items-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] transition-colors px-4 py-2.5 rounded-lg text-sm font-semibold text-zinc-300"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] transition-colors px-4 py-2.5 rounded-lg text-sm font-semibold text-zinc-300"
           >
             <Sparkles className="w-4 h-4" />
             From Template
           </button>
           <button
             onClick={() => setShowWizard(true)}
-            className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2.5 rounded-lg text-sm font-semibold text-white"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2.5 rounded-lg text-sm font-semibold text-white"
           >
             <Plus className="w-4 h-4" />
             {t("newInstance")}
@@ -237,7 +237,7 @@ export default function InstancesPage() {
           </button>
         </div>
       ) : (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {instances.map((instance) => {
             const isProvisioning = instance.provisionStatus === "provisioning";
             return (

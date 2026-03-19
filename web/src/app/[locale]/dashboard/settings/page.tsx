@@ -21,7 +21,7 @@ export default async function SettingsPage() {
   const plan = PLANS[user.plan as keyof typeof PLANS];
 
   return (
-    <div className="p-4 md:p-8 max-w-2xl">
+    <div className="p-4 pt-14 md:p-8 md:pt-6 max-w-2xl">
       <h1 className="text-2xl font-bold text-white mb-8">{t("title")}</h1>
 
       <section className="glow-border rounded-2xl bg-white/[0.02] p-6 mb-6">

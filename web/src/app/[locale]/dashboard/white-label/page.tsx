@@ -26,7 +26,7 @@ export default async function WhiteLabelPage() {
   const isAgency = user?.plan === "enterprise";
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
+    <div className="max-w-2xl mx-auto px-4 pt-14 pb-8 md:px-4 md:pt-6 md:pb-8">
       <h1 className="text-2xl font-bold text-white mb-2">{t("title")}</h1>
       <p className="text-zinc-400 mb-8">{t("subtitle")}</p>
       <WhiteLabelForm

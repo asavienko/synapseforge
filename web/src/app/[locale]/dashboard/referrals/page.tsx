@@ -181,7 +181,7 @@ export default function ReferralsPage() {
   const totalEarnings = data.paidEarnings + data.pendingEarnings;
 
   return (
-    <div className="p-6 md:p-8">
+    <div className="pt-14 md:pt-0 p-4 md:p-8">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="mb-8">

@@ -2144,7 +2144,7 @@ export default function InstanceDetailPage() {
 
   return (
     <>
-    <div className="p-4 md:p-8 max-w-4xl">
+    <div className="pt-14 md:pt-0 p-4 md:p-8 max-w-4xl overflow-x-hidden">
       {/* Toast */}
       {toast && (
         <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-xl text-sm font-medium shadow-2xl border ${
@@ -2215,7 +2215,7 @@ export default function InstanceDetailPage() {
 
       {/* Tabs — scrollable on mobile so all 8 tabs are always reachable */}
       <div className="relative mb-6">
-        <div className="flex gap-1 border-b border-white/5 overflow-x-auto scrollbar-none">
+        <div className="flex gap-1 border-b border-white/5 overflow-x-auto scrollbar-hide">
           {TABS.map((tabKey) => {
             const tabLabels: Record<string, string> = {
               "Overview": t("tabs.overview"),
@@ -2604,7 +2604,7 @@ export default function InstanceDetailPage() {
 
       {/* ── Chat ── */}
       {tab === "Chat" && (
-        <div className="flex flex-col" style={{ minHeight: 520 }}>
+        <div className="flex flex-col" style={{ minHeight: 'calc(100vh - 200px)' }}>
           {/* Header bar */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2 text-sm text-zinc-500">
@@ -2919,7 +2919,7 @@ export default function InstanceDetailPage() {
               )}
 
               {/* Input */}
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <textarea
                   data-testid="chat-input"
                   value={chatInput}
@@ -2939,10 +2939,10 @@ export default function InstanceDetailPage() {
                   onClick={() => sendChat()}
                   disabled={chatLoading || !chatInput.trim()}
                   data-testid="chat-send-btn"
-                  className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 transition-colors px-4 py-3 rounded-xl text-sm font-semibold text-white self-end"
+                  className="flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 transition-colors px-4 py-3 rounded-xl text-sm font-semibold text-white self-end"
                 >
                   {chatLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-                  {chatLoading ? t("chat.sending") : t("chat.send")}
+                  <span className="hidden sm:inline">{chatLoading ? t("chat.sending") : t("chat.send")}</span>
                 </button>
               </div>
             </>

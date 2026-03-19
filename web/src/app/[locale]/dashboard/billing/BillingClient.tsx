@@ -230,7 +230,7 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
   const formatNumber = (num: number) => num.toLocaleString("en-US");
 
   return (
-    <div className="p-6 md:p-8 max-w-6xl">
+    <div className="pt-14 md:pt-0 p-4 md:p-8 max-w-6xl">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-white">{tb("title")}</h1>
