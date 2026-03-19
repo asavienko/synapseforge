@@ -101,7 +101,8 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
   // Get subscription details
   const stripe = getStripe();
-  const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const subscription = await stripe.subscriptions.retrieve(subscriptionId) as any;
   const priceId = subscription.items.data[0]?.price.id;
   const planKey = priceId ? PRICE_TO_PLAN[priceId] : null;
 
@@ -142,8 +143,10 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
  * Recurring payment succeeded
  */
 async function handleInvoicePaid(invoice: Stripe.Invoice) {
-  const subscriptionId = invoice.subscription as string;
-  const customerId = invoice.customer as string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const subscriptionId = (invoice as any).subscription as string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const customerId = (invoice as any).customer as string;
 
   if (!subscriptionId || !customerId) return;
 
@@ -155,7 +158,8 @@ async function handleInvoicePaid(invoice: Stripe.Invoice) {
 
   // Update period end and ensure plan is active
   const stripe = getStripe();
-  const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const subscription = await stripe.subscriptions.retrieve(subscriptionId) as any;
 
   await prisma.user.update({
     where: { id: user.id },
@@ -174,8 +178,10 @@ async function handleInvoicePaid(invoice: Stripe.Invoice) {
  * Recurring payment failed
  */
 async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
-  const subscriptionId = invoice.subscription as string;
-  const customerId = invoice.customer as string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const subscriptionId = (invoice as any).subscription as string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const customerId = (invoice as any).customer as string;
 
   if (!subscriptionId || !customerId) return;
 
@@ -203,8 +209,10 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
  * Subscription changed (plan change, cancellation scheduled, etc.)
  */
 async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
-  const customerId = subscription.customer as string;
-  const priceId = subscription.items.data[0]?.price.id;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const sub = subscription as any;
+  const customerId = sub.customer as string;
+  const priceId = sub.items.data[0]?.price.id;
   const planKey = priceId ? PRICE_TO_PLAN[priceId] : null;
 
   const user = await prisma.user.findFirst({
@@ -214,11 +222,11 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   if (!user) return;
 
   const updateData: Record<string, unknown> = {
-    stripeCurrentPeriodEnd: new Date(subscription.current_period_end * 1000),
+    stripeCurrentPeriodEnd: new Date(sub.current_period_end * 1000),
   };
 
   // Handle cancellation
-  if (subscription.cancel_at_period_end) {
+  if (sub.cancel_at_period_end) {
     console.log(`[stripe/webhook] User ${user.id} scheduled cancellation`);
     updateData.stripeCancelAtPeriodEnd = true;
   } else {
