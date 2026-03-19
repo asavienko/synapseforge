@@ -1463,6 +1463,16 @@ export default function InstanceDetailPage() {
     }
   }, [searchParams, firstRunDetected]);
 
+  // Detect ?tab= param and auto-switch to that tab (e.g. from upsell card)
+  useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (tabParam && TABS.includes(tabParam as typeof TABS[number])) {
+      setTab(tabParam as typeof TABS[number]);
+    }
+  // Only run once on mount
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Detect sandbox→real graduation and show the "what next?" modal
   useEffect(() => {
     if (!instance) return;
@@ -2352,25 +2362,42 @@ export default function InstanceDetailPage() {
             })()}
           </div>
           {/* Sandbox status widget */}
-          {instance.sandboxMode && (
-            <div className="p-4 bg-violet-500/5 border border-violet-500/15 rounded-xl">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-violet-300">
-                  {t("overview.sandboxMode")}
-                </span>
-                <span className="text-xs text-zinc-500">
-                  {instance.sandboxUsed ?? 0}/{SANDBOX_LIMIT} {t("overview.messagesUsed")}
-                </span>
+          {instance.sandboxMode && (() => {
+            const used = instance.sandboxUsed ?? 0;
+            const exhausted = used >= SANDBOX_LIMIT;
+            const pct = Math.min(100, (used / SANDBOX_LIMIT) * 100);
+            return (
+              <div className={`p-4 rounded-xl border ${exhausted ? "bg-amber-500/5 border-amber-500/30" : "bg-violet-500/5 border-violet-500/15"}`}>
+                <div className="flex items-center justify-between mb-2">
+                  <span className={`text-sm font-medium ${exhausted ? "text-amber-300" : "text-violet-300"}`}>
+                    {exhausted ? "⚠️ Free messages used up" : t("overview.sandboxMode")}
+                  </span>
+                  <span className="text-xs text-zinc-500">
+                    {used}/{SANDBOX_LIMIT} {t("overview.messagesUsed")}
+                  </span>
+                </div>
+                <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all ${exhausted ? "bg-amber-500" : "bg-violet-500"}`}
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+                {exhausted ? (
+                  <div className="mt-3 flex items-center gap-3">
+                    <p className="text-xs text-amber-400/80 flex-1">Add your own API key to keep going — no per-message limits.</p>
+                    <button
+                      onClick={() => setTab("Credentials")}
+                      className="shrink-0 text-xs font-semibold text-white bg-violet-600 hover:bg-violet-500 px-3 py-1.5 rounded-lg transition-colors"
+                    >
+                      Add API Key →
+                    </button>
+                  </div>
+                ) : (
+                  <p className="text-xs text-zinc-600 mt-2">{t("overview.sandboxHint")}</p>
+                )}
               </div>
-              <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-violet-500 rounded-full transition-all"
-                  style={{ width: `${Math.min(100, ((instance.sandboxUsed ?? 0) / SANDBOX_LIMIT) * 100)}%` }}
-                />
-              </div>
-              <p className="text-xs text-zinc-600 mt-2">{t("overview.sandboxHint")}</p>
-            </div>
-          )}
+            );
+          })()}
 
           {/* Usage Stats Panel */}
           <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden" data-testid="usage-panel">
