@@ -70,6 +70,24 @@ export default async function DashboardPage() {
       })
     : 0;
 
+  // Get message counts per instance for the last 7 days
+  // Using a fixed timestamp approach to avoid impure Date.now() during render
+  const now = new Date();
+  const sevenDaysAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
+  const msgCounts = user.instances.length > 0
+    ? await prisma.chatMessage.groupBy({
+        by: ['instanceId'],
+        where: {
+          instanceId: { in: user.instances.map(i => i.id) },
+          createdAt: { gte: sevenDaysAgo },
+          role: 'user', // count user messages = conversations
+        },
+        _count: { id: true },
+      })
+    : [];
+  const msgCountMap = Object.fromEntries(msgCounts.map(r => [r.instanceId, r._count.id]));
+  const weeklyConversations = msgCounts.reduce((sum, r) => sum + r._count.id, 0);
+
   // Check: has a channel integration
   const hasChannel = firstInstance
     ? await prisma.instanceCredential.count({
@@ -224,6 +242,18 @@ export default async function DashboardPage() {
         </div>
       </div>
 
+      {/* Weekly Summary Row */}
+      <div className="flex items-center gap-4 mb-6">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+          <Activity className="w-3.5 h-3.5 text-emerald-400" />
+          <span className="text-xs font-medium text-emerald-400">{runningCount} running</span>
+        </div>
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-violet-500/10 border border-violet-500/20">
+          <MessageSquare className="w-3.5 h-3.5 text-violet-400" />
+          <span className="text-xs font-medium text-violet-400">{weeklyConversations} msgs this week</span>
+        </div>
+      </div>
+
       {user.manager ? (
         <div className="glow-border rounded-2xl p-5 bg-white/[0.02] mb-6 flex items-center gap-4">
           <div className="w-10 h-10 rounded-full bg-violet-600/30 border border-violet-500/30 flex items-center justify-center shrink-0">
@@ -322,7 +352,7 @@ export default async function DashboardPage() {
                   <Bot className="w-4 h-4 text-zinc-600 shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="text-sm text-white truncate">{instance.name}</div>
-                    <div className="text-xs text-zinc-600">{instance.type}</div>
+                    <div className="text-xs text-zinc-500">{msgCountMap[instance.id] ?? 0} msgs this week · {instance.type}</div>
                   </div>
                   <span className={`text-xs px-2 py-0.5 rounded-full ${STATUS_COLORS[instance.status]}`}>{instance.status}</span>
                 </Link>
