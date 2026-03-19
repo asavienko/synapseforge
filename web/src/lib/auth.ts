@@ -55,9 +55,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   providers,
   // Trust localhost in development and CI environments
   // AUTH_TRUST_HOST is the standard env var for Auth.js v5
-  trustHost: process.env.NODE_ENV !== "production" || 
-             process.env.AUTH_TRUST_HOST === "true" || 
-             process.env.CI === "true",
+  // Trust host on Vercel (edge handles security), in dev, CI, or if explicitly set
+  trustHost: true,
   callbacks: {
     async signIn({ user, account }) {
       // For Google OAuth: upsert user into DB
