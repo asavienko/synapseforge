@@ -198,7 +198,7 @@ export function WidgetChatUI({
 
         // Notify parent of new message
         if (window.parent !== window) {
-          window.parent.postMessage({ type: "synapseforge-chat", action: "new-message" }, "*");
+          window.parent.postMessage({ type: "openhelix-chat", action: "new-message" }, "*");
         }
       } else {
         // Fallback for non-streaming responses
