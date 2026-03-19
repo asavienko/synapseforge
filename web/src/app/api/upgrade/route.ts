@@ -32,7 +32,35 @@ export async function POST(req: NextRequest) {
       user.plan,
       requestedPlan,
       note ?? ""
-    );
+    ).catch(console.error);
+  }
+
+  // Always notify admins too (backup if no manager, or for visibility)
+  const adminEmails = (process.env.ADMIN_EMAILS ?? "").split(",").map((e) => e.trim()).filter(Boolean);
+  for (const adminEmail of adminEmails) {
+    await email.upgradeRequest(
+      adminEmail,
+      "Admin",
+      user.name ?? user.email,
+      user.email ?? "",
+      user.plan,
+      requestedPlan,
+      note ?? ""
+    ).catch(console.error);
+  }
+
+  // Log upgrade request to activity (use existing activityLog if there's an instance, or a standalone log)
+  const userInstance = await prisma.aIInstance.findFirst({
+    where: { userId: session.user.id },
+  });
+  if (userInstance) {
+    await prisma.activityLog.create({
+      data: {
+        instanceId: userInstance.id,
+        event: "upgrade_requested",
+        details: `Plan upgrade requested: ${user.plan} → ${requestedPlan}${note ? ` — "${note}"` : ""}`,
+      },
+    }).catch(console.error);
   }
 
   return NextResponse.json({ ok: true });

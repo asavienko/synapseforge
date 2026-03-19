@@ -172,6 +172,12 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
     if (data.url) {
       window.location.assign(data.url);
     } else if (data.managedPlanContact || data.stripeUnavailable) {
+      // Record upgrade intent — non-blocking
+      fetch("/api/upgrade", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ requestedPlan: planKey, note: "Initiated upgrade — awaiting manual activation" }),
+      }).catch(console.error);
       setShowContactUpgrade(true);
     } else {
       setBillingError(data.error || "Something went wrong. Please try again.");
