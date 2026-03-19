@@ -438,7 +438,7 @@ export default async function LandingPage() {
           </div>
 
           {/* Feature callouts below mockup */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
             {[
               { emoji: "⚡", label: "Live in 3 minutes", desc: "One click to deploy" },
               { emoji: "🤖", label: "Any LLM model", desc: "OpenAI, Claude, custom" },
@@ -462,7 +462,7 @@ export default async function LandingPage() {
           <p className="text-zinc-400 max-w-xl mx-auto">{t("features.subtitle")}</p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {[
             { icon: MessageSquare, color: "text-violet-400", title: t("features.f1title"), desc: t("features.f1desc") },
             { icon: Code2,         color: "text-blue-400",   title: t("features.f2title"), desc: t("features.f2desc") },
@@ -577,7 +577,7 @@ export default async function LandingPage() {
           <p className="text-zinc-400">{t("pricing.subtitle")}</p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {(["free", "pro", "enterprise"] as const).map((plan) => {
             const highlighted = plan === "pro";
             const features: string[] = plan === "free"
@@ -591,7 +591,7 @@ export default async function LandingPage() {
                 key={plan}
                 className={`rounded-2xl p-8 flex flex-col relative ${
                   highlighted
-                    ? "bg-violet-600/20 border border-violet-500/50 shadow-lg shadow-violet-500/10 ring-2 ring-violet-500/50"
+                    ? "bg-violet-600/20 border border-violet-500/50 shadow-lg shadow-violet-500/10 ring-2 ring-violet-500/50 order-first sm:order-none"
                     : "glow-border bg-white/[0.02]"
                 }`}
               >

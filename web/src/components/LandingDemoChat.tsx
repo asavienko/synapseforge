@@ -122,9 +122,8 @@ export function LandingDemoChat() {
       {/* ── Expanded: chat window ────────────────────────────────────────── */}
       {open && (
         <div
-          className="fixed bottom-6 right-6 z-50 flex flex-col bg-zinc-900 border border-white/10 rounded-2xl shadow-2xl shadow-black/60 overflow-hidden"
+          className="fixed bottom-6 right-6 z-50 flex flex-col bg-zinc-900 border border-white/10 rounded-2xl shadow-2xl shadow-black/60 overflow-hidden w-[90vw] sm:w-80 max-w-[calc(100vw-32px)]"
           style={{
-            width: "min(24rem, calc(100vw - 2rem))",
             maxHeight: "min(24rem, calc(100vh - 6rem))",
           }}
         >
