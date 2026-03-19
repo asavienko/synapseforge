@@ -31,7 +31,7 @@ export default async function PrivacyPage() {
             <Shield className="w-3.5 h-3.5" />
             Your Data, Your Control
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Privacy Policy</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t("privacy.title")}</h1>
           <p className="text-zinc-500">Effective Date: March 2026</p>
         </div>
 

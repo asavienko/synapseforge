@@ -31,7 +31,7 @@ export default async function TermsPage() {
             <FileText className="w-3.5 h-3.5" />
             Legal Agreement
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Terms of Service</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t("terms.title")}</h1>
           <p className="text-zinc-500">Effective Date: March 2026</p>
         </div>
 
