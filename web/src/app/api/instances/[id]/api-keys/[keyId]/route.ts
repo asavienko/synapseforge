@@ -25,12 +25,11 @@ export async function DELETE(
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    // Delete the credential
-    await prisma.userCredential.deleteMany({
+    // Delete the API key
+    await prisma.apiKey.deleteMany({
       where: {
         id: keyId,
-        userId: session.user.id,
-        key: { startsWith: `api_key_${id}_` },
+        instanceId: id,
       },
     });
 

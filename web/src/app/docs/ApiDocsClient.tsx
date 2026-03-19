@@ -161,7 +161,7 @@ export function ApiDocsClient() {
             {/* Endpoints */}
             <section id="endpoints">
               <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                <Webhook className="w-5 h-5 text-violet-400" /
+                <Webhook className="w-5 h-5 text-violet-400" />
                 Endpoints
               </h2>
 

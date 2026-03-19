@@ -156,7 +156,7 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
             ⚠️ Copy your API key now!
           </p>
           <p className="text-sm text-amber-300/80 mb-3">
-            You won't be able to see it again.
+            You won&apos;t be able to see it again.
           </p>
           <div className="flex items-center gap-2">
             <code className="flex-1 bg-black/30 rounded px-3 py-2 text-sm font-mono break-all">
@@ -173,7 +173,7 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
             onClick={() => setNewlyCreatedKey(null)}
             className="mt-3 text-sm text-amber-400 hover:text-amber-300"
           >
-            I've copied it
+            I&apos;ve copied it
           </button>
         </div>
       )}
@@ -281,7 +281,7 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
           <strong className="text-zinc-300">Using your API key:</strong>
         </p>
         <code className="block bg-black/30 rounded p-3 text-xs font-mono mt-2">
-          curl -H "Authorization: Bearer YOUR_API_KEY" \\n<br>
+          curl -H &quot;Authorization: Bearer YOUR_API_KEY&quot; \\n<br />
           &nbsp;&nbsp;https://synapseforge.ai/api/instances/{instanceId}/chat
         </code>
       </div>

@@ -74,9 +74,20 @@ export async function POST(
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
+    // Get user ID from session
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { id: true },
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
     // Create webhook
     const webhook = await prisma.webhook.create({
       data: {
+        userId: user.id,
         instanceId: id,
         url,
         events,

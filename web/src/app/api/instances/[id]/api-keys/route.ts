@@ -26,35 +26,27 @@ export async function GET(
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    // Get API keys from UserCredential table
-    const credentials = await prisma.userCredential.findMany({
-      where: { 
-        userId: session.user.id,
-        key: { startsWith: `api_key_${id}_` }
-      },
+    // Get API keys from ApiKey table
+    const apiKeys = await prisma.apiKey.findMany({
+      where: { instanceId: id },
       select: {
         id: true,
-        key: true,
+        name: true,
+        preview: true,
         createdAt: true,
-        updatedAt: true,
+        lastUsedAt: true,
       },
       orderBy: { createdAt: "desc" },
     });
 
     // Format keys for response
-    const keys = credentials.map((cred) => {
-      // Extract name from key (api_key_instanceId_name)
-      const parts = cred.key.split("_");
-      const name = parts.slice(3).join("_") || "API Key";
-      
-      return {
-        id: cred.id,
-        name: name,
-        key: cred.key.replace(`api_key_${id}_`, "sf_"), // Mask the full key
-        createdAt: cred.createdAt,
-        lastUsedAt: cred.updatedAt,
-      };
-    });
+    const keys = apiKeys.map((k) => ({
+      id: k.id,
+      name: k.name,
+      key: k.preview, // Use preview (masked) for display
+      createdAt: k.createdAt,
+      lastUsedAt: k.lastUsedAt,
+    }));
 
     return NextResponse.json({ keys });
   } catch (error) {
@@ -96,23 +88,24 @@ export async function POST(
 
     // Generate API key
     const keyValue = `sf_${randomBytes(32).toString("hex")}`;
-    const storageKey = `api_key_${id}_${name.trim()}`;
+    const preview = `sf_${keyValue.slice(3, 11)}...${keyValue.slice(-4)}`;
 
     // Store in database
-    const credential = await prisma.userCredential.create({
+    const apiKey = await prisma.apiKey.create({
       data: {
-        userId: session.user.id,
-        key: storageKey,
-        value: keyValue,
+        instanceId: id,
+        name: name.trim(),
+        key: keyValue,
+        preview,
       },
     });
 
     return NextResponse.json({
       key: {
-        id: credential.id,
-        name: name.trim(),
-        key: keyValue,
-        createdAt: credential.createdAt,
+        id: apiKey.id,
+        name: apiKey.name,
+        key: keyValue, // Return full key only on creation
+        createdAt: apiKey.createdAt,
         lastUsedAt: null,
       },
     });

@@ -15,11 +15,12 @@ export async function triggerWebhooks(
 ): Promise<void> {
   try {
     // Find all active webhooks for this instance that subscribe to this event
+    // events is stored as comma-separated string, use contains for filtering
     const webhooks = await prisma.webhook.findMany({
       where: {
         instanceId,
         active: true,
-        events: { has: event },
+        events: { contains: event },
       },
     });
 
@@ -59,33 +60,13 @@ export async function triggerWebhooks(
           const duration = Date.now() - startTime;
           const responseBody = await response.text();
 
-          // Log delivery
-          await prisma.webhookDelivery.create({
-            data: {
-              webhookId: webhook.id,
-              event,
-              payload: payloadString,
-              statusCode: response.status,
-              response: responseBody.slice(0, 10000), // Limit response size
-              success: response.ok,
-            },
-          });
-
+          // TODO: Implement webhook delivery logging when webhookDelivery model is added
+          // For now, just log to console
           console.log(
             `[webhook] ${event} to ${webhook.url} - ${response.status} (${duration}ms)`
           );
         } catch (error) {
-          // Log failed delivery
-          await prisma.webhookDelivery.create({
-            data: {
-              webhookId: webhook.id,
-              event,
-              payload: payloadString,
-              success: false,
-              error: error instanceof Error ? error.message : "Unknown error",
-            },
-          });
-
+          // TODO: Implement webhook delivery logging when webhookDelivery model is added
           console.error(`[webhook] Failed to send ${event} to ${webhook.url}:`, error);
         }
       })

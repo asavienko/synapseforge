@@ -113,13 +113,18 @@ export async function POST(
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
+    // Parse existing config and merge with template
+    const existingConfig = instance.config ? JSON.parse(instance.config) : {};
+    const updatedConfig = {
+      ...existingConfig,
+      systemPrompt: template.systemPrompt || existingConfig.systemPrompt,
+    };
+
     // Apply template configuration
     const updated = await prisma.aIInstance.update({
       where: { id },
       data: {
-        systemPrompt: template.systemPrompt || instance.systemPrompt,
-        // Store template ID for reference
-        // Add any other template-specific configurations
+        config: JSON.stringify(updatedConfig),
       },
     });
 
