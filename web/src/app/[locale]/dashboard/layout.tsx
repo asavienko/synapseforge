@@ -19,8 +19,7 @@ export default async function DashboardLayout({
 
   const user = await prisma.user.findUnique({ where: { id: session.user.id! } });
   if (user && !user.onboardingDone) redirect(`/${locale}/onboarding`);
-  if (user && !user.emailVerified) redirect(`/${locale}/verify-email`);
-
+  // Email verification is encouraged but NOT required to use the app
   const needsVerification = user && !user.emailVerified;
 
   // Determine elevated roles so sidebar can show the right links

@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { getTranslations } from "next-intl/server";
+import { routing } from "@/i18n/routing";
 
 interface Props {
   params: Promise<{ id: string; locale: string }>;
@@ -47,10 +48,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export async function generateStaticParams() {
-  return agentTemplates.map((t) => ({
-    id: t.id,
-    locale: "en",
-  }));
+  // Generate static params for all templates across all supported locales
+  const params: { id: string; locale: string }[] = [];
+  for (const locale of routing.locales) {
+    for (const template of agentTemplates) {
+      params.push({ id: template.id, locale });
+    }
+  }
+  return params;
 }
 
 export default async function TemplateDetailPage({ params }: Props) {

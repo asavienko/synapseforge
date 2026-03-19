@@ -86,7 +86,13 @@ function VerifyContent() {
           {resending ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCcw className="w-4 h-4" />}
           {t("resendButton")}
         </button>
-        <p className="text-xs text-zinc-500">{t("checkSpam")}</p>
+        <p className="text-xs text-zinc-500 mb-6">{t("checkSpam")}</p>
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors"
+        >
+          Continue to dashboard →
+        </Link>
       </div>
     );
   }
