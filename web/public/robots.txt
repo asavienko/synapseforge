@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+
+# Allow all crawlers to index the site
+# Disallow admin and API routes that shouldn't be indexed
+
+Disallow: /api/
+Disallow: /en/dashboard/
+Disallow: /es/dashboard/
+Disallow: /uk/dashboard/
+Disallow: /ru/dashboard/
+Disallow: /widget-chat/
+Disallow: /internal/
+
+# Sitemap location
+Sitemap: https://synapseforge.ai/sitemap.xml
