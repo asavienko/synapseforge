@@ -154,7 +154,7 @@ export default async function WidgetChatPage({
         {!data.branding.hidePoweredBy && (
           <div className="flex justify-center py-3 border-t border-white/5">
             <a 
-              href="https://synapseforge.ai" 
+              href="https://synapseforge-mu.vercel.app" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors"

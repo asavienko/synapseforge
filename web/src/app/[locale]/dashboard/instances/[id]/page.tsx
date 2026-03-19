@@ -1040,21 +1040,43 @@ function QRCard({ instanceId, t }: { instanceId: string; t: (key: string) => str
 
  
 function EmbedCard({ instanceId, t }: { instanceId: string; t: (key: string) => string }) {
-  const [copied, setCopied] = useState<"iframe" | "script" | null>(null);
-  const [tab, setTab] = useState<"iframe" | "script">("iframe");
+  const [copied, setCopied] = useState<"link" | "iframe" | "script" | "api" | null>(null);
+  const [tab, setTab] = useState<"link" | "embed" | "api">("link");
+  const [apiKey, setApiKey] = useState<string | null>(null);
+  const [apiKeysLoading, setApiKeysLoading] = useState(false);
   const origin = typeof window !== "undefined" ? window.location.origin : "https://synapseforge.ai";
 
-  const iframeSnippet = `<iframe\n  src="${origin}/chat/${instanceId}"\n  width="420"\n  height="650"\n  style="border:none;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.4);"\n  allow="clipboard-write"\n  title="AI Assistant"\n></iframe>`;
+  // Fetch API keys when API tab is selected
+  useEffect(() => {
+    if (tab === "api" && !apiKey && !apiKeysLoading) {
+      setApiKeysLoading(true);
+      fetch(`/api/instances/${instanceId}/keys`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.keys && data.keys.length > 0) {
+            setApiKey(data.keys[0].preview + "...");
+          }
+        })
+        .catch(() => {
+          // Silently fail - user can still see the endpoint
+        })
+        .finally(() => setApiKeysLoading(false));
+    }
+  }, [tab, instanceId, apiKey, apiKeysLoading]);
+
+  const directLink = `${origin}/widget-chat/${instanceId}`;
+
+  const iframeSnippet = `<iframe\n  src="${origin}/widget-chat/${instanceId}"\n  width="420"\n  height="650"\n  style="border:none;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.4);"\n  allow="clipboard-write"\n  title="AI Assistant"\n></iframe>`;
 
   const scriptSnippet = `<script>\n  (function(){\n    var w=window,d=document;\n    var s=d.createElement('script');\n    s.src="${origin}/embed.js?id=${instanceId}";\n    s.async=true;\n    d.head.appendChild(s);\n  })();\n</script>`;
 
-  const activeSnippet = tab === "iframe" ? iframeSnippet : scriptSnippet;
+  const apiSnippet = `curl -X POST "${origin}/api/v1/chat" \\\n  -H "Content-Type: application/json" \\\n  -H "X-API-Key: ${apiKey || "your_api_key_here"}" \\\n  -d '{\n    "instanceId": "${instanceId}",\n    "message": "Hello!"\n  }'`;
 
-  function copy() {
-    navigator.clipboard.writeText(activeSnippet);
-    setCopied(tab);
+  const handleCopy = (content: string, type: "link" | "iframe" | "script" | "api") => {
+    navigator.clipboard.writeText(content);
+    setCopied(type);
     setTimeout(() => setCopied(null), 2000);
-  }
+  };
 
   return (
     <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
@@ -1065,34 +1087,109 @@ function EmbedCard({ instanceId, t }: { instanceId: string; t: (key: string) => 
       <div className="p-5 space-y-4">
         {/* Tab selector */}
         <div className="flex gap-2">
-          {(["iframe", "script"] as const).map((type) => (
+          {([
+            { key: "link", label: "Direct Link" },
+            { key: "embed", label: "Embed Code" },
+            { key: "api", label: "API" },
+          ] as const).map(({ key, label }) => (
             <button
-              key={type}
-              onClick={() => setTab(type)}
+              key={key}
+              onClick={() => setTab(key)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                tab === type
+                tab === key
                   ? "bg-violet-600 text-white"
                   : "bg-white/5 text-zinc-400 hover:text-white border border-white/10"
               }`}
             >
-              {type === "iframe" ? "iFrame" : "JS Widget"}
+              {label}
             </button>
           ))}
         </div>
 
-        {/* Code block */}
-        <div className="relative">
-          <pre className="bg-black/40 border border-white/10 rounded-xl p-4 text-xs text-zinc-300 font-mono overflow-x-auto whitespace-pre leading-relaxed">{activeSnippet}</pre>
-          <button
-            onClick={copy}
-            className="absolute top-3 right-3 flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-2.5 py-1.5 rounded-lg transition-colors"
-          >
-            {copied === tab ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-            {copied === tab ? t("deploy.embedCopied") : t("deploy.embedCopy")}
-          </button>
-        </div>
+        {/* Direct Link Tab */}
+        {tab === "link" && (
+          <div className="space-y-3">
+            <p className="text-xs text-zinc-400">Share this link with anyone to let them chat directly:</p>
+            <div className="relative">
+              <div className="bg-black/40 border border-white/10 rounded-xl p-4 text-xs text-zinc-300 font-mono overflow-x-auto">
+                {directLink}
+              </div>
+              <button
+                onClick={() => handleCopy(directLink, "link")}
+                className="absolute top-3 right-3 flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-2.5 py-1.5 rounded-lg transition-colors"
+              >
+                {copied === "link" ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                {copied === "link" ? "Copied!" : "Copy"}
+              </button>
+            </div>
+            <a
+              href={directLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-xs text-violet-400 hover:text-violet-300 transition-colors"
+            >
+              <Share2 className="w-3.5 h-3.5" />
+              Open in new tab
+            </a>
+          </div>
+        )}
 
-        <p className="text-xs text-zinc-600">{t("deploy.embedHint")}</p>
+        {/* Embed Tab */}
+        {tab === "embed" && (
+          <div className="space-y-3">
+            <div className="flex gap-2">
+              <button
+                onClick={() => setTab("embed")}
+                className="px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 text-zinc-300 border border-white/10"
+              >
+                JavaScript Widget
+              </button>
+              <button
+                onClick={() => setTab("embed")}
+                className="px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 text-zinc-300 border border-white/10"
+              >
+                iFrame
+              </button>
+            </div>
+            <div className="relative">
+              <pre className="bg-black/40 border border-white/10 rounded-xl p-4 text-xs text-zinc-300 font-mono overflow-x-auto whitespace-pre leading-relaxed">{scriptSnippet}</pre>
+              <button
+                onClick={() => handleCopy(scriptSnippet, "script")}
+                className="absolute top-3 right-3 flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-2.5 py-1.5 rounded-lg transition-colors"
+              >
+                {copied === "script" ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                {copied === "script" ? "Copied!" : "Copy"}
+              </button>
+            </div>
+            <p className="text-xs text-zinc-600">{t("deploy.embedHint")}</p>
+          </div>
+        )}
+
+        {/* API Tab */}
+        {tab === "api" && (
+          <div className="space-y-3">
+            <p className="text-xs text-zinc-400">Use the API to integrate with your backend:</p>
+            <div className="relative">
+              <pre className="bg-black/40 border border-white/10 rounded-xl p-4 text-xs text-zinc-300 font-mono overflow-x-auto whitespace-pre leading-relaxed">{apiSnippet}</pre>
+              <button
+                onClick={() => handleCopy(apiSnippet, "api")}
+                className="absolute top-3 right-3 flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-2.5 py-1.5 rounded-lg transition-colors"
+              >
+                {copied === "api" ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                {copied === "api" ? "Copied!" : "Copy"}
+              </button>
+            </div>
+            <div className="flex items-center gap-2">
+              <a
+                href={`/dashboard/instances/${instanceId}/api-keys`}
+                className="inline-flex items-center gap-1.5 text-xs text-violet-400 hover:text-violet-300 transition-colors"
+              >
+                <Key className="w-3.5 h-3.5" />
+                Manage API Keys
+              </a>
+            </div>
+          </div>
+        )}
 
         <a
           href={`/dashboard/instances/${instanceId}/share`}

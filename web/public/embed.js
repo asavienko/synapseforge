@@ -1,8 +1,10 @@
 (function () {
   "use strict";
 
+  // Get the current script tag
+  var scriptTag = document.currentScript || document.querySelector('script[src*="embed.js"]') || document.querySelector('script[src*="widget.js"]');
+  
   // Get configuration from data attributes or global config
-  var scriptTag = document.currentScript || document.querySelector('script[src*="widget.js"]');
   var config = window.SynapseForge || {};
   
   // Parse data attributes from script tag
@@ -13,9 +15,22 @@
     config.greeting = scriptTag.getAttribute('data-greeting') || config.greeting;
     config.hideBranding = scriptTag.getAttribute('data-hide-branding') === 'true' || config.hideBranding;
   }
+  
+  // Parse query string from script src for ?id= support
+  if (scriptTag && scriptTag.src) {
+    try {
+      var url = new URL(scriptTag.src);
+      var queryId = url.searchParams.get('id');
+      if (queryId && !config.instanceId) {
+        config.instanceId = queryId;
+      }
+    } catch (e) {
+      // Ignore URL parsing errors
+    }
+  }
 
   if (!config.instanceId) {
-    console.error('[SynapseForge Widget] data-instance-id is required');
+    console.error('[SynapseForge Widget] instance ID is required. Use data-instance-id attribute or ?id= query param.');
     return;
   }
 
