@@ -1,0 +1,3 @@
+-- Migration merged into init (20260309174229)
+-- The ClientNote table in init uses authorId/clientId instead of managerId/userId.
+-- This migration is now a no-op to avoid column name conflicts.
