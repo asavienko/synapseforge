@@ -4,9 +4,9 @@ import { rateLimit } from "@/lib/ratelimit";
 import { trackUsage } from "@/lib/usage";
 
 /**
- * Public Chat API - Used by the embeddable widget
+ * Streaming Chat API - Always returns SSE stream
  * 
- * POST /api/v1/chat
+ * POST /api/v1/chat/stream
  * Headers: Authorization: Bearer {api_key}
  * Body: { message: string, sessionId?: string }
  * 
@@ -127,12 +127,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Check if streaming is requested
-    const wantsStream = 
-      req.headers.get("accept")?.includes("text/event-stream") ||
-      req.nextUrl.searchParams.get("stream") === "true";
-
-    // Call the LLM
+    // Call the LLM - always stream
     const stream = await callLLM({
       message,
       systemPrompt,
@@ -142,62 +137,19 @@ export async function POST(req: NextRequest) {
       apiKey: openAiKey,
     });
 
-    if (wantsStream) {
-      // Return streaming SSE response
-      return new Response(stream, {
-        headers: {
-          "Content-Type": "text/event-stream",
-          "Cache-Control": "no-cache",
-          "Connection": "keep-alive",
-          "X-Session-Id": sessionId,
-          "X-RateLimit-Limit": "60",
-        },
-      });
-    } else {
-      // Non-streaming: read the full response and return as JSON
-      const reader = stream.getReader();
-      const decoder = new TextDecoder();
-      let fullContent = "";
-
-      try {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          const chunk = decoder.decode(value);
-          const lines = chunk.split("\n");
-
-          for (const line of lines) {
-            if (line.startsWith("data: ")) {
-              const data = line.slice(6);
-              if (data === "[DONE]") continue;
-              
-              try {
-                const parsed = JSON.parse(data);
-                if (parsed.delta) {
-                  fullContent += parsed.delta;
-                } else if (parsed.content) {
-                  fullContent += parsed.content;
-                }
-              } catch {
-                // Ignore parse errors
-              }
-            }
-          }
-        }
-      } finally {
-        reader.releaseLock();
-      }
-
-      return NextResponse.json({
-        response: fullContent,
-        latencyMs: Date.now() - startTime,
-        sessionId,
-      });
-    }
+    // Return streaming SSE response
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
+        "X-Session-Id": sessionId,
+        "X-RateLimit-Limit": "60",
+      },
+    });
 
   } catch (error) {
-    console.error("[api/v1/chat] Error:", error);
+    console.error("[api/v1/chat/stream] Error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

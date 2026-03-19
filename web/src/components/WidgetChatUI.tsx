@@ -37,6 +37,7 @@ export function WidgetChatUI({
   const [sending, setSending] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -46,6 +47,13 @@ export function WidgetChatUI({
   // Focus input on mount
   useEffect(() => {
     inputRef.current?.focus();
+  }, []);
+
+  // Cleanup abort controller on unmount
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
   }, []);
 
   const handleSend = async () => {
@@ -66,14 +74,18 @@ export function WidgetChatUI({
       .filter((m) => !m.error)
       .map((m) => ({ role: m.role, content: m.content }));
 
+    // Create abort controller for this request
+    abortControllerRef.current = new AbortController();
+
     try {
-      const res = await fetch(`/api/chat/${instanceId}`, {
+      const res = await fetch(`/api/chat/${instanceId}?stream=true`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          Accept: "text/event-stream",
+          "Accept": "text/event-stream",
         },
         body: JSON.stringify({ message: msg, history }),
+        signal: abortControllerRef.current.signal,
       });
 
       if (!res.ok) {
@@ -90,7 +102,7 @@ export function WidgetChatUI({
         return;
       }
 
-      // Handle streaming response
+      // Handle streaming response with SSE format
       if (res.headers.get("content-type")?.includes("text/event-stream")) {
         const reader = res.body?.getReader();
         const decoder = new TextDecoder();
@@ -103,21 +115,75 @@ export function WidgetChatUI({
         ]);
 
         if (reader) {
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
+          try {
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
 
-            const chunk = decoder.decode(value, { stream: true });
-            assistantMessage += chunk;
+              const chunk = decoder.decode(value, { stream: true });
+              
+              // Parse SSE format
+              const lines = chunk.split("\n");
+              for (const line of lines) {
+                if (line.startsWith("data: ")) {
+                  const data = line.slice(6);
+                  
+                  if (data === "[DONE]") {
+                    continue;
+                  }
 
-            // Update the last message with streamed content
-            setMessages((prev) =>
-              prev.map((m, i) =>
-                i === prev.length - 1 && m.role === "assistant"
-                  ? { ...m, content: assistantMessage, streaming: true }
-                  : m
-              )
-            );
+                  try {
+                    const parsed = JSON.parse(data);
+                    
+                    if (parsed.error) {
+                      // Handle error in stream
+                      setMessages((prev) =>
+                        prev.map((m, i) =>
+                          i === prev.length - 1 && m.role === "assistant"
+                            ? { ...m, content: parsed.error, streaming: false, error: true }
+                            : m
+                        )
+                      );
+                    } else if (parsed.delta) {
+                      // Append delta to message
+                      assistantMessage += parsed.delta;
+                      setMessages((prev) =>
+                        prev.map((m, i) =>
+                          i === prev.length - 1 && m.role === "assistant"
+                            ? { ...m, content: assistantMessage, streaming: true }
+                            : m
+                        )
+                      );
+                    }
+                  } catch {
+                    // Ignore parse errors for malformed lines
+                  }
+                }
+              }
+            }
+
+            // Flush any remaining bytes
+            const finalChunk = decoder.decode();
+            if (finalChunk) {
+              const lines = finalChunk.split("\n");
+              for (const line of lines) {
+                if (line.startsWith("data: ")) {
+                  const data = line.slice(6);
+                  if (data && data !== "[DONE]") {
+                    try {
+                      const parsed = JSON.parse(data);
+                      if (parsed.delta) {
+                        assistantMessage += parsed.delta;
+                      }
+                    } catch {
+                      // Ignore parse errors
+                    }
+                  }
+                }
+              }
+            }
+          } finally {
+            reader.releaseLock();
           }
         }
 
@@ -125,10 +191,15 @@ export function WidgetChatUI({
         setMessages((prev) =>
           prev.map((m, i) =>
             i === prev.length - 1 && m.role === "assistant"
-              ? { ...m, streaming: false }
+              ? { ...m, content: assistantMessage, streaming: false }
               : m
           )
         );
+
+        // Notify parent of new message
+        if (window.parent !== window) {
+          window.parent.postMessage({ type: "synapseforge-chat", action: "new-message" }, "*");
+        }
       } else {
         // Fallback for non-streaming responses
         const data = await res.json();
@@ -137,7 +208,12 @@ export function WidgetChatUI({
           { role: "assistant", content: data.response },
         ]);
       }
-    } catch {
+    } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") {
+        // Request was aborted - user likely closed widget
+        return;
+      }
+      
       setMessages((prev) => [
         ...prev,
         {
@@ -148,12 +224,15 @@ export function WidgetChatUI({
       ]);
     } finally {
       setSending(false);
+      abortControllerRef.current = null;
       setTimeout(() => inputRef.current?.focus(), 50);
     }
   };
 
   // Handle close button
   const handleClose = () => {
+    // Abort any in-flight request
+    abortControllerRef.current?.abort();
     onClose?.();
   };
 
