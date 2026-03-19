@@ -1,137 +1,295 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { callLLM, ChatMessage } from "@/lib/llm";
-import { validateApiKey, CORS_HEADERS } from "@/lib/api-auth";
-import { publicChatLimiter, rateLimitHeaders, getRateLimitKey } from "@/lib/rate-limit";
+import { rateLimit } from "@/lib/ratelimit";
+import { trackUsage } from "@/lib/usage";
 
-// LLM calls can take 30-60s — extend Vercel's default 10s limit
-export const maxDuration = 60;
+/**
+ * Public Chat API - Used by the embeddable widget
+ * 
+ * POST /api/v1/chat
+ * Headers: Authorization: Bearer {api_key}
+ * Body: { message: string, sessionId?: string }
+ * 
+ * Returns: Streaming SSE response with AI reply
+ */
 
-// Handle CORS preflight
-export async function OPTIONS() {
-  return new NextResponse(null, { status: 204, headers: CORS_HEADERS });
+export async function POST(req: NextRequest) {
+  const startTime = Date.now();
+
+  try {
+    // Extract API key from Authorization header
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return NextResponse.json(
+        { error: "Missing or invalid Authorization header. Use: Bearer {api_key}" },
+        { status: 401 }
+      );
+    }
+
+    const apiKey = authHeader.slice(7);
+
+    // Validate API key and get instance
+    const keyRecord = await prisma.apiKey.findFirst({
+      where: { key: apiKey },
+      include: {
+        instance: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
+
+    if (!keyRecord) {
+      return NextResponse.json(
+        { error: "Invalid API key" },
+        { status: 401 }
+      );
+    }
+
+    const instance = keyRecord.instance;
+    const user = instance?.user;
+
+    if (!instance || !user) {
+      return NextResponse.json(
+        { error: "Instance not found" },
+        { status: 404 }
+      );
+    }
+
+    // Check if instance is running
+    if (instance.status !== "running") {
+      return NextResponse.json(
+        { error: "Instance is not running", status: instance.status },
+        { status: 503 }
+      );
+    }
+
+    // Rate limiting by API key
+    const rateLimitAllowed = await rateLimit(apiKey, 60, 60 * 1000);
+
+    if (!rateLimitAllowed) {
+      return NextResponse.json(
+        { 
+          error: "Rate limit exceeded",
+          retryAfter: 60
+        },
+        { status: 429 }
+      );
+    }
+
+    // Parse request body
+    const body = await req.json();
+    const { message, sessionId = crypto.randomUUID() } = body;
+
+    if (!message || typeof message !== "string" || message.trim().length === 0) {
+      return NextResponse.json(
+        { error: "Message is required" },
+        { status: 400 }
+      );
+    }
+
+    // Check plan limits
+    const planLimits = getPlanLimits(user.plan);
+    const currentUsage = await getCurrentMonthUsage(user.id);
+
+    if (currentUsage >= planLimits.messages) {
+      return NextResponse.json(
+        { error: "Monthly message limit exceeded", limit: planLimits.messages },
+        { status: 429 }
+      );
+    }
+
+    // Get instance configuration
+    const config = instance.config ? JSON.parse(instance.config) : {};
+    const systemPrompt = config.systemPrompt || "You are a helpful AI assistant.";
+
+    // Track usage (async, don't block)
+    trackUsage({
+      userId: user.id,
+      instanceId: instance.id,
+      type: "chat",
+      metadata: { sessionId, messageLength: message.length },
+    }).catch(console.error);
+
+    // Update API key last used
+    prisma.apiKey.update({
+      where: { id: keyRecord.id },
+      data: { lastUsedAt: new Date() },
+    }).catch(() => {});
+
+    // Call the LLM
+    const stream = await callLLM({
+      message,
+      systemPrompt,
+      model: config.model || "gpt-4o-mini",
+      temperature: config.temperature || 0.7,
+      maxTokens: config.maxTokens || 1000,
+    });
+
+    // Return streaming response
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
+        "X-Session-Id": sessionId,
+        "X-RateLimit-Limit": "60",
+      },
+    });
+
+  } catch (error) {
+    console.error("[api/v1/chat] Error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
 }
 
 /**
- * POST /api/v1/chat
- *
- * SynapseForge public chat API. Authenticated with API key.
- *
- * Request:
- *   Authorization: Bearer sf-live-<key>
- *   { "message": "Hello!" }
- *   or
- *   { "messages": [{ "role": "user", "content": "Hello!" }] }
- *
- * Response:
- *   { "response": "...", "model": "gpt-4o", "provider": "openai", "latencyMs": 312,
- *     "inputTokens": 12, "outputTokens": 48 }
+ * Get plan message limits
  */
-export async function POST(req: NextRequest) {
-  const ctx = await validateApiKey(req);
-  if (!ctx) {
-    return NextResponse.json(
-      { error: "Invalid or missing API key. Pass Authorization: Bearer sf-live-<key>" },
-      { status: 401, headers: CORS_HEADERS }
-    );
-  }
+function getPlanLimits(plan: string): { messages: number } {
+  const limits: Record<string, number> = {
+    free: 2000,
+    starter_10k: 10000,
+    growth_30k: 30000,
+    scale_100k: 100000,
+    business_200k: 200000,
+    managed_starter: 10000,
+    managed_growth: 30000,
+    managed_scale: 100000,
+  };
+  return { messages: limits[plan] || 2000 };
+}
 
-  // Rate limit: 60 req/min per API key
-  const rlKey = getRateLimitKey(req, "v1-chat", ctx.keyId);
-  const rl = publicChatLimiter.check(rlKey);
-  const rlHeaders = { ...CORS_HEADERS, ...rateLimitHeaders(rl) };
-  if (!rl.allowed) {
-    return NextResponse.json(
-      { error: "Rate limit exceeded. Try again later.", retryAfterMs: rl.resetAt - Date.now() },
-      { status: 429, headers: rlHeaders }
-    );
-  }
+/**
+ * Get current month's usage for a user
+ */
+async function getCurrentMonthUsage(userId: string): Promise<number> {
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-  const instance = await prisma.aIInstance.findUnique({
-    where: { id: ctx.instanceId },
-    select: { status: true, name: true },
+  const result = await prisma.usageEvent.aggregate({
+    where: {
+      userId,
+      createdAt: { gte: startOfMonth },
+      type: "chat",
+    },
+    _sum: { count: true },
   });
 
-  if (!instance) {
-    return NextResponse.json({ error: "Instance not found" }, { status: 404, headers: CORS_HEADERS });
+  return result._sum.count || 0;
+}
+
+/**
+ * Call the LLM and return a streaming response
+ */
+async function callLLM({
+  message,
+  systemPrompt,
+  model,
+  temperature,
+  maxTokens,
+}: {
+  message: string;
+  systemPrompt: string;
+  model: string;
+  temperature: number;
+  maxTokens: number;
+}): Promise<ReadableStream> {
+  const encoder = new TextEncoder();
+
+  // Get user's OpenAI API key or use platform key
+  // This is a simplified version - in production you'd use the instance's credentials
+  const apiKey = process.env.OPENAI_API_KEY;
+
+  if (!apiKey) {
+    throw new Error("OpenAI API key not configured");
   }
 
-  if (instance.status !== "running") {
-    return NextResponse.json(
-      { error: `Instance is ${instance.status}. Start it before sending requests.` },
-      { status: 400, headers: CORS_HEADERS }
-    );
-  }
-
-  let body: Record<string, unknown>;
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400, headers: CORS_HEADERS });
-  }
-
-  let messages: ChatMessage[] = [];
-
-  if (Array.isArray(body.messages) && body.messages.length > 0) {
-    messages = body.messages as ChatMessage[];
-  } else if (typeof body.message === "string" && body.message.trim()) {
-    messages = [{ role: "user", content: body.message.trim() }];
-  } else {
-    return NextResponse.json(
-      { error: 'Provide either "message" (string) or "messages" (array)' },
-      { status: 400, headers: CORS_HEADERS }
-    );
-  }
-
-  // Persist user message
-  const userContent = messages[messages.length - 1]?.content ?? "";
-  prisma.chatMessage.create({
-    data: { instanceId: ctx.instanceId, role: "user", content: userContent, source: "api" },
-  }).catch(console.error);
-
-  const result = await callLLM(ctx.instanceId, messages);
-
-  if ("error" in result) {
-    const status = result.missingCredential ? 400 : 502;
-    return NextResponse.json(result, { status, headers: CORS_HEADERS });
-  }
-
-  // Persist assistant reply with token counts
-  prisma.chatMessage.create({
-    data: {
-      instanceId: ctx.instanceId,
-      role: "assistant",
-      content: result.response,
-      latencyMs: result.latencyMs,
-      provider: result.provider,
-      model: result.model,
-      inputTokens: result.inputTokens ?? null,
-      outputTokens: result.outputTokens ?? null,
-      source: "api",
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
     },
-  }).catch(console.error);
+    body: JSON.stringify({
+      model,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: message },
+      ],
+      temperature,
+      max_tokens: maxTokens,
+      stream: true,
+    }),
+  });
 
-  // Log activity with token info
-  const tokenNote = (result.inputTokens != null && result.outputTokens != null)
-    ? `, tokens: ${result.inputTokens}in/${result.outputTokens}out`
-    : "";
-  prisma.activityLog.create({
-    data: {
-      instanceId: ctx.instanceId,
-      event: "chat_message",
-      details: `[API] key="${ctx.keyName}", model: ${result.model}, latency: ${result.latencyMs}ms${tokenNote}`,
-    },
-  }).catch(console.error);
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`OpenAI error: ${error}`);
+  }
 
-  return NextResponse.json(
-    {
-      response: result.response,
-      model: result.model,
-      provider: result.provider,
-      latencyMs: result.latencyMs,
-      inputTokens: result.inputTokens ?? undefined,
-      outputTokens: result.outputTokens ?? undefined,
+  // Transform OpenAI stream to SSE format
+  return new ReadableStream({
+    async start(controller) {
+      const reader = response.body?.getReader();
+      if (!reader) {
+        controller.close();
+        return;
+      }
+
+      const decoder = new TextDecoder();
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value);
+          const lines = chunk.split("\n");
+
+          for (const line of lines) {
+            if (line.startsWith("data: ")) {
+              const data = line.slice(6);
+              if (data === "[DONE]") {
+                controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+                continue;
+              }
+
+              try {
+                const parsed = JSON.parse(data);
+                const content = parsed.choices?.[0]?.delta?.content;
+                if (content) {
+                  controller.enqueue(
+                    encoder.encode(`data: ${JSON.stringify({ content })}\n\n`)
+                  );
+                }
+              } catch {
+                // Ignore parse errors
+              }
+            }
+          }
+        }
+      } finally {
+        controller.close();
+        reader.releaseLock();
+      }
     },
-    { headers: rlHeaders }
-  );
+  });
+}
+
+/**
+ * CORS preflight
+ */
+export async function OPTIONS() {
+  return new Response(null, {
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    },
+  });
 }

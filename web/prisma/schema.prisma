@@ -47,6 +47,7 @@ model User {
   webhooks         Webhook[]
   whiteLabelConfig WhiteLabelConfig?
   credentials      UserCredential[]
+  usageEvents      UsageEvent[]
 }
 
 model Referral {
@@ -198,6 +199,7 @@ model AIInstance {
   webhooks         Webhook[]
   knowledgeBase    KnowledgeBase?
   migrations       MigrationJob[]
+  usageEvents      UsageEvent[]
 }
 
 model KnowledgeBase {
@@ -454,4 +456,22 @@ model UserCredential {
 
   @@unique([userId, provider])
   @@index([userId])
+}
+
+// Usage tracking for billing and analytics
+model UsageEvent {
+  id         String   @id @default(cuid())
+  userId     String
+  instanceId String
+  type       String // "chat" | "api_call" | "token"
+  count      Int     @default(1)
+  metadata   String? // JSON string with additional data
+  createdAt  DateTime @default(now())
+
+  user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  instance AIInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([instanceId, createdAt])
+  @@index([type, createdAt])
 }
