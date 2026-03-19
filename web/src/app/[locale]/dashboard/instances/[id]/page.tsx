@@ -1268,70 +1268,6 @@ export default function InstanceDetailPage() {
   // Recent activity for Overview
   const [recentLogs, setRecentLogs] = useState<LogRow[]>([]);
 
-  // Knowledge Base state
-  interface KnowledgeDocRow {
-    id: string;
-    filename: string;
-    fileSize: number;
-    status: string;
-    createdAt: string;
-  }
-  const [knowledgeDocs, setKnowledgeDocs] = useState<KnowledgeDocRow[]>([]);
-  const [knowledgeLoading, setKnowledgeLoading] = useState(false);
-  const [knowledgeUploading, setKnowledgeUploading] = useState(false);
-  const knowledgeFileRef = useRef<HTMLInputElement>(null);
-
-  const loadKnowledge = useCallback(async () => {
-    setKnowledgeLoading(true);
-    try {
-      const res = await fetch(`/api/instances/${id}/knowledge`);
-      if (res.ok) {
-        const data = await res.json();
-        setKnowledgeDocs(data.documents ?? []);
-      }
-    } finally {
-      setKnowledgeLoading(false);
-    }
-  }, [id]);
-
-  async function handleKnowledgeUpload(file: File) {
-    setKnowledgeUploading(true);
-    try {
-      const fd = new FormData();
-      fd.append("file", file);
-      const res = await fetch(`/api/instances/${id}/knowledge/upload`, {
-        method: "POST",
-        body: fd,
-      });
-      if (res.ok) {
-        await loadKnowledge();
-        showToast(file.name + " uploaded", "success");
-      } else {
-        const err = await res.json().catch(() => ({ error: "Upload failed" }));
-        showToast(err.error ?? t("knowledge.uploadFailed"), "error");
-      }
-    } catch {
-      showToast(t("knowledge.uploadFailed"), "error");
-    } finally {
-      setKnowledgeUploading(false);
-    }
-  }
-
-  function handleKnowledgeDelete(docId: string, filename: string) {
-    setPendingConfirm({
-      message: t("knowledge.deleteConfirm"),
-      onConfirm: async () => {
-        const res = await fetch(`/api/instances/${id}/knowledge/${docId}`, { method: "DELETE" });
-        if (res.ok) {
-          setKnowledgeDocs((prev) => prev.filter((d) => d.id !== docId));
-          showToast(filename + " removed", "success");
-        } else {
-          showToast(t("knowledge.deleteFailed"), "error");
-        }
-      },
-    });
-  }
-
   function showToast(text: string, type: "success" | "error" = "success") {
     setToast({ text, type });
     setTimeout(() => setToast(null), 3000);
@@ -1519,7 +1455,6 @@ export default function InstanceDetailPage() {
     if (tab === "Credentials") loadCredentials();
     if (tab === "Deploy" && credentials.length === 0) loadCredentials();
     if (tab === "Chat") loadChatHistory();
-    if (tab === "Knowledge") loadKnowledge();
   }, [tab]);
 
   useEffect(() => {
