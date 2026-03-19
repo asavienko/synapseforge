@@ -20,6 +20,7 @@ import { IntegrationCard } from "@/components/IntegrationCard";
 import { SandboxUpgradeCard } from "@/components/SandboxUpgradeCard";
 import { WhatsAppWizard } from "@/components/WhatsAppWizard";
 import { KnowledgeBaseManager } from "@/components/KnowledgeBaseManager";
+import { EmbedTab } from "@/components/EmbedTab";
 import { SANDBOX_LIMIT, getSandboxRemaining } from "@/lib/sandbox";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -5023,6 +5024,11 @@ print(resp.choices[0].message.content)`}</pre>
             </button>
           </div>
         </div>
+      )}
+
+      {/* ── Embed ── */}
+      {tab === "Embed" && (
+        <EmbedTab instanceId={id} instanceName={instance.name} />
       )}
     </>
   );
