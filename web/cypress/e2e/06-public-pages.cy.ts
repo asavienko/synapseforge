@@ -38,10 +38,12 @@ describe("06 · Pricing Page", () => {
     cy.snap("06-pricing-01-title");
   });
 
-  it("shows all three plan cards", () => {
+  it("shows self-service and managed plan sections", () => {
+    cy.contains("Self-Service", { matchCase: false }).should("be.visible");
+    cy.contains("Managed", { matchCase: false }).should("be.visible");
     cy.contains("Free").should("be.visible");
-    cy.contains("Pro").should("be.visible");
-    cy.contains("Enterprise").should("be.visible");
+    cy.contains("Starter").should("be.visible");
+    cy.contains("Growth").should("be.visible");
     cy.snap("06-pricing-02-plans");
   });
 
@@ -53,20 +55,20 @@ describe("06 · Pricing Page", () => {
     cy.snap("06-pricing-03-free-cta");
   });
 
-  it("Pro plan links to sign-up", () => {
-    cy.contains("a", /Get Pro/i)
+  it("Starter plan links to sign-up", () => {
+    cy.contains("a", /Get Started/i)
       .first()
       .should("be.visible")
       .and("have.attr", "href")
       .and("include", "sign-up");
-    cy.snap("06-pricing-04-pro-cta");
+    cy.snap("06-pricing-04-starter-cta");
   });
 
-  it("Enterprise plan shows contact link", () => {
-    cy.contains("a", /Contact/i)
+  it("Managed plans show contact link", () => {
+    cy.contains("a", /Contact Sales/i)
       .should("be.visible")
       .and("have.attr", "href", "mailto:hello@synapseforge.ai");
-    cy.snap("06-pricing-05-enterprise-cta");
+    cy.snap("06-pricing-05-managed-cta");
   });
 
   it("has a back-to-home link", () => {

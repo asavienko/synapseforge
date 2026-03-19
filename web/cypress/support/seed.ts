@@ -48,7 +48,7 @@ async function main() {
     where: { email },
     update: {
       name,
-      plan: "pro",  // pro = 3 instances; spec 27 creates a second instance (Journey Agent)
+      plan: "starter_10k",  // starter = 3 instances; spec 27 creates a second instance (Journey Agent)
       onboardingDone: true,
       password: hashed,
       emailVerified: new Date(), // Ensure email is verified — avoids banner blocking tests
@@ -57,7 +57,7 @@ async function main() {
       email,
       name,
       password: hashed,
-      plan: "pro",
+      plan: "starter_10k",
       onboardingDone: true,
       emailVerified: new Date(),
       onboardingData: JSON.stringify({

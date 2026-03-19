@@ -25,11 +25,11 @@ describe("27 · Managed Instance Journey — happy path", () => {
   before(() => {
     cy.login(EMAIL(), PASS());
 
-    // Upgrade plan to pro so we can create a second instance
+    // Upgrade plan to starter so we can create a second instance (3 instance limit)
     cy.request({
       method: "PATCH",
       url: "/api/user",
-      body: { plan: "pro" },
+      body: { plan: "starter_10k" },
       headers: { "Content-Type": "application/json" },
       failOnStatusCode: false,
     });

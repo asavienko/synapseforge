@@ -175,30 +175,29 @@ describe("04 · Billing", () => {
 
   it("shows current plan card", () => {
     cy.contains("Current Plan").should("be.visible");
-    // Seed user is plan=pro (needed for spec 27 which creates a 2nd instance)
-    cy.contains("pro", { matchCase: false }).should("be.visible");
+    // Seed user is plan=starter_10k (needed for spec 27 which creates a 2nd instance)
+    cy.contains("starter", { matchCase: false }).should("be.visible");
     cy.snap("04-billing-02-current-plan");
   });
 
-  it("shows all three plan cards", () => {
-    cy.contains("Free").should("be.visible");
-    cy.contains("Pro").should("be.visible");
-    cy.contains("Enterprise").should("be.visible");
+  it("shows all plan cards", () => {
+    cy.contains("Self-Service", { matchCase: false }).should("be.visible");
+    cy.contains("Managed", { matchCase: false }).should("be.visible");
     cy.snap("04-billing-03-all-plans");
   });
 
-  it("shows upgrade option — pro user sees Enterprise contact link", () => {
-    // Seed user is plan=pro; Pro card shows "Current plan"; Enterprise shows a mailto CTA
+  it("shows upgrade option — starter user sees managed plans contact link", () => {
+    // Seed user is plan=starter_10k; Starter card shows "Current plan"; Managed plans show mailto CTA
     cy.get("a[href='mailto:hello@synapseforge.ai']").should("be.visible");
     cy.snap("04-billing-04-upgrade-btn");
   });
 
-  it("shows Enterprise contact link (not a Stripe checkout button)", () => {
-    // Enterprise uses mailto link — "Contact us"
-    cy.contains("a", "Contact us")
+  it("shows managed plans contact link (not a Stripe checkout button)", () => {
+    // Managed plans use mailto link — "Contact Sales"
+    cy.contains("a", /Contact Sales/i)
       .should("be.visible")
       .and("have.attr", "href", "mailto:hello@synapseforge.ai");
-    cy.snap("04-billing-05-enterprise-contact");
+    cy.snap("04-billing-05-managed-contact");
   });
 });
 
