@@ -21,6 +21,7 @@ import { SandboxUpgradeCard } from "@/components/SandboxUpgradeCard";
 import { WhatsAppWizard } from "@/components/WhatsAppWizard";
 import { KnowledgeBaseManager } from "@/components/KnowledgeBaseManager";
 import { EmbedTab } from "@/components/EmbedTab";
+import { AnalyticsTab } from "@/components/AnalyticsTab";
 import { SANDBOX_LIMIT, getSandboxRemaining } from "@/lib/sandbox";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -536,7 +537,7 @@ function SetupChecklistCard({ instance, credentials, onGoToCredentials, onGoToDe
   );
 }
 
-const TABS = ["Overview", "Credentials", "Deploy", "Chat", "Configuration", "Knowledge", "API Keys", "Activity Log", "Infrastructure", "Embed"] as const;
+const TABS = ["Overview", "Credentials", "Deploy", "Chat", "Configuration", "Knowledge", "API Keys", "Activity Log", "Infrastructure", "Embed", "Analytics"] as const;
 type Tab = (typeof TABS)[number];
 
 interface ChatMsg {
@@ -2182,6 +2183,7 @@ export default function InstanceDetailPage() {
               "Credentials": t("credentials.tab"),
               "Knowledge": t("knowledge.tab"),
               "Embed": "Embed",
+              "Analytics": "Analytics",
             };
             return (
               <button key={tabKey} data-tab={tabKey} onClick={() => setTab(tabKey)}
@@ -5029,6 +5031,11 @@ print(resp.choices[0].message.content)`}</pre>
       {/* ── Embed ── */}
       {tab === "Embed" && (
         <EmbedTab instanceId={id} instanceName={instance.name} />
+      )}
+
+      {/* ── Analytics ── */}
+      {tab === "Analytics" && (
+        <AnalyticsTab instanceId={id} />
       )}
     </>
   );
