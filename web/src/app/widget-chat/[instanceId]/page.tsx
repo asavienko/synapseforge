@@ -167,5 +167,13 @@ export default async function WidgetChatPage({
     );
   }
 
-  return <WidgetChatUI instanceId={data.instance.id} branding={data.branding} />;
+  return (
+    <WidgetChatUI
+      instanceId={data.instance.id}
+      greeting={data.branding.welcomeMessage}
+      brandColor={data.branding.brandColor}
+      logoUrl={data.branding.logoUrl}
+      agentName={data.branding.agentName}
+    />
+  );
 }

@@ -111,8 +111,8 @@ export function WidgetChatUI({
             assistantMessage += chunk;
 
             // Update the last message with streamed content
-            setMessages((prev) =
-              prev.map((m, i) =
+            setMessages((prev) =>
+              prev.map((m, i) =>
                 i === prev.length - 1 && m.role === "assistant"
                   ? { ...m, content: assistantMessage, streaming: true }
                   : m
@@ -122,8 +122,8 @@ export function WidgetChatUI({
         }
 
         // Mark as complete
-        setMessages((prev) =
-          prev.map((m, i) =
+        setMessages((prev) =>
+          prev.map((m, i) =>
             i === prev.length - 1 && m.role === "assistant"
               ? { ...m, streaming: false }
               : m
