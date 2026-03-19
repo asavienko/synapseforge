@@ -25,7 +25,13 @@ export async function DELETE(
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    // TODO: Delete from database when schema ready
+    // Delete the webhook
+    await prisma.webhook.deleteMany({
+      where: {
+        id: webhookId,
+        instanceId: id,
+      },
+    });
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("[webhooks/delete] Error:", error);
