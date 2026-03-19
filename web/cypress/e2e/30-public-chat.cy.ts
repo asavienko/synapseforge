@@ -57,8 +57,8 @@ describe("30 · Public Chat Page + Widget", () => {
       // Welcome message (set by server: `Hi! I'm ${instance.name}. How can I help you today?`)
       cy.contains(/Hi! I'm Cypress Agent/i).should("be.visible");
 
-      // "Powered by SynapseForge" badge in header
-      cy.contains("Powered by SynapseForge").should("be.visible");
+      // "Powered by OpenHelix AI" badge in header
+      cy.contains("Powered by OpenHelix AI").should("be.visible");
 
       // Message input visible
       cy.get('input[placeholder]').should("be.visible");

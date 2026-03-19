@@ -6,7 +6,7 @@ describe("01 · Landing Page", () => {
   beforeEach(() => cy.visit("/en"));
 
   it("renders hero section with product-focused headline", () => {
-    cy.contains("We forge the AI stack").should("be.visible");
+    cy.contains("Deploy AI agents in minutes").should("be.visible");
     cy.contains("so you don't have to.").should("be.visible");
     cy.snap("01-landing-01-hero");
   });

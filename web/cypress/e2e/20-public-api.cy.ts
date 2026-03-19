@@ -4,7 +4,7 @@
  * Tests the public REST API endpoints:
  *  - GET  /api/v1            → API docs JSON
  *  - GET  /api/v1/instance   → instance metadata (API key auth)
- *  - POST /api/v1/chat       → SynapseForge chat format
+ *  - POST /api/v1/chat       → OpenHelix AI chat format
  *  - POST /api/v1/chat/completions  → OpenAI-compatible format
  *
  * All LLM calls are intercepted — no real API keys required.
@@ -41,7 +41,7 @@ describe("20 · Public API", () => {
   it("GET /api/v1 returns API documentation JSON", () => {
     cy.request("/api/v1").then((res) => {
       expect(res.status).to.eq(200);
-      expect(res.body).to.have.property("name", "SynapseForge Public API");
+      expect(res.body).to.have.property("name", "OpenHelix AI Public API");
       expect(res.body).to.have.property("endpoints").that.is.an("array").with.length.gte(3);
       expect(res.body.authentication).to.have.property("type", "Bearer token");
     });

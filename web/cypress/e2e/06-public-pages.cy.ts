@@ -67,7 +67,7 @@ describe("06 · Pricing Page", () => {
   it("Managed plans show contact link", () => {
     cy.contains("a", /Contact Sales/i)
       .should("be.visible")
-      .and("have.attr", "href", "mailto:hello@synapseforge.ai");
+      .and("have.attr", "href", "mailto:hello@openhelixai.com");
     cy.snap("06-pricing-05-managed-cta");
   });
 

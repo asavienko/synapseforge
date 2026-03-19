@@ -10,9 +10,9 @@ describe("11 · Email Verification Page", () => {
     cy.snap("11-verify-01-page");
   });
 
-  it("shows SynapseForge logo", () => {
+  it("shows OpenHelix AI logo", () => {
     cy.visit("/en/verify-email");
-    cy.contains("SynapseForge").should("be.visible");
+    cy.contains("OpenHelix AI").should("be.visible");
     cy.snap("11-verify-02-logo");
   });
 
