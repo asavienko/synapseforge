@@ -1,72 +1,62 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Bot, Loader2, X } from "lucide-react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { Bot, Send, X, Loader2 } from "lucide-react";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
   error?: boolean;
+  streaming?: boolean;
 }
 
-interface Branding {
-  agentName: string;
-  brandColor: string;
-  logoUrl: string | null;
-  welcomeMessage: string;
-  hidePoweredBy: boolean;
-}
-
-interface Props {
+interface WidgetChatUIProps {
   instanceId: string;
-  branding: Branding;
+  greeting?: string;
+  brandColor?: string;
+  logoUrl?: string | null;
+  agentName?: string;
+  onClose?: () => void;
 }
 
-export function WidgetChatUI({ instanceId, branding }: Props) {
-  const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", content: branding.welcomeMessage },
+export function WidgetChatUI({
+  instanceId,
+  greeting,
+  brandColor = "#7c3aed",
+  logoUrl,
+  agentName = "AI Assistant",
+  onClose,
+}: WidgetChatUIProps) {
+  const [messages, setMessages] = useState<Message[]>(() => [
+    {
+      role: "assistant",
+      content: greeting || `Hi! I'm ${agentName}. How can I help you today?`,
+    },
   ]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
-  const [started, setStarted] = useState(false);
-  const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Starter questions
-  const STARTERS = [
-    "What can you help me with?",
-    "Tell me about your services",
-    "I have a question",
-  ];
-
+  // Scroll to bottom when messages change
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Notify parent window about chat events
-  const notifyParent = (action: string) => {
-    if (window.parent !== window) {
-      window.parent.postMessage({
-        type: 'synapseforge-chat',
-        action,
-        instanceId,
-      }, '*');
-    }
-  };
+  // Focus input on mount
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
-  async function send(text?: string) {
-    const msg = (text ?? input).trim();
+  const handleSend = async () => {
+    const msg = input.trim();
     if (!msg || sending) return;
-    
-    setInput("");
-    setStarted(true);
-    setSending(true);
-    notifyParent('message-sent');
 
-    const userMsg: Message = { role: "user", content: msg };
-    const nextMessages = [...messages, userMsg];
+    setSending(true);
+    setInput("");
+
+    // Add user message
+    const nextMessages: Message[] = [...messages, { role: "user", content: msg }];
     setMessages(nextMessages);
 
     // Build history to send
@@ -79,46 +69,92 @@ export function WidgetChatUI({ instanceId, branding }: Props) {
     try {
       const res = await fetch(`/api/chat/${instanceId}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          Accept: "text/event-stream",
+        },
         body: JSON.stringify({ message: msg, history }),
       });
 
-      const data = await res.json();
-
-      if (!res.ok || data.error) {
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({ error: "Unknown error" }));
         setMessages((prev) => [
           ...prev,
           {
             role: "assistant",
-            content: data.error || "Sorry, something went wrong. Please try again.",
+            content: errorData.error || "Sorry, something went wrong. Please try again.",
             error: true,
           },
         ]);
+        setSending(false);
+        return;
+      }
+
+      // Handle streaming response
+      if (res.headers.get("content-type")?.includes("text/event-stream")) {
+        const reader = res.body?.getReader();
+        const decoder = new TextDecoder();
+        let assistantMessage = "";
+
+        // Add empty assistant message for streaming
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: "", streaming: true },
+        ]);
+
+        if (reader) {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            const chunk = decoder.decode(value, { stream: true });
+            assistantMessage += chunk;
+
+            // Update the last message with streamed content
+            setMessages((prev) =
+              prev.map((m, i) =
+                i === prev.length - 1 && m.role === "assistant"
+                  ? { ...m, content: assistantMessage, streaming: true }
+                  : m
+              )
+            );
+          }
+        }
+
+        // Mark as complete
+        setMessages((prev) =
+          prev.map((m, i) =
+            i === prev.length - 1 && m.role === "assistant"
+              ? { ...m, streaming: false }
+              : m
+          )
+        );
       } else {
+        // Fallback for non-streaming responses
+        const data = await res.json();
         setMessages((prev) => [
           ...prev,
           { role: "assistant", content: data.response },
         ]);
-        notifyParent('new-message');
       }
     } catch {
       setMessages((prev) => [
         ...prev,
-        { 
-          role: "assistant", 
-          content: "Sorry, I'm having trouble connecting. Please try again later.", 
-          error: true 
+        {
+          role: "assistant",
+          content: "Sorry, I'm having trouble connecting. Please try again later.",
+          error: true,
         },
       ]);
     } finally {
       setSending(false);
       setTimeout(() => inputRef.current?.focus(), 50);
     }
-  }
+  };
 
   // Handle close button
   const handleClose = () => {
-    notifyParent('close');
+    onClose?.();
   };
 
   return (
@@ -126,24 +162,24 @@ export function WidgetChatUI({ instanceId, branding }: Props) {
       {/* Header */}
       <div
         className="flex items-center gap-3 px-4 py-3 border-b border-white/10"
-        style={{ borderBottomColor: `${branding.brandColor}30` }}
+        style={{ borderBottomColor: `${brandColor}30` }}
       >
-        {branding.logoUrl ? (
+        {logoUrl ? (
           <img
-            src={branding.logoUrl}
-            alt={branding.agentName}
+            src={logoUrl}
+            alt={agentName}
             className="w-9 h-9 rounded-full object-cover"
           />
         ) : (
           <div
             className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0"
-            style={{ backgroundColor: branding.brandColor }}
+            style={{ backgroundColor: brandColor }}
           >
             <Bot className="w-5 h-5" />
           </div>
         )}
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-white text-sm truncate">{branding.agentName}</p>
+          <p className="font-semibold text-white text-sm truncate">{agentName}</p>
           <div className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             <span className="text-xs text-zinc-500">Online</span>
@@ -167,143 +203,73 @@ export function WidgetChatUI({ instanceId, branding }: Props) {
             key={i}
             className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
           >
-            {msg.role === "assistant" && (
-              <div
-                className="w-7 h-7 rounded-full flex items-center justify-center mr-2 shrink-0 mt-0.5"
-                style={{
-                  backgroundColor: `${branding.brandColor}20`,
-                  border: `1px solid ${branding.brandColor}40`,
-                }}
-              >
-                <Bot className="w-3.5 h-3.5" style={{ color: branding.brandColor }} />
-              </div>
-            )}
             <div
-              className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed break-words ${
+              className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
                 msg.role === "user"
-                  ? "text-white rounded-br-sm"
+                  ? "bg-violet-600 text-white rounded-br-md"
                   : msg.error
-                  ? "bg-red-500/10 border border-red-500/20 text-red-400 rounded-bl-sm"
-                  : "bg-white/[0.06] border border-white/[0.08] text-zinc-100 rounded-bl-sm"
+                  ? "bg-red-500/10 border border-red-500/20 text-red-200 rounded-bl-md"
+                  : "bg-white/10 text-zinc-100 rounded-bl-md"
               }`}
-              style={
-                msg.role === "user"
-                  ? { backgroundColor: branding.brandColor }
-                  : undefined
-              }
             >
-              {msg.role === "assistant" && !msg.error ? (
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  components={{
-                    p: ({ children }) => <p className="mb-1 last:mb-0">{children}</p>,
-                    ul: ({ children }) => <ul className="list-disc ml-4 mb-1 space-y-0.5">{children}</ul>,
-                    ol: ({ children }) => <ol className="list-decimal ml-4 mb-1 space-y-0.5">{children}</ol>,
-                    li: ({ children }) => <li>{children}</li>,
-                    strong: ({ children }) => <strong className="font-semibold text-white">{children}</strong>,
-                    code: ({ children }) => (
-                      <code className="bg-white/10 rounded px-1 py-0.5 font-mono text-xs">{children}</code>
-                    ),
-                    a: ({ href, children }) => (
-                      <a 
-                        href={href} 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        className="underline opacity-80 hover:opacity-100"
-                      >
-                        {children}
-                      </a>
-                    ),
-                  }}
-                >
-                  {msg.content}
-                </ReactMarkdown>
-              ) : (
-                <span className="whitespace-pre-wrap">{msg.content}</span>
+              {msg.content}
+              {msg.streaming && (
+                <span className="inline-flex ml-1">
+                  <span className="w-1.5 h-1.5 bg-violet-400 rounded-full animate-pulse" />
+                  <span className="w-1.5 h-1.5 bg-violet-400 rounded-full animate-pulse ml-0.5" style={{ animationDelay: "0.1s" }} />
+                  <span className="w-1.5 h-1.5 bg-violet-400 rounded-full animate-pulse ml-0.5" style={{ animationDelay: "0.2s" }} />
+                </span>
               )}
             </div>
           </div>
         ))}
-
-        {/* Typing indicator */}
-        {sending && (
-          <div className="flex justify-start">
-            <div
-              className="w-7 h-7 rounded-full flex items-center justify-center mr-2 shrink-0"
-              style={{ backgroundColor: `${branding.brandColor}20` }}
-            >
-              <Bot className="w-3.5 h-3.5" style={{ color: branding.brandColor }} />
-            </div>
-            <div className="bg-white/[0.06] border border-white/[0.08] rounded-2xl rounded-bl-sm px-4 py-3 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-bounce" style={{ animationDelay: "0ms" }} />
-              <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-bounce" style={{ animationDelay: "150ms" }} />
-              <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-bounce" style={{ animationDelay: "300ms" }} />
-            </div>
-          </div>
-        )}
-
-        <div ref={bottomRef} />
+        <div ref={messagesEndRef} />
       </div>
 
-      {/* Conversation starters */}
-      {!started && !sending && (
-        <div className="px-4 pb-2 flex flex-wrap gap-2 justify-center">
-          {STARTERS.map((s) => (
-            <button
-              key={s}
-              onClick={() => send(s)}
-              className="text-xs px-3 py-1.5 rounded-full border transition-all hover:scale-105 active:scale-95"
-              style={{
-                borderColor: `${branding.brandColor}40`,
-                color: branding.brandColor,
-                backgroundColor: `${branding.brandColor}10`,
-              }}
-            >
-              {s}
-            </button>
-          ))}
-        </div>
-      )}
-
       {/* Input */}
-      <div className="px-4 pb-4 pt-2 border-t border-white/[0.08]">
-        <div className="flex gap-2">
+      <div className="px-4 py-3 border-t border-white/10 bg-[#0a0a0f]">
+        <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-2"
+        >
           <input
             ref={inputRef}
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && void send()}
-            placeholder="Type your message..."
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+              }
+            }}
+            placeholder="Type a message..."
             disabled={sending}
-            className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500/50 transition-colors disabled:opacity-50"
+            className="flex-1 bg-transparent text-sm text-white placeholder-zinc-600 focus:outline-none disabled:opacity-50"
           />
           <button
-            onClick={() => void send()}
+            onClick={handleSend}
             disabled={sending || !input.trim()}
-            className="w-11 h-11 rounded-xl flex items-center justify-center transition-colors disabled:opacity-40 shrink-0"
-            style={{ backgroundColor: branding.brandColor }}
+            className="p-2 rounded-lg bg-violet-600 hover:bg-violet-500 disabled:opacity-40 disabled:hover:bg-violet-600 transition-colors"
+            style={{ backgroundColor: sending ? undefined : brandColor }}
+            aria-label="Send message"
           >
             {sending ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
+              <Loader2 className="w-4 h-4 text-white animate-spin" />
             ) : (
-              <Send className="w-4 h-4" />
+              <Send className="w-4 h-4 text-white" />
             )}
           </button>
         </div>
-        
-        {!branding.hidePoweredBy && (
-          <div className="text-center mt-2">
-            <a 
-              href="https://synapseforge.ai" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="text-[10px] text-zinc-600 hover:text-zinc-400 transition-colors"
-            >
-              Powered by SynapseForge
-            </a>
-          </div>
-        )}
+        <p className="text-[10px] text-zinc-600 text-center mt-2">
+          Powered by{" "}
+          <a
+            href="https://synapseforge.ai"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-violet-400 hover:text-violet-300"
+          >
+            SynapseForge
+          </a>
+        </p>
       </div>
     </div>
   );
