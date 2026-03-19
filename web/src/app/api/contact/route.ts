@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
     </div>`;
 
   await sendEmail({
-    to: "asavienko@gmail.com",
+    to: "hello@synapseforge.ai",
     replyTo: email,
     subject: `[Contact] ${subject?.trim() || `Message from ${name.trim()}`}`,
     html,
