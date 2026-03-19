@@ -43,13 +43,13 @@ describe("18 · Deploy Tab", () => {
 
   // ── 01. Deploy tab is visible ──────────────────────────────────────────────
   it("Deploy tab is visible in the tab bar", () => {
-    cy.contains("button", "Deploy").should("be.visible");
+    cy.get('button[data-tab="Deploy"]', { timeout: 10000 }).should("be.visible");
     cy.snap("18-deploy-01-tab-visible");
   });
 
   // ── 02. Tab content loads ─────────────────────────────────────────────────
   it("Deploy tab shows deployment section", () => {
-    cy.contains("button", "Deploy").click();
+    cy.get('button[data-tab="Deploy"]', { timeout: 10000 }).click();
     cy.get("main").contains(/Deploy to Cloud|deployed|Provisioning/i).should("be.visible");
     cy.snap("18-deploy-02-content");
   });
@@ -71,7 +71,7 @@ describe("18 · Deploy Tab", () => {
     cy.wrap(null).then(() => {
       if (instanceId) cy.visit(`/en/dashboard/instances/${instanceId}`);
     });
-    cy.contains("button", "Deploy").click();
+    cy.get('button[data-tab="Deploy"]', { timeout: 10000 }).click();
 
     // Deploy button should be disabled
     cy.get("[data-testid='deploy-btn']", { timeout: 10000 }).should("be.disabled");
@@ -108,8 +108,8 @@ describe("18 · Deploy Tab", () => {
     // Wait for main content
     cy.get("main", { timeout: 10000 }).should("be.visible");
 
-    // Open Deploy tab
-    cy.contains("button", "Deploy", { timeout: 10000 }).click();
+    // Open Deploy tab using data-tab attribute (more reliable than text)
+    cy.get('button[data-tab="Deploy"]', { timeout: 10000 }).click();
 
     // Wait for the checklist to render with the LLM check
     cy.contains(/AI provider key|OpenAI API key|LLM|OpenAI/i, { timeout: 10000 }).should("be.visible");
@@ -137,7 +137,7 @@ describe("18 · Deploy Tab", () => {
     cy.wrap(null).then(() => {
       if (instanceId) cy.visit(`/en/dashboard/instances/${instanceId}`);
     });
-    cy.contains("button", "Deploy").click();
+    cy.get('button[data-tab="Deploy"]', { timeout: 10000 }).click();
 
     cy.get("main").contains(/Telegram/).should("be.visible");
     cy.snap("18-deploy-05-channel-check");
@@ -155,7 +155,7 @@ describe("18 · Deploy Tab", () => {
     cy.wrap(null).then(() => {
       if (instanceId) cy.visit(`/en/dashboard/instances/${instanceId}`);
     });
-    cy.contains("button", "Deploy").click();
+    cy.get('button[data-tab="Deploy"]', { timeout: 10000 }).click();
 
     // NOW intercept the subsequent GET poll to return provisioning state
     cy.intercept("GET", `/api/instances/${instanceId}`, {
@@ -197,7 +197,7 @@ describe("18 · Deploy Tab", () => {
     cy.wrap(null).then(() => {
       if (instanceId) cy.visit(`/en/dashboard/instances/${instanceId}`);
     });
-    cy.contains("button", "Deploy").click();
+    cy.get('button[data-tab="Deploy"]', { timeout: 10000 }).click();
 
     cy.get("[data-testid='deploy-btn']").then(($btn) => {
       if (!$btn.is(":disabled")) {
@@ -236,7 +236,7 @@ describe("18 · Deploy Tab", () => {
     cy.get("main", { timeout: 10000 }).should("be.visible");
     
     // Find and click Deploy tab
-    cy.contains("button", "Deploy", { timeout: 10000 }).click();
+    cy.get('button[data-tab="Deploy"]', { timeout: 10000 }).click();
 
     // Click Add key button
     cy.get("main").contains("button", /add key/i).click();
@@ -276,7 +276,7 @@ describe("18 · Deploy Tab", () => {
     cy.wrap(null).then(() => {
       if (instanceId) cy.visit(`/en/dashboard/instances/${instanceId}`);
     });
-    cy.contains("button", "Deploy").click();
+    cy.get('button[data-tab="Deploy"]', { timeout: 10000 }).click();
     cy.wait("@instanceRunning");
 
     // Should show live state
@@ -308,7 +308,7 @@ describe("18 · Deploy Tab", () => {
     cy.wrap(null).then(() => {
       if (instanceId) cy.visit(`/en/dashboard/instances/${instanceId}`);
     });
-    cy.contains("button", "Deploy").click();
+    cy.get('button[data-tab="Deploy"]', { timeout: 10000 }).click();
 
     cy.get("main").contains(/updated.*sync|sync.*apply/i).should("be.visible");
     cy.get("main").contains(/Sync/i).should("be.visible");
@@ -341,7 +341,7 @@ describe("18 · Deploy Tab", () => {
     cy.wrap(null).then(() => {
       if (instanceId) cy.visit(`/en/dashboard/instances/${instanceId}`);
     });
-    cy.contains("button", "Deploy").click();
+    cy.get('button[data-tab="Deploy"]', { timeout: 10000 }).click();
 
     cy.get("main").contains("button", /Sync/i).click();
     cy.wait("@restartReq");
