@@ -4,13 +4,17 @@ import { rateLimit } from "@/lib/ratelimit";
 export const maxDuration = 30;
 
 const SYSTEM_PROMPT =
-  "You are a friendly AI assistant for SynapseForge. Your job is to demo how a custom AI agent works. Be helpful, concise, and occasionally mention that users can deploy their own agent like you in under 3 minutes at SynapseForge.";
+  "Hi! I'm a demo of what your customers will experience. Ask me anything! I'm a friendly SynapseForge demo agent — helpful, concise, and excited to show you what's possible with custom AI agents.";
 
 const FALLBACK_REPLIES = [
   "Hi! I'm SynapseForge's demo assistant. You can deploy your own AI agent just like me in under 3 minutes at SynapseForge! What would you like to know?",
   "SynapseForge lets you build and deploy custom AI agents with no infrastructure headaches. You can have your own agent live in under 3 minutes — no DevOps required!",
   "Great question! With SynapseForge, you configure your system prompt, choose a model, and your AI agent is live. Ready to try it yourself?",
 ];
+
+// In-memory session store (serverless = short-lived anyway)
+// Key: sessionId, Value: array of messages (last 6 max)
+const sessionStore = new Map<string, Array<{ role: "user" | "assistant" | "system"; content: string }>>();
 
 function getClientIp(req: NextRequest): string {
   return (
@@ -28,85 +32,238 @@ interface ChatMessage {
 /**
  * POST /api/demo/chat
  *
- * Public chat endpoint for the landing page demo widget.
+ * Public chat endpoint for the landing page demo.
  * No auth required. Rate limited to 5 messages per IP per 10 minutes.
- * Max 5 user messages per conversation (server-enforced).
+ * Supports both SSE streaming and JSON response modes.
+ *
+ * Body (streaming mode): { message: string, sessionId: string, stream?: true }
+ * Body (legacy mode):   { messages?: ChatMessage[] }
  */
 export async function POST(req: NextRequest) {
+  // ── Check OpenAI key configured ─────────────────────────────────────────
+  const apiKey = process.env.SYNAPSEFORGE_OPENAI_KEY;
+  if (!apiKey) {
+    return NextResponse.json(
+      { error: "OpenAI API key not configured. Set SYNAPSEFORGE_OPENAI_KEY environment variable." },
+      { status: 503 }
+    );
+  }
+
   // ── Rate limit ───────────────────────────────────────────────────────────
   const ip = getClientIp(req);
-  const allowed = rateLimit(`demo:${ip}`, 5, 10 * 60 * 1000);
+  const allowed = await rateLimit(`demo:${ip}`, 5, 10 * 60 * 1000);
   if (!allowed) {
     return NextResponse.json(
-      { error: "Too many messages. Please wait a few minutes and try again." },
+      { error: "Demo rate limit reached. Sign up for unlimited access." },
       { status: 429 }
     );
   }
 
   // ── Parse body ───────────────────────────────────────────────────────────
-  let body: { messages?: ChatMessage[] };
+  let body: { 
+    message?: string; 
+    sessionId?: string; 
+    stream?: boolean;
+    messages?: ChatMessage[] 
+  };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
   }
 
-  const messages: ChatMessage[] = Array.isArray(body.messages)
-    ? body.messages
-    : [];
+  // Check if client wants streaming (new format)
+  const wantsStream = body.stream === true || (body.message !== undefined && body.sessionId !== undefined);
 
-  // ── Demo limit: max 5 user messages ─────────────────────────────────────
-  const userMessageCount = messages.filter((m) => m.role === "user").length;
-  if (userMessageCount > 5) {
-    return NextResponse.json({
-      reply:
-        "🚀 You've reached the demo limit! Sign up free to deploy your own AI agent in under 3 minutes.",
-      limitReached: true,
-    });
-  }
+  if (wantsStream) {
+    // ── New streaming mode ─────────────────────────────────────────────────
+    const { message, sessionId = crypto.randomUUID() } = body;
 
-  // ── Call OpenAI (or fallback) ────────────────────────────────────────────
-  const apiKey = process.env.SYNAPSEFORGE_OPENAI_KEY;
-  if (!apiKey) {
-    // No key configured — return a friendly hardcoded response
-    const idx = Math.floor(Math.random() * FALLBACK_REPLIES.length);
-    return NextResponse.json({ reply: FALLBACK_REPLIES[idx] });
-  }
-
-  try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          // Keep last 10 messages for context (conversation history)
-          ...messages.slice(-10),
-        ],
-        max_tokens: 300,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.status}`);
+    if (!message || typeof message !== "string" || message.trim().length === 0) {
+      return NextResponse.json({ error: "Message is required" }, { status: 400 });
     }
 
-    const data = (await response.json()) as {
-      choices?: Array<{ message?: { content?: string } }>;
-    };
-    const reply =
-      data.choices?.[0]?.message?.content?.trim() ??
-      "Sorry, I couldn't generate a response. Please try again!";
+    // Get or create session context
+    let sessionMessages = sessionStore.get(sessionId) || [];
+    
+    // Add user message to context
+    sessionMessages.push({ role: "user", content: message.trim() });
+    
+    // Keep only last 6 messages (3 exchanges)
+    if (sessionMessages.length > 6) {
+      sessionMessages = sessionMessages.slice(-6);
+    }
+    
+    sessionStore.set(sessionId, sessionMessages);
 
-    return NextResponse.json({ reply });
-  } catch (err) {
-    console.error("[demo/chat] OpenAI call failed:", err);
-    // Graceful fallback
-    const idx = Math.floor(Math.random() * FALLBACK_REPLIES.length);
-    return NextResponse.json({ reply: FALLBACK_REPLIES[idx] });
+    // Build messages for OpenAI
+    const messagesForOpenAI: ChatMessage[] = [
+      { role: "system", content: SYSTEM_PROMPT },
+      ...sessionMessages,
+    ];
+
+    try {
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          messages: messagesForOpenAI,
+          max_tokens: 500,
+          stream: true,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`OpenAI API error: ${response.status} - ${error}`);
+      }
+
+      if (!response.body) {
+        throw new Error("No response body from OpenAI");
+      }
+
+      // Transform OpenAI stream to SSE format
+      const encoder = new TextEncoder();
+      let assistantContent = "";
+
+      const stream = new ReadableStream({
+        async start(controller) {
+          const reader = response.body!.getReader();
+          const decoder = new TextDecoder();
+
+          try {
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+
+              const chunk = decoder.decode(value);
+              const lines = chunk.split("\n");
+
+              for (const line of lines) {
+                if (line.startsWith("data: ")) {
+                  const data = line.slice(6);
+                  if (data === "[DONE]") {
+                    controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+                    continue;
+                  }
+
+                  try {
+                    const parsed = JSON.parse(data);
+                    const content = parsed.choices?.[0]?.delta?.content;
+                    if (content) {
+                      assistantContent += content;
+                      controller.enqueue(
+                        encoder.encode(`data: ${JSON.stringify({ delta: content })}\n\n`)
+                      );
+                    }
+                  } catch {
+                    // Ignore parse errors
+                  }
+                }
+              }
+            }
+          } catch (err) {
+            console.error("[demo/chat] Stream error:", err);
+            controller.enqueue(
+              encoder.encode(`data: ${JSON.stringify({ error: "Stream error" })}\n\n`)
+            );
+          } finally {
+            // Store assistant response in session
+            if (assistantContent) {
+              const currentMessages = sessionStore.get(sessionId) || [];
+              currentMessages.push({ role: "assistant", content: assistantContent });
+              if (currentMessages.length > 6) {
+                sessionStore.set(sessionId, currentMessages.slice(-6));
+              } else {
+                sessionStore.set(sessionId, currentMessages);
+              }
+            }
+            controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+            controller.close();
+            reader.releaseLock();
+          }
+        },
+      });
+
+      return new Response(stream, {
+        headers: {
+          "Content-Type": "text/event-stream",
+          "Cache-Control": "no-cache",
+          "Connection": "keep-alive",
+          "X-Session-Id": sessionId,
+        },
+      });
+    } catch (err) {
+      console.error("[demo/chat] OpenAI streaming error:", err);
+      // Fallback to non-streaming response on error
+      const idx = Math.floor(Math.random() * FALLBACK_REPLIES.length);
+      return NextResponse.json({ reply: FALLBACK_REPLIES[idx] });
+    }
+  } else {
+    // ── Legacy non-streaming mode (for LandingDemoChat widget) ─────────────
+    const messages: ChatMessage[] = Array.isArray(body.messages) ? body.messages : [];
+
+    // Demo limit: max 5 user messages
+    const userMessageCount = messages.filter((m) => m.role === "user").length;
+    if (userMessageCount > 5) {
+      return NextResponse.json({
+        reply:
+          "🚀 You've reached the demo limit! Sign up free to deploy your own AI agent in under 3 minutes.",
+        limitReached: true,
+      });
+    }
+
+    try {
+      const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          messages: [
+            { role: "system", content: SYSTEM_PROMPT },
+            ...messages.slice(-10),
+          ],
+          max_tokens: 300,
+        }),
+      });
+
+      if (!openaiRes.ok) {
+        throw new Error(`OpenAI API error: ${openaiRes.status}`);
+      }
+
+      const data = (await openaiRes.json()) as {
+        choices?: Array<{ message?: { content?: string } }>;
+      };
+      const reply =
+        data.choices?.[0]?.message?.content?.trim() ??
+        "Sorry, I couldn't generate a response. Please try again!";
+
+      return NextResponse.json({ reply });
+    } catch (err) {
+      console.error("[demo/chat] OpenAI call failed:", err);
+      const idx = Math.floor(Math.random() * FALLBACK_REPLIES.length);
+      return NextResponse.json({ reply: FALLBACK_REPLIES[idx] });
+    }
   }
+}
+
+/**
+ * CORS preflight
+ */
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 204,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+    },
+  });
 }

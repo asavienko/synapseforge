@@ -2,6 +2,7 @@ import { Link } from "@/i18n/navigation";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
 import { MobileNav } from "@/components/MobileNav";
 import { LandingDemoChat } from "@/components/LandingDemoChat";
+import { DemoChat } from "@/components/DemoChat";
 import { getFeaturedTemplates, categoryColors } from "@/lib/templates";
 import {
   Zap, Bot, ArrowRight, Check, Shield, RefreshCw,
@@ -35,6 +36,7 @@ export default async function LandingPage() {
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-zinc-400">
             <Link href="/templates" className="hover:text-white transition-colors">Templates</Link>
+            <a href="#demo" className="hover:text-white transition-colors">Demo</a>
             <a href="#how" className="hover:text-white transition-colors">{t("nav.services")}</a>
             <a href="#pricing" className="hover:text-white transition-colors">{t("nav.pricing")}</a>
             <a href="#about" className="hover:text-white transition-colors">{t("nav.about")}</a>
@@ -445,6 +447,18 @@ export default async function LandingPage() {
               <p className="text-zinc-400 text-sm leading-relaxed">{f.desc}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ── Live Demo ── */}
+      <section id="demo" className="py-24 px-6">
+        <div className="max-w-4xl mx-auto text-center mb-12">
+          <span className="text-xs font-semibold tracking-widest text-violet-400 uppercase">Live Demo</span>
+          <h2 className="text-3xl md:text-4xl font-bold mt-3 mb-4">See it in action</h2>
+          <p className="text-zinc-400 text-lg">Chat with a real AI agent — no sign-up required.</p>
+        </div>
+        <div className="max-w-2xl mx-auto">
+          <DemoChat />
         </div>
       </section>
 
