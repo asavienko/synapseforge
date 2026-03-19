@@ -38,6 +38,6 @@
     {
       "path": "/api/cron/provision-poll",
       "schedule": "*/1 * * * *"
-    },
+    }
   ]
 }
