@@ -21,6 +21,9 @@ export function DemoChat() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [rateLimited, setRateLimited] = useState(false);
+  const [leadEmail, setLeadEmail] = useState("");
+  const [leadSubmitted, setLeadSubmitted] = useState(false);
+  const [leadSubmitting, setLeadSubmitting] = useState(false);
   const [streamingContent, setStreamingContent] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -277,17 +280,64 @@ export function DemoChat() {
 
       {/* Rate limit CTA */}
       {rateLimited && (
-        <div className="mx-5 mb-4 bg-violet-950/50 border border-violet-500/30 rounded-xl px-4 py-3">
-          <p className="text-sm text-violet-200 mb-2">
-            You&apos;ve reached the demo limit.
-          </p>
+        <div className="mx-5 mb-4 bg-violet-950/50 border border-violet-500/30 rounded-xl px-4 py-4 space-y-3">
+          <p className="text-sm font-semibold text-violet-200">You&apos;ve seen what it can do 👀</p>
+
+          {/* Primary CTA — sign up */}
           <Link
             href="/sign-up"
-            className="inline-flex items-center gap-1.5 text-sm bg-violet-600 hover:bg-violet-500 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            className="flex items-center justify-center gap-2 text-sm bg-violet-600 hover:bg-violet-500 text-white px-4 py-2.5 rounded-lg font-semibold transition-colors w-full"
           >
-            Sign up for unlimited access
+            Start free — deploy your own AI
             <Send className="w-3.5 h-3.5" />
           </Link>
+
+          {/* Secondary CTA — lead capture */}
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10" /></div>
+            <div className="relative flex justify-center"><span className="bg-[#0a0a0f] px-2 text-xs text-zinc-500">or get a personalised setup</span></div>
+          </div>
+
+          {leadSubmitted ? (
+            <p className="text-center text-sm text-emerald-400 font-medium py-1">✓ Got it — we&apos;ll be in touch shortly!</p>
+          ) : (
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                if (!leadEmail.trim()) return;
+                setLeadSubmitting(true);
+                try {
+                  await fetch("/api/demo/lead", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email: leadEmail.trim() }),
+                  });
+                  setLeadSubmitted(true);
+                } catch {
+                  setLeadSubmitted(true); // fail silently
+                } finally {
+                  setLeadSubmitting(false);
+                }
+              }}
+              className="flex gap-2"
+            >
+              <input
+                type="email"
+                required
+                value={leadEmail}
+                onChange={(e) => setLeadEmail(e.target.value)}
+                placeholder="your@email.com"
+                className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500/50 min-w-0"
+              />
+              <button
+                type="submit"
+                disabled={leadSubmitting}
+                className="px-3 py-2 bg-white/10 hover:bg-white/20 border border-white/10 text-white rounded-lg text-sm font-medium transition-colors whitespace-nowrap disabled:opacity-50"
+              >
+                {leadSubmitting ? "..." : "Notify me"}
+              </button>
+            </form>
+          )}
         </div>
       )}
 
