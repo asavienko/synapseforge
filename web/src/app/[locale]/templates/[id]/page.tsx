@@ -12,11 +12,11 @@ import {
   ArrowLeft,
   ArrowRight,
   Check,
-  Copy,
   Sparkles,
   Zap,
   ExternalLink,
 } from "lucide-react";
+import { CopyButton } from "@/components/CopyButton";
 import { auth } from "@/lib/auth";
 import { getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
@@ -263,15 +263,7 @@ export default async function TemplateDetailPage({ params }: Props) {
                 <pre className="bg-black/40 border border-white/10 rounded-xl p-4 text-sm text-zinc-300 overflow-x-auto max-h-64 font-mono">
                   {promptPreview}
                 </pre>
-                <button
-                  className="absolute top-3 right-3 p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
-                  title="Copy to clipboard"
-                  onClick={() => {
-                    navigator.clipboard.writeText(template.systemPrompt);
-                  }}
-                >
-                  <Copy className="w-4 h-4 text-zinc-400" />
-                </button>
+                <CopyButton text={template.systemPrompt} />
               </div>
             </div>
 
