@@ -381,7 +381,7 @@
   function createContainer() {
     var container = document.createElement('div');
     container.id = '_sf_frame_wrap';
-    container.className = 'sf-widget-container position-' + widgetConfig.position;
+    container.className = 'sf-widget-container sf-hidden position-' + widgetConfig.position;
     container.setAttribute('role', 'dialog');
     container.setAttribute('aria-label', 'Chat window');
     
@@ -478,6 +478,7 @@
       btn.classList.add('open');
       btn.setAttribute('aria-label', 'Close chat');
       container.classList.add('open');
+      container.classList.remove('sf-hidden');
       hideGreeting();
       
       // Focus iframe for accessibility
@@ -489,6 +490,7 @@
       btn.classList.remove('open');
       btn.setAttribute('aria-label', 'Open chat with ' + (widgetConfig.agentName || 'AI Assistant'));
       container.classList.remove('open');
+      container.classList.add('sf-hidden');
     }
   }
 
