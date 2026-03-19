@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { encrypt } from "@/lib/crypto";
+import crypto from "crypto";
 
 // GET /api/instances/[id]/webhooks - List webhooks
 export async function GET(
@@ -26,9 +26,13 @@ export async function GET(
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    // For now, return empty array - webhooks stored in separate table later
-    // This is a placeholder that allows the UI to work
-    return NextResponse.json({ webhooks: [] });
+    // Get webhooks from database
+    const webhooks = await prisma.webhook.findMany({
+      where: { instanceId: id },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return NextResponse.json({ webhooks });
   } catch (error) {
     console.error("[webhooks] Error:", error);
     return NextResponse.json(
@@ -50,7 +54,15 @@ export async function POST(
     }
 
     const { id } = await params;
-    const body = await req.json();
+    const { url, events, secret } = await req.json();
+
+    // Validate
+    if (!url || !events || events.length === 0) {
+      return NextResponse.json(
+        { error: "URL and events are required" },
+        { status: 400 }
+      );
+    }
 
     // Verify instance ownership
     const instance = await prisma.aIInstance.findFirst({
@@ -62,12 +74,18 @@ export async function POST(
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    // TODO: Store webhook in database when schema is ready
-    // For now, just return success so UI works
-    return NextResponse.json({ 
-      success: true, 
-      message: "Webhook configuration saved (stored locally)" 
+    // Create webhook
+    const webhook = await prisma.webhook.create({
+      data: {
+        instanceId: id,
+        url,
+        events,
+        secret: secret || crypto.randomBytes(32).toString("hex"),
+        active: true,
+      },
     });
+
+    return NextResponse.json({ webhook });
   } catch (error) {
     console.error("[webhooks] Error:", error);
     return NextResponse.json(
