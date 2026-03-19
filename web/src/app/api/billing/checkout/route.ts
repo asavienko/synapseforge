@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { STRIPE_PLANS, PlanKey } from "@/lib/stripe";
+import { STRIPE_PLANS, PlanKey, getSelfServicePlans, getManagedPlans } from "@/lib/stripe";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -14,7 +14,11 @@ export async function POST(req: NextRequest) {
   }
 
   const { plan } = (await req.json()) as { plan: PlanKey };
-  if (!STRIPE_PLANS[plan]) return NextResponse.json({ error: "Invalid plan." }, { status: 400 });
+
+  // Validate plan exists
+  if (!STRIPE_PLANS[plan]) {
+    return NextResponse.json({ error: "Invalid plan." }, { status: 400 });
+  }
 
   const user = await prisma.user.findUnique({ where: { id: session.user.id } });
   if (!user) return NextResponse.json({ error: "User not found." }, { status: 404 });
@@ -26,6 +30,19 @@ export async function POST(req: NextRequest) {
       data: { plan: "free", stripeSubscriptionId: null, stripePriceId: null, stripeCurrentPeriodEnd: null },
     });
     return NextResponse.json({ success: true, downgradedToFree: true });
+  }
+
+  // Check if plan has a valid price ID configured
+  const planConfig = STRIPE_PLANS[plan];
+  if (!planConfig.priceId) {
+    // For managed plans without Stripe price IDs, redirect to contact
+    if (getManagedPlans().includes(plan)) {
+      return NextResponse.json({ 
+        managedPlanContact: true, 
+        message: "Managed plans require setup. Please contact us." 
+      }, { status: 200 });
+    }
+    return NextResponse.json({ error: "Plan not available for purchase at this time." }, { status: 400 });
   }
 
   // Lazy-import stripe only when key is available
@@ -49,18 +66,30 @@ export async function POST(req: NextRequest) {
 
   const baseUrl = process.env.NEXTAUTH_URL!;
 
+  // Build checkout session metadata
+  const metadata: Record<string, string> = {
+    userId: user.id,
+    plan,
+  };
+
+  // Add support hours info for managed plans
+  if (getManagedPlans().includes(plan)) {
+    metadata.supportHours = String(planConfig.supportHours);
+    metadata.isManaged = "true";
+  }
+
   const checkoutSession = await stripe.checkout.sessions.create({
     customer: customerId,
     mode: "subscription",
     payment_method_types: ["card"],
-    line_items: [{ price: STRIPE_PLANS[plan].priceId, quantity: 1 }],
-    success_url: `${baseUrl}/dashboard/billing?success=1`,
+    line_items: [{ price: planConfig.priceId, quantity: 1 }],
+    success_url: `${baseUrl}/dashboard/billing?success=1&plan=${plan}`,
     cancel_url: `${baseUrl}/dashboard/billing?cancelled=1`,
     subscription_data: {
-      metadata: { userId: user.id, plan },
+      metadata,
     },
     allow_promotion_codes: true,
-    metadata: { userId: user.id, plan },
+    metadata,
   });
 
   return NextResponse.json({ url: checkoutSession.url });

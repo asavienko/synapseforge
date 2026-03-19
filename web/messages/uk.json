@@ -51,12 +51,71 @@
     "title": "Просте та прозоре ціноутворення",
     "subtitle": "Починайте безкоштовно. Оновлюйте коли потрібно.",
     "popular": "Найпопулярніший",
+    "managedBadge": "Підтримка людини",
+    "selfService": "Самообслуговування",
+    "managed": "З підтримкою",
+    "supportAddon": "Додаткові години підтримки",
+    "supportAddonDesc": "Додаткові години підтримки за $100/год або $50/год у складі керованих планів",
+    "messagesPerMonth": "{count} повідомлень/міс",
+    "instances": "{count} інстанс",
+    "supportHours": "{count} годин підтримки",
+    "aiManager": "Тільки AI менеджер",
+    "humanManager": "Виділений менеджер",
     "free": {
       "name": "Безкоштовний",
       "price": "$0",
       "desc": "на місяць",
       "cta": "Почати безкоштовно →",
       "period": "назавжди"
+    },
+    "starter_10k": {
+      "name": "Starter",
+      "price": "$50",
+      "desc": "на місяць",
+      "period": "/ місяць",
+      "cta": "Обрати Starter →"
+    },
+    "growth_30k": {
+      "name": "Growth",
+      "price": "$100",
+      "desc": "на місяць",
+      "period": "/ місяць",
+      "cta": "Обрати Growth →"
+    },
+    "scale_100k": {
+      "name": "Scale",
+      "price": "$200",
+      "desc": "на місяць",
+      "period": "/ місяць",
+      "cta": "Обрати Scale →"
+    },
+    "business_200k": {
+      "name": "Business",
+      "price": "$300",
+      "desc": "на місяць",
+      "period": "/ місяць",
+      "cta": "Обрати Business →"
+    },
+    "managed_starter": {
+      "name": "Managed Starter",
+      "price": "$300",
+      "desc": "на місяць",
+      "period": "/ місяць",
+      "cta": "Зв'язатися з нами →"
+    },
+    "managed_growth": {
+      "name": "Managed Growth",
+      "price": "$500",
+      "desc": "на місяць",
+      "period": "/ місяць",
+      "cta": "Зв'язатися з нами →"
+    },
+    "managed_scale": {
+      "name": "Managed Scale",
+      "price": "$1,000",
+      "desc": "на місяць",
+      "period": "/ місяць",
+      "cta": "Зв'язатися з нами →"
     },
     "pro": {
       "name": "Pro",
@@ -88,7 +147,19 @@
       "sla4h": "SLA відповіді 4г",
       "customIntegrations": "Власні інтеграції",
       "teamTraining": "Навчання команди",
-      "whiteLabel": "White-label"
+      "whiteLabel": "White-label",
+      "messages10k": "10,000 повідомлень/міс",
+      "messages30k": "30,000 повідомлень/міс",
+      "messages100k": "100,000 повідомлень/міс",
+      "messages200k": "200,000 повідомлень/міс",
+      "instances3": "До 3 AI інстансів",
+      "instances5": "До 5 AI інстансів",
+      "instances10": "До 10 AI інстансів",
+      "support4h": "4 години підтримки/міс",
+      "support8h": "8 годин підтримки/міс",
+      "support18h": "18 годин підтримки/міс",
+      "weeklyCheckins": "Щотижневі дзвінки",
+      "aiManagerOnly": "AI менеджер (самообслуговування)"
     },
     "currentPlan": "Поточний план",
     "upgradeToPro": "Перейти на Pro"

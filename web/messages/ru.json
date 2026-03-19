@@ -51,12 +51,71 @@
     "title": "Простое и прозрачное ценообразование",
     "subtitle": "Начните бесплатно. Переходите на платный план, когда нужно.",
     "popular": "Самый популярный",
+    "managedBadge": "Поддержка человека",
+    "selfService": "Самообслуживание",
+    "managed": "С поддержкой",
+    "supportAddon": "Дополнительные часы поддержки",
+    "supportAddonDesc": "Дополнительные часы поддержки за $100/час или $50/час в составе управляемых планов",
+    "messagesPerMonth": "{count} сообщений/мес",
+    "instances": "{count} инстанс",
+    "supportHours": "{count} часов поддержки",
+    "aiManager": "Только AI менеджер",
+    "humanManager": "Выделенный менеджер",
     "free": {
       "name": "Бесплатный",
       "price": "$0",
       "desc": "в месяц",
       "cta": "Начать бесплатно →",
       "period": "навсегда"
+    },
+    "starter_10k": {
+      "name": "Starter",
+      "price": "$50",
+      "desc": "в месяц",
+      "period": "/ месяц",
+      "cta": "Выбрать Starter →"
+    },
+    "growth_30k": {
+      "name": "Growth",
+      "price": "$100",
+      "desc": "в месяц",
+      "period": "/ месяц",
+      "cta": "Выбрать Growth →"
+    },
+    "scale_100k": {
+      "name": "Scale",
+      "price": "$200",
+      "desc": "в месяц",
+      "period": "/ месяц",
+      "cta": "Выбрать Scale →"
+    },
+    "business_200k": {
+      "name": "Business",
+      "price": "$300",
+      "desc": "в месяц",
+      "period": "/ месяц",
+      "cta": "Выбрать Business →"
+    },
+    "managed_starter": {
+      "name": "Managed Starter",
+      "price": "$300",
+      "desc": "в месяц",
+      "period": "/ месяц",
+      "cta": "Связаться с нами →"
+    },
+    "managed_growth": {
+      "name": "Managed Growth",
+      "price": "$500",
+      "desc": "в месяц",
+      "period": "/ месяц",
+      "cta": "Связаться с нами →"
+    },
+    "managed_scale": {
+      "name": "Managed Scale",
+      "price": "$1,000",
+      "desc": "в месяц",
+      "period": "/ месяц",
+      "cta": "Связаться с нами →"
     },
     "pro": {
       "name": "Pro",
@@ -88,7 +147,19 @@
       "sla4h": "SLA ответа 4ч",
       "customIntegrations": "Собственные интеграции",
       "teamTraining": "Обучение команды",
-      "whiteLabel": "White-label"
+      "whiteLabel": "White-label",
+      "messages10k": "10,000 сообщений/мес",
+      "messages30k": "30,000 сообщений/мес",
+      "messages100k": "100,000 сообщений/мес",
+      "messages200k": "200,000 сообщений/мес",
+      "instances3": "До 3 AI инстансов",
+      "instances5": "До 5 AI инстансов",
+      "instances10": "До 10 AI инстансов",
+      "support4h": "4 часа поддержки/мес",
+      "support8h": "8 часов поддержки/мес",
+      "support18h": "18 часов поддержки/мес",
+      "weeklyCheckins": "Еженедельные созвоны",
+      "aiManagerOnly": "AI менеджер (самообслуживание)"
     },
     "currentPlan": "Текущий план",
     "upgradeToPro": "Перейти на Pro"

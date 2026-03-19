@@ -16,44 +16,101 @@ import {
   AlertCircle,
   X,
   AlertTriangle,
+  Sparkles,
+  Bot,
+  Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const PLANS = [
+// Self-service plans
+const SELF_SERVICE_PLANS = [
   {
     key: "free",
-    features: [
-      "1 AI instance",
-      "Manager assigned",
-      "In-app messaging",
-      "Community support",
-    ],
+    messages: 2000,
+    instances: 1,
+    supportHours: 0,
+    features: ["1 AI instance", "2,000 messages/mo", "Community support"],
     highlight: false,
   },
   {
+    key: "starter_10k",
+    messages: 10000,
+    instances: 3,
+    supportHours: 0,
+    price: "$50",
+    features: ["Up to 3 AI instances", "10,000 messages/mo", "AI Manager only", "Telegram & WhatsApp"],
+    highlight: false,
+  },
+  {
+    key: "growth_30k",
+    messages: 30000,
+    instances: 3,
+    supportHours: 0,
+    price: "$100",
+    features: ["Up to 3 AI instances", "30,000 messages/mo", "AI Manager only", "Telegram & WhatsApp"],
+    highlight: true,
+  },
+  {
+    key: "scale_100k",
+    messages: 100000,
+    instances: 5,
+    supportHours: 0,
+    price: "$200",
+    features: ["Up to 5 AI instances", "100,000 messages/mo", "AI Manager only", "Priority API"],
+    highlight: false,
+  },
+  {
+    key: "business_200k",
+    messages: 200000,
+    instances: 10,
+    supportHours: 0,
+    price: "$300",
+    features: ["Up to 10 AI instances", "200,000 messages/mo", "AI Manager only", "Priority API"],
+    highlight: false,
+  },
+];
+
+// Managed plans
+const MANAGED_PLANS = [
+  {
+    key: "managed_starter",
+    messages: 10000,
+    instances: 3,
+    supportHours: 4,
+    price: "$300",
+    features: ["Up to 3 AI instances", "10,000 messages/mo", "4h support/mo", "Dedicated manager"],
+    highlight: false,
+  },
+  {
+    key: "managed_growth",
+    messages: 30000,
+    instances: 3,
+    supportHours: 8,
+    price: "$500",
+    features: ["Up to 3 AI instances", "30,000 messages/mo", "8h support/mo", "Weekly check-ins"],
+    highlight: true,
+  },
+  {
+    key: "managed_scale",
+    messages: 100000,
+    instances: 5,
+    supportHours: 18,
+    price: "$1,000",
+    features: ["Up to 5 AI instances", "100,000 messages/mo", "18h support/mo", "Team training"],
+    highlight: false,
+  },
+];
+
+// Legacy plans for backward compatibility
+const LEGACY_PLANS = [
+  {
     key: "pro",
-    features: [
-      "Up to 3 AI instances",
-      "Dedicated human manager",
-      "24h response time",
-      "Weekly check-ins",
-      "Custom configurations",
-      "Telegram & WhatsApp integration",
-      "99% uptime SLA",
-    ],
+    features: ["Up to 3 AI instances", "Dedicated human manager", "24h response time", "Weekly check-ins"],
     highlight: true,
   },
   {
     key: "enterprise",
-    features: [
-      "Unlimited AI instances",
-      "Dedicated manager team",
-      "4h response SLA",
-      "Custom integrations",
-      "Team training",
-      "Monthly strategy calls",
-      "White-label option",
-    ],
+    features: ["Unlimited AI instances", "Dedicated manager team", "4h response SLA", "Team training"],
     highlight: false,
   },
 ];
@@ -86,6 +143,7 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
   const [loading, setLoading] = useState<string | null>(null);
   const [billingError, setBillingError] = useState<string | null>(null);
   const [showContactUpgrade, setShowContactUpgrade] = useState(false);
+  const [activeTab, setActiveTab] = useState<"self-service" | "managed">("self-service");
 
   // Cancellation survey state
   const [showCancelSurvey, setShowCancelSurvey] = useState(false);
@@ -95,6 +153,11 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
 
   const tb = useTranslations("dashboard.billing");
   const tp = useTranslations("pricing");
+
+  // Check if current plan is managed
+  const isManagedPlan = plan.startsWith("managed_");
+  // Check if current plan is legacy
+  const isLegacyPlan = ["pro", "enterprise"].includes(plan);
 
   async function handleUpgrade(planKey: string) {
     setBillingError(null);
@@ -108,7 +171,7 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
     setLoading(null);
     if (data.url) {
       window.location.assign(data.url);
-    } else if (data.stripeUnavailable) {
+    } else if (data.managedPlanContact || data.stripeUnavailable) {
       setShowContactUpgrade(true);
     } else {
       setBillingError(data.error || "Something went wrong. Please try again.");
@@ -154,15 +217,27 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
     await openPortal();
   }
 
+  const getPlanName = (key: string) => {
+    // Try new translation keys first, fall back to legacy
+    const name = tp(`${key}.name` as Parameters<typeof tp>[0]);
+    // If it returns the key itself, format it nicely
+    if (name === `${key}.name`) {
+      return key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+    }
+    return name;
+  };
+
+  const formatNumber = (num: number) => num.toLocaleString("en-US");
+
   return (
-    <div className="p-6 md:p-8 max-w-5xl">
+    <div className="p-6 md:p-8 max-w-6xl">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-white">{tb("title")}</h1>
         <p className="text-zinc-400 mt-1">{tb("subtitle")}</p>
       </div>
 
-      {/* Billing error banner — replaces the browser alert() */}
+      {/* Billing error banner */}
       {billingError && (
         <div className="flex items-start gap-3 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 mb-6">
           <AlertTriangle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
@@ -223,8 +298,18 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
             <div className="flex items-center gap-2 mb-1">
               <CreditCard className="w-4 h-4 text-violet-400" />
               <span className="text-xs text-zinc-500 uppercase tracking-wider">{tb("currentPlan")}</span>
+              {isManagedPlan && (
+                <span className="ml-2 text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full">
+                  Managed
+                </span>
+              )}
+              {isLegacyPlan && (
+                <span className="ml-2 text-xs bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full">
+                  Legacy
+                </span>
+              )}
             </div>
-            <div className="text-xl font-bold text-white capitalize">{plan}</div>
+            <div className="text-xl font-bold text-white capitalize">{getPlanName(plan)}</div>
             {periodEnd && (
               <div className="flex items-center gap-1.5 mt-1">
                 <Clock className="w-3.5 h-3.5 text-zinc-500" />
@@ -256,92 +341,199 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
         </div>
       </div>
 
+      {/* Plan tabs */}
+      <div className="flex gap-4 mb-6">
+        <button
+          onClick={() => setActiveTab("self-service")}
+          className={cn(
+            "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+            activeTab === "self-service"
+              ? "bg-violet-600 text-white"
+              : "bg-white/5 text-zinc-400 hover:text-white"
+          )}
+        >
+          <Bot className="w-4 h-4" />
+          Self-Service
+        </button>
+        <button
+          onClick={() => setActiveTab("managed")}
+          className={cn(
+            "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+            activeTab === "managed"
+              ? "bg-emerald-600 text-white"
+              : "bg-white/5 text-zinc-400 hover:text-white"
+          )}
+        >
+          <Users className="w-4 h-4" />
+          Managed Plans
+        </button>
+      </div>
+
       {/* Plan cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {PLANS.map((p) => {
-          const isCurrent = p.key === plan;
-          const planName = tp(`${p.key}.name` as Parameters<typeof tp>[0]);
-          const planPrice = tp(`${p.key}.price` as Parameters<typeof tp>[0]);
-          const planPeriod = tp(`${p.key}.period` as Parameters<typeof tp>[0]);
-          const planDesc = tp(`${p.key}.desc` as Parameters<typeof tp>[0]);
-          const planCta = tp(`${p.key}.cta` as Parameters<typeof tp>[0]);
+      {activeTab === "self-service" ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+          {SELF_SERVICE_PLANS.map((p) => {
+            const isCurrent = p.key === plan;
+            const planName = getPlanName(p.key);
+            const planPrice = p.price || "$0";
 
-          return (
-            <div
-              key={p.key}
-              className={cn(
-                "relative rounded-2xl p-6 border transition-all",
-                p.highlight
-                  ? "border-violet-500/50 bg-violet-600/5"
-                  : "border-white/10 bg-white/[0.02]"
-              )}
-            >
-              {p.highlight && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="bg-violet-600 text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
-                    <Zap className="w-3 h-3" /> {tb("mostPopular")}
-                  </span>
-                </div>
-              )}
+            return (
+              <div
+                key={p.key}
+                className={cn(
+                  "relative rounded-2xl p-5 border transition-all",
+                  p.highlight
+                    ? "border-violet-500/50 bg-violet-600/5"
+                    : "border-white/10 bg-white/[0.02]"
+                )}
+              >
+                {p.highlight && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                    <span className="bg-violet-600 text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
+                      <Sparkles className="w-3 h-3" /> {tb("mostPopular")}
+                    </span>
+                  </div>
+                )}
 
-              <div className="mb-4">
-                <div className="text-sm font-semibold text-zinc-300 mb-1">{planName}</div>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-bold text-white">{planPrice}</span>
-                  {planPeriod && <span className="text-zinc-500 text-sm">{planPeriod}</span>}
+                <div className="mb-4">
+                  <div className="text-sm font-semibold text-zinc-300 mb-1">{planName}</div>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-2xl font-bold text-white">{planPrice}</span>
+                    <span className="text-zinc-500 text-sm">/mo</span>
+                  </div>
                 </div>
-                <p className="text-xs text-zinc-500 mt-2">{planDesc}</p>
+
+                {/* Key metrics */}
+                <div className="space-y-1 mb-4 text-xs text-zinc-400">
+                  <div>{formatNumber(p.messages)} messages/mo</div>
+                  <div>{p.instances} {p.instances === 1 ? "instance" : "instances"}</div>
+                </div>
+
+                <ul className="space-y-2 mb-6">
+                  {p.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2 text-xs text-zinc-400">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-violet-400 shrink-0 mt-0.5" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+
+                {isCurrent ? (
+                  <div className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-white/10 text-sm text-zinc-500 font-medium">
+                    <Shield className="w-4 h-4" /> {tb("currentPlan")}
+                  </div>
+                ) : p.key === "free" ? (
+                  <button
+                    onClick={() => setShowCancelSurvey(true)}
+                    className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-white/10 text-sm text-zinc-600 font-medium hover:text-zinc-400 hover:border-white/20 transition-colors"
+                  >
+                    {tb("downgradeViaSupport")}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => handleUpgrade(p.key)}
+                    disabled={!!loading}
+                    className={cn(
+                      "w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-colors disabled:opacity-50",
+                      p.highlight
+                        ? "bg-violet-600 hover:bg-violet-500 text-white"
+                        : "bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-200"
+                    )}
+                  >
+                    {loading === p.key ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                    Upgrade
+                  </button>
+                )}
               </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl">
+          {MANAGED_PLANS.map((p) => {
+            const isCurrent = p.key === plan;
+            const planName = getPlanName(p.key);
 
-              <ul className="space-y-2 mb-6">
-                {p.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-sm text-zinc-400">
-                    <CheckCircle2 className="w-4 h-4 text-violet-400 shrink-0 mt-0.5" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
+            return (
+              <div
+                key={p.key}
+                className={cn(
+                  "relative rounded-2xl p-5 border transition-all",
+                  p.highlight
+                    ? "border-emerald-500/50 bg-emerald-600/5"
+                    : "border-white/10 bg-white/[0.02]"
+                )}
+              >
+                {p.highlight && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                    <span className="bg-emerald-600 text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
+                      <Sparkles className="w-3 h-3" /> {tb("mostPopular")}
+                    </span>
+                  </div>
+                )}
 
-              {isCurrent ? (
-                <div className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-white/10 text-sm text-zinc-500 font-medium">
-                  <Shield className="w-4 h-4" /> {tb("currentPlan")}
+                <div className="mb-4">
+                  <div className="text-sm font-semibold text-zinc-300 mb-1">{planName}</div>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-2xl font-bold text-white">{p.price}</span>
+                    <span className="text-zinc-500 text-sm">/mo</span>
+                  </div>
                 </div>
-              ) : p.key === "free" ? (
-                <button
-                  onClick={() => setShowCancelSurvey(true)}
-                  className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-white/10 text-sm text-zinc-600 font-medium hover:text-zinc-400 hover:border-white/20 transition-colors"
-                >
-                  {tb("downgradeViaSupport")}
-                </button>
-              ) : p.key === "enterprise" ? (
-                <a
-                  href="mailto:hello@synapseforge.ai"
-                  className={cn(
-                    "w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-colors",
-                    "bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-200"
-                  )}
-                >
-                  <Mail className="w-4 h-4" />
-                  {planCta}
-                </a>
-              ) : (
-                <button
-                  onClick={() => handleUpgrade(p.key)}
-                  disabled={!!loading}
-                  className={cn(
-                    "w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-colors disabled:opacity-50",
-                    p.highlight
-                      ? "bg-violet-600 hover:bg-violet-500 text-white"
-                      : "bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-200"
-                  )}
-                >
-                  {loading === p.key ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                  {planCta}
-                </button>
-              )}
-            </div>
-          );
-        })}
+
+                {/* Key metrics */}
+                <div className="space-y-1 mb-4 text-xs">
+                  <div className="text-zinc-400">{formatNumber(p.messages)} messages/mo</div>
+                  <div className="text-zinc-400">{p.instances} {p.instances === 1 ? "instance" : "instances"}</div>
+                  <div className="text-emerald-400 font-medium">{p.supportHours} hours support/mo</div>
+                </div>
+
+                <ul className="space-y-2 mb-6">
+                  {p.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2 text-xs text-zinc-400">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+
+                {isCurrent ? (
+                  <div className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-white/10 text-sm text-zinc-500 font-medium">
+                    <Shield className="w-4 h-4" /> {tb("currentPlan")}
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => handleUpgrade(p.key)}
+                    disabled={!!loading}
+                    className={cn(
+                      "w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-colors disabled:opacity-50",
+                      p.highlight
+                        ? "bg-emerald-600 hover:bg-emerald-500 text-white"
+                        : "bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-200"
+                    )}
+                  >
+                    {loading === p.key ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />}
+                    Contact Sales
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Support Add-on info */}
+      <div className="mt-8 p-4 rounded-xl bg-white/[0.02] border border-white/10">
+        <div className="flex items-center gap-2 mb-2">
+          <Sparkles className="w-4 h-4 text-violet-400" />
+          <span className="text-sm font-medium text-white">Support Hours Add-on</span>
+        </div>
+        <p className="text-xs text-zinc-400">
+          Purchase additional support hours at $100/hour, or bundled at $50/hour with managed plans.
+          {" "}
+          <a href="mailto:hello@synapseforge.ai" className="text-violet-400 hover:text-violet-300">
+            Contact us to add support hours.
+          </a>
+        </p>
       </div>
 
       {/* Annual note */}
@@ -431,7 +623,7 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
           className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={(e) => e.target === e.currentTarget && setShowContactUpgrade(false)}
         >
-          <div className="bg-[#111118] border border-white/10 rounded-2xl p-7 w-full max-w-md">
+          <div className="bg-[#111118] border border-white/10 rounded-2xl p-7 w-full max-w-md relative">
             <button
               onClick={() => setShowContactUpgrade(false)}
               className="absolute top-4 right-4 text-zinc-600 hover:text-zinc-300 transition-colors text-lg leading-none"

@@ -51,12 +51,71 @@
     "title": "Simple, transparent pricing",
     "subtitle": "Start free. Upgrade when you need more.",
     "popular": "Most popular",
+    "managedBadge": "Human Support",
+    "selfService": "Self-Service",
+    "managed": "Managed Plans",
+    "supportAddon": "Support Hours Add-on",
+    "supportAddonDesc": "Purchase additional support hours at $100/hour, or bundled at $50/hour with managed plans",
+    "messagesPerMonth": "{count} messages/month",
+    "instances": "{count} instances",
+    "supportHours": "{count} hours support",
+    "aiManager": "AI Manager only",
+    "humanManager": "Dedicated human manager",
     "free": {
       "name": "Free",
       "price": "$0",
       "desc": "per month",
       "period": "forever",
       "cta": "Start free →"
+    },
+    "starter_10k": {
+      "name": "Starter",
+      "price": "$50",
+      "desc": "per month",
+      "period": "/ month",
+      "cta": "Get Starter →"
+    },
+    "growth_30k": {
+      "name": "Growth",
+      "price": "$100",
+      "desc": "per month",
+      "period": "/ month",
+      "cta": "Get Growth →"
+    },
+    "scale_100k": {
+      "name": "Scale",
+      "price": "$200",
+      "desc": "per month",
+      "period": "/ month",
+      "cta": "Get Scale →"
+    },
+    "business_200k": {
+      "name": "Business",
+      "price": "$300",
+      "desc": "per month",
+      "period": "/ month",
+      "cta": "Get Business →"
+    },
+    "managed_starter": {
+      "name": "Managed Starter",
+      "price": "$300",
+      "desc": "per month",
+      "period": "/ month",
+      "cta": "Contact Sales →"
+    },
+    "managed_growth": {
+      "name": "Managed Growth",
+      "price": "$500",
+      "desc": "per month",
+      "period": "/ month",
+      "cta": "Contact Sales →"
+    },
+    "managed_scale": {
+      "name": "Managed Scale",
+      "price": "$1,000",
+      "desc": "per month",
+      "period": "/ month",
+      "cta": "Contact Sales →"
     },
     "pro": {
       "name": "Pro",
@@ -88,7 +147,19 @@
       "sla4h": "4h response SLA",
       "customIntegrations": "Custom integrations & webhooks",
       "teamTraining": "Team onboarding & training",
-      "whiteLabel": "White-label option"
+      "whiteLabel": "White-label option",
+      "messages10k": "10,000 messages/month",
+      "messages30k": "30,000 messages/month",
+      "messages100k": "100,000 messages/month",
+      "messages200k": "200,000 messages/month",
+      "instances3": "Up to 3 AI instances",
+      "instances5": "Up to 5 AI instances",
+      "instances10": "Up to 10 AI instances",
+      "support4h": "4 hours support/month",
+      "support8h": "8 hours support/month",
+      "support18h": "18 hours support/month",
+      "weeklyCheckins": "Weekly check-ins",
+      "aiManagerOnly": "AI Manager (self-service)"
     },
     "currentPlan": "Current plan",
     "upgradeToPro": "Upgrade to Pro"

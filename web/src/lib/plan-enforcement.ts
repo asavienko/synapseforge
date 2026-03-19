@@ -9,7 +9,7 @@
  */
 
 import { prisma } from "@/lib/prisma";
-import { PLANS } from "@/lib/utils";
+import { PLANS, PlanKey, mapLegacyPlan } from "@/lib/utils";
 
 export interface EnforcementResult {
   /** User email (for notifications) */
@@ -23,6 +23,10 @@ export interface EnforcementResult {
   totalInstances: number;
   /** Instances that were stopped (name + id) */
   stoppedInstances: { id: string; name: string }[];
+  /** Number of messages allowed under the new plan */
+  allowedMessages: number;
+  /** Support hours included in the new plan */
+  supportHours: number;
 }
 
 /**
@@ -48,7 +52,9 @@ export async function enforcePlanLimits(userId: string, newPlan: string): Promis
 
   if (!user) return null;
 
-  const plan = PLANS[newPlan as keyof typeof PLANS] ?? PLANS.free;
+  // Map legacy plans to new plans
+  const mappedPlanKey = mapLegacyPlan(newPlan);
+  const plan = PLANS[mappedPlanKey] ?? PLANS.free;
   const limit = plan.instances; // -1 = unlimited
 
   const totalInstances = user.instances.length;
@@ -83,6 +89,8 @@ export async function enforcePlanLimits(userId: string, newPlan: string): Promis
     allowedInstances: limit,
     totalInstances,
     stoppedInstances,
+    allowedMessages: plan.messages,
+    supportHours: plan.supportHours,
   };
 }
 
@@ -99,9 +107,16 @@ export async function enforceExpiredSubscriptions(): Promise<EnforcementResult[]
   const now = new Date();
 
   // Find users who have a paid plan but their subscription period has expired
+  // Include both new plan keys and legacy plan keys
+  const paidPlans = [
+    "starter_10k", "growth_30k", "scale_100k", "business_200k",
+    "managed_starter", "managed_growth", "managed_scale",
+    "pro", "enterprise" // legacy plans
+  ];
+
   const expiredUsers = await prisma.user.findMany({
     where: {
-      plan: { not: "free" },
+      plan: { in: paidPlans },
       stripeCurrentPeriodEnd: { lt: now },
     },
     select: { id: true, plan: true },
@@ -126,4 +141,54 @@ export async function enforceExpiredSubscriptions(): Promise<EnforcementResult[]
   }
 
   return results;
+}
+
+/**
+ * Check if user has exceeded their message limit
+ */
+export async function checkMessageLimit(userId: string, planKey: PlanKey): Promise<{
+  allowed: boolean;
+  currentCount: number;
+  limit: number;
+}> {
+  const plan = PLANS[planKey] ?? PLANS.free;
+  const limit = plan.messages;
+
+  // Get message count for current month
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  const messageCount = await prisma.activityLog.count({
+    where: {
+      instance: { userId },
+      event: "message",
+      createdAt: { gte: startOfMonth },
+    },
+  });
+
+  return {
+    allowed: messageCount < limit,
+    currentCount: messageCount,
+    limit,
+  };
+}
+
+/**
+ * Get plan features for display
+ */
+export function getPlanFeatures(planKey: PlanKey): {
+  messages: number;
+  instances: number;
+  supportHours: number;
+  isManaged: boolean;
+} {
+  const mappedKey = mapLegacyPlan(planKey);
+  const plan = PLANS[mappedKey] ?? PLANS.free;
+
+  return {
+    messages: plan.messages,
+    instances: plan.instances,
+    supportHours: plan.supportHours,
+    isManaged: plan.supportHours > 0,
+  };
 }
