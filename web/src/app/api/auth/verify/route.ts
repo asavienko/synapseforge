@@ -1,7 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { rateLimit } from "@/lib/ratelimit";
 
 export async function GET(req: NextRequest) {
+  // Rate limit: 10 attempts per IP per hour (prevents token enumeration)
+  const ip = req.headers.get("x-forwarded-for") ?? "unknown";
+  const allowed = await rateLimit(`verify-email:${ip}`, 10, 60 * 60 * 1000);
+  if (!allowed) {
+    return NextResponse.json(
+      { error: "Too many attempts. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   const token = req.nextUrl.searchParams.get("token");
   if (!token) {
     return NextResponse.json({ error: "missing" }, { status: 400 });
