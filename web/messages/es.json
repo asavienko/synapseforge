@@ -915,7 +915,34 @@
         "editCreds": "Editar credenciales",
         "testNumberPlaceholder": "Tu número de teléfono (ej. +34612345678)",
         "testSentLive": "¡Mensaje de prueba enviado! Tu IA está activa en WhatsApp.",
-        "saveFailed": "Error al guardar las credenciales"
+        "saveFailed": "Error al guardar las credenciales",
+        "selectProvider": "Selecciona un proveedor para conectar WhatsApp:",
+        "disconnectConfirm": "¿Estás seguro de que quieres desconectar WhatsApp?",
+        "disconnectFailed": "Error al desconectar WhatsApp. Inténtalo de nuevo.",
+        "sendTestBtn": "Enviar prueba",
+        "twilioWebhookRequired": "Webhook Requerido",
+        "twilioWebhookInstructions": "No olvides configurar la URL del webhook en tu panel de Twilio para recibir mensajes.",
+        "meta": {
+          "title": "WhatsApp Cloud API",
+          "desc": "Integración oficial vía Meta — mensajes gratuitos",
+          "step1": "Número de teléfono",
+          "step2": "Verificación",
+          "step3": "OAuth",
+          "step4": "Listo",
+          "setupNote": "Necesitas una cuenta de negocios de Meta y un número de teléfono verificado.",
+          "phoneLabel": "Número de teléfono de WhatsApp",
+          "phoneHint": "Formato: +1234567890",
+          "businessNameLabel": "Nombre del negocio",
+          "businessNamePlaceholder": "Tu Empresa",
+          "getStartedHint": "Obtén acceso a WhatsApp Business API",
+          "connectBtn": "Conectar vía Meta",
+          "redirecting": "Redirigiendo a Meta...",
+          "redirectHint": "Serás redirigido para autorización"
+        },
+        "twilio": {
+          "title": "Twilio WhatsApp",
+          "desc": "Conexión vía API de Twilio — pago por mensaje"
+        }
       },
       "widget": {
         "title": "Widget Web",

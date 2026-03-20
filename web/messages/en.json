@@ -915,7 +915,34 @@
         "editCreds": "Edit credentials",
         "testNumberPlaceholder": "Your phone number (e.g. +34612345678)",
         "testSentLive": "Test message sent! Your AI is live on WhatsApp.",
-        "saveFailed": "Failed to save credentials"
+        "saveFailed": "Failed to save credentials",
+        "selectProvider": "Select a provider to connect WhatsApp:",
+        "disconnectConfirm": "Are you sure you want to disconnect WhatsApp?",
+        "disconnectFailed": "Failed to disconnect WhatsApp. Please try again.",
+        "sendTestBtn": "Send test",
+        "twilioWebhookRequired": "Webhook Required",
+        "twilioWebhookInstructions": "Don't forget to set up the webhook URL in your Twilio settings to receive messages.",
+        "meta": {
+          "title": "WhatsApp Cloud API",
+          "desc": "Official integration via Meta — free messages",
+          "step1": "Phone Number",
+          "step2": "Verification",
+          "step3": "OAuth",
+          "step4": "Done",
+          "setupNote": "You need a Meta business account and a verified phone number.",
+          "phoneLabel": "WhatsApp Phone Number",
+          "phoneHint": "Format: +1234567890",
+          "businessNameLabel": "Business Name",
+          "businessNamePlaceholder": "Your Company",
+          "getStartedHint": "Get access to WhatsApp Business API",
+          "connectBtn": "Connect via Meta",
+          "redirecting": "Redirecting to Meta...",
+          "redirectHint": "You will be redirected for authorization"
+        },
+        "twilio": {
+          "title": "Twilio WhatsApp",
+          "desc": "Connect via Twilio API — pay per message"
+        }
       },
       "widget": {
         "title": "Web Widget",

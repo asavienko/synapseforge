@@ -915,7 +915,34 @@
         "editCreds": "Редагувати облікові дані",
         "testNumberPlaceholder": "Ваш номер телефону (напр. +380501234567)",
         "testSentLive": "Тестове повідомлення надіслано! Ваш ШІ працює у WhatsApp.",
-        "saveFailed": "Не вдалося зберегти облікові дані"
+        "saveFailed": "Не вдалося зберегти облікові дані",
+        "selectProvider": "Оберіть провайдера для підключення WhatsApp:",
+        "disconnectConfirm": "Ви впевнені, що хочете відключити WhatsApp?",
+        "disconnectFailed": "Не вдалося відключити WhatsApp. Спробуйте ще раз.",
+        "sendTestBtn": "Надіслати тест",
+        "twilioWebhookRequired": "Необхідний вебхук",
+        "twilioWebhookInstructions": "Не забудьте налаштувати вебхук URL у налаштуваннях Twilio для отримання повідомлень.",
+        "meta": {
+          "title": "WhatsApp Cloud API",
+          "desc": "Офіційна інтеграція через Meta — безкоштовні повідомлення",
+          "step1": "Номер телефону",
+          "step2": "Підтвердження",
+          "step3": "OAuth",
+          "step4": "Готово",
+          "setupNote": "Вам потрібен бізнес-акаунт Meta та підтверджений номер телефону.",
+          "phoneLabel": "Номер телефону WhatsApp",
+          "phoneHint": "Формат: +1234567890",
+          "businessNameLabel": "Назва бізнесу",
+          "businessNamePlaceholder": "Ваша компанія",
+          "getStartedHint": "Отримайте доступ до WhatsApp Business API",
+          "connectBtn": "Підключити через Meta",
+          "redirecting": "Перенаправлення до Meta...",
+          "redirectHint": "Ви будете перенаправлені для авторизації"
+        },
+        "twilio": {
+          "title": "Twilio WhatsApp",
+          "desc": "Підключення через Twilio API — плата за повідомлення"
+        }
       },
       "widget": {
         "title": "Веб-віджет",
