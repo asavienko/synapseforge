@@ -427,7 +427,7 @@ interface SetupChecklistCardProps {
   instanceId: string;
 }
 
-function SetupChecklistCard({ instance, credentials, onGoToCredentials, onGoToDeploy, instanceId }: SetupChecklistCardProps) {
+function SetupChecklistCard({ instance, credentials, onGoToCredentials, instanceId }: Omit<SetupChecklistCardProps, "onGoToDeploy">) {
   const t = useTranslations("instanceDetail");
   const [dismissed, setDismissed] = useState(() => {
     if (typeof window === "undefined") return false;
@@ -436,56 +436,51 @@ function SetupChecklistCard({ instance, credentials, onGoToCredentials, onGoToDe
 
   const credKeys = credentials.map((c) => c.key);
   const hasLLMKey = credKeys.some((k) => ["openai_api_key", "anthropic_api_key", "openrouter_api_key"].includes(k));
-  const hasChannel = credKeys.some((k) => ["telegram_bot_token", "discord_bot_token", "slack_app_token", "slack_bot_token"].includes(k));
-  const hasGateway = !!(instance.hasGateway && instance.provisionStatus === "ready");
-  const isHealthy = instance.healthStatus === "healthy";
+  const hasChannel = credKeys.some((k) => ["telegram_bot_token", "discord_bot_token", "slack_app_token", "slack_bot_token", "whatsapp_business_token"].includes(k));
+  // Sandbox counts as a working LLM — agent is live without an API key
+  const llmReady = hasLLMKey || (instance.sandboxMode === true);
 
-  const allGreen = hasLLMKey && hasChannel && hasGateway && isHealthy;
+  const allGreen = llmReady && hasChannel;
 
   function dismiss() {
     localStorage.setItem(`sf_checklist_dismissed_${instanceId}`, "1");
     setDismissed(true);
   }
 
-  if (dismissed || allGreen) return null;
+  if (dismissed) return null;
 
-  const items: Array<{
-    done: boolean;
-    label: string;
-    doneText: string;
-    pendingText: string;
-    action?: () => void;
-    actionLabel?: string;
-  }> = [
+  // Celebration state — agent is fully live
+  if (allGreen) {
+    return (
+      <div className="rounded-2xl bg-emerald-500/10 border border-emerald-500/20 p-4 mb-4 flex items-center gap-3">
+        <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-400 text-base">🎉</div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-emerald-300">Your agent is live!</p>
+          <p className="text-xs text-emerald-400/70 mt-0.5">Messages from your connected channel will be answered by your AI agent.</p>
+        </div>
+        <button onClick={dismiss} className="text-emerald-600 hover:text-emerald-400 transition-colors shrink-0">
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+    );
+  }
+
+  const items = [
     {
-      done: hasLLMKey,
-      label: t("checklist.aiModel"),
-      doneText: t("checklist.apiKeySaved"),
-      pendingText: t("checklist.addApiKey"),
+      done: llmReady,
+      label: "AI Model",
+      doneText: hasLLMKey ? "API key saved" : `Sandbox active (${instance.sandboxUsed ?? 0}/${20} messages used)`,
+      pendingText: "Add your OpenAI / Anthropic / OpenRouter key",
       action: onGoToCredentials,
-      actionLabel: t("checklist.addApiKeyAction"),
+      actionLabel: "Add key →",
     },
     {
       done: hasChannel,
-      label: t("checklist.channel"),
-      doneText: t("checklist.channelSaved"),
-      pendingText: t("checklist.connectChannel"),
+      label: "Channel",
+      doneText: "Channel connected — your agent is receiving messages",
+      pendingText: "Connect Telegram, WhatsApp, or Discord",
       action: onGoToCredentials,
-      actionLabel: t("checklist.connectAction"),
-    },
-    {
-      done: hasGateway,
-      label: t("checklist.agentDeployed"),
-      doneText: instance.vpsProvider ? `VPS running on ${instance.vpsProvider}` : "VPS running",
-      pendingText: t("checklist.notYetDeployed"),
-      action: onGoToDeploy,
-      actionLabel: t("checklist.launchAction"),
-    },
-    {
-      done: isHealthy,
-      label: t("checklist.agentHealthy"),
-      doneText: instance.lastCheckedAt ? t("checklist.online") : t("checklist.online"),
-      pendingText: t("checklist.waitingHealthCheck"),
+      actionLabel: "Connect →",
     },
   ];
 
@@ -494,16 +489,12 @@ function SetupChecklistCard({ instance, credentials, onGoToCredentials, onGoToDe
       <div className="p-4 border-b border-white/5 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Zap className="w-4 h-4 text-violet-400" />
-          <h3 className="text-sm font-semibold text-white">{t("checklist.title")}</h3>
+          <h3 className="text-sm font-semibold text-white">Get your agent live</h3>
           <span className="text-xs text-zinc-500">
-            {items.filter((i) => i.done).length}/{items.length} {t("checklist.complete")}
+            {items.filter((i) => i.done).length}/{items.length} complete
           </span>
         </div>
-        <button
-          onClick={dismiss}
-          title={t("credentials.dismissChecklist")}
-          className="text-zinc-600 hover:text-zinc-400 transition-colors"
-        >
+        <button onClick={dismiss} title="Dismiss" className="text-zinc-600 hover:text-zinc-400 transition-colors">
           <X className="w-4 h-4" />
         </button>
       </div>
@@ -2264,7 +2255,6 @@ export default function InstanceDetailPage() {
             instance={instance}
             credentials={credentials}
             onGoToCredentials={() => { setTab("Credentials"); loadCredentials(); }}
-            onGoToDeploy={() => setTab("Deploy")}
             instanceId={id}
           />
 
