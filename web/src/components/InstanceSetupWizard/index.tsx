@@ -5,6 +5,7 @@ import { X, Check, Loader2, ChevronRight, ChevronLeft, Zap } from "lucide-react"
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { analytics } from "@/lib/analytics";
+import { createInstance } from "@/lib/api";
 import type { WizardProps } from "./types";
 import { useWizardState, STEPS, AGENT_TEMPLATES } from "./hooks/useWizardState";
 import { BasicInfoStep } from "./steps/BasicInfoStep";
@@ -60,33 +61,26 @@ export function InstanceSetupWizard({ onClose, onCreated }: WizardProps) {
     setError("");
 
     try {
-      // 1. Create the instance
+      // 1. Create the instance using the standardized API
       const chosenAgentTemplate = AGENT_TEMPLATES.find((t) => t.id === state.agentTemplateId);
-      const instanceRes = await fetch("/api/instances", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: state.name,
-          type: state.instanceType,
-          description: chosenAgentTemplate?.desc ?? `${state.systemPrompt.slice(0, 80)}...`,
-          config: JSON.stringify({
-            model: state.model,
-            systemPrompt: state.systemPrompt,
-            temperature: state.temperature,
-            maxTokens: state.maxTokens,
-            template: state.template,
-            agentTemplateId: state.agentTemplateId || undefined,
-            agentTemplateName: chosenAgentTemplate?.name ?? undefined,
-          }),
-        }),
+      const response = await createInstance({
+        name: state.name,
+        type: state.instanceType,
+        description: chosenAgentTemplate?.desc ?? `${state.systemPrompt.slice(0, 80)}...`,
+        systemPrompt: state.systemPrompt,
+        agentTemplateId: state.agentTemplateId || undefined,
+        agentTemplateName: chosenAgentTemplate?.name ?? undefined,
       });
 
-      if (!instanceRes.ok) {
-        const d = await instanceRes.json();
-        throw new Error(d.error ?? "Failed to create instance");
+      if (response.error) {
+        throw new Error(response.error);
       }
 
-      const instance = await instanceRes.json();
+      if (!response.data) {
+        throw new Error("Failed to create instance");
+      }
+
+      const instance = response.data;
       const instanceId = instance.id;
       setCreatedInstanceId(instanceId);
       analytics.instanceCreated(state.instanceType);

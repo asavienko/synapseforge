@@ -6,6 +6,7 @@ import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { NotificationCenter } from "@/components/NotificationCenter";
+import { getInstances, getUnreadCount } from "@/lib/api";
 import {
   HelixLogo,
   DashboardIcon,
@@ -110,12 +111,11 @@ function SidebarContent({ userName, userEmail, unreadCount, isAdmin, isManager, 
   useEffect(() => {
     const fetchHealth = async () => {
       try {
-        const res = await fetch("/api/instances");
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          setInstanceHealth(data.map((i: { id: string; healthStatus: string | null }) => ({ 
+        const response = await getInstances();
+        if (response.data) {
+          setInstanceHealth(response.data.map((i: { id: string; healthStatus?: string | null }) => ({ 
             id: i.id, 
-            healthStatus: i.healthStatus 
+            healthStatus: i.healthStatus ?? null
           })));
         }
       } catch {
@@ -201,9 +201,10 @@ export function DashboardSidebar({ userName, userEmail, isAdmin, isManager }: Si
 
   useEffect(() => {
     // Initial fetch of unread count
-    fetch("/api/messages/unread")
-      .then((r) => r.json())
-      .then((d) => setUnreadCount(d.count ?? 0))
+    getUnreadCount()
+      .then((response: { data?: { count: number }; error?: string; status: number }) => 
+        setUnreadCount(response.data?.count ?? 0)
+      )
       .catch(() => {});
 
     // SSE: increment badge on new manager messages in real-time

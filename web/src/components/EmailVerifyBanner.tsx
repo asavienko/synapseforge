@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { MailWarning, X, Loader2, CheckCircle2 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { resendVerification } from "@/lib/api";
 
 export function EmailVerifyBanner() {
   const t = useTranslations("auth.verifyEmail");
@@ -14,7 +15,7 @@ export function EmailVerifyBanner() {
 
   async function resend() {
     setLoading(true);
-    await fetch("/api/auth/resend-verification", { method: "POST" });
+    await resendVerification();
     setLoading(false);
     setSent(true);
   }

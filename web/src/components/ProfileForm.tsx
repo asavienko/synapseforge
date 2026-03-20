@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Loader2, CheckCircle2 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { updateProfile } from "@/lib/api";
 
 interface ProfileFormProps {
   initialName: string;
@@ -24,21 +25,16 @@ export function ProfileForm({ initialName, email }: ProfileFormProps) {
     setSuccess("");
     setLoading(true);
 
-    const res = await fetch("/api/user", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: name !== initialName ? name : undefined,
-        currentPassword: currentPassword || undefined,
-        newPassword: newPassword || undefined,
-      }),
+    const response = await updateProfile({
+      name: name !== initialName ? name : undefined,
+      currentPassword: currentPassword || undefined,
+      newPassword: newPassword || undefined,
     });
 
-    const data = await res.json();
     setLoading(false);
 
-    if (!res.ok) {
-      setError(data.error || t("profileUpdateError"));
+    if (response.error) {
+      setError(response.error || t("profileUpdateError"));
     } else {
       setSuccess(t("profileUpdateSuccess"));
       setCurrentPassword("");
