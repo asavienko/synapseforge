@@ -24,30 +24,54 @@ interface GoogleButtonProps {
 export function GoogleButton({ callbackUrl = "/dashboard", referralCode }: GoogleButtonProps) {
   const t = useTranslations("auth");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleClick() {
     setLoading(true);
+    setError(null);
     analytics.signupCompleted("google");
+    
     // Encode referral code in the callbackUrl so the post-auth page can pick it up
     let finalCallbackUrl = callbackUrl;
     if (referralCode) {
       const sep = callbackUrl.includes("?") ? "&" : "?";
       finalCallbackUrl = `${callbackUrl}${sep}_ref=${encodeURIComponent(referralCode)}`;
     }
-    await signIn("google", { callbackUrl: finalCallbackUrl });
-    // Note: signIn with redirect will navigate away; loading resets if it stays
-    setLoading(false);
+    
+    try {
+      const result = await signIn("google", { 
+        callbackUrl: finalCallbackUrl,
+        redirect: false 
+      });
+      
+      if (result?.error) {
+        setError("Google sign-in is not configured. Please use email/password.");
+        setLoading(false);
+      } else if (result?.url) {
+        window.location.href = result.url;
+      }
+    } catch (err) {
+      setError("Google sign-in failed. Please try again or use email/password.");
+      setLoading(false);
+    }
   }
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      disabled={loading}
-      className="w-full flex items-center justify-center gap-3 bg-white hover:bg-zinc-100 disabled:opacity-50 transition-colors py-3 rounded-xl text-sm font-semibold text-zinc-800 border border-zinc-200"
-    >
-      {loading ? <Loader2 className="w-4 h-4 animate-spin text-zinc-600" /> : <GoogleIcon />}
-      {t("continueWithGoogle")}
-    </button>
+    <div>
+      <button
+        type="button"
+        onClick={handleClick}
+        disabled={loading}
+        className="w-full flex items-center justify-center gap-3 bg-white hover:bg-zinc-100 disabled:opacity-50 transition-colors py-3 rounded-xl text-sm font-semibold text-zinc-800 border border-zinc-200"
+      >
+        {loading ? <Loader2 className="w-4 h-4 animate-spin text-zinc-600" /> : <GoogleIcon />}
+        {t("continueWithGoogle")}
+      </button>
+      {error && (
+        <p className="text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-4 py-3 mt-3">
+          {error}
+        </p>
+      )}
+    </div>
   );
 }
