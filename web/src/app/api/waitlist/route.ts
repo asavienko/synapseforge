@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
+import { rateLimit } from "@/lib/ratelimit";
 
 async function notifyEmail(email: string, source: string) {
   const html = `
@@ -33,6 +34,16 @@ async function notifyTelegram(email: string, source: string) {
 }
 
 export async function POST(req: NextRequest) {
+  // Rate limit: 3 submissions per IP per hour (prevents spam)
+  const ip = req.headers.get("x-forwarded-for") ?? "unknown";
+  const allowed = await rateLimit(`waitlist:${ip}`, 3, 60 * 60 * 1000);
+  if (!allowed) {
+    return NextResponse.json(
+      { error: "Too many submissions. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   const { email, source = "sandbox_exhausted" } = await req.json();
   if (!email || !email.includes("@")) {
     return NextResponse.json({ error: "Invalid email" }, { status: 400 });
