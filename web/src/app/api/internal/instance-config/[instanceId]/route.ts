@@ -33,7 +33,7 @@ export async function GET(
     where: { id: instanceId },
     include: {
       credentials: true,
-      user: { select: { onboardingData: true } },
+      user: { select: { id: true, onboardingData: true } },
     },
   });
 
@@ -44,13 +44,36 @@ export async function GET(
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  // Decrypt credentials
+  // Decrypt instance-level credentials
   const credMap: Partial<CredentialMap> = {};
   for (const cred of instance.credentials) {
     try {
       (credMap as Record<string, string>)[cred.key] = decrypt(cred.value);
     } catch {
       // skip malformed
+    }
+  }
+
+  // Fallback: read LLM keys from user's global credential vault if not set at instance level
+  const LLM_KEY_MAP: Record<string, string> = {
+    openai: "openai_api_key",
+    anthropic: "anthropic_api_key",
+    openrouter: "openrouter_api_key",
+  };
+
+  const userCredentials = await prisma.userCredential.findMany({
+    where: { userId: instance.user.id },
+  });
+
+  for (const userCred of userCredentials) {
+    const instanceKey = LLM_KEY_MAP[userCred.provider];
+    // Only use user credential if instance doesn't have this key set
+    if (instanceKey && !(credMap as Record<string, string>)[instanceKey]) {
+      try {
+        (credMap as Record<string, string>)[instanceKey] = decrypt(userCred.encryptedKey);
+      } catch {
+        // skip malformed
+      }
     }
   }
 
