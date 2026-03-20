@@ -16,6 +16,11 @@ const inter = Inter({ subsets: ["latin", "cyrillic"] });
 
 export const viewport: Viewport = {
   themeColor: "#7c3aed",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  viewportFit: "cover",
 };
 
 export const metadata: Metadata = {
