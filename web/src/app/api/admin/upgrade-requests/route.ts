@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     where: { event: "upgrade_requested" },
     orderBy: { createdAt: "desc" },
     take: 100,
-    include: { instance: { include: { user: { select: { email: true, name: true, plan: true } } } } },
+    include: { instance: { include: { user: { select: { id: true, email: true, name: true, plan: true } } } } },
   });
 
   return NextResponse.json(logs.map(log => ({
@@ -26,6 +26,7 @@ export async function GET(req: NextRequest) {
     userEmail: log.instance?.user?.email,
     userName: log.instance?.user?.name,
     currentPlan: log.instance?.user?.plan,
+    userId: log.instance?.user?.id,
     instanceId: log.instanceId,
   })));
 }

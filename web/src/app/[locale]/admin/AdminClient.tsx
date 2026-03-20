@@ -360,8 +360,10 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
     userEmail: string | null;
     userName: string | null;
     currentPlan: string | null;
+    userId: string | null;
     instanceId: string | null;
   }>>([]);
+  const [activatingUpgrade, setActivatingUpgrade] = useState<string | null>(null);
   const [upgradesLoading, setUpgradesLoading] = useState(false);
   const upgradesLoadedRef = useRef(false);
 
@@ -428,6 +430,21 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
       setReferralOutstanding((prev) => Math.max(0, prev - (conv?.commissionUsd ?? 0)));
     }
     setMarkingPaid(null);
+  }
+
+  async function activateUpgrade(userId: string, requestId: string, requestedPlan: string) {
+    setActivatingUpgrade(requestId);
+    const res = await fetch(`/api/admin/users/${userId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ plan: requestedPlan }),
+    });
+    setActivatingUpgrade(null);
+    if (res.ok) {
+      // Update local user plan + remove request from list
+      setUsers(prev => prev.map(u => u.id === userId ? { ...u, plan: requestedPlan } : u));
+      setUpgradeRequests(prev => prev.filter(r => r.id !== requestId));
+    }
   }
 
   async function createManager() {
@@ -1676,14 +1693,25 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                             {new Date(req.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
                           </td>
                           <td className="px-5 py-3">
-                            {req.userEmail && (
-                              <a
-                                href={`mailto:${req.userEmail}?subject=Your%20OpenHelix%20AI%20upgrade&body=Hi!%20I%20saw%20you%20requested%20an%20upgrade%20to%20${encodeURIComponent(requestedPlan)}.%20Let's%20get%20you%20set%20up.`}
-                                className="text-xs text-violet-400 hover:text-violet-300 transition-colors"
-                              >
-                                Email →
-                              </a>
-                            )}
+                            <div className="flex items-center gap-2">
+                              {req.userId && requestedPlan !== "unknown" && (
+                                <button
+                                  onClick={() => activateUpgrade(req.userId!, req.id, requestedPlan)}
+                                  disabled={activatingUpgrade === req.id}
+                                  className="text-xs font-semibold text-white bg-emerald-600/80 hover:bg-emerald-500 disabled:opacity-40 px-2.5 py-1 rounded-lg transition-colors"
+                                >
+                                  {activatingUpgrade === req.id ? "…" : `Activate ${requestedPlan}`}
+                                </button>
+                              )}
+                              {req.userEmail && (
+                                <a
+                                  href={`mailto:${req.userEmail}?subject=Your%20OpenHelix%20AI%20upgrade&body=Hi!%20I%20saw%20you%20requested%20an%20upgrade%20to%20${encodeURIComponent(requestedPlan)}.%20Let's%20get%20you%20set%20up.`}
+                                  className="text-xs text-violet-400 hover:text-violet-300 transition-colors"
+                                >
+                                  Email →
+                                </a>
+                              )}
+                            </div>
                           </td>
                         </tr>
                       );
