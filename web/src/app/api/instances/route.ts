@@ -44,8 +44,8 @@ export async function POST(req: NextRequest) {
     systemPrompt: systemPrompt ?? template?.systemPrompt ?? "You are a helpful AI assistant.",
     temperature: 0.7,
     maxTokens: 1024,
-    ...(agentTemplateName ? { agentTemplateName } : {}),
-    ...(agentTemplateId ? { agentTemplateId } : {}),
+    ...(agentTemplateName ? { agentTemplateName: String(agentTemplateName) } : {}),
+    ...(agentTemplateId ? { agentTemplateId: String(agentTemplateId) } : {}),
     ...(templateId ? { templateId, templateName: template?.name } : {}),
   });
 
@@ -73,9 +73,9 @@ export async function POST(req: NextRequest) {
       include: { manager: true },
     });
     if (fullUser?.manager && fullUser.onboardingData) {
-      const od = (() => { try { return JSON.parse(fullUser.onboardingData!); } catch { return null; } })();
+      const od = fullUser.onboardingData as { businessName?: string; industry?: string } | null;
       const firstName = (fullUser.name ?? "there").split(" ")[0];
-      const business = od?.business || "your business";
+      const business = od?.businessName || "your business";
       const industry = od?.industry || "your industry";
       const templateLabel = template?.name ?? agentTemplateName ?? "AI assistant";
       const welcomeBody = `Hi ${firstName}! 🎉 Your new **${name}** (${templateLabel}) is all set up!\n\nBased on your ${industry} context at ${business}, I've pre-configured the agent's system prompt to get you started quickly. You can fine-tune it any time in the Configuration tab.\n\nNext step: add your API keys in the Credentials tab so you can deploy and start chatting. Let me know if you need any help! 🚀`;

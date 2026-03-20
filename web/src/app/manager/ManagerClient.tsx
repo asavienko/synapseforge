@@ -12,7 +12,7 @@ interface Client {
   email: string;
   plan: string;
   createdAt: string;
-  onboardingData: string | null;
+  onboardingData: { businessName?: string; industry?: string; useCase?: string; teamSize?: string; agentType?: string } | null;
   unreadMessages: number;
   lastMessage: { body: string; senderType: string; createdAt: string } | null;
   instances: { id: string; name: string; type: string; status: string; tier: string }[];

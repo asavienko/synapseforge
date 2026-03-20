@@ -1,38 +1,75 @@
 import { NextRequest, NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { hash } from "bcryptjs";
 
 export async function POST(req: NextRequest) {
-  const { token, password } = await req.json();
+  try {
+    const { token, password } = await req.json();
 
-  if (!token || !password) {
-    return NextResponse.json({ error: "Token and password are required." }, { status: 400 });
+    if (!token || typeof token !== "string") {
+      return NextResponse.json(
+        { error: "Token is required" },
+        { status: 400 }
+      );
+    }
+
+    if (!password || typeof password !== "string") {
+      return NextResponse.json(
+        { error: "Password is required" },
+        { status: 400 }
+      );
+    }
+
+    if (password.length < 8) {
+      return NextResponse.json(
+        { error: "Password must be at least 8 characters" },
+        { status: 400 }
+      );
+    }
+
+    // Find valid token
+    const resetToken = await prisma.passwordResetToken.findUnique({
+      where: { token },
+    });
+
+    if (!resetToken) {
+      return NextResponse.json(
+        { error: "Invalid or expired token" },
+        { status: 400 }
+      );
+    }
+
+    if (resetToken.expires < new Date()) {
+      // Delete expired token
+      await prisma.passwordResetToken.delete({
+        where: { token },
+      });
+      return NextResponse.json(
+        { error: "Token has expired" },
+        { status: 400 }
+      );
+    }
+
+    // Hash new password
+    const hashedPassword = await hash(password, 12);
+
+    // Update user password
+    await prisma.user.update({
+      where: { email: resetToken.email },
+      data: { password: hashedPassword },
+    });
+
+    // Delete used token
+    await prisma.passwordResetToken.delete({
+      where: { token },
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Reset password error:", error);
+    return NextResponse.json(
+      { error: "Failed to reset password" },
+      { status: 500 }
+    );
   }
-
-  if (password.length < 8) {
-    return NextResponse.json({ error: "Password must be at least 8 characters." }, { status: 400 });
-  }
-
-  const record = await prisma.passwordResetToken.findUnique({ where: { token } });
-
-  if (!record) {
-    return NextResponse.json({ error: "Invalid or expired reset link." }, { status: 400 });
-  }
-
-  if (record.expires < new Date()) {
-    await prisma.passwordResetToken.delete({ where: { token } });
-    return NextResponse.json({ error: "This reset link has expired. Please request a new one." }, { status: 400 });
-  }
-
-  const hashedPassword = await bcrypt.hash(password, 12);
-
-  await prisma.user.update({
-    where: { email: record.email },
-    data: { password: hashedPassword },
-  });
-
-  // Consume the token
-  await prisma.passwordResetToken.delete({ where: { token } });
-
-  return NextResponse.json({ ok: true });
 }

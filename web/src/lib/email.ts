@@ -188,19 +188,18 @@ export const email = {
     managerName: string,
     userName: string,
     userEmail: string,
-    onboardingData?: string
+    onboardingData?: { businessName?: string; industry?: string; useCase?: string; teamSize?: string; agentType?: string }
   ) {
     let context = "";
     if (onboardingData) {
-      try {
-        const d = JSON.parse(onboardingData);
-        context = `<div style="margin:16px 0">
-          ${d.business ? row("Business", d.business) : ""}
-          ${d.industry ? row("Industry", d.industry) : ""}
-          ${d.useCase ? row("Use case", d.useCase) : ""}
-          ${d.teamSize ? row("Team size", d.teamSize) : ""}
-        </div>`;
-      } catch { /* ignore */ }
+      const d = onboardingData;
+      context = `<div style="margin:16px 0">
+        ${d.businessName ? row("Business", d.businessName) : ""}
+        ${d.industry ? row("Industry", d.industry) : ""}
+        ${d.useCase ? row("Use case", d.useCase) : ""}
+        ${d.teamSize ? row("Team size", d.teamSize) : ""}
+        ${d.agentType ? row("Agent type", d.agentType) : ""}
+      </div>`;
     }
 
     return send(

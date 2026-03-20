@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
     systemPrompt: systemPrompt ?? "You are a helpful AI assistant.",
     temperature: 0.7,
     maxTokens: 1024,
-    ...(agentTemplateName ? { agentTemplateName } : {}),
+    ...(agentTemplateName ? { agentTemplateName: String(agentTemplateName) } : {}),
     ...(agentTemplateId ? { agentTemplateId } : {}),
   });
 
@@ -117,12 +117,10 @@ export async function POST(req: NextRequest) {
 
   // Send personalized welcome message to the client based on their onboarding data
   try {
-    const od = targetUser.onboardingData
-      ? (() => { try { return JSON.parse(targetUser.onboardingData!); } catch { return null; } })()
-      : null;
+    const od = targetUser.onboardingData as { businessName?: string; industry?: string; useCase?: string } | null;
 
     const firstName = (targetUser.name ?? "there").split(" ")[0];
-    const business = od?.business || "your business";
+    const business = od?.businessName || "your business";
     const industry = od?.industry || "your industry";
     const useCase = od?.useCase || "your workflows";
     const templateLabel = agentTemplateName ?? "AI assistant";

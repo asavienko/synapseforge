@@ -23,7 +23,7 @@ interface Client {
   email: string;
   plan: string;
   createdAt: string;
-  onboardingData: string | null;
+  onboardingData: { businessName?: string; industry?: string; useCase?: string; teamSize?: string; agentType?: string } | null;
   healthScore: number | null;
   unreadMessages: number;
   lastMessage: { body: string; senderType: string; createdAt: string } | null;
@@ -515,9 +515,7 @@ export function ManagerClient({ manager, clients: initialClients }: {
               </div>
             ) : (
               sortedClients.map((client) => {
-                const od = client.onboardingData
-                  ? (() => { try { return JSON.parse(client.onboardingData!); } catch { return null; } })()
-                  : null;
+                const od = client.onboardingData;
                 return (
                   <div
                     key={client.id}
@@ -552,7 +550,7 @@ export function ManagerClient({ manager, clients: initialClients }: {
                           <div className="text-xs text-zinc-500 truncate">{client.email}</div>
                           {od && (
                             <div className="text-xs text-zinc-600 mt-0.5 truncate">
-                              {od.business} · {od.useCase}
+                              {od.businessName} · {od.useCase}
                             </div>
                           )}
                           {client.lastMessage && (
@@ -657,16 +655,15 @@ export function ManagerClient({ manager, clients: initialClients }: {
                       <span>Joined {formatDate(activeClient.createdAt)}</span>
                     </div>
                     {activeClient.onboardingData && (() => {
-                      try {
-                        const d = JSON.parse(activeClient.onboardingData!);
-                        return (
-                          <div className="flex gap-4 mt-2 text-xs">
-                            {d.business && <span className="text-zinc-400"><span className="text-zinc-600">biz:</span> {d.business}</span>}
-                            {d.industry && <span className="text-zinc-400"><span className="text-zinc-600">industry:</span> {d.industry}</span>}
-                            {d.useCase && <span className="text-zinc-400"><span className="text-zinc-600">use case:</span> {d.useCase}</span>}
-                          </div>
-                        );
-                      } catch { return null; }
+                      const d = activeClient.onboardingData;
+                      if (!d) return null;
+                      return (
+                        <div className="flex gap-4 mt-2 text-xs">
+                          {d.businessName && <span className="text-zinc-400"><span className="text-zinc-600">biz:</span> {d.businessName}</span>}
+                          {d.industry && <span className="text-zinc-400"><span className="text-zinc-600">industry:</span> {d.industry}</span>}
+                          {d.agentType && <span className="text-zinc-400"><span className="text-zinc-600">type:</span> {d.agentType}</span>}
+                        </div>
+                      );
                     })()}
                   </div>
                   {/* Instances mini-list */}
