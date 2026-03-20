@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type { Step, WizardState } from "../types";
-import { TEMPLATE_PROMPTS, type InstanceTemplate, type LLMProvider } from "@/lib/openclaw-config";
+import { TEMPLATE_PROMPTS, MODEL_OPTIONS, type InstanceTemplate, type LLMProvider } from "@/lib/openclaw-config";
 
 export const STEPS: Step[] = ["template", "provider", "channels", "persona", "deploy"];
 
@@ -156,7 +156,6 @@ export function useWizardState() {
   };
 
   const selectProvider = (provider: LLMProvider) => {
-    const { MODEL_OPTIONS } = require("@/lib/openclaw-config");
     const firstModel = MODEL_OPTIONS[provider][0].value;
     updateState({ llmProvider: provider, model: firstModel, apiKey: "" });
   };
