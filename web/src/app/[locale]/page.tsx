@@ -5,10 +5,22 @@ import { LandingDemoChat } from "@/components/LandingDemoChat";
 import { DemoChat } from "@/components/DemoChat";
 import { getFeaturedTemplates, categoryColors } from "@/lib/templates";
 import {
-  Zap, Bot, ArrowRight, Check, Shield, RefreshCw,
-  MessageSquare, Code2, Activity, Users, Key, Settings, Rocket,
-  Sparkles, CalendarDays,
-} from "lucide-react";
+  HelixLogo,
+  ArrowRightIcon,
+  CheckIcon,
+  ShieldCheckIcon,
+  RefreshIcon,
+  MessagesIcon,
+  CodeIcon,
+  AnalyticsIcon,
+  UserIcon,
+  KeyIcon,
+  SettingsIcon,
+  RocketLaunchIcon,
+  SparklesIcon,
+  CalendarIcon,
+  AIBrainIcon,
+} from "@/components/icons/BrandIcons";
 import { getTranslations } from "next-intl/server";
 
 export default async function LandingPage() {
@@ -31,7 +43,7 @@ export default async function LandingPage() {
       <nav className="border-b border-white/5 backdrop-blur-md sticky top-0 z-50 bg-[#0a0a0f]/80">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between relative">
           <div className="flex items-center gap-2">
-            <Zap className="w-6 h-6 text-violet-400" />
+            <HelixLogo className="w-6 h-6 text-violet-400" size={24} />
             <span className="font-bold text-lg tracking-tight">OpenHelix AI</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-zinc-400">
@@ -113,7 +125,7 @@ export default async function LandingPage() {
             href={isLoggedIn ? "/dashboard" : "/sign-up"}
             className="w-full sm:w-auto flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 transition-all px-8 py-4 rounded-xl font-semibold text-lg shadow-lg shadow-violet-500/20"
           >
-            {isLoggedIn ? t("nav.dashboard") : t("hero.cta")} <ArrowRight className="w-5 h-5" />
+            {isLoggedIn ? t("nav.dashboard") : t("hero.cta")} <ArrowRightIcon className="w-5 h-5" />
           </Link>
           {/* Secondary CTAs — row on mobile */}
           <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -121,14 +133,14 @@ export default async function LandingPage() {
               href="/templates"
               className="flex-1 sm:flex-none flex items-center justify-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] transition-colors px-6 sm:px-8 py-4 rounded-xl font-semibold text-base sm:text-lg text-zinc-300"
             >
-              <Sparkles className="w-5 h-5" />
+              <SparklesIcon className="w-5 h-5" />
               {t("hero.ctaSecondary")}
             </Link>
             <Link
               href="/contact?subject=Demo+Request"
               className="flex-1 sm:flex-none flex items-center justify-center gap-2 border border-violet-500/30 hover:border-violet-500/60 bg-violet-500/5 hover:bg-violet-500/10 transition-colors px-6 sm:px-8 py-4 rounded-xl font-semibold text-base sm:text-lg text-violet-300 hover:text-violet-200"
             >
-              <CalendarDays className="w-5 h-5" />
+              <CalendarIcon className="w-5 h-5" />
               {t("hero.bookDemo")}
             </Link>
           </div>
@@ -188,9 +200,9 @@ export default async function LandingPage() {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
-            { num: tl("howItWorks.step1.num"), icon: MessageSquare, title: tl("howItWorks.step1.title"), desc: tl("howItWorks.step1.desc") },
-            { num: tl("howItWorks.step2.num"), icon: Settings,      title: tl("howItWorks.step2.title"), desc: tl("howItWorks.step2.desc") },
-            { num: tl("howItWorks.step3.num"), icon: Rocket,        title: tl("howItWorks.step3.title"), desc: tl("howItWorks.step3.desc") },
+            { num: tl("howItWorks.step1.num"), icon: MessagesIcon, title: tl("howItWorks.step1.title"), desc: tl("howItWorks.step1.desc") },
+            { num: tl("howItWorks.step2.num"), icon: SettingsIcon,      title: tl("howItWorks.step2.title"), desc: tl("howItWorks.step2.desc") },
+            { num: tl("howItWorks.step3.num"), icon: RocketLaunchIcon,        title: tl("howItWorks.step3.title"), desc: tl("howItWorks.step3.title") },
           ].map((step, i) => (
             <div key={i} className="glow-border rounded-2xl p-6 bg-gradient-to-b from-white/[0.05] to-transparent backdrop-blur-sm border border-white/10 hover:border-violet-500/30 hover:bg-white/[0.05] transition-all duration-300">
               <div className="text-5xl font-bold text-violet-600/20 mb-4">{step.num}</div>
@@ -209,7 +221,7 @@ export default async function LandingPage() {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 text-xs font-medium mb-4">
-              <Sparkles className="w-3.5 h-3.5" />
+              <SparklesIcon className="w-3.5 h-3.5" />
               Pre-Built Templates
             </div>
             <h2 className="text-3xl md:text-4xl font-bold">
@@ -224,7 +236,7 @@ export default async function LandingPage() {
             className="inline-flex items-center gap-2 text-violet-400 hover:text-violet-300 font-medium"
           >
             View All Templates
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRightIcon className="w-4 h-4" />
           </Link>
         </div>
 
@@ -258,7 +270,7 @@ export default async function LandingPage() {
                   </span>
                   <span className="text-sm text-violet-400 font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
                     Use
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRightIcon className="w-4 h-4" />
                   </span>
                 </div>
               </div>
@@ -278,7 +290,7 @@ export default async function LandingPage() {
           {[
             {
               step: "01",
-              icon: Key,
+              icon: KeyIcon,
               color: "text-violet-400",
               bg: "bg-violet-600/10 border-violet-500/20",
               title: t("how.step1title"),
@@ -286,7 +298,7 @@ export default async function LandingPage() {
             },
             {
               step: "02",
-              icon: Zap,
+              icon: MessagesIcon,
               color: "text-emerald-400",
               bg: "bg-emerald-600/10 border-emerald-500/20",
               title: t("how.step2title"),
@@ -294,7 +306,7 @@ export default async function LandingPage() {
             },
             {
               step: "03",
-              icon: MessageSquare,
+              icon: MessagesIcon,
               color: "text-blue-400",
               bg: "bg-blue-600/10 border-blue-500/20",
               title: t("how.step3title"),
@@ -464,12 +476,12 @@ export default async function LandingPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {[
-            { icon: MessageSquare, color: "text-violet-400", title: t("features.f1title"), desc: t("features.f1desc") },
-            { icon: Code2,         color: "text-blue-400",   title: t("features.f2title"), desc: t("features.f2desc") },
-            { icon: RefreshCw,     color: "text-emerald-400", title: t("features.f3title"), desc: t("features.f3desc") },
-            { icon: Users,         color: "text-pink-400",   title: t("features.f4title"), desc: t("features.f4desc") },
-            { icon: Shield,        color: "text-amber-400",  title: t("features.f5title"), desc: t("features.f5desc") },
-            { icon: Activity,      color: "text-cyan-400",   title: t("features.f6title"), desc: t("features.f6desc") },
+            { icon: MessagesIcon, color: "text-violet-400", title: t("features.f1title"), desc: t("features.f1desc") },
+            { icon: CodeIcon,         color: "text-blue-400",   title: t("features.f2title"), desc: t("features.f2desc") },
+            { icon: RefreshIcon,     color: "text-emerald-400", title: t("features.f3title"), desc: t("features.f3desc") },
+            { icon: UserIcon,         color: "text-pink-400",   title: t("features.f4title"), desc: t("features.f4desc") },
+            { icon: ShieldCheckIcon,        color: "text-amber-400",  title: t("features.f5title"), desc: t("features.f5desc") },
+            { icon: AnalyticsIcon,      color: "text-cyan-400",   title: t("features.f6title"), desc: t("features.f6desc") },
           ].map((f, i) => (
             <div key={i} className="glow-border rounded-2xl p-6 bg-gradient-to-b from-white/[0.05] to-transparent backdrop-blur-sm border border-white/10 hover:border-violet-500/30 hover:bg-white/[0.05] transition-all duration-300">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500/20 to-violet-600/10 flex items-center justify-center mb-4">
@@ -609,7 +621,7 @@ export default async function LandingPage() {
                 <ul className="space-y-3 mb-8 flex-1">
                   {features.map((f) => (
                     <li key={f} className="flex items-start gap-3 text-sm text-zinc-300">
-                      <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckIcon className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                       {t(`pricing.features.${f}` as Parameters<typeof t>[0])}
                     </li>
                   ))}
@@ -692,14 +704,14 @@ export default async function LandingPage() {
               href="/sign-up"
               className="inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-6 py-3 rounded-xl font-semibold text-sm"
             >
-              {t("hero.cta")} <ArrowRight className="w-4 h-4" />
+              {t("hero.cta")} <ArrowRightIcon className="w-4 h-4" />
             </Link>
           </div>
           <div className="grid grid-cols-1 gap-5">
             {[
-              { icon: Zap,    color: "text-violet-400", stat: t("about.setup"),    label: t("about.setupLabel") },
-              { icon: Users,  color: "text-emerald-400", stat: t("about.response"), label: t("about.responseLabel") },
-              { icon: Shield, color: "text-blue-400",   stat: t("about.uptime"),   label: t("about.uptimeLabel") },
+              { icon: RocketLaunchIcon,    color: "text-violet-400", stat: t("about.setup"),    label: t("about.setupLabel") },
+              { icon: UserIcon,  color: "text-emerald-400", stat: t("about.response"), label: t("about.responseLabel") },
+              { icon: ShieldCheckIcon, color: "text-blue-400",   stat: t("about.uptime"),   label: t("about.uptimeLabel") },
             ].map((item) => (
               <div key={item.label} className="glow-border rounded-2xl p-5 bg-white/[0.02] flex items-center gap-5">
                 <div className="w-12 h-12 rounded-xl bg-white/[0.04] flex items-center justify-center shrink-0">
@@ -729,7 +741,7 @@ export default async function LandingPage() {
             href="/sign-up"
             className="inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-8 py-4 rounded-xl font-semibold text-lg relative"
           >
-            {t("hero.cta")} <ArrowRight className="w-5 h-5" />
+            {t("hero.cta")} <ArrowRightIcon className="w-5 h-5" />
           </Link>
           <p className="text-zinc-600 text-sm mt-4 relative">{t("hero.footnote")}</p>
         </div>
@@ -739,7 +751,7 @@ export default async function LandingPage() {
       <footer className="border-t border-white/5 py-10">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-zinc-500">
           <div className="flex items-center gap-2">
-            <Zap className="w-4 h-4 text-violet-400" />
+            <HelixLogo className="w-4 h-4 text-violet-400" size={16} />
             <span className="font-semibold text-zinc-400">OpenHelix AI</span>
             <span>© 2026</span>
           </div>
