@@ -1,11 +1,19 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Bot, Plus, Loader2, X, Sparkles, ArrowRight, Search, RefreshCw } from "lucide-react";
+import {
+  BotIcon,
+  PlusIcon,
+  CloseIcon,
+  SparklesIcon,
+  ArrowRightIcon,
+  RefreshIcon,
+  LoadingIcon,
+} from "@/components/icons/BrandIcons";
 import { STATUS_COLORS, INSTANCE_TYPES, formatRelativeTime } from "@/lib/utils";
-import { agentTemplates, categoryColors, difficultyColors, getTemplateById, type AgentTemplate } from "@/lib/templates";
+import { getTemplateById, type AgentTemplate } from "@/lib/templates";
 import { useTranslations } from "next-intl";
 import { InstanceSetupWizard } from "@/components/InstanceSetupWizard";
 
@@ -201,20 +209,20 @@ export default function InstancesPage() {
             title="Refresh health status"
             className="flex items-center justify-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] disabled:opacity-50 transition-colors px-3 py-2.5 rounded-lg text-sm font-semibold text-zinc-300"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+            <RefreshIcon className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
           </button>
           <Link
             href="/templates"
             className="hidden sm:flex items-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] transition-colors px-4 py-2.5 rounded-lg text-sm font-semibold text-zinc-300"
           >
-            <Sparkles className="w-4 h-4" />
+            <SparklesIcon className="w-4 h-4" />
             Browse Templates
           </Link>
           <button
             onClick={() => setShowTemplateSelector(true)}
             className="flex items-center justify-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] transition-colors px-3 sm:px-4 py-2.5 rounded-lg text-sm font-semibold text-zinc-300 whitespace-nowrap"
           >
-            <Sparkles className="w-4 h-4" />
+            <SparklesIcon className="w-4 h-4" />
             <span className="hidden sm:inline">From Template</span>
             <span className="sm:hidden">Template</span>
           </button>
@@ -222,7 +230,7 @@ export default function InstancesPage() {
             onClick={() => setShowWizard(true)}
             className="flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-3 sm:px-4 py-2.5 rounded-lg text-sm font-semibold text-white whitespace-nowrap"
           >
-            <Plus className="w-4 h-4" />
+            <PlusIcon className="w-4 h-4" />
             <span className="hidden sm:inline">{t("newInstance")}</span>
             <span className="sm:hidden">New</span>
           </button>
@@ -231,18 +239,18 @@ export default function InstancesPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-6 h-6 text-zinc-500 animate-spin" />
+          <LoadingIcon className="w-6 h-6 text-zinc-500 animate-spin" />
         </div>
       ) : instances.length === 0 ? (
         <div className="glow-border rounded-2xl p-16 bg-white/[0.02] text-center">
-          <Bot className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
+          <BotIcon className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-white mb-2">{t("emptyTitle")}</h3>
           <p className="text-zinc-400 text-sm mb-6">{t("emptyDesc")}</p>
           <button
             onClick={() => setShowWizard(true)}
             className="inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-6 py-3 rounded-lg text-sm font-semibold text-white"
           >
-            <Plus className="w-4 h-4" />
+            <PlusIcon className="w-4 h-4" />
             {t("createInstance")}
           </button>
         </div>
@@ -258,10 +266,10 @@ export default function InstancesPage() {
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="relative w-10 h-10 rounded-xl bg-violet-600/20 border border-violet-500/20 flex items-center justify-center">
-                    <Bot className="w-5 h-5 text-violet-400" />
+                    <BotIcon className="w-5 h-5 text-violet-400" />
                     {isProvisioning && (
                       <span className="absolute -top-1 -right-1 w-3.5 h-3.5">
-                        <Loader2 className="w-3.5 h-3.5 text-amber-400 animate-spin" />
+                        <LoadingIcon className="w-3.5 h-3.5 text-amber-400 animate-spin" />
                       </span>
                     )}
                   </div>
@@ -269,7 +277,7 @@ export default function InstancesPage() {
                     <HealthDot healthStatus={instance.healthStatus} lastCheckedAt={instance.lastCheckedAt} />
                     {isProvisioning ? (
                       <span className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full font-medium bg-amber-400/10 text-amber-400 border border-amber-400/20">
-                        <Loader2 className="w-2.5 h-2.5 animate-spin" />
+                        <LoadingIcon className="w-2.5 h-2.5 animate-spin" />
                         Provisioning…
                       </span>
                     ) : (
@@ -296,7 +304,7 @@ export default function InstancesPage() {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-bold text-white">{t("modal.title")}</h2>
               <button onClick={() => setShowCreate(false)} className="text-zinc-500 hover:text-white transition-colors">
-                <X className="w-5 h-5" />
+                <CloseIcon className="w-5 h-5" />
               </button>
             </div>
 
@@ -361,7 +369,7 @@ export default function InstancesPage() {
                   disabled={creating}
                   className="flex-1 flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 transition-colors py-3 rounded-lg text-sm font-semibold text-white"
                 >
-                  {creating ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                  {creating ? <LoadingIcon className="w-4 h-4 animate-spin" /> : null}
                   {t("modal.createBtn")}
                 </button>
               </div>
