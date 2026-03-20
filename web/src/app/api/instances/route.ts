@@ -13,7 +13,62 @@ export async function GET() {
     orderBy: { createdAt: "desc" },
   });
 
-  return NextResponse.json(instances);
+  // Quick live health check for any instances with VPS configured
+  // This is a "best effort" check - we don't wait for timeouts, just return cached if slow
+  const instancesWithHealth = await Promise.all(
+    instances.map(async (instance) => {
+      if (!instance.vpsUrl || !instance.gatewayToken) {
+        return instance;
+      }
+
+      // Try a quick health check (3 second timeout)
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 3000);
+        
+        const res = await fetch(`${instance.vpsUrl}/hooks/wake`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${instance.gatewayToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ text: "health-check", mode: "next-heartbeat" }),
+          signal: controller.signal,
+        });
+        
+        clearTimeout(timeout);
+        
+        const healthy = res.status !== 401 && res.status !== 503 && res.status !== 0;
+        const newStatus = healthy ? "healthy" : "down";
+        
+        // Update DB if status changed
+        if (instance.healthStatus !== newStatus) {
+          await prisma.aIInstance.update({
+            where: { id: instance.id },
+            data: { healthStatus: newStatus, lastCheckedAt: new Date() },
+          });
+        }
+        
+        return { ...instance, healthStatus: newStatus, lastCheckedAt: new Date() };
+      } catch {
+        // If check fails, return cached value but mark as down if we haven't checked recently
+        const lastCheck = instance.lastCheckedAt;
+        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+        
+        if (!lastCheck || lastCheck < fiveMinutesAgo) {
+          await prisma.aIInstance.update({
+            where: { id: instance.id },
+            data: { healthStatus: "down", lastCheckedAt: new Date() },
+          });
+          return { ...instance, healthStatus: "down", lastCheckedAt: new Date() };
+        }
+        
+        return instance;
+      }
+    })
+  );
+
+  return NextResponse.json(instancesWithHealth);
 }
 
 export async function POST(req: NextRequest) {

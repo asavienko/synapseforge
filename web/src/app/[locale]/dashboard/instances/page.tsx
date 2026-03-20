@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Bot, Plus, Loader2, X, Sparkles, ArrowRight, Search } from "lucide-react";
+import { Bot, Plus, Loader2, X, Sparkles, ArrowRight, Search, RefreshCw } from "lucide-react";
 import { STATUS_COLORS, INSTANCE_TYPES, formatRelativeTime } from "@/lib/utils";
 import { agentTemplates, categoryColors, difficultyColors, getTemplateById, type AgentTemplate } from "@/lib/templates";
 import { useTranslations } from "next-intl";
@@ -195,6 +195,14 @@ export default function InstancesPage() {
           <p className="text-zinc-400 mt-1">{t("subtitle")}</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={loadInstances}
+            disabled={loading}
+            title="Refresh health status"
+            className="flex items-center justify-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] disabled:opacity-50 transition-colors px-3 py-2.5 rounded-lg text-sm font-semibold text-zinc-300"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+          </button>
           <Link
             href="/templates"
             className="hidden sm:flex items-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] transition-colors px-4 py-2.5 rounded-lg text-sm font-semibold text-zinc-300"
