@@ -81,16 +81,43 @@ type CredentialResult =
 
 /**
  * Resolves the provider, model ID, and API key for a given instance + config.
- * Tries the primary provider first, then falls back to available credentials.
+ * Tries instance credentials first, then falls back to user's global credential vault.
  */
 export async function resolveCredentials(
   instanceId: string,
   config: InstanceConfig,
 ): Promise<CredentialResult> {
+  // Get instance and user ID
+  const instance = await prisma.aIInstance.findUnique({
+    where: { id: instanceId },
+    select: { userId: true },
+  });
+  if (!instance) {
+    return {
+      ok: false,
+      error: { error: "Instance not found." },
+    };
+  }
+
+  // Read instance-level credentials
   const credRows = await prisma.instanceCredential.findMany({ where: { instanceId } });
   const credMap: Record<string, string> = {};
   for (const row of credRows) {
     try { credMap[row.key] = decrypt(row.value); } catch { /* skip malformed */ }
+  }
+
+  // Fallback: read from user's global credential vault for LLM keys
+  const userCreds = await prisma.userCredential.findMany({ where: { userId: instance.userId } });
+  const USER_CRED_MAP: Record<string, string> = {
+    openai: "openai_api_key",
+    anthropic: "anthropic_api_key",
+    openrouter: "openrouter_api_key",
+  };
+  for (const uc of userCreds) {
+    const keyName = USER_CRED_MAP[uc.provider];
+    if (keyName && !credMap[keyName]) {
+      try { credMap[keyName] = decrypt(uc.encryptedKey); } catch { /* skip malformed */ }
+    }
   }
 
   const modelKey = config.model;
