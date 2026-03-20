@@ -78,9 +78,28 @@ button, a {
 }
 
 /* But allow small inline buttons */
-button.inline, a.inline {
+button.inline, a.inline, button svg, a svg {
   min-height: auto;
   min-width: auto;
+}
+
+/* Fix iOS Safari 100vh issue */
+@supports (-webkit-touch-callout: none) {
+  .min-h-screen {
+    min-height: -webkit-fill-available;
+  }
+}
+
+/* Prevent text zoom on iOS when focusing inputs */
+@media screen and (max-width: 768px) {
+  input, select, textarea {
+    font-size: 16px;
+  }
+}
+
+/* Ensure proper scrolling on mobile */
+.overflow-auto, .overflow-y-auto, .overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Refined gradient text - more subtle */

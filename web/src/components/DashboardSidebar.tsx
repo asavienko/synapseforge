@@ -209,14 +209,14 @@ export function DashboardSidebar({ userName, userEmail, isAdmin, isManager }: Si
   return (
     <>
       {/* Mobile top bar */}
-      <div className="md:hidden flex items-center justify-between px-4 h-14 border-b border-white/5 bg-[#0a0a0f] fixed top-0 left-0 right-0 z-40">
+      <div className="md:hidden flex items-center justify-between px-4 h-14 border-b border-white/5 bg-[#0a0a0f] fixed top-0 left-0 right-0 z-40 safe-area-inset">
         <Link href="/" className="flex items-center gap-2">
           <Zap className="w-5 h-5 text-violet-400" />
           <span className="font-bold text-sm tracking-tight text-white">OpenHelix AI</span>
         </Link>
         <div className="flex items-center gap-2">
           <NotificationCenter />
-          <button onClick={() => setMobileOpen(true)} className="text-zinc-400 hover:text-white transition-colors p-2">
+          <button onClick={() => setMobileOpen(true)} className="text-zinc-400 hover:text-white transition-colors p-2 -mr-2">
             <Menu className="w-5 h-5" />
           </button>
         </div>
@@ -229,7 +229,7 @@ export function DashboardSidebar({ userName, userEmail, isAdmin, isManager }: Si
 
       {/* Mobile drawer */}
       <div className={cn(
-        "md:hidden fixed top-0 left-0 bottom-0 w-64 bg-[#0a0a0f] border-r border-white/5 z-50 transition-transform duration-200",
+        "md:hidden fixed top-0 left-0 bottom-0 w-64 bg-[#0a0a0f] border-r border-white/5 z-50 transition-transform duration-200 safe-area-inset",
         mobileOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <SidebarContent userName={userName} userEmail={userEmail} unreadCount={unreadCount} isAdmin={isAdmin} isManager={isManager} onClose={() => setMobileOpen(false)} />
