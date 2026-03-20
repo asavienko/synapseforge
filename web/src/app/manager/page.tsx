@@ -40,7 +40,7 @@ export default async function ManagerPage() {
         email: c.email,
         plan: c.plan,
         createdAt: c.createdAt.toISOString(),
-        onboardingData: c.onboardingData as { businessName?: string; industry?: string; useCase?: string; teamSize?: string; agentType?: string } | null,
+        onboardingData: c.onboardingData as unknown as { businessName?: string; industry?: string; useCase?: string; teamSize?: string; agentType?: string } | null,
         unreadMessages: unreadMap[c.id] ?? 0,
         lastMessage: c.messages[0] ? {
           body: c.messages[0].body,

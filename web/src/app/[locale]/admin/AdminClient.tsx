@@ -9,13 +9,6 @@ import { ProvisioningWizard } from "@/components/ProvisioningWizard";
 import NextLink from "next/link";
 import { Mail } from "lucide-react";
 
-interface OnboardingData {
-  industry?: string;
-  useCase?: string;
-  businessName?: string;
-  agentType?: string;
-}
-
 interface UserRow {
   id: string;
   name: string | null;
@@ -24,7 +17,7 @@ interface UserRow {
   createdAt: string;
   managerId: string | null;
   managerName: string | null;
-  onboardingData: OnboardingData | null;
+  onboardingData: { businessName?: string; industry?: string; useCase?: string; teamSize?: string; agentType?: string } | null;
   instances: {
     id: string;
     name: string;
@@ -982,14 +975,11 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                     <span>Joined {formatDate(user.createdAt)}</span>
                     {user.onboardingData && (() => {
                       const od = user.onboardingData;
-                      if (!od) return null;
-                      return (
-                        <>
-                          {od.industry && <><span className="text-zinc-700">·</span><span className="text-violet-400">{od.industry}</span></>}
-                          {od.agentType && <><span className="text-zinc-700">·</span><span className="text-zinc-400 capitalize">{od.agentType}</span></>}
-                          {od.businessName && <><span className="text-zinc-700">·</span><span className="text-zinc-400 italic">{od.businessName}</span></>}
-                        </>
-                      );
+                      return <>
+                        {od?.industry && <><span className="text-zinc-700">·</span><span className="text-violet-400">{od.industry}</span></>}
+                        {od?.useCase && <><span className="text-zinc-700">·</span><span className="text-zinc-400">{od.useCase.replace(/-/g, " ")}</span></>}
+                        {od?.businessName && <><span className="text-zinc-700">·</span><span className="text-zinc-400 italic">{od.businessName}</span></>}
+                      </>;
                     })()}
                   </div>
 
