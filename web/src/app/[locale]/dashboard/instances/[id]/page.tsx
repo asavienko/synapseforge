@@ -575,14 +575,7 @@ interface DeployTabProps {
   instanceId: string;
   credentials: CredentialRow[];
   credsLoading: boolean;
-  deploying: boolean;
-  deployError: string | null;
-  syncing: boolean;
-  syncDone: boolean;
-  onDeploy: () => void;
-  onSync: () => void;
   onGoToCredentials: () => void;
-   
   t: (key: string) => string;
 }
 
@@ -591,39 +584,31 @@ function DeployTab({
   instanceId,
   credentials,
   credsLoading,
-  deploying,
-  deployError,
-  syncing,
-  syncDone,
-  onDeploy,
-  onSync,
   onGoToCredentials,
   t,
 }: DeployTabProps) {
   const credKeys = credentials.map((c) => c.key);
   const hasLLM = credKeys.some((k) => ["openai_api_key", "anthropic_api_key", "openrouter_api_key"].includes(k));
   const hasTelegram = credKeys.includes("telegram_bot_token");
-  const hasWhatsApp = credKeys.includes("twilio_account_sid");
-  // Web Widget is always active once the instance is running — no credential needed
-  const hasWebWidget = true;
-  const hasChannel = hasTelegram || hasWhatsApp || hasWebWidget;
-
-  const isProvisioning = instance.provisionStatus === "provisioning";
-  const isReady = instance.hasGateway && (instance.provisionStatus === "ready" || (instance.hasGateway && !isProvisioning));
-  const isFailed = instance.provisionStatus === "failed";
-  const isNotDeployed = !instance.hasGateway && !isProvisioning;
+  const hasWhatsApp = credKeys.some(k => ["twilio_account_sid", "whatsapp_business_token"].includes(k));
+  const hasWidget = true; // always available
+  const hasAnyRealChannel = hasTelegram || hasWhatsApp;
+  const isLive = hasAnyRealChannel; // "deployed" means channel connected
 
   const activeChannels = [
     hasTelegram && t("deploy.channelTelegram"),
     hasWhatsApp && t("deploy.channelWhatsApp"),
-    hasWebWidget && t("deploy.channelWidget"),
+    hasWidget && t("deploy.channelWidget"),
   ].filter(Boolean) as string[];
+
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://openhelixai.com";
+  const embedCode = `<script src="${origin}/widget.js" data-instance="${instanceId}"></script>`;
 
   return (
     <div className="space-y-5">
 
       {/* ── Quick-connect banner: shown when agent has AI key but no channel yet ── */}
-      {hasLLM && !hasChannel && (
+      {hasLLM && !hasAnyRealChannel && (
         <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center gap-4">
           <div className="flex-1">
             <p className="text-sm font-semibold text-emerald-300 mb-1">✅ Your AI is ready — now connect a channel</p>
@@ -646,307 +631,199 @@ function DeployTab({
         </div>
       )}
 
-      {/* ── Not yet deployed ── */}
-      {(isNotDeployed || isFailed) && (
+      {/* ── Not live (no channel connected) ── */}
+      {!isLive && (
         <>
-          {/* Hero card */}
+          {/* Telegram Setup Guide */}
           <div className="glow-border rounded-2xl bg-white/[0.02] p-6">
             <div className="flex items-start gap-4 mb-6">
-              <div className="w-12 h-12 rounded-xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center shrink-0">
-                <Server className="w-6 h-6 text-violet-400" />
+              <div className="w-12 h-12 rounded-xl bg-sky-600/20 border border-sky-500/30 flex items-center justify-center shrink-0">
+                <span className="text-2xl">✈️</span>
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-white mb-1">{t("deploy.sectionTitle")}</h2>
-                <p className="text-sm text-zinc-400">{t("deploy.sectionDesc")}</p>
+                <h2 className="text-lg font-semibold text-white mb-1">Go live in 3 steps</h2>
+                <p className="text-sm text-zinc-400">Connect your agent to Telegram — the fastest way to start handling real conversations.</p>
               </div>
             </div>
 
-            {/* Readiness checklist */}
-            <div className="space-y-3 mb-6">
-              {/* LLM check */}
-              <div className={`flex items-center gap-3 p-3 rounded-xl border ${
-                hasLLM ? "bg-emerald-500/5 border-emerald-500/20" : "bg-red-500/5 border-red-500/20"
-              }`}>
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                  hasLLM ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"
-                }`}>
-                  {hasLLM ? "✓" : "!"}
+            <div className="space-y-4">
+              {/* Step 1 */}
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-zinc-800/30 border border-white/5">
+                <div className="w-8 h-8 rounded-full bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-sm font-bold text-violet-400 shrink-0">
+                  1
                 </div>
                 <div className="flex-1">
-                  <div className={`text-sm font-medium ${hasLLM ? "text-emerald-300" : "text-red-300"}`}>
-                    {t("deploy.checkLLM")}
-                  </div>
-                  {!hasLLM && (
-                    <div className="text-xs text-zinc-500 mt-0.5">OpenAI, Anthropic or OpenRouter key required</div>
-                  )}
+                  <h3 className="text-sm font-semibold text-white mb-2">Create your Telegram bot</h3>
+                  <ul className="space-y-1.5 text-sm text-zinc-400">
+                    <li className="flex items-start gap-2">
+                      <span className="text-zinc-600">→</span>
+                      <span>Open Telegram, search for <span className="text-sky-400">@BotFather</span></span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-zinc-600">→</span>
+                      <span>Send: <code className="text-zinc-300 bg-zinc-800 px-1.5 py-0.5 rounded">/newbot</code></span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-zinc-600">→</span>
+                      <span>Choose a name (e.g. &quot;Acme Support&quot;) and username (e.g. <span className="text-zinc-300">acme_support_bot</span>)</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-zinc-600">→</span>
+                      <span>BotFather gives you a token: <code className="text-xs text-zinc-500">1234567890:AAFxxxxxxxxxxxxxxxxxxxxxxxx</code></span>
+                    </li>
+                  </ul>
+                  <p className="text-xs text-zinc-500 mt-2">Copy that token.</p>
                 </div>
-                {!hasLLM && (
-                  <button
-                    onClick={onGoToCredentials}
-                    className="text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 px-2 py-1 rounded-lg transition-colors shrink-0"
-                  >
-                    Add key
-                  </button>
-                )}
               </div>
 
-              {/* Channel check */}
-              <div className={`flex items-center gap-3 p-3 rounded-xl border ${
-                hasChannel ? "bg-emerald-500/5 border-emerald-500/20" : "bg-zinc-800/50 border-white/5"
-              }`}>
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                  hasChannel ? "bg-emerald-500/20 text-emerald-400" : "bg-zinc-700 text-zinc-500"
-                }`}>
-                  {hasChannel ? "✓" : "○"}
+              {/* Step 2 */}
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-zinc-800/30 border border-white/5">
+                <div className="w-8 h-8 rounded-full bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-sm font-bold text-violet-400 shrink-0">
+                  2
                 </div>
                 <div className="flex-1">
-                  <div className={`text-sm font-medium ${hasChannel ? "text-emerald-300" : "text-zinc-400"}`}>
-                    {t("deploy.checkChannel")}
-                  </div>
-                  {hasChannel ? (
-                    <div className="text-xs text-zinc-500 mt-0.5">
-                      {activeChannels.join(", ")}
-                    </div>
-                  ) : (
-                    <div className="text-xs text-zinc-600 mt-0.5">
-                      Add Telegram, Discord or Slack tokens to reach users on those platforms
-                    </div>
-                  )}
-                </div>
-                {!hasChannel && (
+                  <h3 className="text-sm font-semibold text-white mb-2">Paste the token</h3>
                   <button
                     onClick={onGoToCredentials}
-                    className="text-xs text-zinc-500 hover:text-white bg-white/5 px-2 py-1 rounded-lg transition-colors shrink-0"
+                    disabled={credsLoading}
+                    className="flex items-center gap-2 text-xs font-semibold px-4 py-2.5 bg-sky-600 hover:bg-sky-500 disabled:opacity-50 transition-colors text-white rounded-lg"
                   >
-                    Add channel
+                    Add Telegram Bot →
                   </button>
-                )}
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
+                <div className="w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-sm font-bold text-emerald-400 shrink-0">
+                  ✓
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-sm font-semibold text-emerald-300 mb-1">Done</h3>
+                  <p className="text-sm text-zinc-400">Your agent goes live instantly. No servers, no deployment — just paste and go.</p>
+                </div>
               </div>
             </div>
-
-            {/* Deploy error */}
-            {(deployError || isFailed) && (
-              <div className="flex items-start gap-3 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 mb-4">
-                <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
-                <div className="flex-1">
-                  <div className="text-sm font-medium text-red-300">
-                    {isFailed && !deployError ? t("deploy.failedTitle") : t("deploy.failedTitle")}
-                  </div>
-                  <div className="text-xs text-red-400/80 mt-0.5">{deployError ?? t("deploy.failedDesc")}</div>
-                </div>
-              </div>
-            )}
-
-            {/* Deploy button */}
-            <button
-              onClick={onDeploy}
-              disabled={!hasLLM || deploying || credsLoading}
-              data-testid="deploy-btn"
-              className="w-full flex items-center justify-center gap-3 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors px-6 py-4 rounded-xl text-base font-semibold text-white"
-            >
-              {deploying ? (
-                <><Loader2 className="w-5 h-5 animate-spin" /> {t("deploy.deploying")}</>
-              ) : (
-                <><Zap className="w-5 h-5" /> {isFailed ? t("deploy.retryBtn") : t("deploy.deployBtn")}</>
-              )}
-            </button>
-
-            {!hasLLM && (
-              <p className="text-xs text-zinc-600 text-center mt-3">
-                {t("deploy.notReadyDesc")}
-              </p>
-            )}
           </div>
 
-          {/* What happens next */}
-          <div className="glow-border rounded-2xl bg-white/[0.02] p-5">
-            <h3 className="text-xs text-zinc-500 uppercase tracking-wider mb-4">{t("deploy.whatHappensTitle")}</h3>
-            <div className="space-y-3">
-              {[
-                { icon: "1", text: t("deploy.step1Text") },
-                { icon: "2", text: t("deploy.step2Text") },
-                { icon: "3", text: t("deploy.step3Text") },
-                { icon: "4", text: t("deploy.step4Text") },
-              ].map((step) => (
-                <div key={step.icon} className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-violet-600/20 border border-violet-500/20 flex items-center justify-center text-xs font-bold text-violet-400 shrink-0 mt-0.5">
-                    {step.icon}
-                  </div>
-                  <p className="text-sm text-zinc-400">{step.text}</p>
-                </div>
-              ))}
+          {/* Web Widget Card */}
+          <div className="glow-border rounded-2xl bg-white/[0.02] p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center">
+                <span className="text-xl">🌐</span>
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-white">Web Widget</h3>
+                <p className="text-xs text-zinc-500">Always available — embed on any website</p>
+              </div>
             </div>
+
+            <div className="bg-zinc-900/50 rounded-lg p-3 font-mono text-xs text-zinc-400 overflow-x-auto mb-3">
+              <code>{embedCode}</code>
+            </div>
+
+            <p className="text-xs text-zinc-500">Paste this snippet before the closing <code className="text-zinc-400">&lt;/body&gt;</code> tag.</p>
           </div>
         </>
       )}
 
-      {/* ── Provisioning in progress ── */}
-      {isProvisioning && (
-        <div className="glow-border rounded-2xl bg-white/[0.02] p-6 md:p-8">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="w-12 h-12 rounded-xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center shrink-0">
-              <Loader2 className="w-6 h-6 text-violet-400 animate-spin" />
+      {/* ── Live (channel connected) ── */}
+      {isLive && (
+        <div className="space-y-4">
+          {/* Live banner */}
+          <div className="glow-border rounded-2xl bg-emerald-500/5 border border-emerald-500/20 p-5 flex items-center gap-4">
+            <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
+              <span className="text-xl">🎉</span>
             </div>
-            <div>
-              <h2 className="text-lg font-semibold text-white">{t("deploy.provisioningTitle")}</h2>
-              <p className="text-sm text-zinc-400">{t("deploy.provisioningDesc")}</p>
+            <div className="flex-1">
+              <h2 className="text-sm font-semibold text-emerald-300">Agent is live</h2>
+              <p className="text-xs text-zinc-400">
+                Connected to: {activeChannels.filter(ch => ch !== t("deploy.channelWidget")).join(", ")}
+              </p>
             </div>
+            <span className="text-xs px-3 py-1.5 rounded-full font-medium bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+              {t("deploy.liveStatus")}
+            </span>
           </div>
 
-          {/* Step progress */}
-          <div className="space-y-3 mb-6">
-            {[
-              { label: t("deploy.provStep1Label"), sublabel: t("deploy.provStep1Sub"), done: true, active: false },
-              { label: t("deploy.provStep2Label"), sublabel: t("deploy.provStep2Sub"), done: false, active: true },
-              { label: t("deploy.provStep3Label"), sublabel: t("deploy.provStep3Sub"), done: false, active: false },
-              { label: t("deploy.provStep4Label"), sublabel: t("deploy.provStep4Sub"), done: false, active: false },
-            ].map((step, i) => (
-              <div key={i} className={`flex items-start gap-3 p-3 rounded-xl border transition-colors ${
-                step.active ? "bg-violet-500/10 border-violet-500/30" :
-                step.done  ? "bg-emerald-500/5 border-emerald-500/20" :
-                             "bg-white/[0.02] border-white/5"
-              }`}>
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 ${
-                  step.done   ? "bg-emerald-500/20 text-emerald-400" :
-                  step.active ? "bg-violet-600/30 text-violet-300" :
-                                "bg-zinc-800 text-zinc-600"
-                }`}>
-                  {step.done ? "✓" : step.active ? <Loader2 className="w-3 h-3 animate-spin" /> : i + 1}
+          {/* Channel Status Grid */}
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {/* Telegram Card */}
+            <div className={`glow-border rounded-2xl bg-white/[0.02] p-5 border ${hasTelegram ? "border-emerald-500/30" : "border-white/5"}`}>
+              <div className="flex items-center gap-3 mb-4">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg ${hasTelegram ? "bg-sky-600/20 border border-sky-500/30" : "bg-zinc-800/50 border border-white/5"}`}>
+                  ✈️
                 </div>
                 <div>
-                  <div className={`text-sm font-medium ${
-                    step.active ? "text-white" : step.done ? "text-emerald-300" : "text-zinc-500"
-                  }`}>{step.label}</div>
-                  <div className="text-xs text-zinc-600 mt-0.5">{step.sublabel}</div>
+                  <h3 className={`text-sm font-semibold ${hasTelegram ? "text-white" : "text-zinc-500"}`}>Telegram</h3>
                 </div>
+                {hasTelegram ? (
+                  <span className="ml-auto text-xs px-2 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
+                    {t("deploy.activeStatus")}
+                  </span>
+                ) : null}
               </div>
-            ))}
-          </div>
-
-          <div className="flex items-center gap-2 bg-violet-500/5 border border-violet-500/10 rounded-xl px-4 py-3 text-xs text-zinc-500 justify-center">
-            <Loader2 className="w-3 h-3 animate-spin" />
-            {t("deploy.provisioningNote")}
-          </div>
-          <p className="text-xs text-zinc-600 mt-4 text-center">{t("deploy.autoUpdateHint")}</p>
-        </div>
-      )}
-
-      {/* ── Live & running ── */}
-      {isReady && (
-        <div className="space-y-4">
-          {/* Status card */}
-          <div className="glow-border rounded-2xl bg-white/[0.02] p-6">
-            <div className="flex items-start gap-4 mb-5">
-              <div className="w-12 h-12 rounded-xl bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center shrink-0">
-                <Zap className="w-6 h-6 text-emerald-400" />
-              </div>
-              <div>
-                <h2 className="text-lg font-semibold text-white mb-1">{t("deploy.runningTitle")}</h2>
-                <p className="text-sm text-zinc-400">{t("deploy.runningDesc")}</p>
-              </div>
-              <span className="ml-auto text-xs px-3 py-1.5 rounded-full font-medium bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                {t("deploy.liveStatus")}
-              </span>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 text-sm mb-5">
-              <div>
-                <div className="text-xs text-zinc-500 uppercase tracking-wider mb-1">{t("deploy.serverLabel")}</div>
-                <div className="text-zinc-300 font-mono text-xs">
-                  {instance.hasGateway ? "Connected" : "—"}
+              {hasTelegram ? (
+                <div>
+                  <p className="text-sm text-zinc-400">Bot connected</p>
+                  {instance.telegramBotUsername && (
+                    <p className="text-xs text-zinc-500 mt-1">@{instance.telegramBotUsername}</p>
+                  )}
                 </div>
-                {instance.tier && (
-                  <div className="text-xs text-zinc-600 mt-1">
-                    {{
-                      minimal: "cx22 · 2 vCPU · 4 GB",
-                      standard: "cx32 · 4 vCPU · 8 GB",
-                      pro: "cx42 · 8 vCPU · 16 GB",
-                    }[instance.tier] ?? instance.tier}
-                  </div>
-                )}
-              </div>
-              <div>
-                <div className="text-xs text-zinc-500 uppercase tracking-wider mb-1">{t("deploy.channelsLabel")}</div>
-                <div className="flex flex-wrap gap-1.5">
-                  {activeChannels.length > 0
-                    ? activeChannels.map((ch) => (
-                        <span key={ch} className="text-xs px-2 py-0.5 rounded-full bg-violet-500/15 text-violet-300 border border-violet-500/20">
-                          {ch}
-                        </span>
-                      ))
-                    : <span className="text-xs text-zinc-600">{t("deploy.noneConfigured")}</span>
-                  }
-                </div>
-              </div>
-            </div>
-
-            {/* Config out of sync banner */}
-            {instance.configSynced === false && (
-              <div className="flex items-center gap-3 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3 mb-4">
-                <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
-                <span className="text-sm text-amber-300 flex-1">{t("deploy.syncOutOfDate")}</span>
+              ) : (
                 <button
-                  onClick={onSync}
-                  disabled={syncing}
-                  className="flex items-center gap-1.5 text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 px-3 py-1.5 rounded-lg transition-colors shrink-0 disabled:opacity-50"
+                  onClick={onGoToCredentials}
+                  className="w-full text-xs text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 px-3 py-2 rounded-lg transition-colors"
                 >
-                  {syncing ? <Loader2 className="w-3 h-3 animate-spin" /> : <Wifi className="w-3 h-3" />}
-                  {syncing ? t("deploy.syncing") : t("deploy.syncNow")}
+                  Connect →
                 </button>
-              </div>
-            )}
-
-            {syncDone && (
-              <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3 mb-4 text-sm text-emerald-300">
-                <Check className="w-4 h-4" /> {t("deploy.syncDone")}
-              </div>
-            )}
-
-            {/* Chat hint */}
-            <div className="flex items-center gap-2 text-xs text-zinc-500">
-              <MessageSquare className="w-3.5 h-3.5" />
-              {t("deploy.chatAvailable")}
+              )}
             </div>
-          </div>
 
-          {/* Channel integrations detail */}
-          <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
-            <div className="p-5 border-b border-white/5">
-              <h3 className="text-sm font-semibold text-white">{t("deploy.connectedIntegrations")}</h3>
+            {/* Web Widget Card */}
+            <div className="glow-border rounded-2xl bg-white/[0.02] p-5 border border-white/5 sm:col-span-2 lg:col-span-2">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center text-lg">
+                  🌐
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-white">Web Widget</h3>
+                  <p className="text-xs text-zinc-500">Embed on any website</p>
+                </div>
+                <span className="ml-auto text-xs px-2 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
+                  {t("deploy.activeStatus")}
+                </span>
+              </div>
+              <div className="bg-zinc-900/50 rounded-lg p-3 font-mono text-xs text-zinc-400 overflow-x-auto">
+                <code>{embedCode}</code>
+              </div>
             </div>
-            <div className="divide-y divide-white/5">
-              {[
-                { key: "telegram_bot_token", label: "Telegram", icon: "✈️", desc: t("deploy.channelTelegramDesc") },
-                { key: "twilio_account_sid", label: "WhatsApp", icon: "💬", desc: t("deploy.channelWhatsAppDesc") },
-                { key: "web_widget", label: "Web Widget", icon: "🌐", desc: t("deploy.channelWidgetDesc") },
-              ].map(({ key, label, icon, desc }) => {
-                const active = key === "web_widget" ? true : credKeys.includes(key);
-                return (
-                  <div key={key} className="flex items-center gap-4 p-4">
-                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-lg ${
-                      active ? "bg-violet-600/15 border border-violet-500/20" : "bg-zinc-800/50 border border-white/5"
-                    }`}>
-                      {icon}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className={`text-sm font-medium ${active ? "text-white" : "text-zinc-500"}`}>{label}</div>
-                      <div className="text-xs text-zinc-600">{desc}</div>
-                    </div>
-                    {active ? (
-                      <span className="text-xs px-2 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
-                        {t("deploy.activeStatus")}
-                      </span>
-                    ) : (
-                      <button
-                        onClick={onGoToCredentials}
-                        className="text-xs text-zinc-600 hover:text-white bg-white/5 px-2 py-1 rounded-lg transition-colors"
-                      >
-                        {t("deploy.connectAction")}
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
+
+            {/* WhatsApp Card */}
+            <div className={`glow-border rounded-2xl bg-white/[0.02] p-5 border ${hasWhatsApp ? "border-emerald-500/30" : "border-white/5"}`}>
+              <div className="flex items-center gap-3 mb-4">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg ${hasWhatsApp ? "bg-emerald-600/20 border border-emerald-500/30" : "bg-zinc-800/50 border border-white/5"}`}>
+                  💬
+                </div>
+                <div>
+                  <h3 className={`text-sm font-semibold ${hasWhatsApp ? "text-white" : "text-zinc-500"}`}>WhatsApp</h3>
+                </div>
+                {hasWhatsApp ? (
+                  <span className="ml-auto text-xs px-2 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
+                    {t("deploy.activeStatus")}
+                  </span>
+                ) : null}
+              </div>
+              {hasWhatsApp ? (
+                <p className="text-sm text-zinc-400">Connected</p>
+              ) : (
+                <button
+                  onClick={onGoToCredentials}
+                  className="w-full text-xs text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 px-3 py-2 rounded-lg transition-colors"
+                >
+                  Connect →
+                </button>
+              )}
             </div>
           </div>
 
@@ -2974,12 +2851,6 @@ export default function InstanceDetailPage() {
           instanceId={id}
           credentials={credentials}
           credsLoading={credsLoading}
-          deploying={deploying}
-          deployError={deployError}
-          syncing={syncing}
-          syncDone={syncDone}
-          onDeploy={deployInstance}
-          onSync={syncConfig}
           onGoToCredentials={() => { setTab("Credentials"); loadCredentials(); }}
           t={t}
         />
