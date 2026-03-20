@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { analytics } from "@/lib/analytics";
+import { agentTemplates } from "@/lib/templates";
 
 const TOTAL_STEPS = 5;
 
@@ -129,18 +130,6 @@ export default function OnboardingPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Link referral code passed via Google OAuth callback URL
-  useEffect(() => {
-    const ref = searchParams.get("_ref");
-    if (ref) {
-      fetch("/api/referral/link", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: ref }),
-      }).catch(() => {/* non-fatal */});
-    }
-  }, [searchParams]);
-
   // Step state
   const [step, setStep] = useState(1);
 
@@ -170,6 +159,48 @@ export default function OnboardingPage() {
   // Submission
   const [loading, setLoading] = useState(false);
   const [instanceId, setInstanceId] = useState<string | null>(null);
+
+  // Applied template (from ?template= param)
+  const [appliedTemplate, setAppliedTemplate] = useState<typeof agentTemplates[0] | null>(null);
+
+  // Link referral code passed via Google OAuth callback URL
+  useEffect(() => {
+    const ref = searchParams.get("_ref");
+    if (ref) {
+      fetch("/api/referral/link", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: ref }),
+      }).catch(() => {/* non-fatal */});
+    }
+  }, [searchParams]);
+
+  // Read template from URL or sessionStorage and pre-fill fields
+  useEffect(() => {
+    const tmplId = searchParams.get("template") ?? sessionStorage.getItem("pendingTemplate");
+    if (!tmplId) return;
+    const tmpl = agentTemplates.find(t => t.id === tmplId);
+    if (!tmpl) return;
+    setAppliedTemplate(tmpl);
+
+    // Pre-fill industry from template category
+    setIndustry(tmpl.category); // use the category as industry hint
+
+    // Pre-fill useCase — map template category to onboarding useCase keys
+    const categoryToUseCase: Record<string, string> = {
+      "Customer Support": "customer-support",
+      "Sales": "sales-assistant",
+      "Marketing": "content",
+      "Internal Tools": "internal-tools",
+    };
+    const uc = categoryToUseCase[tmpl.category];
+    if (uc) setUseCase(uc);
+
+    // Pre-fill useCase description with template short description
+    setUseCaseDescription(tmpl.shortDescription);
+
+    sessionStorage.removeItem("pendingTemplate");
+  }, [searchParams]);
 
   // ── Toggle channel selection ──────────────────────────────────────────────
 
@@ -249,7 +280,9 @@ export default function OnboardingPage() {
         useCase, 
         useCaseDescription,
         channelsWanted: selectedChannels,
-        credentials 
+        credentials,
+        templateId: appliedTemplate?.id ?? null,
+        templateSystemPrompt: appliedTemplate?.systemPrompt ?? null,
       }),
     });
 
@@ -304,6 +337,15 @@ export default function OnboardingPage() {
         {/* ── Step 1 — Business + Industry ── */}
         {step === 1 && (
           <div className="glow-border rounded-2xl p-5 sm:p-8 bg-white/[0.02]">
+            {appliedTemplate && (
+              <div className="flex items-center gap-2 bg-violet-500/10 border border-violet-500/30 rounded-xl px-4 py-3 mb-4">
+                <span className="text-lg">{appliedTemplate.icon}</span>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-violet-300">Starting from: {appliedTemplate.name}</p>
+                  <p className="text-xs text-zinc-500">{appliedTemplate.shortDescription}</p>
+                </div>
+              </div>
+            )}
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center">
                 <Building2 className="w-5 h-5 text-violet-400" />

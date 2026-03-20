@@ -17,6 +17,8 @@ const formSchema = z.object({
   channelsWanted: z.array(z.string()).optional(),
   credentials: z.record(z.string(), z.string()).optional(),
   instanceName: z.string().optional(),
+  templateId: z.string().optional(),
+  templateSystemPrompt: z.string().optional(),
 });
 
 // Map useCase values to AI instance types
@@ -200,10 +202,10 @@ export async function POST(request: Request) {
     const tier = planConfig?.tier || 'minimal';
 
     // Generate instance name (use business name or fallback)
-    const instanceName = validatedData.instanceName || `${validatedData.business} AI`;
+    const instanceName = validatedData.instanceName?.trim() || `${validatedData.business} AI Agent`;
 
-    // Generate tailored system prompt
-    const systemPrompt = generateSystemPrompt({
+    // Use template system prompt if provided, otherwise generate one
+    const systemPrompt = validatedData.templateSystemPrompt?.trim() || generateSystemPrompt({
       business: validatedData.business,
       industry: validatedData.industry,
       useCase: validatedData.useCase,

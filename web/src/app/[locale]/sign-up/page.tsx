@@ -34,6 +34,12 @@ export default function SignUpPage() {
     const refFromCookie = getReferralCode();
     setReferralCode(refFromUrl ?? refFromCookie);
     analytics.signupStarted();
+
+    // Store template ID for onboarding pre-fill
+    const templateId = searchParams.get("template");
+    if (templateId) {
+      sessionStorage.setItem("pendingTemplate", templateId);
+    }
   }, [searchParams]);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -67,7 +73,8 @@ export default function SignUpPage() {
       router.push("/sign-in?registered=1");
     } else {
       analytics.signupCompleted("email");
-      router.push("/onboarding");
+      const tmplId = searchParams.get("template") ?? sessionStorage.getItem("pendingTemplate");
+      router.push(tmplId ? `/onboarding?template=${tmplId}` : "/onboarding");
     }
   }
 
@@ -107,7 +114,7 @@ export default function SignUpPage() {
           )}
           {/* Google OAuth — fastest path to sign up */}
           <div className="mb-6">
-            <GoogleButton callbackUrl="/onboarding" referralCode={referralCode ?? undefined} />
+            <GoogleButton callbackUrl={searchParams.get("template") ? `/onboarding?template=${searchParams.get("template")}` : "/onboarding"} referralCode={referralCode ?? undefined} />
           </div>
           <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">
