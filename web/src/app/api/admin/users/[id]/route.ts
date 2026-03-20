@@ -29,8 +29,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   // Email user when manager is newly assigned
   if (data.managerId && user.manager && user.email) {
     emailService.managerAssigned(user.email, user.name ?? "there", user.manager.name, user.manager.email).catch(console.error);
-    const onboardingDataObj = user.onboardingData as { businessName?: string; industry?: string; useCase?: string; teamSize?: string; agentType?: string } | null;
-    emailService.newUserAlert(user.manager.email, user.manager.name, user.name ?? user.email, user.email, onboardingDataObj ?? undefined).catch(console.error);
+    emailService.newUserAlert(user.manager.email, user.manager.name, user.name ?? user.email, user.email, user.onboardingData ? JSON.stringify(user.onboardingData) : undefined).catch(console.error);
   }
 
   // Email user when plan changes

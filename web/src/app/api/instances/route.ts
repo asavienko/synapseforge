@@ -44,8 +44,8 @@ export async function POST(req: NextRequest) {
     systemPrompt: systemPrompt ?? template?.systemPrompt ?? "You are a helpful AI assistant.",
     temperature: 0.7,
     maxTokens: 1024,
-    ...(agentTemplateName ? { agentTemplateName } : {}),
-    ...(agentTemplateId ? { agentTemplateId } : {}),
+    ...(agentTemplateName ? { agentTemplateName: String(agentTemplateName) } : {}),
+    ...(agentTemplateId ? { agentTemplateId: String(agentTemplateId) } : {}),
     ...(templateId ? { templateId, templateName: template?.name } : {}),
   });
 

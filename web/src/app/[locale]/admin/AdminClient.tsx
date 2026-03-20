@@ -17,7 +17,7 @@ interface UserRow {
   createdAt: string;
   managerId: string | null;
   managerName: string | null;
-  onboardingData: string | null;
+  onboardingData: { businessName?: string; industry?: string; useCase?: string; teamSize?: string; agentType?: string } | null;
   instances: {
     id: string;
     name: string;
