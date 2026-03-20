@@ -445,7 +445,7 @@ export default async function TemplateDetailPage({ params }: Props) {
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4 text-violet-400" />
             <span className="font-semibold text-zinc-400">OpenHelix AI</span>
-            <span>© 2026</span>
+            <span>{t("footer.copyright", { year: 2026 })}</span>
           </div>
           <div className="flex gap-6">
             <Link
