@@ -216,6 +216,7 @@ export default function InstanceDetailPage() {
             config={config}
             onGoToCredentials={() => { setTab("Credentials"); loadCredentials(); }}
             onGoToDeploy={() => setTab("Deploy")}
+            onGoToActivity={() => setTab("Activity")}
             showToast={showToast}
             toggleStatus={toggleStatus}
             saving={saving}

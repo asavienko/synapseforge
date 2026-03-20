@@ -22,6 +22,7 @@ interface OverviewTabProps {
   config: Config;
   onGoToCredentials: () => void;
   onGoToDeploy: () => void;
+  onGoToActivity?: () => void;
   showToast: (text: string, type?: "success" | "error") => void;
   toggleStatus: () => Promise<void>;
   saving: boolean;
@@ -37,6 +38,7 @@ export function OverviewTab({
   config,
   onGoToCredentials,
   onGoToDeploy,
+  onGoToActivity,
   toggleStatus,
   saving,
 }: OverviewTabProps) {
@@ -401,7 +403,7 @@ export function OverviewTab({
               <h3 className="text-sm font-semibold text-white">{t("overview.recentActivity")}</h3>
             </div>
             <button
-              onClick={() => {}}
+              onClick={onGoToActivity}
               className="text-xs text-violet-400 hover:text-violet-300 transition-colors"
             >
               {t("overview.seeAll")}
