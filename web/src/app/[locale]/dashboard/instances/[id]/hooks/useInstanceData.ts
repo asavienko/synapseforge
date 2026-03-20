@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   Instance,
   Config,
@@ -17,7 +18,7 @@ import {
   UsageData,
   Tab,
   TABS,
-} from "./types";
+} from "../types";
 
 export function useInstanceData() {
   const { id } = useParams<{ id: string }>();
@@ -371,7 +372,7 @@ export function useInstanceData() {
       body: JSON.stringify({ autoUpdate: newValue }),
     });
     if (res.ok) {
-      setInstance((prev) => prev ? { ...prev, autoUpdate: newValue } : prev);
+      setInstance((prev: Instance | null) => prev ? { ...prev, autoUpdate: newValue } : prev);
     } else {
       const data = await res.json().catch(() => ({}));
       showToast(data.error ?? "Failed to toggle auto-update", "error");

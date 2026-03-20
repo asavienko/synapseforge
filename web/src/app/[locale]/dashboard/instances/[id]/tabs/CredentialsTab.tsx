@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ShieldCheck, Zap, Loader2, Check, X, Wifi, Trash, Eye, AlertCircle, Key } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";

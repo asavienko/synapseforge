@@ -19,6 +19,8 @@ interface ConfigurationTabProps {
 }
 
 export function ConfigurationTab({
+  instance,
+  id,
   config,
   setConfig,
   configDirty,

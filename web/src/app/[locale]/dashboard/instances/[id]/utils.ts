@@ -1,3 +1,20 @@
+export const LOG_ICONS: Record<string, { icon: string; color: string }> = {
+  started: { icon: "▶️", color: "text-emerald-400" },
+  stopped: { icon: "⏹️", color: "text-zinc-400" },
+  config_changed: { icon: "⚙️", color: "text-blue-400" },
+  key_generated: { icon: "🔑", color: "text-violet-400" },
+  key_revoked: { icon: "❌", color: "text-red-400" },
+  created: { icon: "🆕", color: "text-violet-400" },
+  deleted: { icon: "❌", color: "text-red-400" },
+  chat_message: { icon: "💬", color: "text-sky-400" },
+  config_synced: { icon: "🔄", color: "text-blue-400" },
+  health_check: { icon: "💓", color: "text-rose-400" },
+  provision_start: { icon: "⚙️", color: "text-amber-400" },
+  provision_done: { icon: "⚙️", color: "text-emerald-400" },
+  provision_failed: { icon: "❌", color: "text-red-400" },
+  error: { icon: "❌", color: "text-red-400" },
+};
+
 export function formatAbsoluteTime(date: string | Date): string {
   return new Intl.DateTimeFormat("en-US", {
     month: "short", day: "numeric", year: "numeric",

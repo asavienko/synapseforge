@@ -122,7 +122,7 @@ export function ChatTab({
           const { done, value } = await reader.read();
           if (done) break;
           fullText += decoder.decode(value, { stream: true });
-          setChatMessages((prev) =
+          setChatMessages((prev) =>
             prev.map((m) => (m.id === streamingId ? { ...m, content: fullText } : m))
           );
         }
@@ -131,8 +131,8 @@ export function ChatTab({
         reader.releaseLock();
       }
 
-      setChatMessages((prev) =
-        prev.map((m) =
+      setChatMessages((prev) =>
+        prev.map((m) =>
           m.id === streamingId ? { role: "assistant" as const, content: fullText } : m
         )
       );
