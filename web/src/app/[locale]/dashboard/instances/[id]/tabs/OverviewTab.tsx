@@ -1,15 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Bot, Key, Zap, Activity, MessageSquare, AlertCircle, Send, Check, Share2, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { Bot, Key, Zap, Activity, MessageSquare, AlertCircle, Send, Share2, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { STATUS_COLORS, formatDate, formatRelativeTime } from "@/lib/utils";
-import { SANDBOX_LIMIT, getSandboxRemaining } from "@/lib/sandbox";
-import { Instance, CredentialRow, UsageData, LogRow, Config, ChatMsg } from "../types";
-import { groupLogsByDay } from "../utils";
+import { formatRelativeTime } from "@/lib/utils";
+import { Instance, CredentialRow, UsageData, LogRow, Config } from "../types";
 import { SetupChecklistCard } from "../components/SetupChecklistCard";
 
 interface OverviewTabProps {
@@ -19,13 +17,10 @@ interface OverviewTabProps {
   usageData: UsageData | null;
   usageLoading: boolean;
   recentLogs: LogRow[];
-  config: Config;
   onGoToCredentials: () => void;
   onGoToDeploy: () => void;
   onGoToActivity?: () => void;
   showToast: (text: string, type?: "success" | "error") => void;
-  toggleStatus: () => Promise<void>;
-  saving: boolean;
 }
 
 export function OverviewTab({
@@ -35,12 +30,9 @@ export function OverviewTab({
   usageData,
   usageLoading,
   recentLogs,
-  config,
   onGoToCredentials,
   onGoToDeploy,
   onGoToActivity,
-  toggleStatus,
-  saving,
 }: OverviewTabProps) {
   const t = useTranslations("instanceDetail");
   const typeLabel = instance.type;

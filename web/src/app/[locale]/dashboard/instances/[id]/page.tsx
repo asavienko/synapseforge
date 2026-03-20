@@ -213,13 +213,10 @@ export default function InstanceDetailPage() {
             usageData={usageData}
             usageLoading={usageLoading}
             recentLogs={recentLogs}
-            config={config}
             onGoToCredentials={() => { setTab("Credentials"); loadCredentials(); }}
             onGoToDeploy={() => setTab("Deploy")}
-            onGoToActivity={() => setTab("Activity")}
+            onGoToActivity={() => setTab("Activity Log")}
             showToast={showToast}
-            toggleStatus={toggleStatus}
-            saving={saving}
           />
         )}
 
