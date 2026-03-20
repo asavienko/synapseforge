@@ -189,12 +189,12 @@ export default function InstancesPage() {
   return (
     <div className="p-4 pt-14 md:p-8 md:pt-6">
       {toast && <Toast text={toast.text} type={toast.type} />}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-white">{t("title")}</h1>
           <p className="text-zinc-400 mt-1">{t("subtitle")}</p>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2">
           <button
             onClick={loadInstances}
             disabled={loading}
@@ -212,17 +212,19 @@ export default function InstancesPage() {
           </Link>
           <button
             onClick={() => setShowTemplateSelector(true)}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] transition-colors px-4 py-2.5 rounded-lg text-sm font-semibold text-zinc-300"
+            className="flex items-center justify-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] transition-colors px-3 sm:px-4 py-2.5 rounded-lg text-sm font-semibold text-zinc-300 whitespace-nowrap"
           >
             <Sparkles className="w-4 h-4" />
-            From Template
+            <span className="hidden sm:inline">From Template</span>
+            <span className="sm:hidden">Template</span>
           </button>
           <button
             onClick={() => setShowWizard(true)}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2.5 rounded-lg text-sm font-semibold text-white"
+            className="flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-3 sm:px-4 py-2.5 rounded-lg text-sm font-semibold text-white whitespace-nowrap"
           >
             <Plus className="w-4 h-4" />
-            {t("newInstance")}
+            <span className="hidden sm:inline">{t("newInstance")}</span>
+            <span className="sm:hidden">New</span>
           </button>
         </div>
       </div>
