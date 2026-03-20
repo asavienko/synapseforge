@@ -1,16 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { Zap, Loader2, CheckCircle2, ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-export default function ForgotPasswordPage() {
+function ForgotPasswordForm() {
   const t = useTranslations("auth.forgotPassword");
+  const searchParams = useSearchParams();
   const [emailVal, setEmailVal] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
+
+  // Pre-fill email from ?email= param (used by accept-invite flow and invited clients)
+  useEffect(() => {
+    const emailParam = searchParams.get("email");
+    if (emailParam) setEmailVal(decodeURIComponent(emailParam));
+  }, [searchParams]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -91,5 +99,14 @@ export default function ForgotPasswordPage() {
         )}
       </div>
     </div>
+  );
+}
+
+
+export default function ForgotPasswordPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center"><Loader2 className="w-6 h-6 text-zinc-500 animate-spin" /></div>}>
+      <ForgotPasswordForm />
+    </Suspense>
   );
 }
