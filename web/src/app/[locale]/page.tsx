@@ -41,12 +41,13 @@ export default async function LandingPage() {
 
       {/* ── Nav ──────────────────────────────────────────────────────────── */}
       <nav className="border-b border-white/5 backdrop-blur-md sticky top-0 z-50 bg-[#0a0a0f]/80">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <HelixLogo className="w-6 h-6 text-violet-400" size={24} />
-            <span className="font-bold text-lg tracking-tight">OpenHelix AI</span>
+            <span className="font-bold text-lg tracking-tight hidden sm:block">OpenHelix AI</span>
+            <span className="font-bold text-base tracking-tight sm:hidden">OpenHelix</span>
           </div>
-          <div className="hidden md:flex items-center gap-8 text-sm text-zinc-400">
+          <div className="hidden md:flex items-center gap-6 lg:gap-8 text-sm text-zinc-400">
             <Link href="/templates" className="hover:text-white transition-colors">Templates</Link>
             <a href="#demo" className="hover:text-white transition-colors">Demo</a>
             <a href="#how" className="hover:text-white transition-colors">{t("nav.services")}</a>
@@ -59,9 +60,10 @@ export default async function LandingPage() {
             {isLoggedIn ? (
               <Link
                 href="/dashboard"
-                className="text-sm bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2 rounded-lg font-medium whitespace-nowrap"
+                className="text-sm bg-violet-600 hover:bg-violet-500 transition-colors px-3 sm:px-4 py-2 rounded-lg font-medium whitespace-nowrap"
               >
-                {t("nav.dashboard")}
+                <span className="hidden sm:inline">{t("nav.dashboard")}</span>
+                <span className="sm:hidden">Dashboard</span>
               </Link>
             ) : (
               <>
@@ -70,9 +72,10 @@ export default async function LandingPage() {
                 </Link>
                 <Link
                   href="/sign-up"
-                  className="text-sm bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2 rounded-lg font-medium whitespace-nowrap"
+                  className="text-sm bg-violet-600 hover:bg-violet-500 transition-colors px-3 sm:px-4 py-2 rounded-lg font-medium whitespace-nowrap"
                 >
-                  {t("nav.getStarted")}
+                  <span className="hidden sm:inline">{t("nav.getStarted")}</span>
+                  <span className="sm:hidden">Start</span>
                 </Link>
               </>
             )}
@@ -119,26 +122,26 @@ export default async function LandingPage() {
           {t("hero.subtitle")}
         </p>
 
-        <div className="flex flex-col items-center gap-3 mb-6">
-          {/* Primary CTA — full width on mobile */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
+          {/* Primary CTA */}
           <Link
             href={isLoggedIn ? "/dashboard" : "/sign-up"}
             className="w-full sm:w-auto flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 transition-all px-8 py-4 rounded-xl font-semibold text-lg shadow-lg shadow-violet-500/20"
           >
             {isLoggedIn ? t("nav.dashboard") : t("hero.cta")} <ArrowRightIcon className="w-5 h-5" />
           </Link>
-          {/* Secondary CTAs — row on mobile */}
+          {/* Secondary CTAs */}
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <Link
               href="/templates"
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] transition-colors px-6 sm:px-8 py-4 rounded-xl font-semibold text-base sm:text-lg text-zinc-300"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] transition-colors px-6 py-4 rounded-xl font-semibold text-base text-zinc-300 whitespace-nowrap"
             >
               <SparklesIcon className="w-5 h-5" />
               {t("hero.ctaSecondary")}
             </Link>
             <Link
               href="/contact?subject=Demo+Request"
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 border border-violet-500/30 hover:border-violet-500/60 bg-violet-500/5 hover:bg-violet-500/10 transition-colors px-6 sm:px-8 py-4 rounded-xl font-semibold text-base sm:text-lg text-violet-300 hover:text-violet-200"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 border border-violet-500/30 hover:border-violet-500/60 bg-violet-500/5 hover:bg-violet-500/10 transition-colors px-6 py-4 rounded-xl font-semibold text-base text-violet-300 hover:text-violet-200 whitespace-nowrap"
             >
               <CalendarIcon className="w-5 h-5" />
               {t("hero.bookDemo")}
