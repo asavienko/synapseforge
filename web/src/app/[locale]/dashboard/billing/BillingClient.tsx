@@ -379,7 +379,7 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
 
       {/* Plan cards */}
       {activeTab === "self-service" ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
           {SELF_SERVICE_PLANS.map((p) => {
             const isCurrent = p.key === plan;
             const planName = getPlanName(p.key);
@@ -457,7 +457,7 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
           })}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-3xl">
           {MANAGED_PLANS.map((p) => {
             const isCurrent = p.key === plan;
             const planName = getPlanName(p.key);
@@ -559,7 +559,7 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
       {/* Cancellation survey modal */}
       {showCancelSurvey && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
-          <div className="w-full max-w-md glow-border rounded-2xl bg-[#111113] p-6">
+          <div className="w-full max-w-sm sm:max-w-md glow-border rounded-2xl bg-[#111113] p-5 sm:p-6">
             <div className="flex items-start justify-between mb-4">
               <div>
                 <h2 className="text-lg font-semibold text-white">{tb("cancelTitle")}</h2>
@@ -631,7 +631,7 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
           className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={(e) => e.target === e.currentTarget && setShowContactUpgrade(false)}
         >
-          <div className="bg-[#111118] border border-white/10 rounded-2xl p-7 w-full max-w-md relative">
+          <div className="bg-[#111118] border border-white/10 rounded-2xl p-5 sm:p-7 w-full max-w-sm sm:max-w-md relative">
             <button
               onClick={() => setShowContactUpgrade(false)}
               className="absolute top-4 right-4 text-zinc-600 hover:text-zinc-300 transition-colors text-lg leading-none"

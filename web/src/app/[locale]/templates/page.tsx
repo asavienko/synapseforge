@@ -156,7 +156,7 @@ export default async function TemplatesPage({
           </form>
 
           {/* Category Filter */}
-          <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
+          <div className="flex items-center gap-2 flex-wrap md:flex-nowrap overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
             <Filter className="w-4 h-4 text-zinc-500 shrink-0" />
             <Link
               href="/templates"
@@ -186,7 +186,7 @@ export default async function TemplatesPage({
 
         {/* Active filters */}
         {(searchQuery || selectedCategory) && (
-          <div className="flex items-center gap-2 mt-4 text-sm">
+          <div className="flex flex-wrap items-center gap-2 mt-4 text-sm">
             <span className="text-zinc-500">Active filters:</span>
             {searchQuery && (
               <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-violet-500/10 text-violet-300 border border-violet-500/20">

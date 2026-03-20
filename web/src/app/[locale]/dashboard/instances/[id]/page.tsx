@@ -23,6 +23,7 @@ import { KnowledgeBaseManager } from "@/components/KnowledgeBaseManager";
 import { EmbedTab } from "@/components/EmbedTab";
 import { AnalyticsTab } from "@/components/AnalyticsTab";
 import { ApiKeysManager } from "@/components/ApiKeysManager";
+import { MobileTableWrapper } from "@/components/MobileTableWrapper";
 import { SANDBOX_LIMIT, getSandboxRemaining } from "@/lib/sandbox";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -2091,9 +2092,9 @@ export default function InstanceDetailPage() {
         </div>
       )}
 
-      {/* Tabs — scrollable on mobile so all 8 tabs are always reachable */}
+      {/* Tabs — scrollable on mobile so all 11 tabs are always reachable */}
       <div className="relative mb-6">
-        <div className="flex gap-1 border-b border-white/5 overflow-x-auto scrollbar-hide">
+        <div className="flex gap-1 border-b border-white/5 overflow-x-auto scrollbar-hide tab-scroll-snap pb-px">
           {TABS.map((tabKey) => {
             const tabLabels: Record<string, string> = {
               "Overview": t("tabs.overview"),
@@ -2110,7 +2111,7 @@ export default function InstanceDetailPage() {
             };
             return (
               <button key={tabKey} data-tab={tabKey} onClick={() => setTab(tabKey)}
-                className={cn("px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px shrink-0 whitespace-nowrap",
+                className={cn("px-3 sm:px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px shrink-0 whitespace-nowrap touch-target",
                   tab === tabKey ? "border-violet-500 text-white" : "border-transparent text-zinc-500 hover:text-zinc-300"
                 )}>
                 {tabLabels[tabKey]}
@@ -2119,9 +2120,9 @@ export default function InstanceDetailPage() {
           })}
         </div>
         {/* Left fade hint */}
-        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-[#0a0a0f] to-transparent md:hidden" />
+        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-8 sm:w-12 bg-gradient-to-r from-[#0a0a0f] to-transparent md:hidden" />
         {/* Right fade hint to indicate more tabs are scrollable */}
-        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#0a0a0f] to-transparent md:hidden" />
+        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 sm:w-12 bg-gradient-to-l from-[#0a0a0f] to-transparent md:hidden" />
       </div>
 
       {/* ── Overview ── */}
@@ -3669,8 +3670,8 @@ print(resp.choices[0].message.content)`}</pre>
                       <p className="text-zinc-600 text-xs mt-1">{t("infrastructure.health.noDataDesc")}</p>
                     </div>
                   ) : (
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm">
+                    <MobileTableWrapper>
+                      <table className="w-full text-sm min-w-[500px]">
                         <thead>
                           <tr className="text-xs text-zinc-500 border-b border-white/5">
                             <th className="text-left px-5 py-2">{t("infrastructure.health.time")}</th>
@@ -3691,12 +3692,12 @@ print(resp.choices[0].message.content)`}</pre>
                                 }`}>{c.status}</span>
                               </td>
                               <td className="px-5 py-2.5 text-zinc-400 text-xs">{c.responseMs != null ? `${c.responseMs}ms` : "—"}</td>
-                              <td className="px-5 py-2.5 text-zinc-500 text-xs">{c.error ?? "—"}</td>
+                              <td className="px-5 py-2.5 text-zinc-500 text-xs text-wrap-safe">{c.error ?? "—"}</td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
-                    </div>
+                    </MobileTableWrapper>
                   )}
                 </div>
               </div>
@@ -3756,68 +3757,68 @@ print(resp.choices[0].message.content)`}</pre>
                     <p className="text-zinc-600 text-xs mt-1">{t("infrastructure.backups.noSnapshotsDesc")}</p>
                   </div>
                 ) : (
-                  <div className="overflow-x-auto border-t border-white/5">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="text-xs text-zinc-500 border-b border-white/5">
-                          <th className="text-left px-5 py-2">{t("infrastructure.health.time")}</th>
-                          <th className="text-left px-5 py-2">{t("infrastructure.backups.snapshotId")}</th>
-                          <th className="text-left px-5 py-2">{t("infrastructure.backups.size")}</th>
-                          <th className="text-left px-5 py-2">{t("infrastructure.health.status")}</th>
-                          <th className="text-left px-5 py-2">{t("infrastructure.backups.label")}</th>
-                          <th className="px-5 py-2"></th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-white/5">
-                        {snapshotsData.snapshots.map((s) => (
-                          <tr key={s.id} className="hover:bg-white/[0.02]">
-                            <td className="px-5 py-2.5 text-zinc-400 text-xs">{formatRelativeTime(s.createdAt)}</td>
-                            <td className="px-5 py-2.5 text-zinc-300 text-xs font-mono">{s.snapshotId?.slice(0, 12)}</td>
-                            <td className="px-5 py-2.5 text-zinc-400 text-xs">
-                              {s.sizeBytes != null ? `${(s.sizeBytes / 1024 / 1024).toFixed(1)} MB` : "—"}
-                            </td>
-                            <td className="px-5 py-2.5">
-                              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                                s.healthy ? "bg-emerald-500/20 text-emerald-300" : "bg-red-500/20 text-red-300"
-                              }`}>{s.healthy ? t("infrastructure.health.healthy") : t("infrastructure.health.down")}</span>
-                            </td>
-                            <td className="px-5 py-2.5 text-zinc-500 text-xs">
-                              {s.label && (
-                                <span className="bg-violet-500/10 text-violet-400 px-1.5 py-0.5 rounded">{s.label}</span>
-                              )}
-                            </td>
-                            <td className="px-5 py-2.5 text-right">
-                              {restoreRequested === s.snapshotId ? (
-                                <span className="text-xs text-emerald-400">{t("infrastructure.backups.restoreRequested")}</span>
-                              ) : restoreConfirmId === s.id ? (
-                                <div className="flex items-center gap-2 justify-end">
-                                  <button
-                                    onClick={() => requestRollback(s.snapshotId)}
-                                    className="text-xs px-2 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-lg hover:bg-amber-500/20 transition-colors"
-                                  >
-                                    {t("infrastructure.backups.confirmRestore")}
-                                  </button>
-                                  <button
-                                    onClick={() => setRestoreConfirmId(null)}
-                                    className="text-xs text-zinc-500 hover:text-white"
-                                  >
-                                    {t("common.cancel")}
-                                  </button>
-                                </div>
-                              ) : (
+                <MobileTableWrapper>
+                  <table className="w-full text-sm min-w-[600px]">
+                    <thead>
+                      <tr className="text-xs text-zinc-500 border-b border-white/5">
+                        <th className="text-left px-5 py-2">{t("infrastructure.health.time")}</th>
+                        <th className="text-left px-5 py-2">{t("infrastructure.backups.snapshotId")}</th>
+                        <th className="text-left px-5 py-2">{t("infrastructure.backups.size")}</th>
+                        <th className="text-left px-5 py-2">{t("infrastructure.health.status")}</th>
+                        <th className="text-left px-5 py-2">{t("infrastructure.backups.label")}</th>
+                        <th className="px-5 py-2"></th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {snapshotsData.snapshots.map((s) => (
+                        <tr key={s.id} className="hover:bg-white/[0.02]">
+                          <td className="px-5 py-2.5 text-zinc-400 text-xs">{formatRelativeTime(s.createdAt)}</td>
+                          <td className="px-5 py-2.5 text-zinc-300 text-xs font-mono">{s.snapshotId?.slice(0, 12)}</td>
+                          <td className="px-5 py-2.5 text-zinc-400 text-xs">
+                            {s.sizeBytes != null ? `${(s.sizeBytes / 1024 / 1024).toFixed(1)} MB` : "—"}
+                          </td>
+                          <td className="px-5 py-2.5">
+                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                              s.healthy ? "bg-emerald-500/20 text-emerald-300" : "bg-red-500/20 text-red-300"
+                            }`}>{s.healthy ? t("infrastructure.health.healthy") : t("infrastructure.health.down")}</span>
+                          </td>
+                          <td className="px-5 py-2.5 text-zinc-500 text-xs">
+                            {s.label && (
+                              <span className="bg-violet-500/10 text-violet-400 px-1.5 py-0.5 rounded">{s.label}</span>
+                            )}
+                          </td>
+                          <td className="px-5 py-2.5 text-right">
+                            {restoreRequested === s.snapshotId ? (
+                              <span className="text-xs text-emerald-400">{t("infrastructure.backups.restoreRequested")}</span>
+                            ) : restoreConfirmId === s.id ? (
+                              <div className="flex items-center gap-2 justify-end">
                                 <button
-                                  onClick={() => setRestoreConfirmId(s.id)}
-                                  className="text-xs text-zinc-500 hover:text-violet-400 transition-colors"
+                                  onClick={() => requestRollback(s.snapshotId)}
+                                  className="text-xs px-2 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-lg hover:bg-amber-500/20 transition-colors touch-target"
                                 >
-                                  {t("infrastructure.backups.restore")}
+                                  {t("infrastructure.backups.confirmRestore")}
                                 </button>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                                <button
+                                  onClick={() => setRestoreConfirmId(null)}
+                                  className="text-xs text-zinc-500 hover:text-white touch-target"
+                                >
+                                  {t("common.cancel")}
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                onClick={() => setRestoreConfirmId(s.id)}
+                                className="text-xs text-zinc-500 hover:text-violet-400 transition-colors touch-target"
+                              >
+                                {t("infrastructure.backups.restore")}
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </MobileTableWrapper>
                 )}
                 <div className="p-5 border-t border-white/5">
                   <p className="text-xs text-zinc-600">{t("infrastructure.backups.note")}</p>

@@ -104,19 +104,19 @@ const CHANNEL_OPTIONS = [
 
 function ProgressBar({ step, total }: { step: number; total: number }) {
   return (
-    <div className="flex items-center gap-2 mb-10 justify-center">
+    <div className="flex items-center gap-1 sm:gap-2 mb-10 justify-center overflow-x-auto scrollbar-none px-2">
       {Array.from({ length: total }, (_, i) => i + 1).map((s) => (
-        <div key={s} className="flex items-center gap-2">
+        <div key={s} className="flex items-center gap-1 sm:gap-2">
           <div className={cn(
-            "w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold border-2 transition-all",
+            "w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-semibold border-2 transition-all shrink-0",
             step > s  ? "bg-violet-600 border-violet-600 text-white" :
             step === s ? "border-violet-500 text-violet-300 bg-violet-600/20" :
                          "border-zinc-700 text-zinc-600"
           )}>
-            {step > s ? <CheckCircle2 className="w-4 h-4" /> : s}
+            {step > s ? <CheckCircle2 className="w-3 h-3 sm:w-4 sm:h-4" /> : s}
           </div>
           {s < total && (
-            <div className={cn("w-8 h-0.5 transition-all", step > s ? "bg-violet-600" : "bg-zinc-800")} />
+            <div className={cn("w-4 sm:w-8 h-0.5 transition-all shrink-0", step > s ? "bg-violet-600" : "bg-zinc-800")} />
           )}
         </div>
       ))}
