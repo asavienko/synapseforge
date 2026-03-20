@@ -64,9 +64,11 @@ export default function SignInPage() {
 
         <div className="glow-border rounded-2xl p-8 bg-white/[0.02]">
           {/* Google OAuth — shown above the email/password divider */}
-          <div className="mb-6">
-            <GoogleButton callbackUrl="/dashboard" />
-          </div>
+          {process.env.NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED === "true" && (
+            <div className="mb-6">
+              <GoogleButton callbackUrl="/dashboard" />
+            </div>
+          )}
           <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-white/10" />

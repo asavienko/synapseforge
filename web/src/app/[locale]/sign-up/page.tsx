@@ -113,9 +113,11 @@ export default function SignUpPage() {
             </div>
           )}
           {/* Google OAuth — fastest path to sign up */}
-          <div className="mb-6">
-            <GoogleButton callbackUrl={searchParams.get("template") ? `/onboarding?template=${searchParams.get("template")}` : "/onboarding"} referralCode={referralCode ?? undefined} />
-          </div>
+          {process.env.NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED === "true" && (
+            <div className="mb-6">
+              <GoogleButton callbackUrl={searchParams.get("template") ? `/onboarding?template=${searchParams.get("template")}` : "/onboarding"} referralCode={referralCode ?? undefined} />
+            </div>
+          )}
           <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-white/10" />
