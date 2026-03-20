@@ -8,6 +8,7 @@ on:
 
 env:
   NODE_VERSION: '22'
+  DISABLE_RATE_LIMIT: 'true'
 
 jobs:
   # ── Type check + lint (fast gate, ~2 min) ────────────────────────────────────
