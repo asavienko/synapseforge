@@ -143,6 +143,7 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
   const [loading, setLoading] = useState<string | null>(null);
   const [billingError, setBillingError] = useState<string | null>(null);
   const [showContactUpgrade, setShowContactUpgrade] = useState(false);
+  const [contactUpgradeReason, setContactUpgradeReason] = useState<"stripe" | "managed" | null>(null);
   const [activeTab, setActiveTab] = useState<"self-service" | "managed">("self-service");
 
   // Cancellation survey state
@@ -178,6 +179,7 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ requestedPlan: planKey, note: "Initiated upgrade — awaiting manual activation" }),
       }).catch(console.error);
+      setContactUpgradeReason(data.managedPlanContact ? "managed" : "stripe");
       setShowContactUpgrade(true);
     } else {
       setBillingError(data.error || "Something went wrong. Please try again.");
@@ -638,11 +640,11 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
             </button>
 
             <div className="text-center mb-6">
-              <div className="text-3xl mb-3">🙌</div>
-              <h2 className="text-lg font-bold text-white mb-2">Let&apos;s get you set up</h2>
+              <div className="text-3xl mb-3">💳</div>
+              <h2 className="text-lg font-bold text-white mb-2">Complete Your Upgrade</h2>
               <p className="text-sm text-zinc-400 leading-relaxed">
-                Online checkout is coming soon. In the meantime, book a quick call and we&apos;ll
-                activate your plan manually — usually within 24 hours.
+                Our payment system is temporarily unavailable. Book a quick setup call 
+                and we&apos;ll activate your plan right away — usually within a few hours.
               </p>
             </div>
 
