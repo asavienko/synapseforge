@@ -207,8 +207,20 @@ export function ManagerClient({ manager, clients: initialClients }: {
     setActiveClient(client);
     setThreadLoading(true);
     setMessages([]);
-    const res = await fetch(`/api/messages?userId=${client.id}`);
-    if (res.ok) setMessages(await res.json());
+    try {
+      const res = await fetch(`/api/messages?userId=${client.id}`);
+      if (res.ok) {
+        const data = await res.json();
+        setMessages(data.messages || []);
+      } else {
+        const error = await res.json().catch(() => ({ error: "Failed to load messages" }));
+        console.error("Failed to load messages:", error);
+        alert(error.error || "Failed to load messages. Please try again.");
+      }
+    } catch (err) {
+      console.error("Error loading messages:", err);
+      alert("Network error. Please check your connection and try again.");
+    }
     setThreadLoading(false);
     // Clear unread
     setClients((prev) => prev.map((c) => c.id === client.id ? { ...c, unreadMessages: 0 } : c));
@@ -217,15 +229,24 @@ export function ManagerClient({ manager, clients: initialClients }: {
   async function sendReply() {
     if (!replyBody.trim() || !activeClient) return;
     setReplying(true);
-    const res = await fetch(`/api/messages?asManager=true&userId=${activeClient.id}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ body: replyBody }),
-    });
-    if (res.ok) {
-      const msg = await res.json();
-      setMessages((prev) => [...prev, msg]);
-      setReplyBody("");
+    try {
+      const res = await fetch(`/api/messages?asManager=true&userId=${activeClient.id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ body: replyBody }),
+      });
+      if (res.ok) {
+        const msg = await res.json();
+        setMessages((prev) => [...prev, msg]);
+        setReplyBody("");
+      } else {
+        const error = await res.json().catch(() => ({ error: "Failed to send message" }));
+        console.error("Failed to send message:", error);
+        alert(error.error || "Failed to send message. Please try again.");
+      }
+    } catch (err) {
+      console.error("Error sending message:", err);
+      alert("Network error. Please check your connection and try again.");
     }
     setReplying(false);
   }
