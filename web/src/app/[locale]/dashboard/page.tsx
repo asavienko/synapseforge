@@ -8,7 +8,6 @@ import {
   ArrowRightIcon,
   AnalyticsIcon,
   MessagesIcon,
-  MessageBubbleIcon,
   CheckIcon,
   CircleIcon,
   HeartIcon,
@@ -206,7 +205,7 @@ export default async function DashboardPage() {
 
         <div className="glow-border rounded-2xl p-5 bg-white/[0.02]" data-testid="messages-stat">
           <div className="flex items-center gap-3 mb-3">
-            <MessageBubbleIcon className="w-5 h-5 text-pink-400" />
+            <MessagesIcon className="w-5 h-5 text-pink-400" />
             <span className="text-xs text-zinc-500 uppercase tracking-wider">{t("messagesLabel")}</span>
           </div>
           <div className="text-2xl font-bold text-white mb-1">{totalChatMessages}</div>
@@ -265,7 +264,7 @@ export default async function DashboardPage() {
           <span className="text-xs font-medium text-emerald-400">{runningCount} running</span>
         </div>
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-violet-500/10 border border-violet-500/20">
-          <MessageBubbleIcon className="w-3.5 h-3.5 text-violet-400" />
+          <MessagesIcon className="w-3.5 h-3.5 text-violet-400" />
           <span className="text-xs font-medium text-violet-400">{weeklyConversations} msgs this week</span>
         </div>
       </div>
