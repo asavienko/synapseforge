@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Key, MessageSquare, Zap, Copy, Check, Download, Share2, Loader2 } from "lucide-react";
+import { Copy, Check, Download } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Instance, CredentialRow } from "../types";
 
@@ -259,7 +259,6 @@ function EmbedCard({ instanceId, t }: { instanceId: string; t: any }) {
   }, [tab, instanceId, apiKey, apiKeysLoading]);
 
   const directLink = `${origin}/widget-chat/${instanceId}`;
-  const iframeSnippet = `<iframe\n  src="${origin}/widget-chat/${instanceId}"\n  width="420"\n  height="650"\n  style="border:none;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.4);"\n  allow="clipboard-write"\n  title="AI Assistant"\n></iframe>`;
   const scriptSnippet = `<script>\n  (function(){\n    var w=window,d=document;\n    var s=d.createElement('script');\n    s.src="${origin}/embed.js?id=${instanceId}";\n    s.async=true;\n    d.head.appendChild(s);\n  })();\n</script>`;
   const apiSnippet = `curl -X POST "${origin}/api/v1/chat" \\\n  -H "Content-Type: application/json" \\\n  -H "X-API-Key: ${apiKey || "your_api_key_here"}" \\\n  -d '{\n    "instanceId": "${instanceId}",\n    "message": "Hello!"\n  }'`;
 
