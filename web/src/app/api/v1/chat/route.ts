@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { rateLimit } from "@/lib/ratelimit";
 import { trackUsage } from "@/lib/usage";
+import { resolveCredentials } from "@/lib/llm";
 
 /**
  * Public Chat API - Used by the embeddable widget
@@ -118,12 +119,18 @@ export async function POST(req: NextRequest) {
       data: { lastUsedAt: new Date() },
     }).catch(() => {});
 
-    // Validate OpenAI API key is configured
-    const openAiKey = process.env.OPENHELIX_OPENAI_KEY || process.env.OPENAI_API_KEY;
-    if (!openAiKey) {
+    // Resolve credentials (instance-level or user-level fallback)
+    const credResult = await resolveCredentials(instance.id, {
+      model: config.model || "gpt-4o-mini",
+      systemPrompt,
+      temperature: config.temperature || 0.7,
+      maxTokens: config.maxTokens || 1000,
+    });
+
+    if (!credResult.ok) {
       return NextResponse.json(
-        { error: "OpenAI API key not configured. Set OPENHELIX_OPENAI_KEY environment variable." },
-        { status: 502 }
+        { error: credResult.error.error, missingCredential: credResult.error.missingCredential },
+        { status: 400 }
       );
     }
 
@@ -132,14 +139,15 @@ export async function POST(req: NextRequest) {
       req.headers.get("accept")?.includes("text/event-stream") ||
       req.nextUrl.searchParams.get("stream") === "true";
 
-    // Call the LLM
+    // Call the LLM with user's resolved API key
     const stream = await callLLM({
       message,
       systemPrompt,
-      model: config.model || "gpt-4o-mini",
+      model: credResult.resolvedModelId,
       temperature: config.temperature || 0.7,
       maxTokens: config.maxTokens || 1000,
-      apiKey: openAiKey,
+      apiKey: credResult.resolvedApiKey,
+      provider: credResult.resolvedProvider,
     });
 
     if (wantsStream) {
@@ -251,6 +259,7 @@ async function callLLM({
   temperature,
   maxTokens,
   apiKey,
+  provider,
 }: {
   message: string;
   systemPrompt: string;
@@ -258,16 +267,37 @@ async function callLLM({
   temperature: number;
   maxTokens: number;
   apiKey: string;
+  provider: "openai" | "anthropic" | "openrouter";
 }): Promise<ReadableStream> {
   const encoder = new TextEncoder();
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
+  // Determine API endpoint based on provider
+  let apiUrl: string;
+  let headers: Record<string, string>;
+  let body: Record<string, unknown>;
+
+  if (provider === "anthropic") {
+    apiUrl = "https://api.anthropic.com/v1/messages";
+    headers = {
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01",
+      "Content-Type": "application/json",
+    };
+    body = {
+      model,
+      messages: [{ role: "user", content: message }],
+      system: systemPrompt,
+      max_tokens: maxTokens,
+      temperature,
+      stream: true,
+    };
+  } else if (provider === "openrouter") {
+    apiUrl = "https://openrouter.ai/api/v1/chat/completions";
+    headers = {
       "Authorization": `Bearer ${apiKey}`,
       "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
+    };
+    body = {
       model,
       messages: [
         { role: "system", content: systemPrompt },
@@ -276,15 +306,38 @@ async function callLLM({
       temperature,
       max_tokens: maxTokens,
       stream: true,
-    }),
+    };
+  } else {
+    // OpenAI
+    apiUrl = "https://api.openai.com/v1/chat/completions";
+    headers = {
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    };
+    body = {
+      model,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: message },
+      ],
+      temperature,
+      max_tokens: maxTokens,
+      stream: true,
+    };
+  }
+
+  const response = await fetch(apiUrl, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
   });
 
   if (!response.ok) {
     const error = await response.text();
-    throw new Error(`OpenAI error: ${error}`);
+    throw new Error(`${provider} error: ${error}`);
   }
 
-  // Transform OpenAI stream to SSE format with delta field
+  // Transform stream to SSE format with delta field
   return new ReadableStream({
     async start(controller) {
       const reader = response.body?.getReader();
@@ -313,9 +366,15 @@ async function callLLM({
 
               try {
                 const parsed = JSON.parse(data);
-                const content = parsed.choices?.[0]?.delta?.content;
+                let content: string | undefined;
+                
+                if (provider === "anthropic") {
+                  content = parsed.delta?.text;
+                } else {
+                  content = parsed.choices?.[0]?.delta?.content;
+                }
+                
                 if (content) {
-                  // Use delta field for SSE format
                   controller.enqueue(
                     encoder.encode(`data: ${JSON.stringify({ delta: content })}\n\n`)
                   );
@@ -327,7 +386,6 @@ async function callLLM({
           }
         }
       } catch (err) {
-        // Stream error - send error event
         controller.enqueue(
           encoder.encode(`data: ${JSON.stringify({ error: "Stream error" })}\n\n`)
         );
