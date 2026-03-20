@@ -45,12 +45,20 @@ export function GoogleButton({ callbackUrl = "/dashboard", referralCode }: Googl
       });
       
       if (result?.error) {
-        setError("Google sign-in is not configured. Please use email/password.");
+        console.error("Google sign-in error:", result.error);
+        if (result.error === "OAuthAccountNotLinked") {
+          setError("This email is already registered. Please sign in with your password.");
+        } else if (result.error === "AccessDenied") {
+          setError("Google sign-in is not configured. Please use email/password.");
+        } else {
+          setError(`Google sign-in failed: ${result.error}. Please try again or use email/password.`);
+        }
         setLoading(false);
       } else if (result?.url) {
         window.location.href = result.url;
       }
     } catch (err) {
+      console.error("Google sign-in exception:", err);
       setError("Google sign-in failed. Please try again or use email/password.");
       setLoading(false);
     }
