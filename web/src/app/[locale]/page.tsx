@@ -543,14 +543,14 @@ export default async function LandingPage() {
       </section>
 
       {/* ── Testimonials ─────────────────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-6 py-20">
-        <div className="text-center mb-14">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">{t("testimonials.title")}</h2>
-          <p className="text-zinc-400">{t("testimonials.subtitle")}</p>
+      <section className="max-w-7xl mx-auto px-6 py-16 sm:py-20">
+        <div className="text-center mb-10 sm:mb-14">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{t("testimonials.title")}</h2>
+          <p className="text-zinc-400 text-sm sm:text-base">{t("testimonials.subtitle")}</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
           {([1, 2, 3] as const).map((n) => (
-            <div key={n} className="bg-white/[0.02] border border-white/8 rounded-2xl p-6 flex flex-col gap-4">
+            <div key={n} className="bg-white/[0.02] border border-white/8 rounded-2xl p-4 sm:p-6 flex flex-col gap-3 sm:gap-4">
               <div className="flex gap-1">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <svg key={i} className="w-4 h-4 text-amber-400 fill-amber-400" viewBox="0 0 20 20" aria-hidden="true">
@@ -558,10 +558,10 @@ export default async function LandingPage() {
                   </svg>
                 ))}
               </div>
-              <blockquote className="text-sm text-zinc-300 leading-relaxed flex-1">
+              <blockquote className="text-sm text-zinc-300 leading-relaxed break-words">
                 &ldquo;{t(`testimonials.quote${n}` as Parameters<typeof t>[0])}&rdquo;
               </blockquote>
-              <div>
+              <div className="mt-auto pt-2">
                 <div className="text-sm font-semibold text-white">{t(`testimonials.name${n}` as Parameters<typeof t>[0])}</div>
                 <div className="text-xs text-zinc-500">{t(`testimonials.role${n}` as Parameters<typeof t>[0])}</div>
               </div>
