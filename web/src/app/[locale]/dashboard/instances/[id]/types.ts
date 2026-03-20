@@ -1,5 +1,3 @@
-// types.ts - Shared types for the instance detail page
-
 export interface Instance {
   id: string;
   name: string;
@@ -126,6 +124,7 @@ export interface ChatMsg {
   isError?: boolean;
   source?: string;
   createdAt?: string;
+  provider?: string;
 }
 
 export interface UsageData {
@@ -153,31 +152,8 @@ export interface UserCredential {
   createdAt: string;
 }
 
-export const TABS = [
-  "Overview",
-  "Credentials", 
-  "Deploy",
-  "Chat",
-  "Configuration",
-  "Knowledge",
-  "API Keys",
-  "Activity Log",
-  "Infrastructure",
-  "Embed",
-  "Analytics",
-] as const;
-
+export const TABS = ["Overview", "Credentials", "Deploy", "Chat", "Configuration", "Knowledge", "API Keys", "Activity Log", "Infrastructure", "Embed", "Analytics"] as const;
 export type Tab = (typeof TABS)[number];
-
-export const MODELS = [
-  { value: "gpt-4o", label: "GPT-4o" },
-  { value: "gpt-4-turbo", label: "GPT-4 Turbo" },
-  { value: "gpt-3.5-turbo", label: "GPT-3.5 Turbo" },
-  { value: "claude-3-5-sonnet", label: "Claude 3.5 Sonnet" },
-  { value: "claude-3-haiku", label: "Claude 3 Haiku" },
-  { value: "gemini-1.5-pro", label: "Gemini 1.5 Pro" },
-  { value: "llama-3-70b", label: "Llama 3 70B" },
-];
 
 export const DEFAULT_CONFIG: Config = {
   model: "openai/gpt-4o",
@@ -193,6 +169,23 @@ export const DEFAULT_CONFIG: Config = {
   memoryEnabled: true,
   thinking: "adaptive",
   language: "English",
+};
+
+export const LOG_ICONS: Record<string, { icon: string; color: string }> = {
+  started: { icon: "▶️", color: "text-emerald-400" },
+  stopped: { icon: "⏹️", color: "text-zinc-400" },
+  config_changed: { icon: "⚙️", color: "text-blue-400" },
+  key_generated: { icon: "🔑", color: "text-violet-400" },
+  key_revoked: { icon: "❌", color: "text-red-400" },
+  created: { icon: "🆕", color: "text-violet-400" },
+  deleted: { icon: "❌", color: "text-red-400" },
+  chat_message: { icon: "💬", color: "text-sky-400" },
+  config_synced: { icon: "🔄", color: "text-blue-400" },
+  health_check: { icon: "💓", color: "text-rose-400" },
+  provision_start: { icon: "⚙️", color: "text-amber-400" },
+  provision_done: { icon: "⚙️", color: "text-emerald-400" },
+  provision_failed: { icon: "❌", color: "text-red-400" },
+  error: { icon: "❌", color: "text-red-400" },
 };
 
 export const CREDENTIAL_KEY_LABELS: Record<string, string> = {
@@ -220,22 +213,5 @@ export const ALLOWED_CREDENTIAL_KEYS = [
   "github_token",
   "yelp_api_key",
 ] as const;
-
-export const LOG_ICONS: Record<string, { icon: string; color: string }> = {
-  started: { icon: "▶️", color: "text-emerald-400" },
-  stopped: { icon: "⏹️", color: "text-zinc-400" },
-  config_changed: { icon: "⚙️", color: "text-blue-400" },
-  key_generated: { icon: "🔑", color: "text-violet-400" },
-  key_revoked: { icon: "❌", color: "text-red-400" },
-  created: { icon: "🆕", color: "text-violet-400" },
-  deleted: { icon: "❌", color: "text-red-400" },
-  chat_message: { icon: "💬", color: "text-sky-400" },
-  config_synced: { icon: "🔄", color: "text-blue-400" },
-  health_check: { icon: "💓", color: "text-rose-400" },
-  provision_start: { icon: "⚙️", color: "text-amber-400" },
-  provision_done: { icon: "⚙️", color: "text-emerald-400" },
-  provision_failed: { icon: "❌", color: "text-red-400" },
-  error: { icon: "❌", color: "text-red-400" },
-};
 
 export const LLM_CRED_KEYS = ["openai_api_key", "anthropic_api_key", "openrouter_api_key"];
