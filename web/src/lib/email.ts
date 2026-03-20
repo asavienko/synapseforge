@@ -612,4 +612,24 @@ export const email = {
       )
     );
   },
+
+  async clientInvite(
+    to: string,
+    name: string,
+    managerName: string,
+    acceptUrl: string,
+  ) {
+    return send(
+      to,
+      `You've been invited to OpenHelix AI`,
+      base(
+        `Welcome, ${name.split(" ")[0]}! 🚀`,
+        `<p>Hi ${name.split(" ")[0]}, you've been personally invited to OpenHelix AI by <strong style="color:#e4e4e7">${managerName}</strong>.</p>
+         <p>OpenHelix AI lets you deploy a custom AI agent to Telegram, WhatsApp, or your website — handling customer inquiries 24/7 automatically.</p>
+         <p>Your account has already been created. Click below to set up your AI agent:</p>
+         <p style="color:#71717a;font-size:13px;margin-top:16px;">This invite link expires in 7 days. If you have questions, reply to this email.</p>`,
+        { href: acceptUrl, label: "Set up your AI agent →" }
+      )
+    );
+  },
 };

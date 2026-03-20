@@ -82,6 +82,18 @@ model PasswordResetToken {
   createdAt DateTime @default(now())
 }
 
+model ClientInvite {
+  id        String   @id @default(cuid())
+  token     String   @unique @default(cuid())
+  email     String
+  name      String
+  managerId String?
+  userId    String?  // set after account created
+  used      Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
 model Manager {
   id        String       @id @default(cuid())
   name      String

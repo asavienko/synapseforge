@@ -7,6 +7,7 @@ import { STATUS_COLORS, PLANS, formatDate, formatRelativeTime } from "@/lib/util
 import { cn } from "@/lib/utils";
 import { ProvisioningWizard } from "@/components/ProvisioningWizard";
 import NextLink from "next/link";
+import { Mail } from "lucide-react";
 
 interface UserRow {
   id: string;
@@ -255,6 +256,13 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
   const [creatingManager, setCreatingManager] = useState(false);
   const [managerError, setManagerError] = useState("");
 
+  // Client invite
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [inviteForm, setInviteForm] = useState({ name: "", email: "", managerId: "" });
+  const [inviting, setInviting] = useState(false);
+  const [inviteError, setInviteError] = useState("");
+  const [inviteSuccess, setInviteSuccess] = useState("");
+
   // Message thread modal
   const [activeThread, setActiveThread] = useState<UserRow | null>(null);
   const [threadMessages, setThreadMessages] = useState<Message[]>([]);
@@ -467,6 +475,22 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
     setShowCreateManager(false);
   }
 
+  async function inviteClient() {
+    setInviting(true);
+    setInviteError("");
+    const res = await fetch("/api/admin/invite", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(inviteForm),
+    });
+    const data = await res.json();
+    setInviting(false);
+    if (!res.ok) { setInviteError(data.error); return; }
+    setInviteSuccess(`Invite sent to ${inviteForm.email}!`);
+    setInviteForm({ name: "", email: "", managerId: "" });
+    setTimeout(() => { setShowInviteModal(false); setInviteSuccess(""); }, 2000);
+  }
+
   async function deleteManager(id: string) {
     setPendingDeleteManagerId(id);
   }
@@ -656,6 +680,12 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
             <h1 className="text-2xl font-bold mb-1">{t("adminPanel")}</h1>
             <p className="text-zinc-400 text-sm">Manage users, managers, and messages.</p>
           </div>
+          <button
+            onClick={() => setShowInviteModal(true)}
+            className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 transition-colors px-4 py-2.5 rounded-xl text-sm font-semibold mr-2"
+          >
+            <Mail className="w-4 h-4" /> Invite Client
+          </button>
           <button
             onClick={() => setShowCreateManager(true)}
             className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2.5 rounded-xl text-sm font-semibold"
@@ -1532,6 +1562,73 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                   className="flex-1 flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 transition-colors px-4 py-3 rounded-xl text-sm font-semibold">
                   {creatingManager ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                   Create
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Invite Client Modal */}
+      {showInviteModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#111118] border border-white/10 rounded-2xl p-6 w-full max-w-md">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold">Invite Client</h2>
+              <button onClick={() => { setShowInviteModal(false); setInviteError(""); }} className="text-zinc-500 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-1">Full Name</label>
+                <input
+                  type="text"
+                  value={inviteForm.name}
+                  onChange={(e) => setInviteForm((p) => ({ ...p, name: e.target.value }))}
+                  placeholder="John Smith"
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors"
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-1">Email</label>
+                <input
+                  type="email"
+                  value={inviteForm.email}
+                  onChange={(e) => setInviteForm((p) => ({ ...p, email: e.target.value }))}
+                  placeholder="john@company.com"
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors"
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-1">Manager</label>
+                <select
+                  value={inviteForm.managerId}
+                  onChange={(e) => setInviteForm((p) => ({ ...p, managerId: e.target.value }))}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-violet-500 transition-colors"
+                >
+                  <option value="">Select a manager (optional)</option>
+                  {managers.map((m) => (
+                    <option key={m.id} value={m.id}>{m.name}</option>
+                  ))}
+                </select>
+              </div>
+              {inviteError && <p className="text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-4 py-3">{inviteError}</p>}
+              {inviteSuccess && <p className="text-sm text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 rounded-lg px-4 py-3">{inviteSuccess}</p>}
+              <div className="flex gap-3 pt-2">
+                <button
+                  onClick={() => { setShowInviteModal(false); setInviteError(""); }}
+                  className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors px-4 py-3 rounded-xl text-sm font-semibold"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={inviteClient}
+                  disabled={inviting || !inviteForm.name || !inviteForm.email}
+                  className="flex-1 flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 transition-colors px-4 py-3 rounded-xl text-sm font-semibold"
+                >
+                  {inviting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />}
+                  Send Invite
                 </button>
               </div>
             </div>
