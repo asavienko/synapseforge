@@ -80,11 +80,9 @@ describe("18 · Deploy Tab", () => {
     cy.snap("18-deploy-03-no-llm-disabled");
   });
 
-  // ── 04. With LLM → checklist shows configured ─────────────────────────────
-  it.skip("shows LLM as configured when credentials exist", () => {
-    // SKIPPED: This test is flaky due to timing issues with credential loading.
-    // The functionality works - this is a test reliability issue.
-    // First add the credential via API (before visiting page)
+  // ── 04. With LLM → shows quick-connect banner ────────────────────────────
+  it("shows quick-connect banner when LLM is configured but no channels", () => {
+    // Ensure LLM credential exists
     cy.wrap(null).then(() => {
       if (!instanceId) return;
       return cy.request({
@@ -93,14 +91,20 @@ describe("18 · Deploy Tab", () => {
         body: { key: "openai_api_key", value: "sk-test-fake-key-for-testing" },
         headers: { "Content-Type": "application/json" },
         failOnStatusCode: false,
-      }).then((res) => {
-        cy.log("Credentials POST response:", res.status);
-        // Accept any status - 200/201 = created, 409 = exists, 429 = rate limited
-        // Even if rate limited, the credential might already exist from previous test
       });
     });
 
-    // Now visit the page fresh (credentials may already exist)
+    // Remove any channel credentials to ensure we're in the "has LLM, no channels" state
+    cy.wrap(null).then(() => {
+      if (!instanceId) return;
+      cy.request({
+        method: "DELETE",
+        url: `/api/instances/${instanceId}/credentials/telegram_bot_token`,
+        failOnStatusCode: false,
+      });
+    });
+
+    // Visit the page fresh
     cy.wrap(null).then(() => {
       if (instanceId) {
         cy.visit(`/en/dashboard/instances/${instanceId}`);
@@ -110,17 +114,13 @@ describe("18 · Deploy Tab", () => {
     // Wait for main content
     cy.get("main", { timeout: 10000 }).should("be.visible");
 
-    // Open Deploy tab using data-tab attribute (more reliable than text)
+    // Open Deploy tab
     cy.get('button[data-tab="Deploy"]', { timeout: 10000 }).click();
 
-    // Wait for the checklist to render with the LLM check
-    cy.contains(/AI provider key|OpenAI API key|LLM|OpenAI/i, { timeout: 10000 }).should("be.visible");
+    // Should show the quick-connect banner (LLM ready, needs channel)
+    cy.contains(/Your AI is ready|now connect a channel/i, { timeout: 10000 }).should("be.visible");
 
-    // Verify the checklist item exists and has some content (don't check styling - too flaky)
-    cy.get("main").contains(/AI provider key|OpenAI API key|LLM|OpenAI/i)
-      .should("be.visible");
-
-    cy.snap("18-deploy-04-llm-configured");
+    cy.snap("18-deploy-04-llm-ready-banner");
   });
 
   // ── 05. Checklist shows channel status ────────────────────────────────────
