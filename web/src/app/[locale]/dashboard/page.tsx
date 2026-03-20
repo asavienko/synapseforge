@@ -1,7 +1,23 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { Bot, Zap, User, ArrowRight, Activity, MessageCircle, MessageSquare, CheckCircle2, Circle, Heart, Gift } from "lucide-react";
+import {
+  InstancesIcon,
+  HelixLogo,
+  UserIcon,
+  ArrowRightIcon,
+  AnalyticsIcon,
+  MessagesIcon,
+  MessageBubbleIcon,
+  CheckIcon,
+  CircleIcon,
+  HeartIcon,
+  GiftIcon,
+  RocketLaunchIcon,
+  KeyIcon,
+  AIBrainIcon,
+  BotIcon,
+} from "@/components/icons/BrandIcons";
 import { PLANS, STATUS_COLORS, formatDate } from "@/lib/utils";
 import { DashboardUpgrade } from "@/components/DashboardUpgrade";
 import { CalBookingButton } from "@/components/CalBookingButton";
@@ -160,7 +176,7 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
         <div className="glow-border rounded-2xl p-5 bg-white/[0.02]">
           <div className="flex items-center gap-3 mb-3">
-            <Bot className="w-5 h-5 text-violet-400" />
+            <InstancesIcon className="w-5 h-5 text-violet-400" />
             <span className="text-xs text-zinc-500 uppercase tracking-wider">{t("instancesLabel")}</span>
           </div>
           <div className="text-2xl font-bold text-white mb-2">{instanceUsage}</div>
@@ -181,7 +197,7 @@ export default async function DashboardPage() {
 
         <div className="glow-border rounded-2xl p-5 bg-white/[0.02]">
           <div className="flex items-center gap-3 mb-3">
-            <Activity className="w-5 h-5 text-emerald-400" />
+            <AnalyticsIcon className="w-5 h-5 text-emerald-400" />
             <span className="text-xs text-zinc-500 uppercase tracking-wider">{t("runningLabel")}</span>
           </div>
           <div className="text-2xl font-bold text-white mb-1">{runningCount}</div>
@@ -190,7 +206,7 @@ export default async function DashboardPage() {
 
         <div className="glow-border rounded-2xl p-5 bg-white/[0.02]" data-testid="messages-stat">
           <div className="flex items-center gap-3 mb-3">
-            <MessageSquare className="w-5 h-5 text-pink-400" />
+            <MessageBubbleIcon className="w-5 h-5 text-pink-400" />
             <span className="text-xs text-zinc-500 uppercase tracking-wider">{t("messagesLabel")}</span>
           </div>
           <div className="text-2xl font-bold text-white mb-1">{totalChatMessages}</div>
@@ -199,7 +215,7 @@ export default async function DashboardPage() {
 
         <div className="glow-border rounded-2xl p-5 bg-white/[0.02]">
           <div className="flex items-center gap-3 mb-3">
-            <Zap className="w-5 h-5 text-blue-400" />
+            <RocketLaunchIcon className="w-5 h-5 text-blue-400" />
             <span className="text-xs text-zinc-500 uppercase tracking-wider">{t("planLabel")}</span>
           </div>
           <div className="text-2xl font-bold text-white mb-1">{plan.label}</div>
@@ -214,7 +230,7 @@ export default async function DashboardPage() {
 
         <div className="glow-border rounded-2xl p-5 bg-white/[0.02]">
           <div className="flex items-center gap-3 mb-3">
-            <Heart className="w-5 h-5 text-rose-400" />
+            <HeartIcon className="w-5 h-5 text-rose-400" />
             <span className="text-xs text-zinc-500 uppercase tracking-wider">{t("systemHealth")}</span>
           </div>
           {monitoredInstances === 0 ? (
@@ -245,11 +261,11 @@ export default async function DashboardPage() {
       {/* Weekly Summary Row */}
       <div className="flex items-center gap-4 mb-6">
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-          <Activity className="w-3.5 h-3.5 text-emerald-400" />
+          <AnalyticsIcon className="w-3.5 h-3.5 text-emerald-400" />
           <span className="text-xs font-medium text-emerald-400">{runningCount} running</span>
         </div>
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-violet-500/10 border border-violet-500/20">
-          <MessageSquare className="w-3.5 h-3.5 text-violet-400" />
+          <MessageBubbleIcon className="w-3.5 h-3.5 text-violet-400" />
           <span className="text-xs font-medium text-violet-400">{weeklyConversations} msgs this week</span>
         </div>
       </div>
@@ -257,7 +273,7 @@ export default async function DashboardPage() {
       {user.manager ? (
         <div className="glow-border rounded-2xl p-5 bg-white/[0.02] mb-6 flex items-center gap-4">
           <div className="w-10 h-10 rounded-full bg-violet-600/30 border border-violet-500/30 flex items-center justify-center shrink-0">
-            <User className="w-5 h-5 text-violet-400" />
+            <UserIcon className="w-5 h-5 text-violet-400" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-xs text-zinc-500 mb-0.5">{t("dedicatedManager")}</div>
@@ -271,7 +287,7 @@ export default async function DashboardPage() {
               href="/dashboard/messages"
               className="flex items-center gap-2 text-sm text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2.5 rounded-xl transition-colors"
             >
-              <MessageCircle className="w-4 h-4" />
+              <MessagesIcon className="w-4 h-4" />
               <span className="hidden sm:inline">{t("messageBtn")}</span>
             </Link>
             {user.manager.calLink && (
@@ -282,7 +298,7 @@ export default async function DashboardPage() {
       ) : (
         <div className="glow-border rounded-2xl p-5 bg-white/[0.02] mb-6 flex items-center gap-4">
           <div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center shrink-0">
-            <User className="w-5 h-5 text-zinc-500" />
+            <UserIcon className="w-5 h-5 text-zinc-500" />
           </div>
           <div>
             <div className="text-xs text-zinc-500 mb-0.5">{t("dedicatedManager")}</div>
@@ -294,7 +310,7 @@ export default async function DashboardPage() {
       {!allDone && (
         <div className="glow-border rounded-2xl bg-white/[0.02] mb-6 overflow-hidden">
           <div className="p-5 border-b border-white/5 flex items-center gap-3">
-            <Zap className="w-4 h-4 text-violet-400" />
+            <HelixLogo className="w-4 h-4 text-violet-400" size={16} />
             <h2 className="font-semibold text-white text-sm">{t("gettingStarted")}</h2>
             <span className="ml-auto text-xs text-zinc-500">
               {t("complete", { done: gettingStartedSteps.filter((s) => s.done).length, total: gettingStartedSteps.length })}
@@ -306,15 +322,15 @@ export default async function DashboardPage() {
               const content = (
                 <div className="flex items-center gap-3 px-5 py-3">
                   {step.done ? (
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <CheckIcon className="w-4 h-4 text-emerald-400 shrink-0" />
                   ) : (
-                    <Circle className="w-4 h-4 text-zinc-700 shrink-0" />
+                    <CircleIcon className="w-4 h-4 text-zinc-700 shrink-0" />
                   )}
                   <span className={`text-sm ${step.done ? "text-zinc-500 line-through" : "text-zinc-200"}`}>
                     {label}
                   </span>
                   {!step.done && step.href && (
-                    <ArrowRight className="w-3.5 h-3.5 text-violet-400 ml-auto shrink-0" />
+                    <ArrowRightIcon className="w-3.5 h-3.5 text-violet-400 ml-auto shrink-0" />
                   )}
                 </div>
               );
@@ -335,12 +351,12 @@ export default async function DashboardPage() {
           <div className="flex items-center justify-between p-5 border-b border-white/5">
             <h2 className="font-semibold text-white text-sm">{t("aiInstances")}</h2>
             <Link href="/dashboard/instances" className="text-xs text-violet-400 hover:text-violet-300 flex items-center gap-1 transition-colors">
-              {t("viewAll")} <ArrowRight className="w-3 h-3" />
+              {t("viewAll")} <ArrowRightIcon className="w-3 h-3" />
             </Link>
           </div>
           {user.instances.length === 0 ? (
             <div className="p-8 text-center">
-              <Bot className="w-8 h-8 text-zinc-700 mx-auto mb-2" />
+              <BotIcon className="w-8 h-8 text-zinc-700 mx-auto mb-2" />
               <p className="text-zinc-500 text-sm">{t("noInstancesYet")}</p>
               <Link href="/dashboard/instances" className="text-violet-400 text-xs hover:text-violet-300 mt-1 inline-block">{t("createOne")}</Link>
             </div>
@@ -349,7 +365,7 @@ export default async function DashboardPage() {
               {user.instances.map((instance) => (
                 <Link key={instance.id} href={`/dashboard/instances/${instance.id}`}
                   className="flex items-center gap-3 px-5 py-3.5 hover:bg-white/[0.02] transition-colors">
-                  <Bot className="w-4 h-4 text-zinc-600 shrink-0" />
+                  <BotIcon className="w-4 h-4 text-zinc-600 shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="text-sm text-white truncate">{instance.name}</div>
                     <div className="text-xs text-zinc-500">{msgCountMap[instance.id] ?? 0} msgs this week · {instance.type}</div>
@@ -364,13 +380,13 @@ export default async function DashboardPage() {
         {/* Referral CTA */}
         <Link href="/dashboard/referral" className="glow-border rounded-2xl p-5 bg-white/[0.02] flex items-center gap-4 hover:bg-white/[0.04] transition-colors group">
           <div className="w-10 h-10 rounded-xl bg-violet-600/20 border border-violet-500/20 flex items-center justify-center shrink-0">
-            <Gift className="w-5 h-5 text-violet-400" />
+            <GiftIcon className="w-5 h-5 text-violet-400" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-sm font-semibold text-white">{t("referralTitle")}</div>
             <div className="text-xs text-zinc-500 mt-0.5">{t("referralDesc")}</div>
           </div>
-          <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-violet-400 transition-colors shrink-0" />
+          <ArrowRightIcon className="w-4 h-4 text-zinc-600 group-hover:text-violet-400 transition-colors shrink-0" />
         </Link>
 
         <div className="glow-border rounded-2xl bg-white/[0.02]">
@@ -379,7 +395,7 @@ export default async function DashboardPage() {
           </div>
           {recentLogs.length === 0 ? (
             <div className="p-8 text-center">
-              <Activity className="w-8 h-8 text-zinc-700 mx-auto mb-2" />
+              <AnalyticsIcon className="w-8 h-8 text-zinc-700 mx-auto mb-2" />
               <p className="text-zinc-500 text-sm">{t("noActivityYet")}</p>
             </div>
           ) : (

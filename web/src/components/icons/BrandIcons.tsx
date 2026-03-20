@@ -162,6 +162,18 @@ export function AIBrainIcon({ className = "", size = 24 }: IconProps) {
   );
 }
 
+export function BotIcon({ className = "", size = 24 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <rect x="4" y="4" width="16" height="12" rx="2" stroke="currentColor" strokeWidth="1.5"/>
+      <path d="M8 20H16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M10 16V20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M14 16V20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <circle cx="12" cy="10" r="2" stroke="currentColor" strokeWidth="1.5"/>
+    </svg>
+  );
+}
+
 export function BookOpenIcon({ className = "", size = 24 }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
