@@ -28,6 +28,10 @@ interface UserRow {
     hasGateway: boolean;
     configSynced?: boolean;
     provisionStatus?: string | null;
+    sandboxMode?: boolean;
+    sandboxUsed?: number;
+    hasLLMKey?: boolean;
+    hasChannel?: boolean;
   }[];
   unreadMessages: number;
 }
@@ -977,6 +981,16 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                             <span className="text-zinc-600 capitalize">{inst.type}</span>
                             <span className={`px-1.5 py-0.5 rounded-full ${STATUS_COLORS[inst.status]}`}>{inst.status}</span>
                             <HealthDot healthStatus={inst.healthStatus} />
+                            {/* Activation status chips */}
+                            {inst.sandboxMode && !inst.hasLLMKey && (
+                              <span className="px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/20 text-[10px] font-medium">sandbox</span>
+                            )}
+                            {inst.hasLLMKey && !inst.hasChannel && (
+                              <span className="px-1.5 py-0.5 rounded-full bg-blue-500/15 text-blue-400 border border-blue-500/20 text-[10px] font-medium">no channel</span>
+                            )}
+                            {inst.hasChannel && (
+                              <span className="px-1.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 text-[10px] font-medium">✓ live</span>
+                            )}
                             <div className="ml-auto flex items-center gap-1.5 flex-wrap justify-end">
                               {inst.hasGateway ? (
                                 <>

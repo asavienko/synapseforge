@@ -13,7 +13,14 @@ export default async function AdminPage() {
 
   const [users, managers, allInstancesForHealth] = await Promise.all([
     prisma.user.findMany({
-      include: { manager: true, instances: true },
+      include: {
+        manager: true,
+        instances: {
+          include: {
+            credentials: { select: { key: true } },
+          },
+        },
+      },
       orderBy: { createdAt: "desc" },
     }),
     prisma.manager.findMany({ orderBy: { createdAt: "asc" } }),
@@ -84,6 +91,10 @@ export default async function AdminPage() {
           hasGateway: !!i.vpsUrl,
           configSynced: i.configSynced,
           provisionStatus: i.provisionStatus ?? null,
+          sandboxMode: i.sandboxMode,
+          sandboxUsed: i.sandboxUsed,
+          hasLLMKey: i.credentials.some(c => ["openai_api_key","anthropic_api_key","openrouter_api_key"].includes(c.key)),
+          hasChannel: i.credentials.some(c => ["telegram_bot_token","discord_bot_token","slack_app_token","slack_bot_token","whatsapp_business_token"].includes(c.key)),
         })),
         unreadMessages: unreadMap[u.id] ?? 0,
       }))}
