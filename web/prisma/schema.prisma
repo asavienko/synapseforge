@@ -18,7 +18,7 @@ model User {
   password               String?
   plan                   String    @default("free") // free | starter_10k | growth_30k | scale_100k | business_200k | managed_*
   onboardingDone         Boolean   @default(false)
-  onboardingData         String? // JSON: { business, industry, useCase }
+  onboardingData         Json?     // { industry, useCase, teamSize, agentType, businessName }
   stripeCustomerId       String?   @unique
   stripeSubscriptionId   String?   @unique
   stripePriceId          String?

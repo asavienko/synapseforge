@@ -111,7 +111,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Build onboarding data JSON
+    // Build onboarding data JSON - store as object for Prisma Json type
     const onboardingData = {
       business: validatedData.business,
       industry: validatedData.industry,
@@ -121,11 +121,11 @@ export async function POST(request: Request) {
       completedAt: new Date().toISOString(),
     };
 
-    // Update user with onboarding data as JSON
+    // Update user with onboarding data as Json (not stringified)
     await prisma.user.update({
       where: { id: session.user.id },
       data: {
-        onboardingData: JSON.stringify(onboardingData),
+        onboardingData: onboardingData as any,
         onboardingDone: true,
       },
     });
