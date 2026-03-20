@@ -731,7 +731,7 @@ export default async function LandingPage() {
       </section>
 
       {/* ── CTA banner ───────────────────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-6 py-12 mb-8">
+      <section className="max-w-7xl mx-auto px-6 py-12 pb-20 sm:pb-12 mb-8">
         <div className="rounded-2xl border border-violet-500/20 bg-gradient-to-r from-violet-900/50 via-violet-800/30 to-indigo-900/50 p-12 text-center relative overflow-hidden shadow-2xl shadow-violet-500/10">
           <div className="absolute inset-0 bg-gradient-to-br from-violet-600/5 to-transparent pointer-events-none" />
           <h2 className="text-3xl md:text-4xl font-bold mb-4 relative">
