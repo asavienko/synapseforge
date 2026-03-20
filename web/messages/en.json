@@ -224,21 +224,21 @@
       "submit": "Send reset link",
       "backToSignIn": "Back to sign in",
       "successTitle": "Check your inbox",
-      "successDesc": "If {email} exists, you'll receive a reset link shortly. Check your spam folder too."
+      "successMessage": "If an account exists with that email, you'll receive a reset link shortly. Check your spam folder too."
     },
     "resetPassword": {
       "title": "Set new password",
       "subtitle": "Choose a strong password for your account.",
-      "newPassword": "New password",
+      "password": "New password",
       "confirmPassword": "Confirm password",
       "passwordHint": "Min. 8 characters",
-      "repeatPassword": "Repeat password",
       "submit": "Update password",
       "successTitle": "Password updated!",
-      "successDesc": "Redirecting to sign in...",
-      "mismatch": "Passwords do not match.",
-      "invalidLink": "Invalid reset link.",
-      "requestNew": "Request a new one."
+      "successMessage": "Redirecting to sign in...",
+      "passwordsDontMatch": "Passwords do not match.",
+      "passwordTooShort": "Password must be at least 8 characters.",
+      "invalidToken": "Invalid or expired reset link.",
+      "requestNewLink": "Request a new link"
     },
     "verifyEmail": {
       "title": "Verify your email",

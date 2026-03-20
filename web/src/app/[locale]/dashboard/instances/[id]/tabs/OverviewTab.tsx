@@ -6,7 +6,8 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { formatRelativeTime } from "@/lib/utils";
+import { formatDate, formatRelativeTime } from "@/lib/utils";
+import { SANDBOX_LIMIT } from "@/lib/sandbox";
 import { Instance, CredentialRow, UsageData, LogRow, Config } from "../types";
 import { SetupChecklistCard } from "../components/SetupChecklistCard";
 
