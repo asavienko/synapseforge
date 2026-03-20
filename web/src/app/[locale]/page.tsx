@@ -735,10 +735,10 @@ export default async function LandingPage() {
         <div className="rounded-2xl border border-violet-500/20 bg-gradient-to-r from-violet-900/50 via-violet-800/30 to-indigo-900/50 p-12 text-center relative overflow-hidden shadow-2xl shadow-violet-500/10">
           <div className="absolute inset-0 bg-gradient-to-br from-violet-600/5 to-transparent pointer-events-none" />
           <h2 className="text-3xl md:text-4xl font-bold mb-4 relative">
-            Ready to deploy your AI agent?
+            {t("cta.title")}
           </h2>
           <p className="text-zinc-400 mb-8 max-w-lg mx-auto relative">
-            Join teams that use OpenHelix AI to run AI agents 24/7 — without managing infrastructure.
+            {t("cta.subtitle")}
           </p>
           <Link
             href="/sign-up"
@@ -756,7 +756,7 @@ export default async function LandingPage() {
           <div className="flex items-center justify-center sm:justify-start gap-2">
             <HelixLogo className="w-4 h-4 text-violet-400" size={16} />
             <span className="font-semibold text-zinc-400">OpenHelix AI</span>
-            <span>© 2026</span>
+            <span>{t("footer.copyright", { year: 2026 })}</span>
           </div>
           <div className="flex gap-6">
             <Link href="/privacy" className="hover:text-white transition-colors">{t("footer.privacy")}</Link>
@@ -765,7 +765,7 @@ export default async function LandingPage() {
           </div>
           <Link href="/status" className="flex items-center gap-1.5 hover:text-white transition-colors">
             <span className="w-2 h-2 rounded-full bg-emerald-500" />
-            <span className="text-xs">All systems operational</span>
+            <span className="text-xs">{t("footer.status")}</span>
           </Link>
         </div>
       </footer>

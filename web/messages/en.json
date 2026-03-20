@@ -48,6 +48,10 @@
       "desc": "Your dedicated manager helps configure prompts, models, and integrations optimized for your use case."
     }
   },
+  "cta": {
+    "title": "Ready to deploy your AI agent?",
+    "subtitle": "Join teams that use OpenHelix AI to run AI agents 24/7 — without managing infrastructure."
+  },
   "pricing": {
     "title": "Simple, transparent pricing",
     "subtitle": "Start free. Upgrade when you need more.",
@@ -178,7 +182,9 @@
   "footer": {
     "privacy": "Privacy",
     "terms": "Terms",
-    "contact": "Contact"
+    "contact": "Contact",
+    "copyright": "© {year}",
+    "status": "All systems operational"
   },
   "auth": {
     "signIn": {
