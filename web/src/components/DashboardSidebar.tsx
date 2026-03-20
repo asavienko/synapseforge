@@ -2,11 +2,26 @@
 
 import { useState, useEffect } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
-import { Zap, LayoutDashboard, Bot, Settings, LogOut, Menu, X, MessageCircle, CreditCard, Shield, Users, BookOpen, Gift } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { NotificationCenter } from "@/components/NotificationCenter";
+import {
+  HelixLogo,
+  DashboardIcon,
+  InstancesIcon,
+  MessagesIcon,
+  BillingIcon,
+  SettingsIcon,
+  IntegrationsIcon,
+  ReferralsIcon,
+  ShieldCheckIcon,
+  UserIcon,
+  BookOpenIcon,
+  MenuIcon,
+  CloseIcon,
+  LogoutIcon,
+} from "@/components/icons/BrandIcons";
 
 interface SidebarProps {
   userName?: string | null;
@@ -118,42 +133,42 @@ function SidebarContent({ userName, userEmail, unreadCount, isAdmin, isManager, 
     <div className="flex flex-col h-full">
       <div className="p-4 border-b border-white/5 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2" onClick={onClose}>
-          <Zap className="w-5 h-5 text-violet-400" />
+          <HelixLogo className="w-5 h-5 text-violet-400" size={20} />
           <span className="font-bold text-sm tracking-tight text-white">OpenHelix AI</span>
         </Link>
         <div className="flex items-center gap-1">
           {!onClose && <NotificationCenter />}
           {onClose && (
             <button onClick={onClose} className="text-zinc-500 hover:text-white transition-colors md:hidden">
-              <X className="w-5 h-5" />
+              <CloseIcon className="w-5 h-5" size={20} />
             </button>
           )}
         </div>
       </div>
 
       <nav className="flex-1 p-4 space-y-1">
-        <NavItem href="/dashboard" icon={LayoutDashboard} label={t("overview")} onClick={onClose} />
+        <NavItem href="/dashboard" icon={DashboardIcon} label={t("overview")} onClick={onClose} />
         <NavItem 
           href="/dashboard/instances" 
-          icon={Bot} 
+          icon={InstancesIcon} 
           label={t("instances")} 
           healthIndicator={<HealthIndicator instances={instanceHealth} />}
           onClick={onClose} 
         />
-        <NavItem href="/dashboard/messages" icon={MessageCircle} label={t("messages")} badge={unreadCount} onClick={onClose} />
-        <NavItem href="/dashboard/billing" icon={CreditCard} label={t("billing")} onClick={onClose} />
-        <NavItem href="/dashboard/integrations" icon={Zap} label={t("integrations")} onClick={onClose} />
-        <NavItem href="/dashboard/referrals" icon={Gift} label={t("referral")} onClick={onClose} />
-        <NavItem href="/dashboard/settings" icon={Settings} label={t("settings")} onClick={onClose} />
-        <ExternalNavItem href="/docs" icon={BookOpen} label={t("apiDocs")} />
+        <NavItem href="/dashboard/messages" icon={MessagesIcon} label={t("messages")} badge={unreadCount} onClick={onClose} />
+        <NavItem href="/dashboard/billing" icon={BillingIcon} label={t("billing")} onClick={onClose} />
+        <NavItem href="/dashboard/integrations" icon={IntegrationsIcon} label={t("integrations")} onClick={onClose} />
+        <NavItem href="/dashboard/referrals" icon={ReferralsIcon} label={t("referral")} onClick={onClose} />
+        <NavItem href="/dashboard/settings" icon={SettingsIcon} label={t("settings")} onClick={onClose} />
+        <ExternalNavItem href="/docs" icon={BookOpenIcon} label={t("apiDocs")} />
         {isManager && (
           <div className="pt-2 mt-2 border-t border-white/5">
-            <NavItem href="/manager" icon={Users} label={t("managerPortal")} onClick={onClose} />
+            <NavItem href="/manager" icon={UserIcon} label={t("managerPortal")} onClick={onClose} />
           </div>
         )}
         {isAdmin && (
           <div className={isManager ? "mt-1" : "pt-2 mt-2 border-t border-white/5"}>
-            <NavItem href="/admin" icon={Shield} label={t("adminPanel")} onClick={onClose} />
+            <NavItem href="/admin" icon={ShieldCheckIcon} label={t("adminPanel")} onClick={onClose} />
           </div>
         )}
       </nav>
@@ -172,7 +187,7 @@ function SidebarContent({ userName, userEmail, unreadCount, isAdmin, isManager, 
           onClick={() => signOut({ callbackUrl: "/" })}
           className="flex items-center gap-2 text-xs text-zinc-500 hover:text-white transition-colors py-2 px-3 rounded-lg hover:bg-white/5 w-full"
         >
-          <LogOut className="w-3.5 h-3.5" />
+          <LogoutIcon className="w-3.5 h-3.5" />
           {t("signOut")}
         </button>
       </div>
@@ -211,13 +226,13 @@ export function DashboardSidebar({ userName, userEmail, isAdmin, isManager }: Si
       {/* Mobile top bar */}
       <div className="md:hidden flex items-center justify-between px-4 h-14 border-b border-white/5 bg-[#0a0a0f] fixed top-0 left-0 right-0 z-40 safe-area-inset">
         <Link href="/" className="flex items-center gap-2">
-          <Zap className="w-5 h-5 text-violet-400" />
+          <HelixLogo className="w-5 h-5 text-violet-400" size={20} />
           <span className="font-bold text-sm tracking-tight text-white">OpenHelix AI</span>
         </Link>
         <div className="flex items-center gap-2">
           <NotificationCenter />
           <button onClick={() => setMobileOpen(true)} className="text-zinc-400 hover:text-white transition-colors p-2 -mr-2">
-            <Menu className="w-5 h-5" />
+            <MenuIcon className="w-5 h-5" size={20} />
           </button>
         </div>
       </div>
