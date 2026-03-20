@@ -496,6 +496,24 @@ export function ChevronDownIcon({ className = "", size = 24 }: IconProps) {
   );
 }
 
+export function ChevronLeftIcon({ className = "", size = 24 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+export function MoreVerticalIcon({ className = "", size = 24 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <circle cx="12" cy="12" r="1" fill="currentColor"/>
+      <circle cx="12" cy="5" r="1" fill="currentColor"/>
+      <circle cx="12" cy="19" r="1" fill="currentColor"/>
+    </svg>
+  );
+}
+
 export function PlusIcon({ className = "", size = 24 }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
