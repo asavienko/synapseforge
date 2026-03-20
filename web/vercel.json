@@ -38,6 +38,14 @@
     {
       "path": "/api/cron/provision-poll",
       "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/cron/sandbox-nudge",
+      "schedule": "0 12 * * *"
+    },
+    {
+      "path": "/api/cron/channel-activation-nudge",
+      "schedule": "0 11 * * *"
     }
   ]
 }

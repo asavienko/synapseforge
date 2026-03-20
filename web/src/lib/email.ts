@@ -572,6 +572,34 @@ export const email = {
     );
   },
 
+  async channelActivationNudge(
+    to: string,
+    name: string,
+    instanceName: string,
+    instanceId: string,
+  ) {
+    return send(
+      to,
+      `${instanceName} is ready — your customers can't reach it yet`,
+      base(
+        `One step to go, ${name.split(" ")[0]} 🚀`,
+        `<p>Your AI agent <strong style="color:#e4e4e7">${instanceName}</strong> is running on your own API key — no message limits.</p>
+         <p>But right now, only you can chat with it. <strong style="color:#e4e4e7">Connect a channel so real customers can reach it.</strong></p>
+         <div style="background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.25);border-radius:12px;padding:20px;margin:20px 0;">
+           <p style="margin:0 0 12px 0;color:#c4b5fd;font-weight:600;">Easiest: connect Telegram in ~5 minutes</p>
+           <ol style="padding-left:20px;margin:0;color:#a1a1aa;line-height:1.8;">
+             <li>Open Telegram → search <strong style="color:#e4e4e7">@BotFather</strong></li>
+             <li>Send <code style="background:rgba(255,255,255,0.08);padding:2px 6px;border-radius:4px;">/newbot</code> and follow the prompts</li>
+             <li>Copy the token → paste it in your agent's <strong style="color:#e4e4e7">Credentials</strong> tab</li>
+             <li>Share your bot link — your AI answers instantly 24/7</li>
+           </ol>
+         </div>
+         <p style="color:#71717a;font-size:13px;">You can also embed a web chat widget on your website — one line of code, no installs.</p>`,
+        { href: `${APP_URL}/dashboard/instances/${instanceId}?tab=Credentials`, label: "Connect a channel →" }
+      )
+    );
+  },
+
   async trialEnding(to: string, name: string, daysLeft: number) {
     return send(
       to,
