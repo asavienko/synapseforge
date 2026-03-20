@@ -125,7 +125,7 @@ export function NotificationCenter() {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] z-50 bg-[#13131a] border border-white/10 rounded-xl shadow-2xl overflow-hidden">
+        <div className="fixed sm:absolute right-2 sm:right-0 top-14 sm:top-auto sm:mt-2 w-[calc(100vw-1rem)] sm:w-80 max-w-[320px] z-[60] bg-[#13131a] border border-white/10 rounded-xl shadow-2xl overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
             <span className="text-sm font-semibold text-white">{t("title")}</span>
