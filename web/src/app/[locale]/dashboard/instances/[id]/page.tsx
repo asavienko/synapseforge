@@ -44,6 +44,12 @@ export default function InstanceDetailPage() {
   } = data;
 
   const [recentLogs, setRecentLogs] = useState<Array<{ id: string; event: string; details?: string; createdAt: string }>>([]);
+  const [showGraduationModal, setShowGraduationModal] = useState(false);
+  const [showQuickKeyModal, setShowQuickKeyModal] = useState(false);
+  const [inlineKeyValue, setInlineKeyValue] = useState("");
+  const [inlineKeyProvider, setInlineKeyProvider] = useState<"openai" | "anthropic" | "openrouter">("openai");
+  const [inlineKeySaving, setInlineKeySaving] = useState(false);
+  const [inlineKeyError, setInlineKeyError] = useState("");
 
   // Load recent logs for overview
   useEffect(() => {
@@ -63,13 +69,6 @@ export default function InstanceDetailPage() {
     }
     prevSandboxModeRef.current = curr;
   }, [instance?.sandboxMode]);
-
-  const [showGraduationModal, setShowGraduationModal] = useState(false);
-  const [showQuickKeyModal, setShowQuickKeyModal] = useState(false);
-  const [inlineKeyValue, setInlineKeyValue] = useState("");
-  const [inlineKeyProvider, setInlineKeyProvider] = useState<"openai" | "anthropic" | "openrouter">("openai");
-  const [inlineKeySaving, setInlineKeySaving] = useState(false);
-  const [inlineKeyError, setInlineKeyError] = useState("");
 
   async function saveInlineKey() {
     if (!inlineKeyValue.trim()) return;
@@ -355,7 +354,7 @@ export default function InstanceDetailPage() {
             <div className="text-center mb-7">
               <div className="text-4xl mb-3">🚀</div>
               <h2 className="text-xl font-bold text-white mb-2">Your agent is live!</h2>
-              <p className="text-sm text-zinc-400 leading-relaxed">You're now running on your own API key — no message limits. Connect a channel so real customers can start talking to your agent.</p>
+              <p className="text-sm text-zinc-400 leading-relaxed">You&apos;re now running on your own API key — no message limits. Connect a channel so real customers can start talking to your agent.</p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">

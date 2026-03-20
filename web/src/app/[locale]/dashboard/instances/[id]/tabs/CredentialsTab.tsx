@@ -659,6 +659,7 @@ function TelegramConnectCard({
   setTelegramConnected,
   setTelegramError,
   t,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }: any) {
   const hasTelegram = credentials.some((c: CredentialRow) => c.key === "telegram_bot_token");
   const tgUsername = instance.telegramBotUsername ?? (telegramConnected?.username ?? null);
@@ -783,6 +784,7 @@ function DiscordConnectCard({
   setDiscordInviteUrl,
   setDiscordError,
   t,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }: any) {
   const hasDiscord = credentials.some((c: CredentialRow) => c.key === "discord_bot_token");
 
@@ -906,6 +908,7 @@ function SlackConnectCard({
   setSlackConnected,
   setSlackError,
   t,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }: any) {
   const hasSlack = credentials.some((c: CredentialRow) => c.key === "slack_app_token" || c.key === "slack_bot_token");
 
@@ -1010,6 +1013,7 @@ function SlackConnectCard({
 }
 
 // IntegrationsSection component
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function IntegrationsSection({ id, credentials, saveCredential, t }: { id: string; credentials: CredentialRow[]; saveCredential: (key: string, value: string) => Promise<boolean>; t: any }) {
   return (
     <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">

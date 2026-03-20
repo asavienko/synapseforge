@@ -234,8 +234,12 @@ export function getUserPlan(
   stripeSubscriptionStatus?: string | null,
   stripeCurrentPeriodEnd?: Date | null
 ): PlanKey {
-  // If user has an active Stripe subscription, use that plan
-  if (stripeSubscriptionStatus === "active" || stripeSubscriptionStatus === "trialing") {
+  // Check if subscription period has ended
+  const now = new Date();
+  const hasValidPeriod = !stripeCurrentPeriodEnd || stripeCurrentPeriodEnd > now;
+
+  // If user has an active Stripe subscription with a valid period, use that plan
+  if (hasValidPeriod && (stripeSubscriptionStatus === "active" || stripeSubscriptionStatus === "trialing")) {
     // Map legacy plans to new plans
     const mappedPlan = mapLegacyPlan(userPlan ?? "");
     if (STRIPE_PLANS[mappedPlan]) {

@@ -270,11 +270,11 @@ export async function registerWebhook({
 export async function unregisterWebhook({
   accessToken,
   accountId,
-  verifyToken,
+  _verifyToken,
 }: {
   accessToken: string;
   accountId: string;
-  verifyToken?: string;
+  _verifyToken?: string;
 }): Promise<void> {
   const response = await fetch(
     `${META_GRAPH_API_BASE}/${accountId}/subscribed_apps`,

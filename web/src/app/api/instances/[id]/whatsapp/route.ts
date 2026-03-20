@@ -66,7 +66,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
         await unregisterWebhook({
           accessToken: token,
           accountId: instance.whatsappAccountId,
-          verifyToken: secret,
+          _verifyToken: secret,
         });
       } catch (err) {
         console.warn("[WhatsApp Disconnect] Failed to unregister webhook:", err);
