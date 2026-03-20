@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { email } from "@/lib/email";
+import { createNotification } from "@/lib/notifications";
 
 /**
  * GET /api/instances/[id]/health
@@ -13,6 +15,7 @@ import { prisma } from "@/lib/prisma";
  *   - Calls POST <vpsUrl>/hooks/wake with the gateway token
  *   - Updates healthStatus + lastCheckedAt on the instance
  *   - Creates a HealthCheck record
+ *   - Sends email alerts if status changed (down/recovered)
  *   - Returns { healthy, latencyMs, error? } plus history
  */
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -21,21 +24,31 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
   const { id } = await params;
 
-  // Verify user owns this instance
+  // Verify user owns this instance (include manager for alerts)
   const instance = await prisma.aIInstance.findFirst({
     where: { id, userId: session.user.id },
     select: {
       id: true,
+      name: true,
       healthStatus: true,
       lastCheckedAt: true,
       vpsUrl: true,
       gatewayToken: true,
       provisionStatus: true,
+      user: {
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          manager: { select: { email: true, name: true } },
+        },
+      },
     },
   });
 
   if (!instance) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
+  const previousStatus = instance.healthStatus;
   const live = req.nextUrl.searchParams.get("live") !== "false"; // live by default
   let liveResult: { healthy: boolean; latencyMs: number; error?: string } | null = null;
 
@@ -78,6 +91,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         }),
       ]);
 
+      // Send alerts if status changed
+      if (previousStatus && previousStatus !== newStatus) {
+        await sendHealthAlerts(instance, previousStatus, newStatus, errorMsg);
+      }
+
       // Refresh instance fields after update
       instance.healthStatus = newStatus;
       instance.lastCheckedAt = new Date();
@@ -101,6 +119,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         }),
       ]);
 
+      // Send alert if transitioning to down
+      if (previousStatus && previousStatus !== "down") {
+        await sendHealthAlerts(instance, previousStatus, "down", errorMsg);
+      }
+
       instance.healthStatus = "down";
       instance.lastCheckedAt = new Date();
     }
@@ -117,7 +140,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     lastCheckedAt: instance.lastCheckedAt?.toISOString() ?? null,
     vpsUrl: instance.vpsUrl,
     provisionStatus: instance.provisionStatus,
-    // live result (null when no vpsUrl or live=false)
     liveCheck: liveResult,
     checks: checks.map((c) => ({
       id: c.id,
@@ -127,4 +149,72 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       checkedAt: c.checkedAt.toISOString(),
     })),
   });
+}
+
+/**
+ * Send email and in-app notifications when instance health status changes
+ */
+async function sendHealthAlerts(
+  instance: {
+    id: string;
+    name: string;
+    user: {
+      id: string;
+      email: string;
+      name: string | null;
+      manager: { email: string; name: string } | null;
+    };
+  },
+  previousStatus: string,
+  newStatus: string,
+  errorDetail?: string
+) {
+  const userName = instance.user.name ?? "there";
+  const userEmail = instance.user.email;
+  const manager = instance.user.manager;
+
+  // In-app notification for client
+  await createNotification({
+    userId: instance.user.id,
+    type: newStatus === "down" ? "instance.down" : "instance.recovered",
+    title: newStatus === "down" 
+      ? `🔴 "${instance.name}" is down` 
+      : `✅ "${instance.name}" recovered`,
+    body: newStatus === "down"
+      ? `Your AI agent failed its health check and appears to be unreachable.`
+      : `Your AI agent is back online and responding normally.`,
+    href: `/dashboard/instances/${instance.id}`,
+  }).catch(console.error);
+
+  // Email client
+  if (newStatus === "down") {
+    await email.instanceDown(
+      userEmail,
+      userName,
+      instance.name,
+      instance.id,
+      errorDetail
+    ).catch(console.error);
+  } else if (newStatus === "healthy" && previousStatus === "down") {
+    await email.instanceRecovered(
+      userEmail,
+      userName,
+      instance.name,
+      instance.id
+    ).catch(console.error);
+  }
+
+  // Notify manager if assigned
+  if (manager) {
+    await email.managerInstanceAlert(
+      manager.email,
+      manager.name,
+      userName,
+      userEmail,
+      instance.name,
+      instance.id,
+      newStatus as "down" | "recovered" | "degraded",
+      errorDetail
+    ).catch(console.error);
+  }
 }
