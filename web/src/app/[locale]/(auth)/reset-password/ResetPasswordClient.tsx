@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { Eye, EyeOff, Lock, CheckCircle, AlertCircle } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 
@@ -52,7 +52,7 @@ export function ResetPasswordClient({ token }: ResetPasswordClientProps) {
       if (res.ok) {
         setSuccess(true);
         setTimeout(() => {
-          router.push("/en/sign-in");
+          router.push("/sign-in");
         }, 2000);
       } else {
         setError(data.error || "Failed to reset password");

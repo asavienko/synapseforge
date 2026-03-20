@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { randomUUID } from "crypto";
 
 export async function POST(req: NextRequest) {
   const { token } = await req.json();
@@ -15,8 +16,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "This invite link has expired. Please contact your manager for a new one." }, { status: 400 });
   }
 
-  // Mark as used
+  // Mark invite as used
   await prisma.clientInvite.update({ where: { token }, data: { used: true } });
 
-  return NextResponse.json({ ok: true, email: invite.email });
+  // Generate a password-reset token directly so the invited user can set their
+  // password in one step — no separate "forgot password" email needed.
+  const resetToken = randomUUID();
+  const expires = new Date(Date.now() + 2 * 60 * 60 * 1000); // 2 hours
+  await prisma.passwordResetToken.create({
+    data: { token: resetToken, email: invite.email, expires },
+  });
+
+  return NextResponse.json({ ok: true, email: invite.email, resetToken });
 }

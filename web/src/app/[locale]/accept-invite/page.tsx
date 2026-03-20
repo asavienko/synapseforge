@@ -24,8 +24,8 @@ function AcceptInviteContent() {
       .then(data => {
         if (data.ok) {
           setStatus("success");
-          // Redirect to forgot-password to set their real password
-          setTimeout(() => router.push(`/forgot-password?email=${encodeURIComponent(data.email)}`), 1500);
+          // Go directly to reset-password with a pre-generated token — no extra email needed
+          setTimeout(() => router.push(`/reset-password?token=${encodeURIComponent(data.resetToken)}`), 1500);
         } else {
           setStatus("error");
           setErrorMsg(data.error || "Invalid or expired invite link.");
