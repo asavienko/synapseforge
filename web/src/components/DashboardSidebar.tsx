@@ -15,7 +15,38 @@ interface SidebarProps {
   isManager?: boolean;
 }
 
-function NavItem({ href, icon: Icon, label, badge, onClick }: { href: string; icon: React.ElementType; label: string; badge?: number; onClick?: () => void }) {
+interface InstanceHealth {
+  id: string;
+  healthStatus: string | null;
+}
+
+function HealthIndicator({ instances }: { instances: InstanceHealth[] }) {
+  if (instances.length === 0) return null;
+  
+  const hasDown = instances.some(i => i.healthStatus === "down");
+  const hasDegraded = instances.some(i => i.healthStatus === "degraded");
+  const allHealthy = instances.every(i => i.healthStatus === "healthy");
+  
+  if (hasDown) {
+    return <span className="w-2 h-2 rounded-full bg-red-500" title="Some instances are down" />;
+  }
+  if (hasDegraded) {
+    return <span className="w-2 h-2 rounded-full bg-yellow-400" title="Some instances are degraded" />;
+  }
+  if (allHealthy) {
+    return <span className="w-2 h-2 rounded-full bg-emerald-400" title="All instances healthy" />;
+  }
+  return null;
+}
+
+function NavItem({ href, icon: Icon, label, badge, healthIndicator, onClick }: { 
+  href: string; 
+  icon: React.ElementType; 
+  label: string; 
+  badge?: number; 
+  healthIndicator?: React.ReactNode;
+  onClick?: () => void 
+}) {
   const pathname = usePathname();
   const isActive = href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(href);
 
@@ -32,6 +63,7 @@ function NavItem({ href, icon: Icon, label, badge, onClick }: { href: string; ic
     >
       <Icon className="w-4 h-4" />
       <span className="flex-1">{label}</span>
+      {healthIndicator}
       {badge != null && badge > 0 && (
         <span className="bg-violet-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
           {badge > 99 ? "99+" : badge}
@@ -57,6 +89,30 @@ function ExternalNavItem({ href, icon: Icon, label }: { href: string; icon: Reac
 
 function SidebarContent({ userName, userEmail, unreadCount, isAdmin, isManager, onClose }: SidebarProps & { unreadCount: number; onClose?: () => void }) {
   const t = useTranslations("dashboard.nav");
+  const [instanceHealth, setInstanceHealth] = useState<InstanceHealth[]>([]);
+
+  // Fetch instance health for sidebar indicator
+  useEffect(() => {
+    const fetchHealth = async () => {
+      try {
+        const res = await fetch("/api/instances");
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setInstanceHealth(data.map((i: { id: string; healthStatus: string | null }) => ({ 
+            id: i.id, 
+            healthStatus: i.healthStatus 
+          })));
+        }
+      } catch {
+        // silently fail - health indicator is non-critical
+      }
+    };
+
+    fetchHealth();
+    // Poll every 30s to keep health status fresh
+    const interval = setInterval(fetchHealth, 30_000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="flex flex-col h-full">
@@ -77,7 +133,13 @@ function SidebarContent({ userName, userEmail, unreadCount, isAdmin, isManager, 
 
       <nav className="flex-1 p-4 space-y-1">
         <NavItem href="/dashboard" icon={LayoutDashboard} label={t("overview")} onClick={onClose} />
-        <NavItem href="/dashboard/instances" icon={Bot} label={t("instances")} onClick={onClose} />
+        <NavItem 
+          href="/dashboard/instances" 
+          icon={Bot} 
+          label={t("instances")} 
+          healthIndicator={<HealthIndicator instances={instanceHealth} />}
+          onClick={onClose} 
+        />
         <NavItem href="/dashboard/messages" icon={MessageCircle} label={t("messages")} badge={unreadCount} onClick={onClose} />
         <NavItem href="/dashboard/billing" icon={CreditCard} label={t("billing")} onClick={onClose} />
         <NavItem href="/dashboard/integrations" icon={Zap} label={t("integrations")} onClick={onClose} />
