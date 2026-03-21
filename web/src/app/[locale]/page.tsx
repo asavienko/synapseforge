@@ -759,6 +759,7 @@ export default async function LandingPage() {
             <span>{t("footer.copyright", { year: 2026 })}</span>
           </div>
           <div className="flex gap-6">
+            <Link href="/changelog" className="hover:text-white transition-colors">{t("footer.changelog")}</Link>
             <Link href="/privacy" className="hover:text-white transition-colors">{t("footer.privacy")}</Link>
             <Link href="/terms" className="hover:text-white transition-colors">{t("footer.terms")}</Link>
             <Link href="/contact" className="hover:text-white transition-colors">{t("footer.contact")}</Link>
