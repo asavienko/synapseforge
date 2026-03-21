@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { EmailVerifyBanner } from "@/components/EmailVerifyBanner";
 import { VerifiedSuccessBanner } from "@/components/VerifiedSuccessBanner";
+import { UsageWarningBanner } from "@/components/UsageWarningBanner";
 
 export default async function DashboardLayout({
   children,
@@ -42,7 +43,10 @@ export default async function DashboardLayout({
           isManager={isManager}
         />
         {/* pt-14 on mobile to offset the fixed top bar */}
-        <main className="flex-1 overflow-auto pt-14 md:pt-0">{children}</main>
+        <main className="flex-1 overflow-auto pt-14 md:pt-0">
+          <UsageWarningBanner />
+          {children}
+        </main>
       </div>
     </div>
   );
