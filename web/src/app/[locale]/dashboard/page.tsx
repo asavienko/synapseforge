@@ -24,6 +24,7 @@ import { DashboardRefresher } from "@/components/DashboardRefresher";
 import { getTranslations } from "next-intl/server";
 import { captureServerEvent } from "@/lib/posthog-server";
 import { OnboardingToast } from "@/components/OnboardingToast";
+import { OnboardingChecklist } from "@/components/OnboardingChecklist";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
