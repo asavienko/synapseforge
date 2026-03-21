@@ -16,6 +16,7 @@ import { STATUS_COLORS, INSTANCE_TYPES, formatRelativeTime } from "@/lib/utils";
 import { getTemplateById, type AgentTemplate, agentTemplates } from "@/lib/templates";
 import { useTranslations } from "next-intl";
 import { InstanceSetupWizard } from "@/components/InstanceSetupWizard";
+import { useAnalytics } from "@/components/AnalyticsProvider";
 
 interface Instance {
   id: string;
@@ -83,6 +84,7 @@ export default function InstancesPage() {
   const t = useTranslations("dashboard.instances");
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { track } = useAnalytics();
   const templateIdFromUrl = searchParams.get("template");
 
   const [instances, setInstances] = useState<Instance[]>([]);
@@ -158,11 +160,13 @@ export default function InstancesPage() {
     if (!res.ok) {
       if (res.status === 403) setPlanLimitHit(true);
       setError(data.error || t("modal.failedError"));
+      track("instance_create_failed", { error: data.error, template: template.id });
     } else {
       setShowTemplateSelector(false);
       setSelectedTemplate(null);
       loadInstances();
       showToast(t("createdSuccess"));
+      track("instance_created", { instanceId: data.id, source: "template", template: template.id });
       // Navigate to the new instance
       router.push(`/dashboard/instances/${data.id}`);
     }
@@ -186,11 +190,13 @@ export default function InstancesPage() {
     if (!res.ok) {
       if (res.status === 403) setPlanLimitHit(true);
       setError(data.error || t("modal.failedError"));
+      track("instance_create_failed", { error: data.error, source: "manual" });
     } else {
       setShowCreate(false);
       setForm({ name: "", type: "assistant", description: "" });
       loadInstances();
       showToast(t("createdSuccess"));
+      track("instance_created", { instanceId: data.id, source: "manual", type: form.type });
     }
   }
 
@@ -423,10 +429,11 @@ export default function InstancesPage() {
       {showWizard && (
         <InstanceSetupWizard
           onClose={() => setShowWizard(false)}
-          onCreated={() => {
+          onCreated={(instanceId?: string) => {
             setShowWizard(false);
             loadInstances();
             showToast(t("createdSuccess"));
+            track("instance_created", { instanceId, source: "wizard" });
           }}
         />
       )}
