@@ -19,7 +19,7 @@ describe("13 · Email — Forgot Password Reset", () => {
     cy.request({
       method: "POST",
       url: "/api/auth/forgot-password",
-      body: { emailAddress: Cypress.env("TEST_EMAIL") },
+      body: { email: Cypress.env("TEST_EMAIL") },
       headers: { "Content-Type": "application/json" },
       failOnStatusCode: false,
     }).then((res) => {
@@ -32,7 +32,7 @@ describe("13 · Email — Forgot Password Reset", () => {
     cy.request({
       method: "POST",
       url: "/api/auth/forgot-password",
-      body: { emailAddress: "nobody@no-such-domain-xyz.com" },
+      body: { email: "nobody@no-such-domain-xyz.com" },
       headers: { "Content-Type": "application/json" },
       failOnStatusCode: false,
     }).then((res) => {
@@ -70,13 +70,14 @@ describe("13 · Email — Forgot Password Reset", () => {
     cy.snap("13-email-02-forgot-ui-success");
   });
 
-  it("UI shows email address in success message", () => {
+  it("UI shows generic success message (no email enumeration)", () => {
     cy.visit("/en/forgot-password");
     const testEmail = Cypress.env("TEST_EMAIL");
     cy.get('input[type="email"]').type(testEmail);
     cy.get('button[type="submit"]').click();
-    cy.contains(testEmail, { timeout: 8000 }).should("be.visible");
-    cy.snap("13-email-03-forgot-email-shown");
+    // Success message should be generic (not reveal if email exists)
+    cy.contains(/Check your inbox|reset link|email/i, { timeout: 8000 }).should("be.visible");
+    cy.snap("13-email-03-forgot-success");
   });
 });
 
