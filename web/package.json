@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "type-check": "tsc --noEmit",
+    "check-env": "node scripts/check-env.js",
     "test:unit": "echo 'No unit tests yet'",
     "test:integration": "echo 'No integration tests yet'",
     "cy:open": "cypress open",
