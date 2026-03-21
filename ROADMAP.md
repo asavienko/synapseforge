@@ -19,19 +19,23 @@
 - Active sidebar nav state
 - Toast notifications on instance actions
 - Registration success banner
+- **Manager assignment** — Admin UI exists, can create managers and assign to users
+- **In-app messaging** — Message threads between clients and managers
+- **Onboarding flow** — Post-signup redirect to `/onboarding` with use case capture
+- **Email notifications** — 8 cron jobs: sandbox-nudge, check-inactivity, weekly-digest, channel-activation-nudge, check-milestones, health-check, etc.
+- **Forgot password / password reset** — Full flow with email tokens
+- **Email verification** — Verification emails + banner in dashboard
+- **Billing / Stripe integration** — Checkout, portal, plan management
+- **Rate limiting** — On all auth endpoints
+- **Footer links** — Privacy, Terms, Contact pages all working
+- **Instance Configuration UI** — Full ConfigurationTab with JSON editing
+- **Credential Vault** — Encrypted storage with reveal functionality
+- **Usage Warning Banners** — Proactive alerts when approaching limits
+- **Real-time Notifications** — Toast alerts for instance events (provisioning, down, recovered)
 
 ### ❌ Not Working / Stub Only
-- Manager assignment (admin UI doesn't exist yet — field is in DB but no way to assign)
-- "Contact manager" is just an email link — no in-app messaging
-- Instance status (running/stopped) is a DB toggle — no real AI deployment
-- Instance config field exists in schema but has no UI
-- No onboarding flow after sign-up
-- No email notifications
-- No forgot password / password reset
-- No email verification
-- No billing / payment integration
-- No rate limiting on auth endpoints
-- Footer Privacy, Terms, Contact links are dead (`#`)
+- Instance status is a DB toggle — no real VPS AI deployment yet
+- Real-time instance status from OpenClaw health checks (partially done)
 
 ---
 
