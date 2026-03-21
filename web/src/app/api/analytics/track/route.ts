@@ -1,32 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
 /**
  * POST /api/analytics/track
  *
- * Track analytics events. Lightweight endpoint that stores events
- * for later analysis.
- * 
- * TODO: Uncomment database storage after running migration:
- * npx prisma migrate dev --name add_analytics_event
+ * Track analytics events. Stores events in database for analysis.
  */
 export async function POST(req: NextRequest) {
   try {
     const session = await auth();
     const body = await req.json();
-    const { event, properties, url } = body;
+    const { event, properties, url, userAgent, timestamp } = body;
 
     if (!event) {
       return NextResponse.json({ error: "Event name required" }, { status: 400 });
     }
 
-    // Log to console for now (database storage requires migration)
+    // Log to console in development
     if (process.env.NODE_ENV === "development") {
       console.log("[Analytics]", { event, properties, url, userId: session?.user?.id });
     }
 
-    // TODO: Store in database after migration
-    // await prisma.analyticsEvent.create({...})
+    // Store in database
+    await prisma.analyticsEvent.create({
+      data: {
+        event,
+        properties: properties || {},
+        userId: session?.user?.id || null,
+        url: url || null,
+        userAgent: userAgent || null,
+        timestamp: timestamp ? new Date(timestamp) : new Date(),
+      },
+    });
 
     return NextResponse.json({ success: true });
   } catch {
