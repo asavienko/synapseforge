@@ -178,7 +178,11 @@
   "footer": {
     "privacy": "Конфіденційність",
     "terms": "Умови",
-    "contact": "Контакт"
+    "contact": "Контакт",
+    "changelog": "Історія змін",
+    "status": "Статус",
+    "copyright": "© {year}",
+    "systemStatus": "Всі системи працюють"
   },
   "auth": {
     "signIn": {

@@ -178,7 +178,11 @@
   "footer": {
     "privacy": "Конфиденциальность",
     "terms": "Условия",
-    "contact": "Контакт"
+    "contact": "Контакт",
+    "changelog": "История изменений",
+    "status": "Статус",
+    "copyright": "© {year}",
+    "systemStatus": "Все системы работают"
   },
   "auth": {
     "signIn": {

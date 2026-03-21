@@ -178,7 +178,11 @@
   "footer": {
     "privacy": "Privacidad",
     "terms": "Términos",
-    "contact": "Contacto"
+    "contact": "Contacto",
+    "changelog": "Registro de cambios",
+    "status": "Estado",
+    "copyright": "© {year}",
+    "systemStatus": "Todos los sistemas operativos"
   },
   "auth": {
     "signIn": {
