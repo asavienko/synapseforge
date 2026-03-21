@@ -184,8 +184,9 @@
     "terms": "Terms",
     "contact": "Contact",
     "changelog": "Changelog",
+    "status": "Status",
     "copyright": "© {year}",
-    "status": "All systems operational"
+    "systemStatus": "All systems operational"
   },
   "notFound": {
     "title": "Page not found",

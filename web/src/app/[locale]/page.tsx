@@ -773,7 +773,7 @@ export default async function LandingPage() {
           </div>
           <Link href="/status" className="flex items-center gap-1.5 hover:text-white transition-colors">
             <span className="w-2 h-2 rounded-full bg-emerald-500" />
-            <span className="text-xs">{t("footer.status")}</span>
+            <span className="text-xs">{t("footer.systemStatus")}</span>
           </Link>
         </div>
       </footer>
