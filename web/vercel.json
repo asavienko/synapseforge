@@ -8,6 +8,10 @@
       "schedule": "0 0 * * *"
     },
     {
+      "path": "/api/cron/sandbox-nudge",
+      "schedule": "0 10 * * *"
+    },
+    {
       "path": "/api/internal/provision-timeout",
       "schedule": "0 3 * * *"
     },
