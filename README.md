@@ -2,6 +2,8 @@
 
 **AI Agent Platform for Businesses**
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/asavienko/synapseforge&env=DATABASE_URL,NEXTAUTH_SECRET,NEXTAUTH_URL,ENCRYPTION_KEY,RESEND_API_KEY,EMAIL_FROM,ADMIN_EMAILS&project-name=synapseforge&repository-name=synapseforge)
+
 SynapseForge (branded as OpenHelix AI) is a managed platform for deploying AI agents across multiple channels. Businesses can create, configure, and deploy AI assistants without managing infrastructure.
 
 ## Features
@@ -23,6 +25,14 @@ SynapseForge (branded as OpenHelix AI) is a managed platform for deploying AI ag
 - **Hosting**: Vercel
 
 ## Quick Start
+
+### Option 1: One-Click Deploy (Recommended)
+Click the "Deploy with Vercel" button above to deploy instantly. You'll need to provide:
+- PostgreSQL database (Neon, Supabase, or self-hosted)
+- Resend API key for email
+- Other env vars as prompted
+
+### Option 2: Local Development
 
 ```bash
 # Install dependencies
