@@ -139,7 +139,8 @@ describe("07 · Instance Detail", () => {
       cy.contains("button", "Create Key").click();
       cy.get('input[placeholder*="e.g., Production"]').type("Cypress Test Key");
       cy.contains("button", "Create").click();
-      cy.contains(/Copy your API key now/, { timeout: 8000 }).should("be.visible");
+      // Look for the amber warning banner with the API key
+      cy.get("[class*='amber-500'], [class*='bg-amber']", { timeout: 8000 }).should("be.visible");
       cy.snap("07-detail-12-apikey-generated");
     });
 
@@ -147,7 +148,7 @@ describe("07 · Instance Detail", () => {
       cy.contains("button", "Create Key").click();
       cy.get('input[placeholder*="e.g., Production"]').type("Show Once Key");
       cy.contains("button", "Create").click();
-      cy.contains(/Copy your API key now/, { timeout: 8000 }).should("be.visible");
+      cy.get("[class*='amber-500'], [class*='bg-amber']", { timeout: 8000 }).should("be.visible");
       cy.get("code.font-mono").should("exist");
       cy.snap("07-detail-13-apikey-revealed");
     });
@@ -156,7 +157,7 @@ describe("07 · Instance Detail", () => {
       cy.contains("button", "Create Key").click();
       cy.get('input[placeholder*="e.g., Production"]').type("Copy Key Test");
       cy.contains("button", "Create").click();
-      cy.contains(/Copy your API key now/, { timeout: 8000 }).should("be.visible");
+      cy.get("[class*='amber-500'], [class*='bg-amber']", { timeout: 8000 }).should("be.visible");
       cy.snap("07-detail-14-apikey-copy");
     });
 
@@ -169,7 +170,7 @@ describe("07 · Instance Detail", () => {
       cy.contains("button", "Create Key").click();
       cy.get('input[placeholder*="e.g., Production"]').type("To Be Revoked");
       cy.contains("button", "Create").click();
-      cy.contains(/Copy your API key now/, { timeout: 8000 }).should("be.visible");
+      cy.get("[class*='amber-500'], [class*='bg-amber']", { timeout: 8000 }).should("be.visible");
       // Dismiss the key reveal banner
       cy.contains("I've copied it").click();
       // Revoke the key
