@@ -1,14 +1,50 @@
 import { MetadataRoute } from "next";
 
-const BASE = "https://openhelixai.com";
-
 export default function sitemap(): MetadataRoute.Sitemap {
+  const baseUrl = "https://openhelixai.com";
+
   return [
-    { url: BASE, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
-    { url: `${BASE}/sign-up`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
-    { url: `${BASE}/sign-in`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
-    { url: `${BASE}/privacy`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.3 },
-    { url: `${BASE}/terms`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.3 },
-    { url: `${BASE}/contact`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
+    {
+      url: baseUrl,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 1,
+    },
+    {
+      url: `${baseUrl}/pricing`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/templates`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/contact`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/privacy`,
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.3,
+    },
+    {
+      url: `${baseUrl}/terms`,
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.3,
+    },
+    {
+      url: `${baseUrl}/status`,
+      lastModified: new Date(),
+      changeFrequency: "hourly",
+      priority: 0.4,
+    },
   ];
 }
