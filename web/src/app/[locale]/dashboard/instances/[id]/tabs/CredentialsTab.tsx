@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ShieldCheck, Zap, Loader2, Check, X, Wifi, Trash, Eye, AlertCircle, Key } from "lucide-react";
+import { ShieldCheck, Zap, Loader2, Check, X, Wifi, Trash, Eye, EyeOff, AlertCircle, Key } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
@@ -46,6 +46,8 @@ export function CredentialsTab({
   const [configPreviewText, setConfigPreviewText] = useState<string | null>(null);
   const [configPreviewLoading, setConfigPreviewLoading] = useState(false);
   const [syncRequesting, setSyncRequesting] = useState(false);
+  const [revealedCreds, setRevealedCreds] = useState<Record<string, string>>({});
+  const [revealingCred, setRevealingCred] = useState<string | null>(null);
 
   // Telegram setup state
   const [telegramTokenInput, setTelegramTokenInput] = useState("");
@@ -391,14 +393,52 @@ export function CredentialsTab({
                     <div>
                       <div className="text-sm font-medium text-white">{CREDENTIAL_KEY_LABELS[key]}</div>
                       {existing && !isEditing && (
-                        <div className="text-xs font-mono text-zinc-500 mt-0.5">{existing.maskedValue}</div>
+                        <div className="text-xs font-mono text-zinc-500 mt-0.5">
+                          {revealedCreds[key] ? (
+                            <span className="text-zinc-300">{revealedCreds[key]}</span>
+                          ) : (
+                            existing.maskedValue
+                          )}
+                        </div>
                       )}
                     </div>
                     <div className="flex items-center gap-2">
                       {existing && !isEditing && (
                         <>
                           <button
-                            onClick={() => { setEditingKey(key); setEditValue(""); setCredValidState((p) => { const n = {...p}; delete n[key]; return n; }); }}
+                            onClick={async () => {
+                              if (revealedCreds[key]) {
+                                setRevealedCreds((p) => { const n = { ...p }; delete n[key]; return n; });
+                                return;
+                              }
+                              setRevealingCred(key);
+                              try {
+                                const res = await fetch(`/api/instances/${id}/credentials/${key}/reveal`);
+                                if (res.ok) {
+                                  const data = await res.json();
+                                  setRevealedCreds((p) => ({ ...p, [key]: data.value }));
+                                } else {
+                                  showToast("Failed to reveal credential", "error");
+                                }
+                              } catch {
+                                showToast("Failed to reveal credential", "error");
+                              } finally {
+                                setRevealingCred(null);
+                              }
+                            }}
+                            disabled={revealingCred === key}
+                            className="text-xs text-zinc-500 hover:text-zinc-300 bg-white/5 px-2 py-1 rounded-lg transition-colors flex items-center gap-1"
+                          >
+                            {revealingCred === key ? (
+                              <Loader2 className="w-3 h-3 animate-spin" />
+                            ) : revealedCreds[key] ? (
+                              <><EyeOff className="w-3 h-3" /> Hide</>
+                            ) : (
+                              <><Eye className="w-3 h-3" /> Reveal</>
+                            )}
+                          </button>
+                          <button
+                            onClick={() => { setEditingKey(key); setEditValue(""); setCredValidState((p) => { const n = { ...p }; delete n[key]; return n; }); }}
                             className="text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 px-2 py-1 rounded-lg transition-colors"
                           >
                             {t("credentials.editCredential")}
@@ -413,7 +453,7 @@ export function CredentialsTab({
                       )}
                       {!existing && !isAdding && (
                         <button
-                          onClick={() => { setAddingKey(key); setAddValue(""); setCredValidState((p) => { const n = {...p}; delete n[key]; return n; }); }}
+                          onClick={() => { setAddingKey(key); setAddValue(""); setCredValidState((p) => { const n = { ...p }; delete n[key]; return n; }); }}
                           className="text-xs text-zinc-500 hover:text-white bg-white/5 px-2 py-1 rounded-lg transition-colors"
                         >
                           {t("credentials.addCredential")}
