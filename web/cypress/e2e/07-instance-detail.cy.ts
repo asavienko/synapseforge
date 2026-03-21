@@ -131,32 +131,32 @@ describe("07 · Instance Detail", () => {
     beforeEach(() => cy.contains("API Keys").click());
 
     it("renders API keys tab", () => {
-      cy.contains("Generate new API key").should("be.visible");
+      cy.contains("Create Key").should("be.visible");
       cy.snap("07-detail-11-apikeys-tab");
     });
 
     it("generates a new API key", () => {
-      cy.get('input[placeholder*="Key name"]').type("Cypress Test Key");
-      // Use cy.contains("button", "Generate") to target the button, not the h3 heading
-      cy.contains("button", "Generate").click();
-      // In-page reveal banner stays visible (unlike 3-sec toast)
-      cy.contains("New key generated", { timeout: 8000 }).should("be.visible");
+      cy.contains("button", "Create Key").click();
+      cy.get('input[placeholder*="e.g., Production"]').type("Cypress Test Key");
+      cy.contains("button", "Create").click();
+      cy.contains("Copy your API key now", { timeout: 8000 }).should("be.visible");
       cy.snap("07-detail-12-apikey-generated");
     });
 
     it("shows the new key value once", () => {
-      cy.get('input[placeholder*="Key name"]').type("Show Once Key");
-      cy.contains("button", "Generate").click();
-      cy.contains("New key generated", { timeout: 8000 }).should("be.visible");
-      // The full key should be visible in the reveal banner
-      cy.get(".font-mono, code").should("exist");
+      cy.contains("button", "Create Key").click();
+      cy.get('input[placeholder*="e.g., Production"]').type("Show Once Key");
+      cy.contains("button", "Create").click();
+      cy.contains("Copy your API key now", { timeout: 8000 }).should("be.visible");
+      cy.get("code.font-mono").should("exist");
       cy.snap("07-detail-13-apikey-revealed");
     });
 
     it("shows copy button for new key", () => {
-      cy.get('input[placeholder*="Key name"]').type("Copy Key Test");
-      cy.contains("button", "Generate").click();
-      cy.contains("New key generated", { timeout: 8000 }).should("be.visible");
+      cy.contains("button", "Create Key").click();
+      cy.get('input[placeholder*="e.g., Production"]').type("Copy Key Test");
+      cy.contains("button", "Create").click();
+      cy.contains("Copy your API key now", { timeout: 8000 }).should("be.visible");
       cy.snap("07-detail-14-apikey-copy");
     });
 
@@ -166,16 +166,15 @@ describe("07 · Instance Detail", () => {
     });
 
     it("revokes an API key", () => {
-      cy.get('input[placeholder*="Key name"]').type("To Be Revoked");
-      cy.contains("button", "Generate").click();
-      cy.contains("New key generated", { timeout: 8000 }).should("be.visible");
-      cy.reload();
-      cy.contains("API Keys").click();
-      // The key name appears in the list after reload
-      cy.contains("To Be Revoked", { timeout: 8000 }).should("exist");
-      // Row is: <div class="flex items-center gap-4 p-4"> → sibling button is the revoke X
-      // Use parent with flex class to scope to the key row
-      cy.contains("To Be Revoked").closest(".flex.items-center").find("button").click();
+      cy.contains("button", "Create Key").click();
+      cy.get('input[placeholder*="e.g., Production"]').type("To Be Revoked");
+      cy.contains("button", "Create").click();
+      cy.contains("Copy your API key now", { timeout: 8000 }).should("be.visible");
+      // Dismiss the key reveal banner
+      cy.contains("I've copied it").click();
+      // Revoke the key
+      cy.contains("To Be Revoked").parents("tr, [class*='flex']").first().find("button").last().click();
+      cy.contains("To Be Revoked").should("not.exist");
       cy.snap("07-detail-16-apikey-revoked");
     });
   });
