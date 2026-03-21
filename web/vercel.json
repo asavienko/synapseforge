@@ -25,7 +25,7 @@
     },
     {
       "path": "/api/cron/check-milestones",
-      "schedule": "0 */6 * * *"
+      "schedule": "0 12 * * *"
     },
     {
       "path": "/api/internal/provision-timeout",
