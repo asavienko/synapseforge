@@ -7,6 +7,7 @@ import { EmailVerifyBanner } from "@/components/EmailVerifyBanner";
 import { VerifiedSuccessBanner } from "@/components/VerifiedSuccessBanner";
 import { UsageWarningBanner } from "@/components/UsageWarningBanner";
 import { NotificationPoller } from "./NotificationPoller";
+import { FeedbackButtonWrapper } from "./FeedbackButtonWrapper";
 
 export default async function DashboardLayout({
   children,
@@ -50,6 +51,7 @@ export default async function DashboardLayout({
           {children}
         </main>
       </div>
+      <FeedbackButtonWrapper />
     </div>
   );
 }

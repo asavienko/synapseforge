@@ -487,3 +487,19 @@ model UsageEvent {
   @@index([instanceId, createdAt])
   @@index([type, createdAt])
 }
+
+// User feedback submissions
+model Feedback {
+  id        String   @id @default(cuid())
+  message   String
+  userId    String?
+  userEmail String?
+  source    String   @default("dashboard_widget") // Where the feedback came from
+  metadata  Json?    // Additional context (userAgent, page URL, etc.)
+  status    String   @default("new") // new | read | resolved | archived
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, createdAt])
+  @@index([userId])
+}
