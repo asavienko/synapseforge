@@ -185,6 +185,7 @@
     "contact": "Contact",
     "changelog": "Changelog",
     "status": "Status",
+    "api": "API",
     "copyright": "© {year}",
     "systemStatus": "All systems operational"
   },

@@ -766,7 +766,7 @@ export default async function LandingPage() {
           </div>
           <div className="flex gap-6">
             <Link href="/status" className="hover:text-white transition-colors">{t("footer.status")}</Link>
-            <Link href="/api-docs" className="hover:text-white transition-colors">API</Link>
+            <Link href="/api-docs" className="hover:text-white transition-colors">{t("footer.api")}</Link>
             <Link href="/changelog" className="hover:text-white transition-colors">{t("footer.changelog")}</Link>
             <Link href="/privacy" className="hover:text-white transition-colors">{t("footer.privacy")}</Link>
             <Link href="/terms" className="hover:text-white transition-colors">{t("footer.terms")}</Link>
