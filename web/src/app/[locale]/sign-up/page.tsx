@@ -25,6 +25,7 @@ export default function SignUpPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [referralCode, setReferralCode] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState<0 | 1 | 2 | 3 | 4>(0);
   const [emailError, setEmailError] = useState("");
 
@@ -61,21 +62,25 @@ export default function SignUpPage() {
       return;
     }
 
-    const result = await signIn("credentials", {
-      email: form.email,
-      password: form.password,
-      redirect: false,
-    });
+    // Show success state before redirect
+    setSuccess(true);
+    analytics.signupCompleted("email");
 
-    setLoading(false);
+    // Delay redirect to show success message
+    setTimeout(async () => {
+      const result = await signIn("credentials", {
+        email: form.email,
+        password: form.password,
+        redirect: false,
+      });
 
-    if (result?.error) {
-      router.push("/sign-in?registered=1");
-    } else {
-      analytics.signupCompleted("email");
-      const tmplId = searchParams.get("template") ?? sessionStorage.getItem("pendingTemplate");
-      router.push(tmplId ? `/onboarding?template=${tmplId}` : "/onboarding");
-    }
+      if (result?.error) {
+        router.push("/sign-in?registered=1");
+      } else {
+        const tmplId = searchParams.get("template") ?? sessionStorage.getItem("pendingTemplate");
+        router.push(tmplId ? `/onboarding?template=${tmplId}` : "/onboarding");
+      }
+    }, 1500);
   }
 
   const isAlreadyRegistered =
@@ -245,13 +250,24 @@ export default function SignUpPage() {
             )}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || success}
               className="w-full flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors py-3 rounded-lg font-semibold text-white"
             >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-              {t("submit")}
+              {loading || success ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+              {success ? t("creatingAccount") : t("submit")}
             </button>
           </form>
+
+          {/* Success Banner */}
+          {success && (
+            <div className="mt-4 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-center">
+              <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-2">
+                <Check className="w-5 h-5 text-emerald-400" />
+              </div>
+              <p className="text-emerald-300 font-medium">{t("successTitle")}</p>
+              <p className="text-emerald-400/70 text-sm mt-1">{t("successMessage")}</p>
+            </div>
+          )}
         </div>
 
         <p className="text-center text-sm text-zinc-500 mt-6">
