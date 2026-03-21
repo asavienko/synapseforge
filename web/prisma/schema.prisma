@@ -503,3 +503,18 @@ model Feedback {
   @@index([status, createdAt])
   @@index([userId])
 }
+
+// Analytics events for tracking user behavior
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  event     String   // Event name (e.g., "page_view", "button_click")
+  properties Json?   // Event properties
+  userId    String?
+  url       String?
+  userAgent String?
+  timestamp DateTime @default(now())
+
+  @@index([event, timestamp])
+  @@index([userId])
+  @@index([timestamp])
+}
