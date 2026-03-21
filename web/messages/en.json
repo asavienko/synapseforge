@@ -186,6 +186,14 @@
     "copyright": "© {year}",
     "status": "All systems operational"
   },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you're looking for doesn't exist or has been moved.",
+    "goHome": "Go home",
+    "goDashboard": "Back to dashboard",
+    "needHelp": "Need help?",
+    "contactSupport": "Contact support"
+  },
   "auth": {
     "signIn": {
       "title": "Welcome back",
