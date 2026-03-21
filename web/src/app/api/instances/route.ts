@@ -108,7 +108,8 @@ export async function POST(req: NextRequest) {
     data: {
       name,
       type: type || "assistant",
-      status: "stopped",
+      status: "running",
+      sandboxMode: true,
       tier: plan.tier,
       description: description || template?.shortDescription,
       config: initialConfig,
