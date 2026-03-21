@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Gift, Copy, Check, Share2, Users, DollarSign } from "lucide-react";
-import { useToast } from "@/components/ToastProvider";
+import { toast } from "sonner";
 
 interface ReferralStats {
   code: string;
@@ -16,7 +16,6 @@ export default function ReferralsPage() {
   const [stats, setStats] = useState<ReferralStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
-  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -42,7 +41,7 @@ export default function ReferralsPage() {
     const link = `${window.location.origin}/?ref=${stats.code}`;
     navigator.clipboard.writeText(link);
     setCopied(true);
-    showToast("Referral link copied to clipboard!", "success");
+    toast.success("Referral link copied to clipboard!");
     setTimeout(() => setCopied(false), 2000);
   };
 

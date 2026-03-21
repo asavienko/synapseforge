@@ -27,8 +27,7 @@ export function HelpTooltip({ title, description }: HelpTooltipProps) {
             className="fixed inset-0 z-40"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute z-50 w-64 p-4 bg-[#1a1a1f] border border-white/10 rounded-xl shadow-xl -right-2 top-8"
-003e
+          <div className="absolute z-50 w-64 p-4 bg-[#1a1a1f] border border-white/10 rounded-xl shadow-xl -right-2 top-8">
             <div className="flex items-start justify-between mb-2">
               <h4 className="font-medium text-white">{title}</h4>
               <button
