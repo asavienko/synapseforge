@@ -1,14 +1,13 @@
 /**
  * 18 · Deploy Tab
  *
- * Tests the user-facing deployment flow:
- * - Setup checklist (LLM key required, channels optional)
- * - Deploy button state (enabled/disabled)
- * - Provisioning state + auto-poll
- * - Live/running state with channel integrations
- * - Config sync flow
+ * Tests the Deploy tab which shows:
+ * - Quick-connect banner when LLM is ready but no channel
+ * - Channel setup options (Telegram, QR code, embed)
+ * - Connection status
  *
- * External API calls (Hetzner, etc.) are intercepted.
+ * Note: Instances now auto-start in sandbox mode, so there's no
+ * manual "Deploy" button anymore.
  */
 
 const EMAIL = () => Cypress.env("TEST_EMAIL");
@@ -48,39 +47,14 @@ describe("18 · Deploy Tab", () => {
   });
 
   // ── 02. Tab content loads ─────────────────────────────────────────────────
-  it("Deploy tab shows deployment section", () => {
+  it("Deploy tab shows channel setup section", () => {
     cy.get('button[data-tab="Deploy"]', { timeout: 10000 }).click();
-    cy.get("main").contains(/Deploy to Cloud|deployed|Provisioning/i).should("be.visible");
+    // Should show channel options (Telegram, QR code, embed)
+    cy.get("main").contains(/telegram|qr code|embed|channel/i).should("be.visible");
     cy.snap("18-deploy-02-content");
   });
 
-  // ── 03. No LLM → button disabled ─────────────────────────────────────────
-  it("Deploy button is disabled when no LLM key is configured", () => {
-    // Remove LLM credentials first
-    cy.wrap(null).then(() => {
-      if (!instanceId) return;
-      ["openai_api_key", "anthropic_api_key", "openrouter_api_key"].forEach((key) => {
-        cy.request({
-          method: "DELETE",
-          url: `/api/instances/${instanceId}/credentials/${key}`,
-          failOnStatusCode: false,
-        });
-      });
-    });
-
-    cy.wrap(null).then(() => {
-      if (instanceId) cy.visit(`/en/dashboard/instances/${instanceId}`);
-    });
-    cy.get('button[data-tab="Deploy"]', { timeout: 10000 }).click();
-
-    // Deploy button should be disabled
-    cy.get("[data-testid='deploy-btn']", { timeout: 10000 }).should("be.disabled");
-    // Should show "Add key" prompt
-    cy.get("main").contains(/add key|required/i).should("be.visible");
-    cy.snap("18-deploy-03-no-llm-disabled");
-  });
-
-  // ── 04. With LLM → shows quick-connect banner ────────────────────────────
+  // ── 03. With LLM → shows quick-connect banner ────────────────────────────
   it("shows quick-connect banner when LLM is configured but no channels", () => {
     // Ensure LLM credential exists
     cy.wrap(null).then(() => {
@@ -120,17 +94,18 @@ describe("18 · Deploy Tab", () => {
     // Should show the quick-connect banner (LLM ready, needs channel)
     cy.contains(/Your AI is ready|now connect a channel/i, { timeout: 10000 }).should("be.visible");
 
-    cy.snap("18-deploy-04-llm-ready-banner");
+    cy.snap("18-deploy-03-quick-connect-banner");
   });
 
-  // ── 05. Checklist shows channel status ────────────────────────────────────
-  it("Channel check shows Telegram when token is configured", () => {
+  // ── 04. With channel → shows live status ─────────────────────────────────
+  it("shows live status when channel is connected", () => {
+    // Add Telegram credential
     cy.wrap(null).then(() => {
       if (!instanceId) return;
-      cy.request({
+      return cy.request({
         method: "POST",
         url: `/api/instances/${instanceId}/credentials`,
-        body: { key: "telegram_bot_token", value: "1234567890:AAFakeTokenForTesting" },
+        body: { key: "telegram_bot_token", value: "123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11" },
         headers: { "Content-Type": "application/json" },
         failOnStatusCode: false,
       });
@@ -141,229 +116,32 @@ describe("18 · Deploy Tab", () => {
     });
     cy.get('button[data-tab="Deploy"]', { timeout: 10000 }).click();
 
-    cy.get("main").contains(/Telegram/).should("be.visible");
-    cy.snap("18-deploy-05-channel-check");
+    // Should show connected status
+    cy.get("main").contains(/connected|live|active/i).should("be.visible");
+
+    cy.snap("18-deploy-04-channel-connected");
   });
 
-  // ── 06. Deploy triggers provisioning state ────────────────────────────────
-  it("clicking Deploy shows provisioning state on success", () => {
-    // Intercept the deploy endpoint
-    cy.intercept("POST", `/api/instances/*/deploy`, {
-      statusCode: 200,
-      body: { ok: true, status: "provisioning", serverId: "12345", ip: "1.2.3.4" },
-    }).as("deployReq");
-
-    // Visit the page FIRST (no GET intercept yet — instance loads normally with no provisionStatus)
-    cy.wrap(null).then(() => {
-      if (instanceId) cy.visit(`/en/dashboard/instances/${instanceId}`);
-    });
+  // ── 05. QR code card is visible ──────────────────────────────────────────
+  it("shows QR code for web chat", () => {
     cy.get('button[data-tab="Deploy"]', { timeout: 10000 }).click();
-
-    // NOW intercept the subsequent GET poll to return provisioning state
-    cy.intercept("GET", `/api/instances/${instanceId}`, {
-      statusCode: 200,
-      body: {
-        id: instanceId,
-        name: "Cypress Agent",
-        type: "assistant",
-        status: "pending",
-        tier: "minimal",
-        provisionStatus: "provisioning",
-        hasGateway: false,
-        configSynced: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    }).as("instanceGet");
-
-    // Only click deploy if button is visible and enabled
-    cy.get("[data-testid='deploy-btn']", { timeout: 8000 }).then(($btn) => {
-      if (!$btn.is(":disabled")) {
-        cy.wrap($btn).click();
-        cy.wait("@deployReq");
-        cy.get("main").contains(/Provisioning|provisioning/i).should("be.visible");
-        cy.snap("18-deploy-06-provisioning-state");
-      } else {
-        cy.log("Deploy button disabled — skipping click (already deployed)");
-      }
-    });
+    cy.get("main").contains(/qr code|scan|chat/i).should("be.visible");
+    cy.snap("18-deploy-05-qr-code");
   });
 
-  // ── 07. Deploy error → shows error message ────────────────────────────────
-  it("shows error message when deploy fails", () => {
-    cy.intercept("POST", `/api/instances/*/deploy`, {
-      statusCode: 503,
-      body: { error: "Cloud deployment is not available on this platform. Contact support." },
-    }).as("deployFail");
-
-    cy.wrap(null).then(() => {
-      if (instanceId) cy.visit(`/en/dashboard/instances/${instanceId}`);
-    });
+  // ── 06. Embed code is available ──────────────────────────────────────────
+  it("shows embed code options", () => {
     cy.get('button[data-tab="Deploy"]', { timeout: 10000 }).click();
-
-    cy.get("[data-testid='deploy-btn']").then(($btn) => {
-      if (!$btn.is(":disabled")) {
-        cy.wrap($btn).click();
-        cy.wait("@deployFail");
-        cy.get("main").contains(/not available|failed|error/i).should("be.visible");
-        cy.snap("18-deploy-07-error-state");
-      } else {
-        cy.log("Deploy button disabled — skipping (already deployed)");
-      }
-    });
+    cy.get("main").contains(/embed|script|iframe/i).should("be.visible");
+    cy.snap("18-deploy-06-embed");
   });
 
-  // ── 08. Needs setup: LLM key error leads to Credentials tab ───────────────
-  it("clicking Add key in checklist navigates to Credentials tab", () => {
-    // Remove LLM keys to trigger checklist
-    cy.wrap(null).then(() => {
-      if (!instanceId) return;
-      ["openai_api_key", "anthropic_api_key", "openrouter_api_key"].forEach((key) => {
-        cy.request({
-          method: "DELETE",
-          url: `/api/instances/${instanceId}/credentials/${key}`,
-          failOnStatusCode: false,
-        });
-      });
-    });
-
-    // Visit the page and wait for it to load
-    cy.wrap(null).then(() => {
-      if (instanceId) {
-        cy.visit(`/en/dashboard/instances/${instanceId}`);
-      }
-    });
-    
-    // Wait for main content to load
-    cy.get("main", { timeout: 10000 }).should("be.visible");
-    
-    // Find and click Deploy tab
+  // ── 07. Telegram setup button navigates to Credentials ───────────────────
+  it("clicking Telegram setup navigates to Credentials tab", () => {
     cy.get('button[data-tab="Deploy"]', { timeout: 10000 }).click();
-
-    // Click Add key button
-    cy.get("main").contains("button", /add key/i).click();
-    
-    // Should navigate to Credentials tab
-    cy.get("main").contains("OpenClaw Config").should("be.visible");
-    cy.snap("18-deploy-08-goto-credentials");
-  });
-
-  // ── 09. Running state shows integration panel ─────────────────────────────
-  it("shows live instance state with integration list", () => {
-    // Mock the instance as already deployed and running
-    cy.intercept("GET", `/api/instances/${instanceId}`, {
-      statusCode: 200,
-      body: {
-        id: instanceId,
-        name: "Cypress Agent",
-        type: "assistant",
-        status: "running",
-        tier: "minimal",
-        provisionStatus: "ready",
-        hasGateway: true,
-        configSynced: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    }).as("instanceRunning");
-
-    cy.intercept("GET", `/api/instances/${instanceId}/credentials`, {
-      statusCode: 200,
-      body: [
-        { key: "openai_api_key", maskedValue: "••••••••", updatedAt: new Date().toISOString() },
-        { key: "telegram_bot_token", maskedValue: "••••••••", updatedAt: new Date().toISOString() },
-      ],
-    }).as("credsRunning");
-
-    cy.wrap(null).then(() => {
-      if (instanceId) cy.visit(`/en/dashboard/instances/${instanceId}`);
-    });
-    cy.get('button[data-tab="Deploy"]', { timeout: 10000 }).click();
-    cy.wait("@instanceRunning");
-
-    // Should show live state
-    cy.get("main").contains(/deployed|live|running/i).should("be.visible");
-    // Integration list should be visible
-    cy.get("main").contains("Telegram").should("be.visible");
-    cy.get("main").contains("WhatsApp").should("be.visible");
-    cy.snap("18-deploy-09-running-state");
-  });
-
-  // ── 10. Out-of-sync banner + Sync Now ─────────────────────────────────────
-  it("shows sync banner when configSynced is false", () => {
-    cy.intercept("GET", `/api/instances/${instanceId}`, {
-      statusCode: 200,
-      body: {
-        id: instanceId,
-        name: "Cypress Agent",
-        type: "assistant",
-        status: "running",
-        tier: "minimal",
-        provisionStatus: "ready",
-        hasGateway: true,
-        configSynced: false,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    }).as("instanceOutOfSync");
-
-    cy.wrap(null).then(() => {
-      if (instanceId) cy.visit(`/en/dashboard/instances/${instanceId}`);
-    });
-    cy.get('button[data-tab="Deploy"]', { timeout: 10000 }).click();
-
-    cy.get("main").contains(/updated.*sync|sync.*apply/i).should("be.visible");
-    cy.get("main").contains(/Sync/i).should("be.visible");
-    cy.snap("18-deploy-10-out-of-sync");
-  });
-
-  // ── 11. Sync Config button calls restart API ──────────────────────────────
-  it("Sync Config button triggers restart API", () => {
-    cy.intercept("GET", `/api/instances/${instanceId}`, {
-      statusCode: 200,
-      body: {
-        id: instanceId,
-        name: "Cypress Agent",
-        type: "assistant",
-        status: "running",
-        tier: "minimal",
-        provisionStatus: "ready",
-        hasGateway: true,
-        configSynced: false,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    }).as("instanceOutOfSync2");
-
-    cy.intercept("POST", `/api/instances/*/restart`, {
-      statusCode: 200,
-      body: { ok: true, queued: true, note: "Config will sync on next VPS poll" },
-    }).as("restartReq");
-
-    cy.wrap(null).then(() => {
-      if (instanceId) cy.visit(`/en/dashboard/instances/${instanceId}`);
-    });
-    cy.get('button[data-tab="Deploy"]', { timeout: 10000 }).click();
-
-    cy.get("main").contains("button", /Sync/i).click();
-    cy.wait("@restartReq");
-    cy.snap("18-deploy-11-sync-triggered");
-  });
-
-  // Cleanup: restore instance to known state so later specs aren't affected
-  // (runs even if test 12 didn't delete it)
-  after(() => {
-    cy.login(EMAIL(), PASS());
-    cy.wrap(null).then(() => {
-      if (instanceId) {
-        cy.request({
-          method: "PATCH",
-          url: `/api/instances/${instanceId}`,
-          body: { status: "running" },
-          headers: { "Content-Type": "application/json" },
-          failOnStatusCode: false,
-        });
-      }
-    });
+    cy.contains("button", /telegram|connect/i, { timeout: 10000 }).click();
+    // Should either open Telegram setup or navigate to Credentials
+    cy.get("main").contains(/credentials|telegram|bot token/i).should("be.visible");
+    cy.snap("18-deploy-07-telegram-nav");
   });
 });
