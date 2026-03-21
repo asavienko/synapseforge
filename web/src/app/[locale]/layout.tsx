@@ -9,6 +9,7 @@ import { routing } from "@/i18n/routing";
 import { Suspense } from "react";
 import { PostHogProvider } from "@/components/PostHogProvider";
 import { PostHogPageView } from "@/components/PostHogPageView";
+import { AnalyticsProvider } from "@/components/AnalyticsProvider";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -87,10 +88,12 @@ export default async function LocaleLayout({
       <body className={`${inter.className} antialiased`}>
         <PostHogProvider>
           <NextIntlClientProvider messages={messages}>
-            <Suspense fallback={null}>
-              <PostHogPageView />
-            </Suspense>
-            {children}
+            <AnalyticsProvider>
+              <Suspense fallback={null}>
+                <PostHogPageView />
+              </Suspense>
+              {children}
+            </AnalyticsProvider>
           </NextIntlClientProvider>
         </PostHogProvider>
         <Analytics />
