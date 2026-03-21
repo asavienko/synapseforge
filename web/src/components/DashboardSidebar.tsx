@@ -190,6 +190,20 @@ function SidebarContent({ userName, userEmail, unreadCount, isAdmin, isManager, 
           <LogoutIcon className="w-3.5 h-3.5" />
           {t("signOut")}
         </button>
+
+        {/* Command Palette Hint */}
+        <button
+          onClick={() => {
+            // Dispatch custom event to open command palette
+            window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true }));
+          }}
+          className="mt-2 flex items-center justify-between text-xs text-zinc-600 hover:text-zinc-400 transition-colors py-2 px-3 rounded-lg hover:bg-white/5 w-full border border-white/5 border-dashed"
+        >
+          <span>Command Palette</span>
+          <kbd className="flex items-center gap-0.5 px-1.5 py-0.5 bg-white/5 rounded text-[10px]">
+            <span>⌘</span><span>K</span>
+          </kbd>
+        </button>
       </div>
     </div>
   );
