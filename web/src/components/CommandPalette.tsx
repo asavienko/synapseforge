@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Search, Command, Bot, Settings, Users, CreditCard, Gift, MessageSquare, FileText, Sparkles, Zap } from "lucide-react";
+import { Search, Command, Bot, Settings, CreditCard, Gift, MessageSquare, FileText, Sparkles, Zap } from "lucide-react";
+import { useAnalytics } from "@/components/AnalyticsProvider";
 
 interface CommandItem {
   id: string;
@@ -18,6 +19,7 @@ export function CommandPalette() {
   const [search, setSearch] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const router = useRouter();
+  const { track } = useAnalytics();
 
   const commands: CommandItem[] = [
     {
@@ -109,6 +111,7 @@ export function CommandPalette() {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
         setIsOpen(true);
+        track("command_palette_opened", { source: "keyboard_shortcut" });
       }
 
       // Escape to close
@@ -131,13 +134,15 @@ export function CommandPalette() {
       // Enter to select
       if (e.key === "Enter" && filteredCommands[selectedIndex]) {
         e.preventDefault();
-        filteredCommands[selectedIndex].action();
+        const cmd = filteredCommands[selectedIndex];
+        track("command_palette_selected", { command: cmd.id, label: cmd.label });
+        cmd.action();
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, filteredCommands, selectedIndex]);
+  }, [isOpen, filteredCommands, selectedIndex, track]);
 
   // Prevent body scroll when open
   useEffect(() => {
@@ -191,7 +196,10 @@ export function CommandPalette() {
                 {filteredCommands.map((cmd, index) => (
                   <button
                     key={cmd.id}
-                    onClick={cmd.action}
+                    onClick={() => {
+                      track("command_palette_selected", { command: cmd.id, label: cmd.label, source: "click" });
+                      cmd.action();
+                    }}
                     onMouseEnter={() => setSelectedIndex(index)}
                     className={`w-full flex items-center justify-between gap-3 px-3 py-3 rounded-xl text-left transition-colors ${
                       index === selectedIndex
