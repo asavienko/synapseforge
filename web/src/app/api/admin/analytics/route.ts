@@ -2,140 +2,117 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-function isAdmin(email: string) {
-  const adminEmails = (process.env.ADMIN_EMAILS ?? "").split(",").map((e) => e.trim()).filter(Boolean);
-  return adminEmails.includes(email);
-}
-
+/**
+ * GET /api/admin/analytics
+ *
+ * Admin endpoint returning comprehensive platform analytics.
+ * Protected by admin authentication.
+ */
 export async function GET() {
   const session = await auth();
-  if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  if (!isAdmin(session.user.email)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-
-  const now = new Date();
-  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-
-  const [users, instances, managers] = await Promise.all([
-    prisma.user.findMany({
-      select: {
-        id: true,
-        email: true,
-        plan: true,
-        createdAt: true,
-        managerId: true,
-        onboardingDone: true,
-        emailVerified: true,
-        instances: {
-          select: {
-            id: true,
-            sandboxMode: true,
-            sandboxUsed: true,
-            credentials: { select: { key: true } },
-            telegramBotUsername: true,
-          },
-        },
-      },
-      orderBy: { createdAt: "desc" },
-    }),
-    prisma.aIInstance.findMany({
-      select: {
-        id: true,
-        name: true,
-        status: true,
-        healthStatus: true,
-        vpsUrl: true,
-        provisionStatus: true,
-        user: { select: { email: true } },
-      },
-    }),
-    prisma.manager.findMany({
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        users: { select: { id: true } },
-      },
-    }),
-  ]);
-
-  // Plan counts
-  const planCounts = { free: 0, pro: 0, enterprise: 0 };
-  for (const u of users) {
-    if (u.plan === "pro") planCounts.pro++;
-    else if (u.plan === "enterprise") planCounts.enterprise++;
-    else planCounts.free++;
+  
+  // Check if user is admin
+  const adminEmails = (process.env.ADMIN_EMAILS ?? "").split(",").map((e) => e.trim()).filter(Boolean);
+  const isAdmin = adminEmails.includes(session?.user?.email ?? "");
+  
+  if (!isAdmin) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const mrr = planCounts.pro * 49 + planCounts.enterprise * 299;
 
-  // Users this week
-  const newThisWeek = users.filter((u) => new Date(u.createdAt) >= sevenDaysAgo).length;
+  try {
+    // Get date ranges
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-  // Instance stats
-  const activeInstances = instances.filter((i) => i.status === "running").length;
-  const provisionedVps = instances.filter((i) => !!i.vpsUrl).length;
+    // Parallel queries for performance
+    const [
+      totalUsers,
+      newUsersToday,
+      newUsersThisMonth,
+      totalInstances,
+      activeInstances,
+      instancesByStatus,
+      totalMessages,
+      messagesToday,
+      messagesThisMonth,
+      usersByPlan,
+    ] = await Promise.all([
+      // User stats
+      prisma.user.count(),
+      prisma.user.count({ where: { createdAt: { gte: today } } }),
+      prisma.user.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
+      
+      // Instance stats
+      prisma.aIInstance.count(),
+      prisma.aIInstance.count({ where: { status: "running" } }),
+      prisma.aIInstance.groupBy({
+        by: ["status"],
+        _count: { status: true },
+      }),
+      
+      // Message stats
+      prisma.activityLog.count({ where: { event: "message" } }),
+      prisma.activityLog.count({
+        where: { event: "message", createdAt: { gte: today } },
+      }),
+      prisma.activityLog.count({
+        where: { event: "message", createdAt: { gte: thirtyDaysAgo } },
+      }),
+      
+      // Users by plan
+      prisma.user.groupBy({
+        by: ["plan"],
+        _count: { plan: true },
+      }),
+    ]);
 
-  // Health breakdown
-  const healthBreakdown = {
-    healthy: instances.filter((i) => i.healthStatus === "healthy").length,
-    degraded: instances.filter((i) => i.healthStatus === "degraded").length,
-    down: instances.filter((i) => i.healthStatus === "down").length,
-    notDeployed: instances.filter((i) => !i.vpsUrl).length,
-  };
+    // Get daily signup data for the last 30 days
+    const dailySignups = await prisma.user.groupBy({
+      by: ["createdAt"],
+      where: { createdAt: { gte: thirtyDaysAgo } },
+      _count: { id: true },
+    });
 
-  const downInstances = instances
-    .filter((i) => i.healthStatus === "down")
-    .map((i) => ({ id: i.id, name: i.name, userEmail: i.user.email }));
+    // Format daily data
+    const signupsByDay = dailySignups.map((day) => ({
+      date: day.createdAt.toISOString().split("T")[0],
+      count: day._count.id,
+    }));
 
-  // User growth: group signups by day for last 30 days
-  const signupsByDay: Record<string, number> = {};
-  for (let d = 0; d < 30; d++) {
-    const date = new Date(now.getTime() - d * 24 * 60 * 60 * 1000);
-    const key = date.toISOString().slice(0, 10);
-    signupsByDay[key] = 0;
+    return NextResponse.json({
+      users: {
+        total: totalUsers,
+        newToday: newUsersToday,
+        newThisMonth: newUsersThisMonth,
+        byPlan: usersByPlan.map((p) => ({
+          plan: p.plan || "free",
+          count: p._count.plan,
+        })),
+      },
+      instances: {
+        total: totalInstances,
+        active: activeInstances,
+        byStatus: instancesByStatus.reduce((acc, curr) => {
+          acc[curr.status] = curr._count.status;
+          return acc;
+        }, {} as Record<string, number>),
+      },
+      messages: {
+        total: totalMessages,
+        today: messagesToday,
+        thisMonth: messagesThisMonth,
+      },
+      trends: {
+        signupsByDay,
+      },
+      generatedAt: now.toISOString(),
+    });
+  } catch (err) {
+    console.error("[admin/analytics] Error:", err);
+    return NextResponse.json(
+      { error: "Failed to fetch analytics" },
+      { status: 500 }
+    );
   }
-  for (const u of users) {
-    const key = new Date(u.createdAt).toISOString().slice(0, 10);
-    if (key in signupsByDay) signupsByDay[key]++;
-  }
-  // Sort ascending
-  const userGrowth = Object.entries(signupsByDay)
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([date, count]) => ({ date, count }));
-
-  // Manager efficiency
-  const managerEfficiency = managers.map((m) => ({
-    id: m.id,
-    name: m.name,
-    email: m.email,
-    userCount: m.users.length,
-  }));
-
-  const unassignedUsers = users.filter((u) => !u.managerId).length;
-
-  // Activation funnel
-  const funnelSteps = {
-    signedUp: users.length,
-    emailVerified: users.filter((u) => !!u.emailVerified).length,
-    onboardingDone: users.filter((u) => u.onboardingDone).length,
-    triedSandbox: users.filter((u) => u.instances.some((i) => (i.sandboxUsed ?? 0) > 0)).length,
-    sandboxExhausted: users.filter((u) => u.instances.some((i) => (i.sandboxUsed ?? 0) >= 20)).length,
-    addedApiKey: users.filter((u) => u.instances.some((i) => !i.sandboxMode)).length,
-    connectedTelegram: users.filter((u) => u.instances.some((i) => !!i.telegramBotUsername)).length,
-  };
-
-  return NextResponse.json({
-    planCounts,
-    mrr,
-    totalUsers: users.length,
-    newThisWeek,
-    activeInstances,
-    provisionedVps,
-    healthBreakdown,
-    downInstances,
-    userGrowth,
-    managerEfficiency,
-    unassignedUsers,
-    funnel: funnelSteps,
-  });
 }
