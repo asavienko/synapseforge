@@ -134,7 +134,7 @@ describe("22 · Rate Limiting — Auth endpoints", () => {
     cy.request({
       method: "POST",
       url: "/api/auth/forgot-password",
-      body: { emailAddress: "nonexistent@example.com" },
+      body: { email: "nonexistent@example.com" },
       failOnStatusCode: false,
     }).then((res) => {
       // Always 200 to not reveal whether email exists

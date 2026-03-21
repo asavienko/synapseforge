@@ -169,8 +169,8 @@ describe("27 · Managed Instance Journey — happy path", () => {
     cy.snap("27-journey-02-credential-added");
   });
 
-  // ── 03. Deploy tab shows checklist complete ───────────────────────────────
-  it("03 Deploy tab shows checklist complete", () => {
+  // ── 03. Deploy tab shows channel setup ────────────────────────────────────
+  it("03 Deploy tab shows channel setup options", () => {
     cy.login(EMAIL(), PASS());
 
     cy.wrap(null).then(() => {
@@ -178,55 +178,18 @@ describe("27 · Managed Instance Journey — happy path", () => {
     });
     cy.contains("button", "Deploy").click();
 
-    // LLM key row should show a checkmark — verify deploy button is enabled (means check passed)
-    cy.get("[data-testid='deploy-btn']", { timeout: 10000 }).should("not.be.disabled");
-    // Also verify the checkmark is visible in the checklist
-    cy.get("main").find("div.rounded-full").contains("✓").should("exist");
+    // Should show channel setup options (Telegram, QR code, embed)
+    cy.contains(/telegram|qr code|embed/i).should("be.visible");
 
-    cy.snap("27-journey-03-checklist-complete");
+    cy.snap("27-journey-03-deploy-tab");
   });
 
-  // ── 04. Clicking Deploy triggers provisioning state ───────────────────────
-  it("04 clicking Deploy triggers provisioning state", () => {
-    cy.login(EMAIL(), PASS());
-
-    cy.intercept("POST", `/api/instances/*/deploy`, {
-      statusCode: 200,
-      body: { ok: true, status: "provisioning", serverId: "99999", ip: "10.0.0.1" },
-    }).as("deployReq");
-
-    cy.wrap(null).then(() => {
-      cy.visit(`/en/dashboard/instances/${journeyInstanceId}`);
-    });
-    cy.contains("button", "Deploy").click();
-
-    // Intercept subsequent GET polls to return provisioning state
-    cy.intercept("GET", `/api/instances/${journeyInstanceId}`, {
-      statusCode: 200,
-      body: {
-        id: journeyInstanceId,
-        name: "Journey Agent",
-        type: "assistant",
-        status: "pending",
-        tier: "minimal",
-        provisionStatus: "provisioning",
-        hasGateway: false,
-        configSynced: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    }).as("instanceProvisioning");
-
-    cy.get("[data-testid='deploy-btn']", { timeout: 8000 }).then(($btn) => {
-      if (!$btn.is(":disabled")) {
-        cy.wrap($btn).click();
-        cy.wait("@deployReq");
-      } else {
-        cy.log("Deploy button already disabled — instance may already be provisioning");
-      }
-    });
-
-    cy.snap("27-journey-04-deploy-clicked");
+  // ── 04. Provisioning happens automatically (no deploy button needed) ───────
+  it.skip("04 provisioning is automatic", () => {
+    // SKIPPED: Provisioning now happens automatically on instance creation.
+    // The old manual "Deploy" button flow has been removed.
+    // Instances start with status "running" and sandboxMode = true.
+    cy.log("Provisioning is now automatic — no manual deploy step needed");
   });
 
   // ── 05. Provisioning banner is visible ────────────────────────────────────
