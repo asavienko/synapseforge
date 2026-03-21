@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Zap, X } from "lucide-react";
+import { Zap, X, Loader2, Server } from "lucide-react";
 import { Instance, CredentialRow } from "../types";
 
 interface SetupChecklistCardProps {
@@ -23,6 +23,8 @@ export function SetupChecklistCard({ instance, credentials, onGoToCredentials, i
   const llmReady = hasLLMKey || (instance.sandboxMode === true);
 
   const allGreen = llmReady && hasChannel;
+  const isProvisioning = instance.provisionStatus === "provisioning";
+  const isProvisioned = instance.hasGateway || instance.provisionStatus === "ready";
 
   function dismiss() {
     localStorage.setItem(`sf_checklist_dismissed_${instanceId}`, "1");
@@ -30,6 +32,63 @@ export function SetupChecklistCard({ instance, credentials, onGoToCredentials, i
   }
 
   if (dismissed) return null;
+
+  // Show provisioning state
+  if (isProvisioning) {
+    return (
+      <div className="rounded-2xl bg-violet-500/10 border border-violet-500/20 p-4 mb-4 flex items-center gap-3">
+        <div className="w-8 h-8 rounded-full bg-violet-500/20 flex items-center justify-center shrink-0">
+          <Loader2 className="w-4 h-4 text-violet-400 animate-spin" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-violet-300">Provisioning your AI server...</p>
+          <p className="text-xs text-violet-400/70 mt-0.5">This takes 2-3 minutes. You&apos;ll get a notification when it&apos;s ready.</p>
+        </div>
+        <button onClick={dismiss} className="text-violet-600 hover:text-violet-400 transition-colors shrink-0">
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+    );
+  }
+
+  // Show provisioned but not configured state
+  if (isProvisioned && !allGreen) {
+    return (
+      <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden mb-4">
+        <div className="p-4 border-b border-white/5 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Server className="w-4 h-4 text-emerald-400" />
+            <h3 className="text-sm font-semibold text-white">Server ready!</h3>
+            <span className="text-xs text-emerald-400">VPS provisioned</span>
+          </div>
+          <button onClick={dismiss} title="Dismiss" className="text-zinc-600 hover:text-zinc-400 transition-colors">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+        <div className="p-4">
+          <p className="text-sm text-zinc-400 mb-3">Your AI server is running. Complete setup to start chatting:</p>
+          <div className="flex gap-3">
+            {!llmReady && (
+              <button
+                onClick={onGoToCredentials}
+                className="flex-1 text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 px-3 py-2 rounded-lg transition-colors"
+              >
+                Add API key →
+              </button>
+            )}
+            {!hasChannel && (
+              <button
+                onClick={onGoToCredentials}
+                className="flex-1 text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 px-3 py-2 rounded-lg transition-colors"
+              >
+                Connect channel →
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (allGreen) {
     return (
