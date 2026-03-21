@@ -13,7 +13,7 @@ import {
   LoadingIcon,
 } from "@/components/icons/BrandIcons";
 import { STATUS_COLORS, INSTANCE_TYPES, formatRelativeTime } from "@/lib/utils";
-import { getTemplateById, type AgentTemplate } from "@/lib/templates";
+import { getTemplateById, type AgentTemplate, agentTemplates } from "@/lib/templates";
 import { useTranslations } from "next-intl";
 import { InstanceSetupWizard } from "@/components/InstanceSetupWizard";
 
@@ -242,17 +242,59 @@ export default function InstancesPage() {
           <LoadingIcon className="w-6 h-6 text-zinc-500 animate-spin" />
         </div>
       ) : instances.length === 0 ? (
-        <div className="glow-border rounded-2xl p-16 bg-white/[0.02] text-center">
-          <BotIcon className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-white mb-2">{t("emptyTitle")}</h3>
-          <p className="text-zinc-400 text-sm mb-6">{t("emptyDesc")}</p>
-          <button
-            onClick={() => setShowWizard(true)}
-            className="inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-6 py-3 rounded-lg text-sm font-semibold text-white"
-          >
-            <PlusIcon className="w-4 h-4" />
-            {t("createInstance")}
-          </button>
+        <div className="space-y-8">
+          {/* Empty state with quick start */}
+          <div className="glow-border rounded-2xl p-12 bg-white/[0.02] text-center">
+            <BotIcon className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-white mb-2">{t("emptyTitle")}</h3>
+            <p className="text-zinc-400 text-sm mb-6 max-w-md mx-auto">{t("emptyDesc")}</p>
+            <div className="flex items-center justify-center gap-3">
+              <button
+                onClick={() => setShowWizard(true)}
+                className="inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-6 py-3 rounded-lg text-sm font-semibold text-white"
+              >
+                <PlusIcon className="w-4 h-4" />
+                {t("createInstance")}
+              </button>
+              <Link
+                href="/templates"
+                className="inline-flex items-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] transition-colors px-6 py-3 rounded-lg text-sm font-semibold text-zinc-300"
+              >
+                <SparklesIcon className="w-4 h-4" />
+                Browse Templates
+              </Link>
+            </div>
+          </div>
+
+          {/* Featured templates */}
+          <div>
+            <h4 className="text-sm font-medium text-zinc-500 mb-4 uppercase tracking-wider">Quick Start Templates</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {agentTemplates
+                .filter((t) => t.featured || t.popular)
+                .slice(0, 3)
+                .map((template) => (
+                  <button
+                    key={template.id}
+                    onClick={() => {
+                      setSelectedTemplate(template);
+                      setShowWizard(true);
+                    }}
+                    className="glow-border rounded-2xl p-5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors text-left"
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-violet-600/20 border border-violet-500/20 flex items-center justify-center text-xl">
+                        {template.icon}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h5 className="font-semibold text-white mb-1">{template.name}</h5>
+                        <p className="text-xs text-zinc-500 line-clamp-2">{template.shortDescription}</p>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+            </div>
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
