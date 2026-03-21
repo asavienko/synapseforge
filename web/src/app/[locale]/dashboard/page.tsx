@@ -24,6 +24,11 @@ import { DashboardRefresher } from "@/components/DashboardRefresher";
 import { getTranslations } from "next-intl/server";
 import { captureServerEvent } from "@/lib/posthog-server";
 import { OnboardingToast } from "@/components/OnboardingToast";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+};
 
 export default async function DashboardPage() {
   const session = await auth();

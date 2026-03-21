@@ -2,6 +2,13 @@ import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 import { Zap, ArrowLeft, Mail, Clock, MessageSquare } from "lucide-react";
 import { ContactFormClient } from "./ContactFormClient";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Contact Us | OpenHelix AI",
+  description:
+    "Get in touch with the OpenHelix AI team. We're here to help with questions, support, or enterprise inquiries.",
+};
 
 export default async function ContactPage() {
   const t = await getTranslations();

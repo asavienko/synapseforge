@@ -1,6 +1,13 @@
 import { Link } from "@/i18n/navigation";
 import { Zap, Check, Sparkles } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Pricing | OpenHelix AI",
+  description:
+    "Start free with 2,000 messages. Upgrade to Starter ($29/mo) or Growth ($79/mo) for more messages and instances. Enterprise plans with dedicated managers available.",
+};
 
 export default async function PricingPage() {
   const t = await getTranslations();
