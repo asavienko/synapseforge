@@ -3,6 +3,7 @@ import { LocaleSwitcher } from "@/components/LocaleSwitcher";
 import { MobileNav } from "@/components/MobileNav";
 import { LandingDemoChat } from "@/components/LandingDemoChat";
 import { DemoChat } from "@/components/DemoChat";
+import { LiveStats } from "@/components/LiveStats";
 import { getFeaturedTemplates, categoryColors } from "@/lib/templates";
 import {
   HelixLogo,
@@ -161,6 +162,11 @@ export default async function LandingPage() {
               {ch}
             </span>
           ))}
+        </div>
+
+        {/* Live Stats */}
+        <div className="mt-12">
+          <LiveStats />
         </div>
       </section>
 
