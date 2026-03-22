@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
   ArrowUpRight,
@@ -160,6 +160,14 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
   const tb = useTranslations("dashboard.billing");
   const tp = useTranslations("pricing");
   const { track } = useAnalytics();
+  const router = useRouter();
+
+  // Redirect to dedicated success page on upgrade
+  useEffect(() => {
+    if (success) {
+      router.push(`/dashboard/billing/success?plan=${plan}`);
+    }
+  }, [success, plan, router]);
 
   // Track successful checkout
   useEffect(() => {
