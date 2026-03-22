@@ -123,6 +123,12 @@ export default function AdminAnalyticsPage() {
           icon={Users}
         />
         <StatCard
+          title="Paid Users"
+          value={formatNumber(data.users.byPlan.filter((p) => p.plan !== 'free').reduce((acc, p) => acc + p.count, 0))}
+          subtitle={`${Math.round((data.users.byPlan.filter((p) => p.plan !== 'free').reduce((acc, p) => acc + p.count, 0) / data.users.total) * 100)}% of total`}
+          icon={DollarSign}
+        />
+        <StatCard
           title="AI Instances"
           value={formatNumber(data.instances.total)}
           subtitle={`${data.instances.active} active`}
@@ -133,12 +139,6 @@ export default function AdminAnalyticsPage() {
           value={formatNumber(data.messages.total)}
           subtitle={`+${formatNumber(data.messages.today)} today`}
           icon={MessageSquare}
-        />
-        <StatCard
-          title="New Users (30d)"
-          value={formatNumber(data.users.newThisMonth)}
-          subtitle="Last 30 days"
-          icon={TrendingUp}
         />
       </div>
 
