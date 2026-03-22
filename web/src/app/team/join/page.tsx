@@ -97,7 +97,7 @@ export default function JoinTeamPage() {
           <CheckCircle2 className="w-16 h-16 text-emerald-400 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-white mb-2">Welcome to the team! 🎉</h1>
           <p className="text-zinc-400 mb-6">
-            You've successfully joined {invite?.teamOwner}&apos;s team as a{" "}
+            You&apos;ve successfully joined {invite?.teamOwner}&apos;s team as a{" "}
             {invite?.role}.
           </p>
           <Link

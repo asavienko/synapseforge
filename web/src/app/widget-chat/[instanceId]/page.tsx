@@ -61,7 +61,7 @@ async function loadInstanceData(instanceId: string): Promise<{
     agentName: configData.agentName || instance.name,
     brandColor: whiteLabelConfig?.brandColor ?? "#7c3aed",
     logoUrl: whiteLabelConfig?.logoUrl ?? null,
-    welcomeMessage: configData.welcomeMessage || `Hi! I'm ${instance.name}. How can I help you today?`,
+    welcomeMessage: configData.welcomeMessage || "Hi! I\u0027m " + instance.name + ". How can I help you today?",
     hidePoweredBy: whiteLabelConfig?.hidePoweredBy ?? false,
   };
 
