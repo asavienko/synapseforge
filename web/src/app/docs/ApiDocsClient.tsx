@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Code, Copy, Check, Terminal, Webhook, Globe } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { ApiPlayground } from "@/components/ApiPlayground";
 
 interface ApiDocs {
   name: string;
@@ -118,6 +119,9 @@ export function ApiDocsClient() {
               <a href="#auth" className="block px-3 py-2 rounded-lg text-sm text-zinc-400 hover:text-white hover:bg-white/5 transition-colors">
                 Authentication
               </a>
+              <a href="#playground" className="block px-3 py-2 rounded-lg text-sm text-zinc-400 hover:text-white hover:bg-white/5 transition-colors">
+                Try It
+              </a>
               <a href="#endpoints" className="block px-3 py-2 rounded-lg text-sm text-zinc-400 hover:text-white hover:bg-white/5 transition-colors">
                 Endpoints
               </a>
@@ -156,6 +160,11 @@ export function ApiDocsClient() {
                   .
                 </p>
               </div>
+            </section>
+
+            {/* Playground */}
+            <section id="playground">
+              <ApiPlayground />
             </section>
 
             {/* Endpoints */}
