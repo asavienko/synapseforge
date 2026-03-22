@@ -650,6 +650,7 @@
       "overview": "Resumen",
       "configuration": "Configuración",
       "apiKeys": "Claves API",
+      "webhooks": "Webhooks",
       "activityLog": "Registro de actividad"
     },
     "start": "Iniciar",

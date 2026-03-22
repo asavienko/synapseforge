@@ -19,6 +19,7 @@ import { CredentialsTab } from "./tabs/CredentialsTab";
 import { DeployTab } from "./tabs/DeployTab";
 import { InfrastructureTab } from "./tabs/InfrastructureTab";
 import { ActivityLogTab } from "./tabs/ActivityLogTab";
+import { WebhookDeliveriesTab } from "./tabs/WebhookDeliveriesTab";
 import { ConversationInsights } from "@/components/ConversationInsights";
 
 // Lazy load heavy components
@@ -205,6 +206,7 @@ export default function InstanceDetailPage() {
                 "Deploy": t("deploy.tab"),
                 "Configuration": t("tabs.configuration"),
                 "API Keys": t("tabs.apiKeys"),
+                "Webhooks": t("tabs.webhooks"),
                 "Activity Log": t("tabs.activityLog"),
                 "Insights": t("insights.tab"),
                 "Infrastructure": t("infrastructure.tab"),
@@ -348,6 +350,8 @@ export default function InstanceDetailPage() {
         {tab === "Analytics" && <AnalyticsTab instanceId={id} />}
 
         {tab === "API Keys" && <ApiKeysManager instanceId={id} />}
+
+        {tab === "Webhooks" && <WebhookDeliveriesTab instanceId={id} />}
       </div>
 
       {/* Generic Confirm Modal */}

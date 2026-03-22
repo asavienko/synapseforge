@@ -657,6 +657,7 @@
       "overview": "Overview",
       "configuration": "Configuration",
       "apiKeys": "API Keys",
+      "webhooks": "Webhooks",
       "activityLog": "Activity Log"
     },
     "start": "Start",
