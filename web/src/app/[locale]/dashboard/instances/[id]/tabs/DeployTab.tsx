@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Copy, Check, Download } from "lucide-react";
+import { Copy, Check, Download, MessageSquare } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Instance, CredentialRow } from "../types";
 
@@ -438,6 +438,38 @@ function WidgetCustomizer({ instanceId, t }: { instanceId: string; t: (key: stri
             {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
             {copied ? "Copied!" : "Copy Code"}
           </button>
+        </div>
+
+        {/* Visual Preview */}
+        <div className="mt-4 p-4 bg-zinc-900/50 border border-white/5 rounded-xl">
+          <p className="text-xs text-zinc-500 mb-3">Visual Preview:</p>
+          <div className="relative h-48 bg-zinc-800/50 rounded-lg overflow-hidden">
+            {/* Mock website background */}
+            <div className="absolute inset-0 p-4">
+              <div className="w-2/3 h-4 bg-zinc-700/50 rounded mb-2" />
+              <div className="w-1/2 h-4 bg-zinc-700/50 rounded mb-4" />
+              <div className="w-full h-20 bg-zinc-700/30 rounded" />
+            </div>
+            {/* Widget preview */}
+            <div 
+              className={`absolute ${position === 'bottom-right' ? 'right-4' : 'left-4'} bottom-4`}
+            >
+              {/* Chat bubble */}
+              <div 
+                className="mb-2 p-3 rounded-lg shadow-lg max-w-[200px]"
+                style={{ backgroundColor: primaryColor }}
+              >
+                <p className="text-white text-xs">{greeting}</p>
+              </div>
+              {/* Widget button */}
+              <div 
+                className="w-12 h-12 rounded-full shadow-lg flex items-center justify-center"
+                style={{ backgroundColor: primaryColor }}
+              >
+                <MessageSquare className="w-5 h-5 text-white" />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
