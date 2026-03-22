@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, Loader2 } from "lucide-react";
+import { Activity, Loader2, Download } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { formatRelativeTime } from "@/lib/utils";
 import { LogRow } from "../types";
@@ -56,6 +56,32 @@ export function ActivityLogTab({
           </select>
           <span className="text-xs text-zinc-600">{t("activity.autoRefresh")}</span>
           <button onClick={loadLogs} className="text-xs text-zinc-500 hover:text-white transition-colors">{t("activity.refresh")}</button>
+          {filteredLogs.length > 0 && (
+            <button
+              onClick={() => {
+                const csv = [
+                  ["Timestamp", "Event", "Details"].join(","),
+                  ...filteredLogs.map((log) => [
+                    new Date(log.createdAt).toISOString(),
+                    log.event,
+                    `"${(log.details || "").replace(/"/g, '""')}"`,
+                  ].join(",")),
+                ].join("\n");
+                const blob = new Blob([csv], { type: "text/csv" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `activity-log-${new Date().toISOString().split("T")[0]}.csv`;
+                a.click();
+                URL.revokeObjectURL(url);
+              }}
+              className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-violet-400 transition-colors"
+              title="Export logs"
+            >
+              <Download className="w-3.5 h-3.5" />
+              Export
+            </button>
+          )}
         </div>
       </div>
 
