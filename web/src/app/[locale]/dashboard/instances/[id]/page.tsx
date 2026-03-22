@@ -10,6 +10,7 @@ import { STATUS_COLORS } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { useInstanceData } from "./hooks/useInstanceData";
 import { TABS } from "./types";
+import { useAnalytics } from "@/components/AnalyticsProvider";
 import { ProvisioningBanner } from "./components/ProvisioningBanner";
 import { OverviewTab } from "./tabs/OverviewTab";
 import { ChatTab } from "./tabs/ChatTab";
@@ -42,6 +43,13 @@ export default function InstanceDetailPage() {
     saveCredential, deleteCredential, requestSync, referralCode, referralLoading, pendingConfirm, setPendingConfirm,
     prevSandboxModeRef,
   } = data;
+
+  const { track } = useAnalytics();
+
+  // Track tab changes
+  useEffect(() => {
+    track("instance_tab_viewed", { instanceId: id, tab });
+  }, [tab, id, track]);
 
   const [recentLogs, setRecentLogs] = useState<Array<{ id: string; event: string; details?: string; createdAt: string }>>([]);
   const [showGraduationModal, setShowGraduationModal] = useState(false);
