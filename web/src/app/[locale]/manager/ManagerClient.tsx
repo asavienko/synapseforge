@@ -383,6 +383,35 @@ export function ManagerClient({ manager, clients: initialClients }: {
     setClients((prev) => prev.map((c) => c.id === client.id ? { ...c, unreadMessages: 0 } : c));
   }
 
+  // SSE for real-time message updates from client
+  useEffect(() => {
+    if (!activeClient) return;
+
+    const es = new EventSource(`/api/manager/messages/stream?userId=${activeClient.id}`);
+
+    es.addEventListener("message", (event) => {
+      const msg = JSON.parse(event.data) as Message;
+      setMessages((prev) => {
+        // Only add if not already in list (avoid duplicates)
+        if (prev.some((m) => m.id === msg.id)) return prev;
+        return [...prev, msg];
+      });
+      // Scroll to bottom on new message
+      setTimeout(() => {
+        const el = document.getElementById("manager-thread-scroll");
+        if (el) el.scrollTop = el.scrollHeight;
+      }, 50);
+    });
+
+    es.addEventListener("error", () => {
+      // SSE error — connection will retry automatically
+    });
+
+    return () => {
+      es.close();
+    };
+  }, [activeClient?.id]);
+
   async function sendReply() {
     if (!replyBody.trim() || !activeClient) return;
     setReplying(true);
@@ -678,7 +707,7 @@ export function ManagerClient({ manager, clients: initialClients }: {
               </div>
 
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-5 space-y-3">
+              <div id="manager-thread-scroll" className="flex-1 overflow-y-auto p-5 space-y-3">
                 {threadLoading && (
                   <div className="flex justify-center pt-8">
                     <Loader2 className="w-5 h-5 text-zinc-500 animate-spin" />
