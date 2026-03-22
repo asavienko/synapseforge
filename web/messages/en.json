@@ -1590,7 +1590,15 @@
     "role": "Owner, Lumina Wellness Studio · Valencia",
     "webWidget": "Web Widget"
   },
-  "whiteLabel": {
+  "insights": {
+    "tab": "Insights",
+    "title": "Conversation Insights",
+    "intentBreakdown": "Intent Breakdown",
+    "unanswered": "Unanswered Questions",
+    "quality": "Conversation Quality",
+    "recentUnanswered": "Recent Unanswered Questions",
+    "empty": "No conversation data yet. Start chatting to see insights."
+  },
     "title": "White Label",
     "subtitle": "Customize the branding for your clients",
     "brandName": "Brand Name",

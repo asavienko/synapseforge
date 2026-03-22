@@ -19,6 +19,7 @@ import { CredentialsTab } from "./tabs/CredentialsTab";
 import { DeployTab } from "./tabs/DeployTab";
 import { InfrastructureTab } from "./tabs/InfrastructureTab";
 import { ActivityLogTab } from "./tabs/ActivityLogTab";
+import { ConversationInsights } from "@/components/ConversationInsights";
 
 // Lazy load heavy components
 import dynamic from "next/dynamic";
@@ -193,6 +194,7 @@ export default function InstanceDetailPage() {
                 "Configuration": t("tabs.configuration"),
                 "API Keys": t("tabs.apiKeys"),
                 "Activity Log": t("tabs.activityLog"),
+                "Insights": t("insights.tab"),
                 "Infrastructure": t("infrastructure.tab"),
                 "Credentials": t("credentials.tab"),
                 "Knowledge": t("knowledge.tab"),
@@ -326,6 +328,8 @@ export default function InstanceDetailPage() {
             loadLogs={loadLogs}
           />
         )}
+
+        {tab === "Insights" && <ConversationInsights instanceId={id} />}
 
         {tab === "Embed" && <EmbedTab instanceId={id} instanceName={instance.name} referralCode={referralCode} />}
 
