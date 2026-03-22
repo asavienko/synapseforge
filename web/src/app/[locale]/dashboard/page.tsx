@@ -21,6 +21,7 @@ import { PLANS, STATUS_COLORS, formatDate } from "@/lib/utils";
 import { DashboardUpgrade } from "@/components/DashboardUpgrade";
 import { CalBookingButton } from "@/components/CalBookingButton";
 import { DashboardRefresher } from "@/components/DashboardRefresher";
+import { UsageDashboard } from "@/components/UsageDashboard";
 import { getTranslations } from "next-intl/server";
 import { captureServerEvent } from "@/lib/posthog-server";
 import { OnboardingToast } from "@/components/OnboardingToast";
@@ -274,6 +275,8 @@ export default async function DashboardPage() {
           <span className="text-xs font-medium text-violet-400">{weeklyConversations} msgs this week</span>
         </div>
       </div>
+
+      <UsageDashboard />
 
       {user.manager ? (
         <div className="glow-border rounded-2xl p-5 bg-white/[0.02] mb-6 flex items-center gap-4">
