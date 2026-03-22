@@ -62,6 +62,10 @@
     {
       "path": "/api/cron/webhook-retry",
       "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/inactivity-alert",
+      "schedule": "0 8 * * *"
     }
   ]
 }
