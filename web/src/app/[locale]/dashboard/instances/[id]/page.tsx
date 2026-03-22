@@ -140,7 +140,19 @@ export default function InstanceDetailPage() {
               <h1 className="text-2xl font-bold text-white truncate">{instance.name}</h1>
               <span className={`text-xs px-2.5 py-1 rounded-full font-medium shrink-0 ${STATUS_COLORS[instance.status]}`}>{instance.status}</span>
             </div>
-            <p className="text-zinc-400 text-sm">{typeLabel} · {instance.tier} {t("tierSuffix")}</p>
+            <div className="flex items-center gap-2 text-sm">
+              <p className="text-zinc-400">{typeLabel} · {instance.tier} {t("tierSuffix")}</p>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(id);
+                  showToast("Instance ID copied to clipboard");
+                }}
+                className="text-xs text-zinc-500 hover:text-violet-400 transition-colors font-mono bg-white/5 px-2 py-0.5 rounded"
+                title="Copy instance ID"
+              >
+                {id.slice(0, 8)}...{id.slice(-4)}
+              </button>
+            </div>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <button onClick={toggleStatus} disabled={saving}
