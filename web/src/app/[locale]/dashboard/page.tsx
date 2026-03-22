@@ -22,6 +22,7 @@ import { DashboardUpgrade } from "@/components/DashboardUpgrade";
 import { CalBookingButton } from "@/components/CalBookingButton";
 import { DashboardRefresher } from "@/components/DashboardRefresher";
 import { UsageDashboard } from "@/components/UsageDashboard";
+import { RecentActivity } from "@/components/RecentActivity";
 import { getTranslations } from "next-intl/server";
 import { captureServerEvent } from "@/lib/posthog-server";
 import { OnboardingToast } from "@/components/OnboardingToast";
@@ -277,6 +278,11 @@ export default async function DashboardPage() {
       </div>
 
       <UsageDashboard />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <RecentActivity />
+        {/* Placeholder for another widget */}
+      </div>
 
       {user.manager ? (
         <div className="glow-border rounded-2xl p-5 bg-white/[0.02] mb-6 flex items-center gap-4">
