@@ -89,6 +89,19 @@ export async function GET() {
       take: 10,
     });
 
+    // Get checkout events for conversion tracking
+    const checkoutEvents = await prisma.analyticsEvent.groupBy({
+      by: ["event"],
+      where: {
+        timestamp: { gte: thirtyDaysAgo },
+        event: { in: ["checkout_started", "checkout_completed"] },
+      },
+      _count: { event: true },
+    });
+
+    const checkoutStarted = checkoutEvents.find((e) => e.event === "checkout_started")?._count.event || 0;
+    const checkoutCompleted = checkoutEvents.find((e) => e.event === "checkout_completed")?._count.event || 0;
+
     return NextResponse.json({
       users: {
         total: totalUsers,
@@ -120,6 +133,11 @@ export async function GET() {
           event: e.event,
           count: e._count.event,
         })),
+      },
+      revenue: {
+        checkoutStarted,
+        checkoutCompleted,
+        conversionRate: checkoutStarted > 0 ? Math.round((checkoutCompleted / checkoutStarted) * 100) : 0,
       },
       generatedAt: now.toISOString(),
     });

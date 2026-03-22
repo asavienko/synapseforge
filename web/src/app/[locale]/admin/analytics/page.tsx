@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, Users, Server, MessageSquare, TrendingUp, Calendar } from "lucide-react";
+import { Loader2, Users, Server, MessageSquare, TrendingUp, DollarSign } from "lucide-react";
 
 interface AnalyticsData {
   users: {
@@ -25,6 +25,11 @@ interface AnalyticsData {
   };
   events?: {
     topEvents: { event: string; count: number }[];
+  };
+  revenue?: {
+    checkoutStarted: number;
+    checkoutCompleted: number;
+    conversionRate: number;
   };
   generatedAt: string;
 }
@@ -136,6 +141,27 @@ export default function AdminAnalyticsPage() {
           icon={TrendingUp}
         />
       </div>
+
+      {/* Revenue Metrics */}
+      {data.revenue && (
+        <div className="p-6 bg-white/[0.02] border border-white/5 rounded-xl">
+          <h3 className="text-lg font-semibold mb-4">Revenue Metrics (Last 30 Days)</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="p-4 bg-white/5 rounded-lg">
+              <p className="text-sm text-zinc-500 mb-1">Checkouts Started</p>
+              <p className="text-2xl font-bold text-white">{data.revenue.checkoutStarted}</p>
+            </div>
+            <div className="p-4 bg-white/5 rounded-lg">
+              <p className="text-sm text-zinc-500 mb-1">Checkouts Completed</p>
+              <p className="text-2xl font-bold text-emerald-400">{data.revenue.checkoutCompleted}</p>
+            </div>
+            <div className="p-4 bg-white/5 rounded-lg">
+              <p className="text-sm text-zinc-500 mb-1">Conversion Rate</p>
+              <p className="text-2xl font-bold text-violet-400">{data.revenue.conversionRate}%</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Users by Plan */}
       <div className="p-6 bg-white/[0.02] border border-white/5 rounded-xl">
