@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, Users, Server, MessageSquare, DollarSign } from "lucide-react";
+import { Loader2, Users, Server, MessageSquare, DollarSign, RefreshCw } from "lucide-react";
 
 interface AnalyticsData {
   users: {
@@ -72,20 +72,22 @@ export default function AdminAnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchAnalytics = async () => {
-      try {
-        const res = await fetch("/api/admin/analytics");
-        if (!res.ok) throw new Error("Failed to fetch");
-        const json = await res.json();
-        setData(json);
-      } catch {
-        setError("Failed to load analytics");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchAnalytics = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/admin/analytics");
+      if (!res.ok) throw new Error("Failed to fetch");
+      const json = await res.json();
+      setData(json);
+      setError(null);
+    } catch {
+      setError("Failed to load analytics");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchAnalytics();
   }, []);
 
@@ -109,9 +111,19 @@ export default function AdminAnalyticsPage() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Platform Analytics</h2>
-        <span className="text-sm text-zinc-500">
-          Last updated: {new Date(data.generatedAt).toLocaleTimeString()}
-        </span>
+        <div className="flex items-center gap-4">
+          <span className="text-sm text-zinc-500">
+            Last updated: {new Date(data.generatedAt).toLocaleTimeString()}
+          </span>
+          <button
+            onClick={fetchAnalytics}
+            disabled={loading}
+            className="flex items-center gap-2 px-3 py-1.5 bg-white/5 hover:bg-white/10 disabled:opacity-50 rounded-lg text-sm text-zinc-300 transition-colors"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            Refresh
+          </button>
+        </div>
       </div>
 
       {/* Key Stats */}
