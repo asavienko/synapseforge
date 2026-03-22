@@ -129,56 +129,70 @@ export function KnowledgeBaseManager({ instanceId }: KnowledgeBaseManagerProps) 
     return null;
   }
 
-  async function uploadFile(file: File) {
-    const validationError = validateFile(file);
-    if (validationError) {
-      setError(validationError);
-      setTimeout(() => setError(null), 5000);
-      return;
+  async function uploadFiles(files: FileList) {
+    const validFiles: File[] = [];
+    
+    // Validate all files first
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const validationError = validateFile(file);
+      
+      if (validationError) {
+        setError(`${file.name}: ${validationError}`);
+        setTimeout(() => setError(null), 5000);
+        continue;
+      }
+      
+      validFiles.push(file);
     }
-
-    // Check storage limit
-    if (storage.used + file.size > storage.limit) {
+    
+    if (validFiles.length === 0) return;
+    
+    // Check total storage
+    const totalSize = validFiles.reduce((sum, f) => sum + f.size, 0);
+    if (storage.used + totalSize > storage.limit) {
       setError(t("knowledge.errorStorageLimit"));
       setTimeout(() => setError(null), 5000);
       return;
     }
-
+    
     setUploading(true);
-    setUploadProgress({ filename: file.name, status: "uploading" });
-    setError(null);
-
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const res = await fetch(`/api/instances/${instanceId}/knowledge/upload`, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({ error: "Upload failed" }));
-        throw new Error(data.error || "Upload failed");
-      }
-
-      const result = await res.json();
-      setUploadProgress({ filename: file.name, status: "processing" });
+    
+    // Upload files sequentially
+    for (const file of validFiles) {
+      setUploadProgress({ filename: file.name, status: "uploading" });
       
-      // Refresh documents to show new upload
-      await fetchDocuments();
-      setUploadProgress(null);
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Upload failed";
-      setError(message);
-      setUploadProgress({ filename: file.name, status: "error" });
-      setTimeout(() => {
-        setUploadProgress(null);
-        setError(null);
-      }, 5000);
-    } finally {
-      setUploading(false);
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const res = await fetch(`/api/instances/${instanceId}/knowledge/upload`, {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({ error: "Upload failed" }));
+          throw new Error(data.error || "Upload failed");
+        }
+
+        setUploadProgress({ filename: file.name, status: "processing" });
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Upload failed";
+        setError(`${file.name}: ${message}`);
+        setUploadProgress({ filename: file.name, status: "error" });
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
     }
+    
+    // Refresh documents after all uploads
+    await fetchDocuments();
+    setUploadProgress(null);
+    setUploading(false);
+  }
+
+  async function uploadFile(file: File) {
+    await uploadFiles([file] as unknown as FileList);
   }
 
   async function deleteDocument(docId: string, filename: string) {
@@ -220,14 +234,14 @@ export function KnowledgeBaseManager({ instanceId }: KnowledgeBaseManagerProps) 
     e.stopPropagation();
     setDragActive(false);
 
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      uploadFile(e.dataTransfer.files[0]);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      uploadFiles(e.dataTransfer.files);
     }
   }
 
   function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
-    if (e.target.files && e.target.files[0]) {
-      uploadFile(e.target.files[0]);
+    if (e.target.files && e.target.files.length > 0) {
+      uploadFiles(e.target.files);
     }
     e.target.value = "";
   }
@@ -322,6 +336,7 @@ export function KnowledgeBaseManager({ instanceId }: KnowledgeBaseManagerProps) 
           ref={fileInputRef}
           type="file"
           accept=".pdf,.docx,.txt,.md"
+          multiple
           className="hidden"
           onChange={handleFileSelect}
           disabled={uploading || storage.percentage >= 100}
