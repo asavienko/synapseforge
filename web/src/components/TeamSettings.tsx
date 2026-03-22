@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Users, Plus, X, Loader2, Mail, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -13,38 +13,82 @@ interface TeamMember {
 }
 
 export function TeamSettings() {
-  const [members, setMembers] = useState<TeamMember[]>([
-    { id: "1", email: "you@example.com", role: "admin", status: "active", joinedAt: "2024-01-01" },
-  ]);
+  const [members, setMembers] = useState<TeamMember[]>([]);
+  const [loading, setLoading] = useState(true);
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState<"admin" | "viewer">("viewer");
-  const [loading, setLoading] = useState(false);
+  const [sending, setSending] = useState(false);
   const [showInviteForm, setShowInviteForm] = useState(false);
+  const [error, setError] = useState("");
+
+  // Fetch team members on mount
+  useEffect(() => {
+    fetchMembers();
+  }, []);
+
+  async function fetchMembers() {
+    try {
+      const res = await fetch("/api/team");
+      if (res.ok) {
+        const data = await res.json();
+        setMembers(data.members);
+      }
+    } catch {
+      // Silently fail
+    } finally {
+      setLoading(false);
+    }
+  }
 
   async function sendInvite(e: React.FormEvent) {
     e.preventDefault();
     if (!inviteEmail.trim()) return;
 
-    setLoading(true);
+    setSending(true);
+    setError("");
     
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    
-    const newMember: TeamMember = {
-      id: Math.random().toString(36).substr(2, 9),
-      email: inviteEmail,
-      role: inviteRole,
-      status: "pending",
-    };
-    
-    setMembers((prev) => [...prev, newMember]);
-    setInviteEmail("");
-    setShowInviteForm(false);
-    setLoading(false);
+    try {
+      const res = await fetch("/api/team", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: inviteEmail, role: inviteRole }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setMembers((prev) => [...prev, data.member]);
+        setInviteEmail("");
+        setShowInviteForm(false);
+      } else {
+        setError(data.error || "Failed to send invite");
+      }
+    } catch {
+      setError("Failed to send invite");
+    } finally {
+      setSending(false);
+    }
   }
 
-  function removeMember(id: string) {
-    setMembers((prev) => prev.filter((m) => m.id !== id));
+  async function removeMember(id: string) {
+    try {
+      const res = await fetch(`/api/team?id=${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setMembers((prev) => prev.filter((m) => m.id !== id));
+      }
+    } catch {
+      // Silently fail
+    }
+  }
+
+  if (loading) {
+    return (
+      <section className="glow-border rounded-2xl bg-white/[0.02] p-6 mb-6">
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="w-6 h-6 text-violet-400 animate-spin" />
+        </div>
+      </section>
+    );
   }
 
   return (
@@ -71,6 +115,9 @@ export function TeamSettings() {
       {/* Invite Form */}
       {showInviteForm && (
         <form onSubmit={sendInvite} className="mb-6 p-4 bg-white/5 border border-white/10 rounded-xl">
+          {error && (
+            <p className="text-sm text-red-400 mb-3">{error}</p>
+          )}
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1">
               <div className="relative">
@@ -96,10 +143,10 @@ export function TeamSettings() {
             <div className="flex gap-2">
               <button
                 type="submit"
-                disabled={loading}
+                disabled={sending}
                 className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 transition-colors px-4 py-2.5 rounded-lg text-sm font-semibold text-white"
               >
-                {loading ? (
+                {sending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   "Send Invite"
@@ -107,7 +154,10 @@ export function TeamSettings() {
               </button>
               <button
                 type="button"
-                onClick={() => setShowInviteForm(false)}
+                onClick={() => {
+                  setShowInviteForm(false);
+                  setError("");
+                }}
                 className="p-2.5 text-zinc-400 hover:text-white transition-colors"
               >
                 <X className="w-5 h-5" />
@@ -163,7 +213,7 @@ export function TeamSettings() {
         ))}
       </div>
 
-      {members.length === 1 && (
+      {members.length === 0 && (
         <div className="text-center py-8 text-zinc-500">
           <Users className="w-8 h-8 mx-auto mb-2 opacity-50" />
           <p className="text-sm">No team members yet</p>

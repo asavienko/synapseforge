@@ -520,3 +520,19 @@ model AnalyticsEvent {
   @@index([userId])
   @@index([timestamp])
 }
+
+// Team members for collaboration
+model TeamMember {
+  id          String   @id @default(cuid())
+  ownerId     String   // User who invited
+  email       String
+  role        String   // "admin" | "viewer"
+  status      String   // "pending" | "active"
+  inviteToken String?  @unique
+  joinedAt    DateTime?
+  createdAt   DateTime @default(now())
+
+  @@index([ownerId])
+  @@index([email])
+  @@index([inviteToken])
+}
