@@ -355,8 +355,8 @@ function WidgetCustomizer({ instanceId, t }: { instanceId: string; t: (key: stri
   const origin = typeof window !== "undefined" ? window.location.origin : "https://openhelixai.com";
 
   const customScript = `<script>
-  window.OpenHelixConfig = {
-    primaryColor: "${primaryColor}",
+  window.OpenHelix = {
+    color: "${primaryColor}",
     position: "${position}",
     greeting: "${greeting}"
   };
