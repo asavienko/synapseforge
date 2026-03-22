@@ -23,6 +23,9 @@ interface AnalyticsData {
   trends: {
     signupsByDay: { date: string; count: number }[];
   };
+  events?: {
+    topEvents: { event: string; count: number }[];
+  };
   generatedAt: string;
 }
 
@@ -183,6 +186,33 @@ export default function AdminAnalyticsPage() {
           ))}
         </div>
       </div>
+
+      {/* Top Events */}
+      {data.events?.topEvents && data.events.topEvents.length > 0 && (
+        <div className="p-6 bg-white/[0.02] border border-white/5 rounded-xl">
+          <h3 className="text-lg font-semibold mb-4">Top Events (Last 30 Days)</h3>
+          <div className="space-y-3">
+            {data.events.topEvents.map((evt) => (
+              <div key={evt.event} className="flex items-center justify-between">
+                <span className="text-zinc-400 font-mono text-sm">{evt.event}</span>
+                <div className="flex items-center gap-3">
+                  <div className="w-32 h-2 bg-white/5 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-emerald-500 rounded-full"
+                      style={{
+                        width: `${(evt.count / (data.events?.topEvents[0]?.count || 1)) * 100}%`,
+                      }}
+                    />
+                  </div>
+                  <span className="text-sm text-zinc-300 w-12 text-right">
+                    {formatNumber(evt.count)}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Recent Signups */}
       <div className="p-6 bg-white/[0.02] border border-white/5 rounded-xl">

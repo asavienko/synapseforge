@@ -80,6 +80,15 @@ export async function GET() {
       count: day._count.id,
     }));
 
+    // Get top events from analytics
+    const topEvents = await prisma.analyticsEvent.groupBy({
+      by: ["event"],
+      where: { timestamp: { gte: thirtyDaysAgo } },
+      _count: { event: true },
+      orderBy: { _count: { event: "desc" } },
+      take: 10,
+    });
+
     return NextResponse.json({
       users: {
         total: totalUsers,
@@ -105,6 +114,12 @@ export async function GET() {
       },
       trends: {
         signupsByDay,
+      },
+      events: {
+        topEvents: topEvents.map((e) => ({
+          event: e.event,
+          count: e._count.event,
+        })),
       },
       generatedAt: now.toISOString(),
     });
