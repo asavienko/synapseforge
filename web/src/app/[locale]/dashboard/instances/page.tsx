@@ -12,7 +12,7 @@ import {
   RefreshIcon,
   LoadingIcon,
 } from "@/components/icons/BrandIcons";
-import { Play, Square, Loader2 } from "lucide-react";
+import { Play, Square, Loader2, Copy } from "lucide-react";
 import { STATUS_COLORS, INSTANCE_TYPES, formatRelativeTime } from "@/lib/utils";
 import { getTemplateById, type AgentTemplate, agentTemplates } from "@/lib/templates";
 import { useTranslations } from "next-intl";
@@ -168,6 +168,44 @@ export default function InstancesPage() {
       showToast("Failed to toggle instance", "error");
     } finally {
       setTogglingId(null);
+    }
+  }
+
+  // Duplicate instance
+  async function duplicateInstance(instance: Instance, e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (creating) return;
+
+    setCreating(true);
+    
+    try {
+      const res = await fetch("/api/instances", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: `${instance.name} (Copy)`,
+          type: instance.type,
+          description: instance.description || "",
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        showToast("Instance duplicated successfully");
+        loadInstances();
+        track("instance_duplicated", { originalId: instance.id, newId: data.id });
+      } else if (res.status === 403 && data.error === "plan_limit_reached") {
+        setPlanLimitHit(true);
+        setError(t("planLimitReached"));
+      } else {
+        showToast(data.error || "Failed to duplicate instance", "error");
+      }
+    } catch {
+      showToast("Failed to duplicate instance", "error");
+    } finally {
+      setCreating(false);
     }
   }
 
@@ -384,6 +422,19 @@ export default function InstancesPage() {
                             <Square className="w-3.5 h-3.5" />
                           ) : (
                             <Play className="w-3.5 h-3.5" />
+                          )}
+                        </button>
+                        {/* Duplicate button */}
+                        <button
+                          onClick={(e) => duplicateInstance(instance, e)}
+                          disabled={creating}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white disabled:opacity-50"
+                          title="Duplicate instance"
+                        >
+                          {creating ? (
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          ) : (
+                            <Copy className="w-3.5 h-3.5" />
                           )}
                         </button>
                       </>
