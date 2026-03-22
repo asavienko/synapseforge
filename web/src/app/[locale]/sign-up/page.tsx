@@ -30,6 +30,41 @@ export default function SignUpPage() {
   const [emailError, setEmailError] = useState("");
   const [emailChecking, setEmailChecking] = useState(false);
   const [emailAvailable, setEmailAvailable] = useState<boolean | null>(null);
+  const [emailRegistered, setEmailRegistered] = useState(false);
+
+  // Debounced email availability check
+  useEffect(() => {
+    if (!form.email || !form.email.includes("@")) {
+      setEmailAvailable(null);
+      return;
+    }
+
+    setEmailChecking(true);
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/auth/check-email?email=${encodeURIComponent(form.email)}`);
+        const data = await res.json();
+        setEmailAvailable(data.valid);
+        if (!data.valid && data.error === "already_registered") {
+          setEmailError(t("alreadyRegistered"));
+          setEmailRegistered(true);
+        } else if (!data.valid && data.error === "invalid_format") {
+          setEmailError(t("invalidEmail"));
+          setEmailRegistered(false);
+        } else {
+          setEmailError("");
+          setEmailRegistered(false);
+        }
+      } catch {
+        // Silently fail - let server handle validation
+        setEmailAvailable(null);
+      } finally {
+        setEmailChecking(false);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [form.email, t]);
 
   useEffect(() => {
     // Prefer URL param; fall back to cookie
@@ -179,6 +214,12 @@ export default function SignUpPage() {
               />
               {emailError && (
                 <p className="text-xs text-red-400 mt-1">{emailError}</p>
+              )}
+              {!emailError && emailAvailable === true && form.email.includes("@") && (
+                <p className="text-xs text-emerald-400 mt-1">✓ Email available</p>
+              )}
+              {emailChecking && (
+                <p className="text-xs text-zinc-500 mt-1">Checking...</p>
               )}
             </div>
             <div>
