@@ -1615,6 +1615,7 @@
     "runningHealthCheck": "Ejecutando comprobación de salud..."
   },
   "landing": {
+    "trustedBy": "Confiado por empresas innovadoras",
     "howItWorks": {
       "title": "Cómo funciona",
       "step1": {

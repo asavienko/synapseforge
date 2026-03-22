@@ -477,6 +477,30 @@ export default async function LandingPage() {
         </div>
       </section>
 
+      {/* ── Trusted By ─────────────────────────────────────────────────── */}
+      <section className="py-16 px-4 sm:px-6 border-y border-white/5">
+        <div className="max-w-6xl mx-auto">
+          <p className="text-center text-xs font-semibold tracking-widest text-zinc-500 uppercase mb-8">
+            {t("trustedBy")}
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16 opacity-60">
+            {/* Placeholder logos — replace with actual client logos */}
+            {[
+              { name: "Lumina Wellness", icon: "✦" },
+              { name: "TechStart Inc", icon: "◆" },
+              { name: "GreenLeaf Co", icon: "❖" },
+              { name: "Urban Fitness", icon: "✹" },
+              { name: "CloudNine Labs", icon: "✻" },
+            ].map((company) => (
+              <div key={company.name} className="flex items-center gap-2 text-zinc-400">
+                <span className="text-xl">{company.icon}</span>
+                <span className="text-sm font-medium">{company.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── Features grid ────────────────────────────────────────────────── */}
       <section id="features" className="max-w-7xl mx-auto px-4 sm:px-6 py-20">
         <div className="text-center mb-14">

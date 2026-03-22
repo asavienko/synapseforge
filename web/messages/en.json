@@ -1648,6 +1648,7 @@
     "runningHealthCheck": "Running health check..."
   },
   "landing": {
+    "trustedBy": "Trusted by innovative companies",
     "howItWorks": {
       "title": "How it works",
       "step1": {
