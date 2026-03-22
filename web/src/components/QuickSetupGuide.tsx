@@ -15,8 +15,8 @@ interface SetupStep {
 }
 
 interface QuickSetupGuideProps {
-  instances: any[];
-  credentials?: any[];
+  instances: Array<{ id: string; status: string; provisionStatus?: string | null }>;
+  credentials?: Array<{ key: string; value: string }>;
 }
 
 export function QuickSetupGuide({ instances, credentials = [] }: QuickSetupGuideProps) {
