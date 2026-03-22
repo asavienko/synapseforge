@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Gift, Copy, Check, Share2, Users, DollarSign } from "lucide-react";
 import { toast } from "sonner";
+import { useAnalytics } from "@/components/AnalyticsProvider";
 
 interface ReferralStats {
   code: string;
@@ -16,6 +17,7 @@ export default function ReferralsPage() {
   const [stats, setStats] = useState<ReferralStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const { track } = useAnalytics();
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -42,6 +44,7 @@ export default function ReferralsPage() {
     navigator.clipboard.writeText(link);
     setCopied(true);
     toast.success("Referral link copied to clipboard!");
+    track("referral_link_copied", { code: stats.code });
     setTimeout(() => setCopied(false), 2000);
   };
 

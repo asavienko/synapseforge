@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { MessageSquare, X, Send, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useAnalytics } from "@/components/AnalyticsProvider";
 
 export function FeedbackButton() {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const { track } = useAnalytics();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,6 +27,7 @@ export function FeedbackButton() {
         toast.success("Feedback sent! Thank you.");
         setMessage("");
         setIsOpen(false);
+        track("feedback_submitted", { length: message.length });
       } else {
         throw new Error("Failed to send");
       }
