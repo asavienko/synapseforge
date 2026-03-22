@@ -8,6 +8,7 @@ import { VerifiedSuccessBanner } from "@/components/VerifiedSuccessBanner";
 import { UsageWarningBanner } from "@/components/UsageWarningBanner";
 import { CommandPalette } from "@/components/CommandPalette";
 import { PageTracker } from "@/components/PageTracker";
+import { KeyboardShortcutsModal } from "@/components/KeyboardShortcutsModal";
 import { NotificationPoller } from "./NotificationPoller";
 import { FeedbackButtonWrapper } from "./FeedbackButtonWrapper";
 
@@ -50,6 +51,7 @@ export default async function DashboardLayout({
         <main className="flex-1 overflow-auto pt-14 md:pt-0">
           <PageTracker />
           <CommandPalette />
+          <KeyboardShortcutsModal />
           <NotificationPoller />
           <UsageWarningBanner />
           {children}
