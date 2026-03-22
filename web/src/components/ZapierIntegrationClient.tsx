@@ -114,16 +114,44 @@ export function ZapierIntegrationClient() {
       </div>
 
       {/* Make.com card */}
-      <div className="bg-[#12121a] border border-white/8 rounded-2xl p-6 opacity-75">
-        <div className="flex items-center justify-between">
+      <div className="bg-[#12121a] border border-white/8 rounded-2xl p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 bg-[#6D28D9]/10 rounded-xl flex items-center justify-center">
+            <span className="text-xl">🔧</span>
+          </div>
           <div>
             <h2 className="text-white font-semibold">{t("make.title")}</h2>
-            <p className="text-zinc-500 text-sm mt-1">{t("make.subtitle")}</p>
+            <p className="text-zinc-500 text-sm">{t("make.subtitle")}</p>
           </div>
-          <span className="text-xs bg-zinc-800 text-zinc-400 px-2 py-1 rounded-full">
-            {t("comingSoon")}
-          </span>
+          <a
+            href="https://www.make.com/en/integrations"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-auto flex items-center gap-1.5 text-sm text-violet-400 hover:text-violet-300 transition-colors"
+          >
+            {t("make.openMake")} <ExternalLink className="w-3.5 h-3.5" />
+          </a>
         </div>
+        
+        <p className="text-sm text-zinc-400 mb-3">{t("make.webhookUrl")}</p>
+        <div className="flex items-center gap-2 bg-black/40 rounded-xl px-4 py-3 font-mono text-sm">
+          <span className="text-zinc-400 flex-1 truncate">{apiBase}/api/webhooks/make</span>
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(`${apiBase}/api/webhooks/make`);
+              setCopied(true);
+              setTimeout(() => setCopied(false), 2000);
+            }}
+            className="text-zinc-500 hover:text-white transition-colors shrink-0"
+          >
+            {copied ? (
+              <Check className="w-4 h-4 text-emerald-400" />
+            ) : (
+              <Copy className="w-4 h-4" />
+            )}
+          </button>
+        </div>
+        <p className="text-xs text-zinc-600 mt-2">{t("make.webhookHint")}</p>
       </div>
     </div>
   );

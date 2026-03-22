@@ -1561,7 +1561,10 @@
     },
     "make": {
       "title": "Make (Integromat)",
-      "subtitle": "Visual automation with 1,000+ app connectors"
+      "subtitle": "Visual automation with 1,000+ app connectors",
+      "openMake": "Open Make",
+      "webhookUrl": "Your webhook URL",
+      "webhookHint": "Use this URL in your Make.com HTTP module. Include your API key in the X-API-Key header."
     }
   },
   "integrationCard": {

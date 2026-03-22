@@ -1536,7 +1536,10 @@
     },
     "make": {
       "title": "Make (Integromat)",
-      "subtitle": "Automatización visual con más de 1.000 conectores de aplicaciones"
+      "subtitle": "Automatización visual con más de 1.000 conectores de aplicaciones",
+      "openMake": "Abrir Make",
+      "webhookUrl": "Tu URL de webhook",
+      "webhookHint": "Usa esta URL en tu módulo HTTP de Make.com. Incluye tu clave API en el encabezado X-API-Key."
     }
   },
   "trust": {
