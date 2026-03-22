@@ -192,6 +192,11 @@ export function ChatTab({
               ? `${config.model} via ${chatProvider}`
               : config.model}
           </span>
+          {config.sandboxMode && (
+            <span className="ml-2 px-2 py-0.5 text-xs bg-amber-500/20 text-amber-400 rounded-full border border-amber-500/30">
+              Preview Mode
+            </span>
+          )}
         </div>
         {chatMessages.length > 0 && (
           <div className="flex items-center gap-2">
