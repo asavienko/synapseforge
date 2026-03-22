@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -24,6 +24,8 @@ import {
   WarningIcon,
 } from "@/components/icons/BrandIcons";
 import { cn } from "@/lib/utils";
+
+import { useAnalytics } from "@/components/AnalyticsProvider";
 
 // Self-service plans
 const SELF_SERVICE_PLANS = [
@@ -157,6 +159,17 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
 
   const tb = useTranslations("dashboard.billing");
   const tp = useTranslations("pricing");
+  const { track } = useAnalytics();
+
+  // Track successful checkout
+  useEffect(() => {
+    if (success) {
+      track("checkout_completed", { plan });
+    }
+    if (cancelled) {
+      track("checkout_cancelled", { plan });
+    }
+  }, [success, cancelled, plan, track]);
 
   // Check if current plan is managed
   const isManagedPlan = plan.startsWith("managed_");
@@ -166,6 +179,7 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
   async function handleUpgrade(planKey: string) {
     setBillingError(null);
     setLoading(planKey);
+    track("checkout_started", { plan: planKey, currentPlan: plan });
     const res = await fetch("/api/billing/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -174,9 +188,11 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
     const data = await res.json();
     setLoading(null);
     if (data.url) {
+      track("checkout_redirected", { plan: planKey });
       window.location.assign(data.url);
     } else if (data.managedPlanContact || data.stripeUnavailable) {
       // Record upgrade intent — non-blocking
+      track("checkout_managed_plan_contact", { plan: planKey, reason: data.managedPlanContact ? "managed" : "stripe_unavailable" });
       fetch("/api/upgrade", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
