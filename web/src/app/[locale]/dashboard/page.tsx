@@ -23,6 +23,7 @@ import { CalBookingButton } from "@/components/CalBookingButton";
 import { DashboardRefresher } from "@/components/DashboardRefresher";
 import { UsageDashboard } from "@/components/UsageDashboard";
 import { RecentActivity } from "@/components/RecentActivity";
+import { QuickSetupGuide } from "@/components/QuickSetupGuide";
 import { getTranslations } from "next-intl/server";
 import { captureServerEvent } from "@/lib/posthog-server";
 import { OnboardingToast } from "@/components/OnboardingToast";
@@ -276,6 +277,9 @@ export default async function DashboardPage() {
           <span className="text-xs font-medium text-violet-400">{weeklyConversations} msgs this week</span>
         </div>
       </div>
+
+      {/* Quick Setup Guide for new users */}
+      <QuickSetupGuide instances={instances} credentials={user.credentials || []} />
 
       <UsageDashboard />
 
