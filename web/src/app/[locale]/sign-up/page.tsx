@@ -28,6 +28,8 @@ export default function SignUpPage() {
   const [success, setSuccess] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState<0 | 1 | 2 | 3 | 4>(0);
   const [emailError, setEmailError] = useState("");
+  const [emailChecking, setEmailChecking] = useState(false);
+  const [emailAvailable, setEmailAvailable] = useState<boolean | null>(null);
 
   useEffect(() => {
     // Prefer URL param; fall back to cookie

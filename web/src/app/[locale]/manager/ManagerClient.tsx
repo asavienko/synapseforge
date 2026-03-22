@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, MessageCircle, Send, Loader2, X, Shield, Activity, Server, AlertTriangle, ExternalLink, Rocket, ChevronDown, ChevronUp, StickyNote, Trash2, Zap, ArrowLeft } from "lucide-react";
+import { Users, MessageCircle, Send, Loader2, X, Shield, Activity, Server, AlertTriangle, ExternalLink, Rocket, ChevronDown, ChevronUp, StickyNote, Trash2, Zap, ArrowLeft, Lightbulb } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { STATUS_COLORS, PLANS, formatDate, formatRelativeTime } from "@/lib/utils";
 import { ProvisioningWizard } from "@/components/ProvisioningWizard";
 import { healthScoreLabel } from "@/lib/health-score-utils";
+import { ManagerInsightsPanel } from "@/components/ManagerInsightsPanel";
 
 interface ClientNote {
   id: string;
@@ -97,7 +98,7 @@ function HealthDot({ healthStatus, hasVps }: { healthStatus: string | null; hasV
   return <span className="w-2.5 h-2.5 rounded-full bg-zinc-500 inline-block" title="Unknown" />;
 }
 
-type TabType = "clients" | "instances";
+type TabType = "clients" | "instances" | "insights";
 
 const REGIONS = [
   { value: "nbg1", label: "Nuremberg, EU" },
@@ -508,6 +509,18 @@ export function ManagerClient({ manager, clients: initialClients }: {
               {alerts.length}
             </span>
           )}
+        </button>
+        <button
+          onClick={() => setActiveTab("insights")}
+          className={cn(
+            "flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors",
+            activeTab === "insights"
+              ? "border-violet-500 text-white"
+              : "border-transparent text-zinc-500 hover:text-zinc-300"
+          )}
+        >
+          <Lightbulb className="w-4 h-4" />
+          Insights
         </button>
       </div>
 
@@ -1323,6 +1336,20 @@ export function ManagerClient({ manager, clients: initialClients }: {
               )}
             </>
           )}
+        </div>
+      )}
+
+      {/* ── Insights tab ── */}
+      {activeTab === "insights" && (
+        <div className="p-8 max-w-4xl mx-auto">
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold text-white mb-2">Conversation Intelligence</h2>
+            <p className="text-zinc-400 text-sm">
+              AI-powered insights from your clients&apos; conversations. Review unanswered questions, 
+              complaints, and high-value intents that need attention.
+            </p>
+          </div>
+          <ManagerInsightsPanel />
         </div>
       )}
 
