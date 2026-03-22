@@ -74,11 +74,24 @@ export async function GET() {
       _count: { id: true },
     });
 
-    // Format daily data
-    const signupsByDay = dailySignups.map((day) => ({
-      date: day.createdAt.toISOString().split("T")[0],
-      count: day._count.id,
-    }));
+    // Build a map of existing signups
+    const signupsMap = new Map<string, number>();
+    dailySignups.forEach((day) => {
+      const dateKey = day.createdAt.toISOString().split("T")[0];
+      signupsMap.set(dateKey, (signupsMap.get(dateKey) || 0) + day._count.id);
+    });
+
+    // Fill in all 30 days (including zeros for days with no signups)
+    const signupsByDay = [];
+    for (let i = 0; i < 30; i++) {
+      const d = new Date(thirtyDaysAgo);
+      d.setDate(d.getDate() + i);
+      const dateStr = d.toISOString().split("T")[0];
+      signupsByDay.push({
+        date: dateStr,
+        count: signupsMap.get(dateStr) || 0,
+      });
+    }
 
     // Get top events from analytics
     const topEvents = await prisma.analyticsEvent.groupBy({
