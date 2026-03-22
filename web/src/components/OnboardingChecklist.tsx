@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Check, X, Bot, Key, MessageSquare, Rocket, ChevronRight } from "lucide-react";
+import { useAnalytics } from "@/components/AnalyticsProvider";
 
 interface OnboardingChecklistProps {
   hasInstances: boolean;
@@ -19,12 +20,19 @@ export function OnboardingChecklist({
 }: OnboardingChecklistProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
+  const { track } = useAnalytics();
 
   useEffect(() => {
     // Check if user has dismissed the checklist
     const dismissed = localStorage.getItem("sf_onboarding_checklist_dismissed");
     if (!dismissed) {
       setIsVisible(true);
+      track("onboarding_checklist_shown", {
+        hasInstances,
+        hasApiKey,
+        hasChannel,
+        completedSteps: [hasInstances, hasApiKey, hasChannel].filter(Boolean).length,
+      });
     }
   }, []);
 
@@ -32,6 +40,9 @@ export function OnboardingChecklist({
     localStorage.setItem("sf_onboarding_checklist_dismissed", "1");
     setIsDismissed(true);
     setTimeout(() => setIsVisible(false), 300);
+    track("onboarding_checklist_dismissed", {
+      completedSteps: [hasInstances, hasApiKey, hasChannel].filter(Boolean).length,
+    });
   };
 
   const steps = [
@@ -120,6 +131,7 @@ export function OnboardingChecklist({
             <Link
               key={step.id}
               href={step.href}
+              onClick={() => track("onboarding_checklist_step_clicked", { stepId: step.id, stepLabel: step.label, done: step.done })}
               className={`flex items-center gap-4 p-3 rounded-xl transition-all ${
                 step.done
                   ? "bg-emerald-500/10 border border-emerald-500/20"
