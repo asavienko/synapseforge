@@ -4,6 +4,7 @@ import { User, Shield, Zap } from "lucide-react";
 import { PLANS } from "@/lib/utils";
 import { ProfileForm } from "@/components/ProfileForm";
 import { DashboardUpgrade } from "@/components/DashboardUpgrade";
+import { DeleteAccountSection } from "@/components/DeleteAccountSection";
 import { getTranslations } from "next-intl/server";
 
 export default async function SettingsPage() {
@@ -87,6 +88,8 @@ export default async function SettingsPage() {
           <p className="text-sm text-zinc-400">{t("managerSoon")}</p>
         )}
       </section>
+
+      <DeleteAccountSection />
     </div>
   );
 }
