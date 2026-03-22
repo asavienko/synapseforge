@@ -728,6 +728,8 @@
       "capabilities": "Capabilities",
       "memoryCapability": "Memory",
       "memoryDesc": "Remembers past conversations",
+      "sandboxMode": "Sandbox Mode",
+      "sandboxDesc": "Test changes without affecting live users",
       "smartThinking": "Smart Thinking",
       "smartThinkingDesc": "Better for complex questions (uses more tokens)",
       "languageLabel": "Language",

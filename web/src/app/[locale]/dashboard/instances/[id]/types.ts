@@ -89,6 +89,7 @@ export interface Config {
   memoryEnabled: boolean;
   thinking: "adaptive" | "off";
   language: string;
+  sandboxMode?: boolean;
 }
 
 export interface ApiKeyRow {

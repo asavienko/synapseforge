@@ -344,6 +344,22 @@ export function ConfigurationTab({
               ))}
             </select>
           </div>
+          <div className="flex items-center justify-between px-5 py-4 border-t border-white/5">
+            <div>
+              <div className="text-sm font-medium text-zinc-200">{t("config.sandboxMode")}</div>
+              <div className="text-xs text-zinc-500 mt-0.5">{t("config.sandboxDesc")}</div>
+            </div>
+            <button
+              onClick={() => { setConfig((p) => ({ ...p, sandboxMode: !p.sandboxMode })); setConfigDirty(true); }}
+              className={`relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors ${
+                config.sandboxMode ? "bg-amber-600" : "bg-zinc-700"
+              }`}
+            >
+              <span className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                config.sandboxMode ? "translate-x-5" : "translate-x-0"
+              }`} />
+            </button>
+          </div>
         </div>
       </div>
 
