@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, Users, Server, MessageSquare, TrendingUp, DollarSign } from "lucide-react";
+import { Loader2, Users, Server, MessageSquare, DollarSign } from "lucide-react";
 
 interface AnalyticsData {
   users: {
