@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { verifyApiKey } from "@/lib/apikey";
+
+async function verifyApiKey(apiKey: string) {
+  const keyRecord = await prisma.apiKey.findFirst({
+    where: { key: apiKey },
+    include: { instance: true },
+  });
+  
+  if (!keyRecord) return null;
+  return keyRecord.instance;
+}
 
 /**
  * Make.com Webhook Integration
