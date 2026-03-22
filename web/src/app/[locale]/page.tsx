@@ -5,6 +5,7 @@ import { LandingDemoChat } from "@/components/LandingDemoChat";
 import { DemoChat } from "@/components/DemoChat";
 import { LiveStats } from "@/components/LiveStats";
 import { getFeaturedTemplates, categoryColors } from "@/lib/templates";
+import { ROICalculator } from "@/components/ROICalculator";
 import {
   HelixLogo,
   ArrowRightIcon,
@@ -560,6 +561,13 @@ export default async function LandingPage() {
               <span className="hidden sm:block text-xs bg-violet-500/10 text-violet-400 px-2 py-1 rounded-full border border-violet-500/20">{t("caseStudy.webWidget")}</span>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ── ROI Calculator ───────────────────────────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-20">
+        <div className="max-w-2xl mx-auto">
+          <ROICalculator />
         </div>
       </section>
 
