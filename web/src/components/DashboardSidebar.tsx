@@ -56,13 +56,14 @@ function HealthIndicator({ instances }: { instances: InstanceHealth[] }) {
   return null;
 }
 
-function NavItem({ href, icon: Icon, label, badge, healthIndicator, onClick }: { 
+function NavItem({ href, icon: Icon, label, badge, healthIndicator, onClick, tourId }: { 
   href: string; 
   icon: React.ElementType; 
   label: string; 
   badge?: number; 
   healthIndicator?: React.ReactNode;
-  onClick?: () => void 
+  onClick?: () => void;
+  tourId?: string;
 }) {
   const pathname = usePathname();
   const isActive = href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(href);
@@ -71,6 +72,7 @@ function NavItem({ href, icon: Icon, label, badge, healthIndicator, onClick }: {
     <Link
       href={href}
       onClick={onClick}
+      data-tour={tourId}
       className={cn(
         "flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors",
         isActive
@@ -153,11 +155,12 @@ function SidebarContent({ userName, userEmail, unreadCount, isAdmin, isManager, 
           href="/dashboard/instances" 
           icon={InstancesIcon} 
           label={t("instances")} 
+          tourId="instances"
           healthIndicator={<HealthIndicator instances={instanceHealth} />}
           onClick={onClose} 
         />
-        <NavItem href="/dashboard/messages" icon={MessagesIcon} label={t("messages")} badge={unreadCount} onClick={onClose} />
-        <NavItem href="/dashboard/billing" icon={BillingIcon} label={t("billing")} onClick={onClose} />
+        <NavItem href="/dashboard/messages" icon={MessagesIcon} label={t("messages")} badge={unreadCount} onClick={onClose} tourId="messages" />
+        <NavItem href="/dashboard/billing" icon={BillingIcon} label={t("billing")} onClick={onClose} tourId="billing" />
         <NavItem href="/dashboard/integrations" icon={IntegrationsIcon} label={t("integrations")} onClick={onClose} />
         <NavItem href="/dashboard/referrals" icon={ReferralsIcon} label={t("referral")} onClick={onClose} />
         <NavItem href="/dashboard/settings" icon={SettingsIcon} label={t("settings")} onClick={onClose} />
@@ -253,6 +256,7 @@ export function DashboardSidebar({ userName, userEmail, isAdmin, isManager }: Si
             }}
             className="p-2 text-zinc-400 hover:text-white transition-colors"
             title="Command palette (Cmd+K)"
+            data-tour="command-palette"
           >
             <Search className="w-5 h-5" />
           </button>

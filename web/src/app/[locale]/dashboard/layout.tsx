@@ -9,6 +9,7 @@ import { UsageWarningBanner } from "@/components/UsageWarningBanner";
 import { CommandPalette } from "@/components/CommandPalette";
 import { PageTracker } from "@/components/PageTracker";
 import { KeyboardShortcutsModal } from "@/components/KeyboardShortcutsModal";
+import { ProductTour } from "@/components/ProductTour";
 import { NotificationPoller } from "./NotificationPoller";
 import { FeedbackButtonWrapper } from "./FeedbackButtonWrapper";
 
@@ -52,6 +53,7 @@ export default async function DashboardLayout({
           <PageTracker />
           <CommandPalette />
           <KeyboardShortcutsModal />
+          <ProductTour />
           <NotificationPoller />
           <UsageWarningBanner />
           {children}
