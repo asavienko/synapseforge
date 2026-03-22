@@ -6,6 +6,7 @@ import { ProfileForm } from "@/components/ProfileForm";
 import { DashboardUpgrade } from "@/components/DashboardUpgrade";
 import { DeleteAccountSection } from "@/components/DeleteAccountSection";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { TeamSettings } from "@/components/TeamSettings";
 import { getTranslations } from "next-intl/server";
 
 export default async function SettingsPage() {
@@ -88,6 +89,8 @@ export default async function SettingsPage() {
           <ThemeToggle />
         </div>
       </section>
+
+      <TeamSettings />
 
       <section className="glow-border rounded-2xl bg-white/[0.02] p-6">
         <div className="flex items-center gap-3 mb-6">
