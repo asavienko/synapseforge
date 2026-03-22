@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { User, Shield, Zap, Moon } from "lucide-react";
+import { User, Shield, Zap, Moon, RotateCcw } from "lucide-react";
 import { PLANS } from "@/lib/utils";
 import { ProfileForm } from "@/components/ProfileForm";
 import { DashboardUpgrade } from "@/components/DashboardUpgrade";
@@ -8,6 +8,7 @@ import { DeleteAccountSection } from "@/components/DeleteAccountSection";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { TeamSettings } from "@/components/TeamSettings";
 import { getTranslations } from "next-intl/server";
+import { RestartTourButton } from "@/components/RestartTourButton";
 
 export default async function SettingsPage() {
   const session = await auth();
@@ -91,6 +92,16 @@ export default async function SettingsPage() {
       </section>
 
       <TeamSettings />
+
+      <section className="glow-border rounded-2xl bg-white/[0.02] p-6 mb-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="font-semibold text-white mb-1">Product Tour</h2>
+            <p className="text-sm text-zinc-500">Take the guided tour again</p>
+          </div>
+          <RestartTourButton />
+        </div>
+      </section>
 
       <section className="glow-border rounded-2xl bg-white/[0.02] p-6">
         <div className="flex items-center gap-3 mb-6">
