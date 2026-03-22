@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { Bot, Play, Loader2, X, Zap, Send, Copy, AlertCircle } from "lucide-react";
+import { Bot, Play, Loader2, X, Zap, Send, Copy, AlertCircle, Download } from "lucide-react";
 import { useTranslations } from "next-intl";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -194,17 +194,27 @@ export function ChatTab({
           </span>
         </div>
         {chatMessages.length > 0 && (
-          <button
-            onClick={async () => {
-              setChatMessages([]);
-              setChatNoCredentials(false);
-              setChatProvider(null);
-              fetch(`/api/instances/${id}/chat`, { method: "DELETE" }).catch(() => {});
-            }}
-            className="text-xs text-zinc-600 hover:text-zinc-300 transition-colors px-2 py-1 rounded-lg border border-white/5 hover:border-white/10"
-          >
-            {t("chat.clearChat")}
-          </button>
+          <div className="flex items-center gap-2">
+            <a
+              href={`/api/instances/${id}/export/chat?format=json`}
+              download
+              className="flex items-center gap-1.5 text-xs text-zinc-600 hover:text-violet-400 transition-colors px-2 py-1 rounded-lg border border-white/5 hover:border-violet-500/30 hover:bg-violet-500/10"
+            >
+              <Download className="w-3.5 h-3.5" />
+              Export
+            </a>
+            <button
+              onClick={async () => {
+                setChatMessages([]);
+                setChatNoCredentials(false);
+                setChatProvider(null);
+                fetch(`/api/instances/${id}/chat`, { method: "DELETE" }).catch(() => {});
+              }}
+              className="text-xs text-zinc-600 hover:text-zinc-300 transition-colors px-2 py-1 rounded-lg border border-white/5 hover:border-white/10"
+            >
+              {t("chat.clearChat")}
+            </button>
+          </div>
         )}
       </div>
 
