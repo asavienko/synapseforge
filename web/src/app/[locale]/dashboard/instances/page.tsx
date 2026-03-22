@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -12,7 +12,7 @@ import {
   RefreshIcon,
   LoadingIcon,
 } from "@/components/icons/BrandIcons";
-import { Play, Square, Loader2, Copy } from "lucide-react";
+import { Play, Square, Loader2, Copy, Search, X } from "lucide-react";
 import { STATUS_COLORS, INSTANCE_TYPES, formatRelativeTime } from "@/lib/utils";
 import { getTemplateById, type AgentTemplate, agentTemplates } from "@/lib/templates";
 import { useTranslations } from "next-intl";
@@ -99,6 +99,19 @@ export default function InstancesPage() {
   const [form, setForm] = useState({ name: "", type: "assistant", description: "" });
   const [toast, setToast] = useState<{ text: string; type: "success" | "error" } | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<AgentTemplate | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Filter instances by search query
+  const filteredInstances = useMemo(() => {
+    if (!searchQuery.trim()) return instances;
+    const query = searchQuery.toLowerCase();
+    return instances.filter(
+      (i) =>
+        i.name.toLowerCase().includes(query) ||
+        i.type.toLowerCase().includes(query) ||
+        i.status.toLowerCase().includes(query)
+    );
+  }, [instances, searchQuery]);
 
   // Handle template from URL
   useEffect(() => {
@@ -280,6 +293,27 @@ export default function InstancesPage() {
           <p className="text-zinc-400 mt-1">{t("subtitle")}</p>
         </div>
         <div className="flex items-center gap-2">
+          {/* Search */}
+          {instances.length > 0 && (
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search instances..."
+                className="w-40 sm:w-48 bg-white/5 border border-white/10 rounded-lg pl-9 pr-8 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 transition-colors"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          )}
           <button
             onClick={loadInstances}
             disabled={loading}
@@ -374,10 +408,23 @@ export default function InstancesPage() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {instances.map((instance) => {
-            const isProvisioning = instance.provisionStatus === "provisioning";
-            const isToggling = togglingId === instance.id;
+        <>
+          {filteredInstances.length === 0 && searchQuery ? (
+            <div className="text-center py-12">
+              <Search className="w-8 h-8 text-zinc-600 mx-auto mb-3" />
+              <p className="text-zinc-500">No instances match "{searchQuery}"</p>
+              <button
+                onClick={() => setSearchQuery("")}
+                className="text-violet-400 hover:text-violet-300 text-sm mt-2"
+              >
+                Clear search
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredInstances.map((instance) => {
+                const isProvisioning = instance.provisionStatus === "provisioning";
+                const isToggling = togglingId === instance.id;
             return (
               <Link
                 key={instance.id}
@@ -449,7 +496,9 @@ export default function InstancesPage() {
               </Link>
             );
           })}
-        </div>
+            </div>
+          )}
+        </>
       )}
 
       {showCreate && (
