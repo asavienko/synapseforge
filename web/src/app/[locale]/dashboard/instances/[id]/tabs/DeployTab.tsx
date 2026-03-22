@@ -338,6 +338,108 @@ function EmbedCard({ instanceId, t }: { instanceId: string; t: any }) {
           </div>
         )}
       </div>
+
+      {/* Widget Customization */}
+      <WidgetCustomizer instanceId={instanceId} t={t} />
+    </div>
+  );
+}
+
+// Widget Customization Component
+function WidgetCustomizer({ instanceId, t }: { instanceId: string; t: (key: string) => string }) {
+  const [primaryColor, setPrimaryColor] = useState("#7c3aed");
+  const [position, setPosition] = useState<"bottom-right" | "bottom-left">("bottom-right");
+  const [greeting, setGreeting] = useState("Hi! How can I help you today?");
+  const [copied, setCopied] = useState(false);
+
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://openhelixai.com";
+
+  const customScript = `<script>
+  window.OpenHelixConfig = {
+    primaryColor: "${primaryColor}",
+    position: "${position}",
+    greeting: "${greeting}"
+  };
+</script>
+<script src="${origin}/embed.js?id=${instanceId}"></script>`;
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(customScript);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="mt-6 p-5 border-t border-white/5">
+      <h4 className="text-sm font-semibold text-white mb-4">Customize Widget</h4>
+
+      <div className="space-y-4">
+        {/* Primary Color */}
+        <div className="flex items-center gap-4">
+          <label className="text-sm text-zinc-400 w-24">Color:</label>
+          <div className="flex items-center gap-2">
+            <input
+              type="color"
+              value={primaryColor}
+              onChange={(e) => setPrimaryColor(e.target.value)}
+              className="w-10 h-10 rounded cursor-pointer bg-transparent"
+            />
+            <span className="text-xs text-zinc-500 font-mono">{primaryColor}</span>
+          </div>
+        </div>
+
+        {/* Position */}
+        <div className="flex items-center gap-4">
+          <label className="text-sm text-zinc-400 w-24">Position:</label>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setPosition("bottom-right")}
+              className={`px-3 py-1.5 text-xs rounded-lg border transition-colors ${
+                position === "bottom-right"
+                  ? "bg-violet-600/20 border-violet-500/30 text-violet-300"
+                  : "bg-white/5 border-white/10 text-zinc-400 hover:text-white"
+              }`}
+            >
+              Bottom Right
+            </button>
+            <button
+              onClick={() => setPosition("bottom-left")}
+              className={`px-3 py-1.5 text-xs rounded-lg border transition-colors ${
+                position === "bottom-left"
+                  ? "bg-violet-600/20 border-violet-500/30 text-violet-300"
+                  : "bg-white/5 border-white/10 text-zinc-400 hover:text-white"
+              }`}
+            >
+              Bottom Left
+            </button>
+          </div>
+        </div>
+
+        {/* Greeting */}
+        <div className="flex items-start gap-4">
+          <label className="text-sm text-zinc-400 w-24 pt-2">Greeting:</label>
+          <input
+            type="text"
+            value={greeting}
+            onChange={(e) => setGreeting(e.target.value)}
+            className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500"
+            placeholder="Enter greeting message..."
+          />
+        </div>
+
+        {/* Preview */}
+        <div className="mt-4 p-4 bg-black/30 border border-white/5 rounded-xl">
+          <p className="text-xs text-zinc-500 mb-2">Custom embed code:</p>
+          <pre className="text-xs text-zinc-300 font-mono overflow-x-auto whitespace-pre-wrap break-all">{customScript}</pre>
+          <button
+            onClick={handleCopy}
+            className="mt-3 flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-2.5 py-1.5 rounded-lg transition-colors"
+          >
+            {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+            {copied ? "Copied!" : "Copy Code"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
