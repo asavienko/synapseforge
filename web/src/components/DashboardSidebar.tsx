@@ -23,6 +23,7 @@ import {
   CloseIcon,
   LogoutIcon,
 } from "@/components/icons/BrandIcons";
+import { Search } from "lucide-react";
 
 interface SidebarProps {
   userName?: string | null;
@@ -245,6 +246,16 @@ export function DashboardSidebar({ userName, userEmail, isAdmin, isManager }: Si
           <span className="font-bold text-sm tracking-tight text-white">OpenHelix AI</span>
         </Link>
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              // Dispatch custom event to open command palette
+              window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true }));
+            }}
+            className="p-2 text-zinc-400 hover:text-white transition-colors"
+            title="Command palette (Cmd+K)"
+          >
+            <Search className="w-5 h-5" />
+          </button>
           <NotificationCenter />
           <button onClick={() => setMobileOpen(true)} className="text-zinc-400 hover:text-white transition-colors p-2 -mr-2">
             <MenuIcon className="w-5 h-5" size={20} />
