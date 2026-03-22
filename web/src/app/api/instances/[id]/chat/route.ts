@@ -8,6 +8,7 @@ import { dashboardChatLimiter, rateLimitHeaders, getRateLimitKey } from "@/lib/r
 import { deliverWebhook } from "@/lib/webhooks";
 import { isSandboxExhausted } from "@/lib/sandbox";
 import { captureApiError } from "@/lib/monitoring";
+import { classifyAndStore } from "@/lib/conversation-intelligence";
 
 // LLM calls can take 30-60s
 export const maxDuration = 60;
@@ -162,7 +163,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       );
       if (!("error" in vpsResult)) {
         // VPS succeeded — persist and stream back as plain text
-        await prisma.chatMessage.create({
+        const assistantMessage = await prisma.chatMessage.create({
           data: {
             instanceId: id,
             role: "assistant",
@@ -175,6 +176,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
             source: "openclaw",
           },
         });
+        
+        // Fire-and-forget classification in the background
+        classifyAndStore(id, assistantMessage.id).catch((err) => {
+          console.error("[chat/classify] Background classification failed:", err);
+        });
+        
         prisma.activityLog
           .create({
             data: {
@@ -240,7 +247,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       modelId: resolvedModelId,
       onFinish: async ({ text, inputTokens, outputTokens }) => {
         const latencyMs = Date.now() - startTime;
-        await prisma.chatMessage.create({
+        const assistantMessage = await prisma.chatMessage.create({
           data: {
             instanceId: id,
             role: "assistant",
@@ -252,6 +259,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
             outputTokens: outputTokens || null,
             source: "dashboard",
           },
+        });
+        
+        // Fire-and-forget classification in the background
+        classifyAndStore(id, assistantMessage.id).catch((err) => {
+          console.error("[chat/classify] Background classification failed:", err);
         });
 
         // Increment sandbox usage counter if we used the platform key
