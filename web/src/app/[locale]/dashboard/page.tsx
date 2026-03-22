@@ -279,7 +279,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Quick Setup Guide for new users */}
-      <QuickSetupGuide instances={instances} credentials={user.credentials || []} />
+      <QuickSetupGuide instances={user.instances} />
 
       <UsageDashboard />
 
