@@ -40,6 +40,16 @@ function formatNumber(num: number): string {
   return num.toString();
 }
 
+function timeAgo(date: string): string {
+  const seconds = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000);
+  if (seconds < 60) return 'just now';
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  return `${Math.floor(hours / 24)}d ago`;
+}
+
 function StatCard({
   title,
   value,
@@ -112,8 +122,8 @@ export default function AdminAnalyticsPage() {
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Platform Analytics</h2>
         <div className="flex items-center gap-4">
-          <span className="text-sm text-zinc-500">
-            Last updated: {new Date(data.generatedAt).toLocaleTimeString()}
+          <span className="text-sm text-zinc-500" title={new Date(data.generatedAt).toLocaleString()}>
+            {timeAgo(data.generatedAt)}
           </span>
           <button
             onClick={fetchAnalytics}
