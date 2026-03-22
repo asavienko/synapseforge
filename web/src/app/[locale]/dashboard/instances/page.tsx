@@ -12,6 +12,7 @@ import {
   RefreshIcon,
   LoadingIcon,
 } from "@/components/icons/BrandIcons";
+import { Play, Square, Loader2 } from "lucide-react";
 import { STATUS_COLORS, INSTANCE_TYPES, formatRelativeTime } from "@/lib/utils";
 import { getTemplateById, type AgentTemplate, agentTemplates } from "@/lib/templates";
 import { useTranslations } from "next-intl";
@@ -137,6 +138,38 @@ export default function InstancesPage() {
     const interval = setInterval(loadInstances, 10_000);
     return () => clearInterval(interval);
   }, [instances, loadInstances]);
+
+  // Quick toggle instance status
+  const [togglingId, setTogglingId] = useState<string | null>(null);
+
+  async function toggleInstance(instance: Instance, e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (togglingId) return;
+
+    setTogglingId(instance.id);
+    const newStatus = instance.status === "running" ? "stopped" : "running";
+
+    try {
+      const res = await fetch(`/api/instances/${instance.id}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (res.ok) {
+        showToast(`${instance.name} ${newStatus === "running" ? "started" : "stopped"}`);
+        loadInstances();
+        track("instance_quick_toggle", { instanceId: instance.id, status: newStatus });
+      } else {
+        showToast("Failed to toggle instance", "error");
+      }
+    } catch {
+      showToast("Failed to toggle instance", "error");
+    } finally {
+      setTogglingId(null);
+    }
+  }
 
   async function handleCreateFromTemplate(template: AgentTemplate) {
     setError("");
@@ -306,11 +339,12 @@ export default function InstancesPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {instances.map((instance) => {
             const isProvisioning = instance.provisionStatus === "provisioning";
+            const isToggling = togglingId === instance.id;
             return (
               <Link
                 key={instance.id}
                 href={`/dashboard/instances/${instance.id}`}
-                className="glow-border rounded-2xl p-5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors block"
+                className="glow-border rounded-2xl p-5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors block group"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="relative w-10 h-10 rounded-xl bg-violet-600/20 border border-violet-500/20 flex items-center justify-center">
@@ -329,9 +363,30 @@ export default function InstancesPage() {
                         Provisioning…
                       </span>
                     ) : (
-                      <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${STATUS_COLORS[instance.status]}`}>
-                        {instance.status}
-                      </span>
+                      <>
+                        <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${STATUS_COLORS[instance.status]}`}>
+                          {instance.status}
+                        </span>
+                        {/* Quick toggle button */}
+                        <button
+                          onClick={(e) => toggleInstance(instance, e)}
+                          disabled={isToggling}
+                          className={`opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg ${
+                            instance.status === "running"
+                              ? "bg-zinc-700 hover:bg-zinc-600 text-white"
+                              : "bg-emerald-600 hover:bg-emerald-500 text-white"
+                          } disabled:opacity-50`}
+                          title={instance.status === "running" ? "Stop instance" : "Start instance"}
+                        >
+                          {isToggling ? (
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          ) : instance.status === "running" ? (
+                            <Square className="w-3.5 h-3.5" />
+                          ) : (
+                            <Play className="w-3.5 h-3.5" />
+                          )}
+                        </button>
+                      </>
                     )}
                   </div>
                 </div>
