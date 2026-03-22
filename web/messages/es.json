@@ -1,4 +1,12 @@
 {
+  "notFound": {
+    "title": "Página no encontrada",
+    "description": "La página que buscas no existe o ha sido movida.",
+    "goHome": "Ir al inicio",
+    "goDashboard": "Volver al panel",
+    "needHelp": "¿Necesitas ayuda?",
+    "contactSupport": "Contactar soporte"
+  },
   "notifications": {
     "title": "Notificaciones",
     "bellLabel": "Notificaciones",
