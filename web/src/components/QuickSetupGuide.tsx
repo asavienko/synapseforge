@@ -14,7 +14,12 @@ interface SetupStep {
   check: () => boolean;
 }
 
-export function QuickSetupGuide({ instances, credentials }: { instances: any[]; credentials: any[] }) {
+interface QuickSetupGuideProps {
+  instances: any[];
+  credentials?: any[];
+}
+
+export function QuickSetupGuide({ instances, credentials = [] }: QuickSetupGuideProps) {
   const [dismissed, setDismissed] = useState(false);
   const [hasSeen, setHasSeen] = useState(true);
 
