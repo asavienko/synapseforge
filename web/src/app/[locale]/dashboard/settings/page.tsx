@@ -1,10 +1,11 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { User, Shield, Zap } from "lucide-react";
+import { User, Shield, Zap, Moon } from "lucide-react";
 import { PLANS } from "@/lib/utils";
 import { ProfileForm } from "@/components/ProfileForm";
 import { DashboardUpgrade } from "@/components/DashboardUpgrade";
 import { DeleteAccountSection } from "@/components/DeleteAccountSection";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { getTranslations } from "next-intl/server";
 
 export default async function SettingsPage() {
@@ -72,6 +73,20 @@ export default async function SettingsPage() {
             </a>
           </p>
         )}
+      </section>
+
+      <section className="glow-border rounded-2xl bg-white/[0.02] p-6 mb-6">
+        <div className="flex items-center gap-3 mb-6">
+          <Moon className="w-5 h-5 text-amber-400" />
+          <h2 className="font-semibold text-white">{t("themeSection")}</h2>
+        </div>
+        <div className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10">
+          <div>
+            <div className="font-medium text-white">{t("appearance")}</div>
+            <div className="text-sm text-zinc-400">{t("themeDescription")}</div>
+          </div>
+          <ThemeToggle />
+        </div>
       </section>
 
       <section className="glow-border rounded-2xl bg-white/[0.02] p-6">
