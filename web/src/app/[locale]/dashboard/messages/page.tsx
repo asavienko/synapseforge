@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { Send, Loader2, MessageCircle, User, Shield, CalendarDays, ArrowLeft } from "lucide-react";
+import { useEffect, useRef, useState, useMemo } from "react";
+import { Send, Loader2, MessageCircle, User, Shield, CalendarDays, ArrowLeft, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { CalBookingButton } from "@/components/CalBookingButton";
@@ -30,8 +30,15 @@ export default function MessagesPage() {
   const [error, setError] = useState("");
   const [noManager, setNoManager] = useState(false);
   const [calLink, setCalLink] = useState<string | null>(null);
-  const [showChat, setShowChat] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  // Filter messages by search query
+  const filteredMessages = useMemo(() => {
+    if (!searchQuery.trim()) return messages;
+    const query = searchQuery.toLowerCase();
+    return messages.filter((m) => m.body.toLowerCase().includes(query));
+  }, [messages, searchQuery]);
 
   async function loadMessages() {
     const res = await fetch("/api/messages");
@@ -129,8 +136,37 @@ export default function MessagesPage() {
   return (
     <div className="flex flex-col h-[calc(100vh-3.5rem)] md:h-[calc(100vh)] pt-14 md:pt-0">
       <div className="p-4 md:p-6 border-b border-white/5 shrink-0">
-        <h1 className="text-2xl font-bold text-white">{t("title")}</h1>
-        <p className="text-zinc-400 text-sm mt-1">{t("subtitle")}</p>
+        <div className="flex items-center justify-between gap-4 mb-3">
+          <div>
+            <h1 className="text-2xl font-bold text-white">{t("title")}</h1>
+            <p className="text-zinc-400 text-sm mt-1">{t("subtitle")}</p>
+          </div>
+          {messages.length > 0 && (
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search messages..."
+                className="w-40 sm:w-56 bg-white/5 border border-white/10 rounded-lg pl-9 pr-8 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 transition-colors"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+        {searchQuery && (
+          <p className="text-xs text-zinc-500">
+            {filteredMessages.length} of {messages.length} messages
+          </p>
+        )}
       </div>
 
       {/* Book a call CTA — shown only when manager has a Cal.com link */}
@@ -147,13 +183,13 @@ export default function MessagesPage() {
       )}
 
       <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 space-y-4">
-        {messages.length === 0 ? (
+        {filteredMessages.length === 0 ? (
           <div className="text-center py-12">
             <MessageCircle className="w-8 h-8 text-zinc-600 mx-auto mb-3" />
-            <p className="text-zinc-500 text-sm">{t("noMessagesYet")}</p>
+            <p className="text-zinc-500 text-sm">{searchQuery ? "No messages match your search" : t("noMessagesYet")}</p>
           </div>
         ) : (
-          messages.map((msg) => {
+          filteredMessages.map((msg) => {
             const isUser = msg.senderType === "user";
             return (
               <div key={msg.id} className={cn("flex gap-3", isUser ? "justify-end" : "justify-start")}>
