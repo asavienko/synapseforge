@@ -8,13 +8,8 @@ export const maxDuration = 60;
 /**
  * Cron job: Process webhook retries
  * 
- * Retries failed webhooks with exponential backoff:
- * - Attempt 1: immediate
- * - Attempt 2: after 1 minute  
- * - Attempt 3: after 5 minutes
- * - Attempt 4: after 15 minutes
- * 
- * Vercel Cron: every 15 minutes
+ * Retries failed webhooks from the last 30 minutes.
+ * Vercel Cron: daily at 6 AM (limited by Hobby plan)
  */
 
 const MAX_RETRIES = 3;
