@@ -234,7 +234,10 @@
       },
       "invalidEmail": "Por favor, introduce una dirección de correo válida",
       "alreadyRegistered": "Ese correo ya está registrado",
-      "signInInstead": "¿Iniciar sesión?"
+      "signInInstead": "¿Iniciar sesión?",
+      "creatingAccount": "Creando cuenta...",
+      "successTitle": "¡Cuenta creada!",
+      "successMessage": "Redirigiendo a la configuración inicial..."
     },
     "forgotPassword": {
       "title": "¿Olvidaste tu contraseña?",
@@ -243,7 +246,8 @@
       "submit": "Enviar enlace",
       "backToSignIn": "Volver a iniciar sesión",
       "successTitle": "Revisa tu bandeja de entrada",
-      "successDesc": "Si existe una cuenta para {email}, recibirás un enlace para restablecer tu contraseña en breve."
+      "successDesc": "Si existe una cuenta para {email}, recibirás un enlace para restablecer tu contraseña en breve.",
+      "successMessage": "Si existe una cuenta con ese correo, recibirás un enlace para restablecer tu contraseña. Revisa también tu carpeta de spam."
     },
     "resetPassword": {
       "title": "Establecer nueva contraseña",
@@ -257,7 +261,13 @@
       "successDesc": "Redirigiendo al inicio de sesión...",
       "mismatch": "Las contraseñas no coinciden.",
       "invalidLink": "Enlace de restablecimiento inválido.",
-      "requestNew": "Solicita uno nuevo."
+      "requestNew": "Solicita uno nuevo.",
+      "password": "Nueva contraseña",
+      "passwordsDontMatch": "Las contraseñas no coinciden.",
+      "passwordTooShort": "La contraseña debe tener al menos 8 caracteres.",
+      "invalidToken": "Enlace de restablecimiento inválido o expirado.",
+      "requestNewLink": "Solicitar un nuevo enlace",
+      "successMessage": "Redirigiendo al inicio de sesión..."
     },
     "verifyEmail": {
       "title": "Verifica tu correo",
@@ -504,7 +514,10 @@
       "newPasswordPlaceholder": "Nueva contraseña (mín. 8 caracteres)",
       "saveChanges": "Guardar cambios",
       "profileUpdateSuccess": "Perfil actualizado correctamente.",
-      "profileUpdateError": "Algo salió mal."
+      "profileUpdateError": "Algo salió mal.",
+      "themeSection": "Apariencia",
+      "appearance": "Tema",
+      "themeDescription": "Elige entre modo claro y oscuro"
     }
   },
   "common": {
@@ -1143,7 +1156,25 @@
         "adding": "Añadiendo...",
         "added": "Añadido a Base de Conocimiento",
         "allCaughtUp": "¡Todo al día! No se detectaron brechas de conocimiento."
-      }
+      },
+      "emptyHint": "Tu agente usará estos documentos para responder preguntas",
+      "storageUsed": "Almacenamiento Usado",
+      "storageWarning": "El almacenamiento está bajo. Considera eliminar documentos antiguos.",
+      "storageFull": "Se alcanzó el límite de almacenamiento. Elimina documentos para liberar espacio.",
+      "storageFullTitle": "Almacenamiento Lleno",
+      "storageFullDesc": "Elimina algunos documentos para subir más archivos.",
+      "dropzoneTitle": "Arrastra archivos aquí o haz clic para subir",
+      "dropzoneDesc": "Arrastra y suelta archivos aquí, o haz clic para navegar. Máx {max} por archivo.",
+      "selectFile": "Seleccionar Archivo",
+      "supportedTypes": "Soportados: {types}",
+      "documentsTitle": "Documentos",
+      "statusUploading": "Subiendo...",
+      "statusProcessing": "Procesando embeddings...",
+      "statusDone": "Completado",
+      "statusError": "Fallido",
+      "errorFileTooLarge": "Archivo demasiado grande. El tamaño máximo es {max}.",
+      "errorInvalidType": "Tipo de archivo inválido. Soportados: {types}",
+      "errorStorageLimit": "No hay suficiente espacio de almacenamiento. Elimina algunos documentos primero."
     },
     "deploy": {
       "tab": "Desplegar",
@@ -1721,5 +1752,30 @@
     "quote3": "Nuestro bot de Telegram ahora califica leads 24/7. Dejamos de perder consultas que llegan de noche. Los ingresos de esos leads cubren con creces el coste de la suscripción.",
     "name3": "Olena Marchuk",
     "role3": "CEO, Agencia Digital"
+  },
+  "cta": {
+    "title": "¿Listo para desplegar tu agente de IA?",
+    "subtitle": "Únete a equipos que usan OpenHelix AI para ejecutar agentes de IA 24/7 — sin gestionar infraestructura."
+  },
+  "insights": {
+    "tab": "Análisis",
+    "title": "Análisis de Conversaciones",
+    "intentBreakdown": "Desglose de Intenciones",
+    "unanswered": "Preguntas sin Respuesta",
+    "quality": "Calidad de Conversación",
+    "recentUnanswered": "Preguntas sin Respuesta Recientes",
+    "empty": "Aún no hay datos de conversación. Empieza a chatear para ver análisis."
+  },
+  "whiteLabelPage": {
+    "title": "Marca Blanca",
+    "subtitle": "Personaliza la marca para tus clientes",
+    "brandName": "Nombre de Marca",
+    "brandColor": "Color de Marca",
+    "logoUrl": "URL del Logo",
+    "customDomain": "Dominio Personalizado",
+    "hidePoweredBy": "Ocultar \"Desarrollado por OpenHelix AI\"",
+    "agencyRequired": "Requiere plan de Agencia",
+    "save": "Guardar Cambios",
+    "saved": "Cambios guardados"
   }
 }
