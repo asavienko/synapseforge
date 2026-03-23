@@ -860,8 +860,9 @@
       "vpsUrlLabel": "VPS URL",
       "config": "Config",
       "outOfSync": "Out of sync — VPS will auto-sync within 5 min",
-      "lastCheck": "Last Check",
-      "unreachable": "Unreachable",
+      "lastCheck": "Última verificación",
+      "uptime": "Disponibilidad",
+      "unreachable": "Inaccesible",
       "configManagerSync": "Contact your manager to sync config"
     },
     "credentials": {

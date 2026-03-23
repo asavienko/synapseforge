@@ -66,6 +66,8 @@ export interface HealthData {
   lastCheckedAt: string | null;
   vpsUrl: string | null;
   provisionStatus: string | null;
+  uptimePercentage: number | null;
+  totalChecks: number | null;
   liveCheck: { healthy: boolean; latencyMs: number; error?: string } | null;
   checks: HealthCheckRow[];
 }

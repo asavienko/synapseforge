@@ -868,6 +868,7 @@
       "config": "Config",
       "outOfSync": "Out of sync — VPS will auto-sync within 5 min",
       "lastCheck": "Last Check",
+      "uptime": "Uptime",
       "unreachable": "Unreachable",
       "configManagerSync": "Contact your manager to sync config"
     },

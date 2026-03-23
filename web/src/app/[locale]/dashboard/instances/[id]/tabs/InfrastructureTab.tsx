@@ -174,6 +174,23 @@ export function InfrastructureTab({
                 </div>
               </div>
             )}
+            {healthData?.uptimePercentage !== null && healthData?.uptimePercentage !== undefined && (
+              <div className="flex items-center gap-4">
+                <div className="text-xs text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.uptime")}</div>
+                <div className="flex items-center gap-2">
+                  <span className={cn(
+                    "text-sm font-medium",
+                    healthData.uptimePercentage >= 99 ? "text-emerald-400" :
+                    healthData.uptimePercentage >= 95 ? "text-amber-400" : "text-red-400"
+                  )}>
+                    {healthData.uptimePercentage}%
+                  </span>
+                  <span className="text-xs text-zinc-600">
+                    ({healthData.totalChecks} checks)
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

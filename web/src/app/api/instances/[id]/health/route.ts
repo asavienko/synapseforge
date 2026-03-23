@@ -132,16 +132,23 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   const checks = await prisma.healthCheck.findMany({
     where: { instanceId: id },
     orderBy: { checkedAt: "desc" },
-    take: 20,
+    take: 100, // Get more checks for uptime calculation
   });
+
+  // Calculate uptime percentage
+  const totalChecks = checks.length;
+  const healthyChecks = checks.filter(c => c.status === "healthy").length;
+  const uptimePercentage = totalChecks > 0 ? Math.round((healthyChecks / totalChecks) * 100) : null;
 
   return NextResponse.json({
     healthStatus: instance.healthStatus,
     lastCheckedAt: instance.lastCheckedAt?.toISOString() ?? null,
     vpsUrl: instance.vpsUrl,
     provisionStatus: instance.provisionStatus,
+    uptimePercentage,
+    totalChecks,
     liveCheck: liveResult,
-    checks: checks.map((c) => ({
+    checks: checks.slice(0, 20).map((c) => ({
       id: c.id,
       status: c.status,
       responseMs: c.responseMs,
