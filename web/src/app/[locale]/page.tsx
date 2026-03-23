@@ -153,6 +153,7 @@ export default async function LandingPage() {
             <a href="#demo" className="hover:text-white transition-colors">Demo</a>
             <a href="#how" className="hover:text-white transition-colors">{t("nav.services")}</a>
             <a href="#pricing" className="hover:text-white transition-colors">{t("nav.pricing")}</a>
+            <a href="#about" className="hover:text-white transition-colors">{t("nav.about")}</a>
             <Link href="/use-cases" className="hover:text-white transition-colors">Use Cases</Link>
             <Link href="/compare" className="hover:text-white transition-colors">Compare</Link>
             <Link href="/contact" className="hover:text-white transition-colors">{t("nav.contact")}</Link>

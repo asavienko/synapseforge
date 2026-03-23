@@ -1108,6 +1108,30 @@ function IntegrationsSection({ id, credentials, saveCredential, t }: { id: strin
           toolName="facebook_get_comments"
         />
 
+        <IntegrationCard
+          name="Firecrawl"
+          icon="🔥"
+          description="AI web scraping and crawling. Extract clean content from any URL for your AI agent."
+          docsUrl="https://firecrawl.dev"
+          credKey="firecrawl_api_key"
+          placeholder="fc-..."
+          enabled={credentials.some((c) => c.key === "firecrawl_api_key")}
+          instanceId={id}
+          onSave={async (key, value) => { await saveCredential(key, value); }}
+          toolName="firecrawl_scrape"
+        />
+        <IntegrationCard
+          name="CoinGecko"
+          icon="🦎"
+          description="Real-time cryptocurrency prices, market data, and coin information."
+          docsUrl="https://coingecko.com/api/documentation"
+          credKey="coingecko_api_key"
+          placeholder="CG-..."
+          enabled={credentials.some((c) => c.key === "coingecko_api_key")}
+          instanceId={id}
+          onSave={async (key, value) => { await saveCredential(key, value); }}
+          toolName="crypto_price"
+        />
         <p className="text-xs text-zinc-500 font-medium uppercase tracking-wider pt-2">{t("credentials.integrations.businessTools")}</p>
         <IntegrationCard
           name="GitHub"

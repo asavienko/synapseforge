@@ -140,13 +140,15 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
             <p className="text-xs text-zinc-500">Manage access to your instance API</p>
           </div>
         </div>
-        <button
-          onClick={() => setShowCreateForm(!showCreateForm)}
-          className="flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-500 rounded-lg text-sm font-medium transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          Create Key
-        </button>
+        {!showCreateForm && (
+          <button
+            onClick={() => setShowCreateForm(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-500 rounded-lg text-sm font-medium transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Create Key
+          </button>
+        )}
       </div>
 
       {/* New Key Warning */}

@@ -217,7 +217,7 @@ export default function InstanceDetailPage() {
                 "Analytics": "Analytics",
               };
               return (
-                <button key={tabKey} data-tab={tabKey} onClick={() => setTab(tabKey)}
+                <button key={tabKey} data-tab={tabKey} onClick={(e) => { setTab(tabKey); (e.currentTarget as HTMLElement).scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" }); }}
                   className={cn("px-3 sm:px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px shrink-0 whitespace-nowrap touch-target",
                     tab === tabKey ? "border-violet-500 text-white" : "border-transparent text-zinc-500 hover:text-zinc-300"
                   )}>{tabLabels[tabKey]}

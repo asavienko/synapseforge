@@ -511,7 +511,10 @@
       "newPasswordPlaceholder": "New password (min. 8 characters)",
       "saveChanges": "Save changes",
       "profileUpdateSuccess": "Profile updated successfully.",
-      "profileUpdateError": "Something went wrong."
+      "profileUpdateError": "Something went wrong.",
+      "themeSection": "Appearance",
+      "appearance": "Theme",
+      "themeDescription": "Choose between light and dark mode"
     }
   },
   "common": {
