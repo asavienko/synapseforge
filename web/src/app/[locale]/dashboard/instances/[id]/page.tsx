@@ -20,6 +20,7 @@ import { DeployTab } from "./tabs/DeployTab";
 import { InfrastructureTab } from "./tabs/InfrastructureTab";
 import { ActivityLogTab } from "./tabs/ActivityLogTab";
 import { WebhookDeliveriesTab } from "./tabs/WebhookDeliveriesTab";
+import { KnowledgeSuggestions } from "@/components/KnowledgeSuggestions";
 import { ConversationInsights } from "@/components/ConversationInsights";
 
 // Lazy load heavy components
@@ -307,7 +308,16 @@ export default function InstanceDetailPage() {
           />
         )}
 
-        {tab === "Knowledge" && <KnowledgeBaseManager instanceId={id} />}
+        {tab === "Knowledge" && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <KnowledgeBaseManager instanceId={id} />
+            </div>
+            <div className="lg:col-span-1">
+              <KnowledgeSuggestions instanceId={id} />
+            </div>
+          </div>
+        )}
 
         {tab === "Infrastructure" && (
           <InfrastructureTab

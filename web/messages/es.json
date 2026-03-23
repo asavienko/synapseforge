@@ -1117,7 +1117,20 @@
       "deleteConfirm": "¿Eliminar este documento?",
       "uploading": "Subiendo...",
       "uploadFailed": "Upload failed",
-      "deleteFailed": "Delete failed"
+      "deleteFailed": "Delete failed",
+      "suggestions": {
+        "title": "Sugerencias inteligentes",
+        "subtitle": "{count} brechas de conocimiento detectadas",
+        "questionsAsked": "preguntas realizadas",
+        "highPriority": "Alta Prioridad",
+        "mediumPriority": "Prioridad Media",
+        "lowPriority": "Baja Prioridad",
+        "suggestedAnswer": "Respuesta sugerida",
+        "addToKB": "Añadir a Base de Conocimiento",
+        "adding": "Añadiendo...",
+        "added": "Añadido a Base de Conocimiento",
+        "allCaughtUp": "¡Todo al día! No se detectaron brechas de conocimiento."
+      }
     },
     "deploy": {
       "tab": "Desplegar",

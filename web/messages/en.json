@@ -1142,7 +1142,20 @@
       "statusError": "Failed",
       "errorFileTooLarge": "File too large. Maximum size is {max}.",
       "errorInvalidType": "Invalid file type. Supported: {types}",
-      "errorStorageLimit": "Not enough storage space. Delete some documents first."
+      "errorStorageLimit": "Not enough storage space. Delete some documents first.",
+      "suggestions": {
+        "title": "Smart Suggestions",
+        "subtitle": "{count} knowledge gaps detected",
+        "questionsAsked": "questions asked",
+        "highPriority": "High Priority",
+        "mediumPriority": "Medium Priority",
+        "lowPriority": "Low Priority",
+        "suggestedAnswer": "Suggested answer",
+        "addToKB": "Add to Knowledge Base",
+        "adding": "Adding...",
+        "added": "Added to Knowledge Base",
+        "allCaughtUp": "All caught up! No knowledge gaps detected."
+      }
     },
     "deploy": {
       "tab": "Deploy",
