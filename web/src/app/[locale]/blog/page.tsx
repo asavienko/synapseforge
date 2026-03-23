@@ -24,6 +24,15 @@ const posts = [
     category: "Tutorial",
     categoryColor: "text-blue-400 bg-blue-400/10",
   },
+  {
+    slug: "best-ai-models-for-customer-support",
+    title: "Best AI Models for Customer Support in 2026: GPT-4o vs Claude vs Gemini vs Mistral",
+    excerpt: "Practical breakdown of the top LLMs for customer support chatbots — accuracy, tone, cost, and which fits your use case.",
+    date: "March 23, 2026",
+    readTime: "10 min read",
+    category: "Comparison",
+    categoryColor: "text-violet-400 bg-violet-400/10",
+  },
 ];
 
 export default function BlogPage() {
