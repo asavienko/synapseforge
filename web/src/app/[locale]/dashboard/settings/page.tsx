@@ -15,6 +15,8 @@ export const metadata: Metadata = {
   title: "Settings | Dashboard",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function SettingsPage() {
   const session = await auth();
   const userId = session!.user!.id!;

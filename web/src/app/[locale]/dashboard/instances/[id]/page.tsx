@@ -199,7 +199,7 @@ export default function InstanceDetailPage() {
 
         {/* Tabs */}
         <div className="relative mb-6">
-          <div className="flex gap-1 border-b border-white/5 overflow-x-auto scrollbar-hide tab-scroll-snap pb-px">
+          <div className="flex flex-wrap gap-1 border-b border-white/5 pb-px">
             {TABS.map((tabKey) => {
               const tabLabels: Record<string, string> = {
                 "Overview": t("tabs.overview"),
@@ -217,7 +217,7 @@ export default function InstanceDetailPage() {
                 "Analytics": "Analytics",
               };
               return (
-                <button key={tabKey} data-tab={tabKey} onClick={(e) => { setTab(tabKey); (e.currentTarget as HTMLElement).scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" }); }}
+                <button key={tabKey} data-tab={tabKey} onClick={() => setTab(tabKey)}
                   className={cn("px-3 sm:px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px shrink-0 whitespace-nowrap touch-target",
                     tab === tabKey ? "border-violet-500 text-white" : "border-transparent text-zinc-500 hover:text-zinc-300"
                   )}>{tabLabels[tabKey]}
