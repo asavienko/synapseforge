@@ -9,6 +9,11 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { TeamSettings } from "@/components/TeamSettings";
 import { getTranslations } from "next-intl/server";
 import { RestartTourButton } from "@/components/RestartTourButton";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Settings | Dashboard",
+};
 
 export default async function SettingsPage() {
   const session = await auth();
