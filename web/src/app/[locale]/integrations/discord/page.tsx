@@ -184,6 +184,29 @@ export default function DiscordIntegrationPage() {
             Get Started Free <ArrowRight className="w-5 h-5" />
           </Link>
         </section>
+
+        {/* Related links */}
+        <section className="mb-8">
+          <h2 className="text-xl font-bold mb-4">Related Guides</h2>
+          <div className="grid sm:grid-cols-2 gap-3">
+            <Link href="/integrations/telegram" className="flex items-center gap-3 bg-white/[0.02] border border-white/5 hover:border-violet-500/20 rounded-xl p-4 group">
+              <div className="flex-1"><div className="text-sm font-medium text-white group-hover:text-violet-300 transition-colors">Telegram Integration</div><div className="text-xs text-zinc-500 mt-0.5">Also deploy AI on Telegram</div></div>
+              <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-violet-400 transition-colors shrink-0" />
+            </Link>
+            <Link href="/integrations/whatsapp" className="flex items-center gap-3 bg-white/[0.02] border border-white/5 hover:border-violet-500/20 rounded-xl p-4 group">
+              <div className="flex-1"><div className="text-sm font-medium text-white group-hover:text-violet-300 transition-colors">WhatsApp Integration</div><div className="text-xs text-zinc-500 mt-0.5">Add AI to WhatsApp Business</div></div>
+              <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-violet-400 transition-colors shrink-0" />
+            </Link>
+            <Link href="/blog/how-to-build-telegram-chatbot" className="flex items-center gap-3 bg-white/[0.02] border border-white/5 hover:border-violet-500/20 rounded-xl p-4 group">
+              <div className="flex-1"><div className="text-sm font-medium text-white group-hover:text-violet-300 transition-colors">Telegram Chatbot Tutorial</div><div className="text-xs text-zinc-500 mt-0.5">Step-by-step, 10 minutes</div></div>
+              <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-violet-400 transition-colors shrink-0" />
+            </Link>
+            <Link href="/blog/best-ai-models-for-customer-support" className="flex items-center gap-3 bg-white/[0.02] border border-white/5 hover:border-violet-500/20 rounded-xl p-4 group">
+              <div className="flex-1"><div className="text-sm font-medium text-white group-hover:text-violet-300 transition-colors">Best AI Models for Support</div><div className="text-xs text-zinc-500 mt-0.5">GPT-4o vs Claude vs Gemini</div></div>
+              <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-violet-400 transition-colors shrink-0" />
+            </Link>
+          </div>
+        </section>
       </main>
 
       <footer className="border-t border-white/5 py-8 mt-16">

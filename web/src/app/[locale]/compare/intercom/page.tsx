@@ -226,6 +226,29 @@ export default function IntercomComparePage() {
           </Link>
           <p className="text-sm text-zinc-500 mt-4">No credit card required</p>
         </section>
+
+        {/* Related links */}
+        <section className="mb-8">
+          <h2 className="text-xl font-bold mb-4">Related Guides</h2>
+          <div className="grid sm:grid-cols-2 gap-3">
+            <Link href="/compare/tidio" className="flex items-center gap-3 bg-white/[0.02] border border-white/5 hover:border-violet-500/20 rounded-xl p-4 group">
+              <div className="flex-1"><div className="text-sm font-medium text-white group-hover:text-violet-300 transition-colors">OpenHelix vs Tidio</div><div className="text-xs text-zinc-500 mt-0.5">The most popular chatbot alternative</div></div>
+              <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-violet-400 transition-colors shrink-0" />
+            </Link>
+            <Link href="/compare/crisp" className="flex items-center gap-3 bg-white/[0.02] border border-white/5 hover:border-violet-500/20 rounded-xl p-4 group">
+              <div className="flex-1"><div className="text-sm font-medium text-white group-hover:text-violet-300 transition-colors">OpenHelix vs Crisp</div><div className="text-xs text-zinc-500 mt-0.5">Crisp alternative with AI-first approach</div></div>
+              <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-violet-400 transition-colors shrink-0" />
+            </Link>
+            <Link href="/integrations/telegram" className="flex items-center gap-3 bg-white/[0.02] border border-white/5 hover:border-violet-500/20 rounded-xl p-4 group">
+              <div className="flex-1"><div className="text-sm font-medium text-white group-hover:text-violet-300 transition-colors">Telegram AI Chatbot Setup</div><div className="text-xs text-zinc-500 mt-0.5">Deploy GPT-4 on Telegram in 3 minutes</div></div>
+              <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-violet-400 transition-colors shrink-0" />
+            </Link>
+            <Link href="/blog/best-ai-models-for-customer-support" className="flex items-center gap-3 bg-white/[0.02] border border-white/5 hover:border-violet-500/20 rounded-xl p-4 group">
+              <div className="flex-1"><div className="text-sm font-medium text-white group-hover:text-violet-300 transition-colors">Best AI Models for Customer Support</div><div className="text-xs text-zinc-500 mt-0.5">GPT-4o vs Claude vs Gemini compared</div></div>
+              <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-violet-400 transition-colors shrink-0" />
+            </Link>
+          </div>
+        </section>
       </main>
 
       <footer className="border-t border-white/5 py-8 mt-16">

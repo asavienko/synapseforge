@@ -286,6 +286,28 @@ export default function TelegramIntegrationPage() {
           </Link>
         </section>
 
+        {/* Related links */}
+        <section className="mb-8">
+          <h2 className="text-xl font-bold mb-4">Related Guides</h2>
+          <div className="grid sm:grid-cols-2 gap-3">
+            <Link href="/blog/how-to-build-telegram-chatbot" className="flex items-center gap-3 bg-white/[0.02] border border-white/5 hover:border-violet-500/20 rounded-xl p-4 group">
+              <div className="flex-1"><div className="text-sm font-medium text-white group-hover:text-violet-300 transition-colors">Telegram Chatbot Tutorial</div><div className="text-xs text-zinc-500 mt-0.5">Step-by-step guide with BotFather setup</div></div>
+              <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-violet-400 transition-colors shrink-0" />
+            </Link>
+            <Link href="/integrations/whatsapp" className="flex items-center gap-3 bg-white/[0.02] border border-white/5 hover:border-violet-500/20 rounded-xl p-4 group">
+              <div className="flex-1"><div className="text-sm font-medium text-white group-hover:text-violet-300 transition-colors">WhatsApp Integration</div><div className="text-xs text-zinc-500 mt-0.5">Also deploy AI on WhatsApp Business</div></div>
+              <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-violet-400 transition-colors shrink-0" />
+            </Link>
+            <Link href="/compare/tidio" className="flex items-center gap-3 bg-white/[0.02] border border-white/5 hover:border-violet-500/20 rounded-xl p-4 group">
+              <div className="flex-1"><div className="text-sm font-medium text-white group-hover:text-violet-300 transition-colors">OpenHelix vs Tidio</div><div className="text-xs text-zinc-500 mt-0.5">Tidio doesn&apos;t support Telegram — we do</div></div>
+              <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-violet-400 transition-colors shrink-0" />
+            </Link>
+            <Link href="/blog/best-ai-models-for-customer-support" className="flex items-center gap-3 bg-white/[0.02] border border-white/5 hover:border-violet-500/20 rounded-xl p-4 group">
+              <div className="flex-1"><div className="text-sm font-medium text-white group-hover:text-violet-300 transition-colors">Best AI Models for Customer Support</div><div className="text-xs text-zinc-500 mt-0.5">GPT-4o vs Claude vs Gemini</div></div>
+              <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-violet-400 transition-colors shrink-0" />
+            </Link>
+          </div>
+        </section>
       </main>
 
       {/* Footer */}

@@ -317,10 +317,44 @@ export default function TidioComparePage() {
           <p className="text-sm text-zinc-500 mt-4">2,000 messages free · No credit card · 3-minute setup</p>
         </section>
 
+        {/* Related links */}
+        <section className="mb-16">
+          <h2 className="text-xl font-bold mb-4">Related Guides</h2>
+          <div className="grid sm:grid-cols-2 gap-3">
+            <Link href="/integrations/telegram" className="flex items-center gap-3 bg-white/[0.02] border border-white/5 hover:border-violet-500/20 rounded-xl p-4 group">
+              <div className="flex-1">
+                <div className="text-sm font-medium text-white group-hover:text-violet-300 transition-colors">Telegram AI Chatbot Setup</div>
+                <div className="text-xs text-zinc-500 mt-0.5">Deploy GPT-4 on Telegram in 3 minutes</div>
+              </div>
+              <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-violet-400 transition-colors" />
+            </Link>
+            <Link href="/integrations/whatsapp" className="flex items-center gap-3 bg-white/[0.02] border border-white/5 hover:border-violet-500/20 rounded-xl p-4 group">
+              <div className="flex-1">
+                <div className="text-sm font-medium text-white group-hover:text-violet-300 transition-colors">WhatsApp Business AI Guide</div>
+                <div className="text-xs text-zinc-500 mt-0.5">Connect AI to your WhatsApp number</div>
+              </div>
+              <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-violet-400 transition-colors" />
+            </Link>
+            <Link href="/compare/intercom" className="flex items-center gap-3 bg-white/[0.02] border border-white/5 hover:border-violet-500/20 rounded-xl p-4 group">
+              <div className="flex-1">
+                <div className="text-sm font-medium text-white group-hover:text-violet-300 transition-colors">OpenHelix vs Intercom</div>
+                <div className="text-xs text-zinc-500 mt-0.5">Is Intercom&apos;s price worth it?</div>
+              </div>
+              <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-violet-400 transition-colors" />
+            </Link>
+            <Link href="/blog/best-ai-models-for-customer-support" className="flex items-center gap-3 bg-white/[0.02] border border-white/5 hover:border-violet-500/20 rounded-xl p-4 group">
+              <div className="flex-1">
+                <div className="text-sm font-medium text-white group-hover:text-violet-300 transition-colors">Best AI Models for Customer Support</div>
+                <div className="text-xs text-zinc-500 mt-0.5">GPT-4o vs Claude vs Gemini — which wins?</div>
+              </div>
+              <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-violet-400 transition-colors" />
+            </Link>
+          </div>
+        </section>
+
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-white/5 py-8 mt-16">
+      <footer className="border-t border-white/5 py-8 mt-4">
         <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-zinc-500">
           <span>© 2026 SynapseForge. All rights reserved.</span>
           <div className="flex gap-6">

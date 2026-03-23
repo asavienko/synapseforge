@@ -880,6 +880,50 @@ export default async function LandingPage() {
         </div>
       </section>
 
+      {/* ── Resources ────────────────────────────────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
+        <div className="text-center mb-10">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-3">Guides &amp; Resources</h2>
+          <p className="text-zinc-400 text-sm max-w-xl mx-auto">Tutorials, comparisons, and integration guides to help you get the most out of AI customer support.</p>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+          {/* Blog posts */}
+          <Link href="/blog/how-to-build-telegram-chatbot" className="group bg-white/[0.02] border border-white/5 hover:border-violet-500/20 hover:bg-white/[0.04] transition-all rounded-xl p-5">
+            <div className="text-xs text-blue-400 bg-blue-400/10 px-2 py-0.5 rounded-full inline-block mb-3">Tutorial</div>
+            <h3 className="font-semibold text-white group-hover:text-violet-300 transition-colors mb-1.5 text-sm leading-snug">How to Build a Telegram AI Chatbot in 10 Minutes</h3>
+            <p className="text-xs text-zinc-500">Step-by-step setup with BotFather, API keys, and going live.</p>
+          </Link>
+          <Link href="/blog/best-ai-models-for-customer-support" className="group bg-white/[0.02] border border-white/5 hover:border-violet-500/20 hover:bg-white/[0.04] transition-all rounded-xl p-5">
+            <div className="text-xs text-violet-400 bg-violet-400/10 px-2 py-0.5 rounded-full inline-block mb-3">Comparison</div>
+            <h3 className="font-semibold text-white group-hover:text-violet-300 transition-colors mb-1.5 text-sm leading-snug">GPT-4o vs Claude vs Gemini: Best AI for Customer Support</h3>
+            <p className="text-xs text-zinc-500">Which LLM wins on accuracy, tone, speed, and cost?</p>
+          </Link>
+          <Link href="/integrations/telegram" className="group bg-white/[0.02] border border-white/5 hover:border-violet-500/20 hover:bg-white/[0.04] transition-all rounded-xl p-5">
+            <div className="text-xs text-zinc-400 bg-white/5 px-2 py-0.5 rounded-full inline-block mb-3">Integration</div>
+            <h3 className="font-semibold text-white group-hover:text-violet-300 transition-colors mb-1.5 text-sm leading-snug">Telegram AI Chatbot — Full Integration Guide</h3>
+            <p className="text-xs text-zinc-500">Connect GPT-4 to your Telegram channel in 3 minutes.</p>
+          </Link>
+          <Link href="/integrations/whatsapp" className="group bg-white/[0.02] border border-white/5 hover:border-violet-500/20 hover:bg-white/[0.04] transition-all rounded-xl p-5">
+            <div className="text-xs text-zinc-400 bg-white/5 px-2 py-0.5 rounded-full inline-block mb-3">Integration</div>
+            <h3 className="font-semibold text-white group-hover:text-violet-300 transition-colors mb-1.5 text-sm leading-snug">WhatsApp Business AI Chatbot Setup Guide</h3>
+            <p className="text-xs text-zinc-500">Add AI to your WhatsApp Business number via Twilio.</p>
+          </Link>
+          <Link href="/compare/tidio" className="group bg-white/[0.02] border border-white/5 hover:border-violet-500/20 hover:bg-white/[0.04] transition-all rounded-xl p-5">
+            <div className="text-xs text-zinc-400 bg-white/5 px-2 py-0.5 rounded-full inline-block mb-3">Compare</div>
+            <h3 className="font-semibold text-white group-hover:text-violet-300 transition-colors mb-1.5 text-sm leading-snug">OpenHelix vs Tidio — Full Feature Comparison</h3>
+            <p className="text-xs text-zinc-500">Features, pricing, and when to choose each.</p>
+          </Link>
+          <Link href="/compare/intercom" className="group bg-white/[0.02] border border-white/5 hover:border-violet-500/20 hover:bg-white/[0.04] transition-all rounded-xl p-5">
+            <div className="text-xs text-zinc-400 bg-white/5 px-2 py-0.5 rounded-full inline-block mb-3">Compare</div>
+            <h3 className="font-semibold text-white group-hover:text-violet-300 transition-colors mb-1.5 text-sm leading-snug">OpenHelix vs Intercom — Is the Price Worth It?</h3>
+            <p className="text-xs text-zinc-500">Honest comparison for SMBs evaluating Intercom.</p>
+          </Link>
+        </div>
+        <div className="text-center">
+          <Link href="/blog" className="text-sm text-violet-400 hover:text-violet-300 transition-colors">View all guides →</Link>
+        </div>
+      </section>
+
       {/* ── FAQ ──────────────────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-20">
         <div className="max-w-3xl mx-auto">
@@ -957,25 +1001,72 @@ export default async function LandingPage() {
       </section>
 
       {/* ── Footer ───────────────────────────────────────────────────────── */}
-      <footer className="border-t border-white/5 py-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-zinc-500">
-          <div className="flex items-center justify-center sm:justify-start gap-2">
-            <HelixLogo className="w-4 h-4 text-violet-400" size={16} />
-            <span className="font-semibold text-zinc-400">OpenHelix AI</span>
+      <footer className="border-t border-white/5 pt-12 pb-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          {/* Link columns */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8 mb-10">
+            {/* Brand */}
+            <div className="col-span-2 sm:col-span-3 lg:col-span-1">
+              <div className="flex items-center gap-2 mb-3">
+                <HelixLogo className="w-5 h-5 text-violet-400" size={20} />
+                <span className="font-bold text-white text-sm">OpenHelix AI</span>
+              </div>
+              <p className="text-xs text-zinc-500 leading-relaxed max-w-xs">
+                Deploy AI customer support agents for Telegram, WhatsApp, and web. Powered by GPT-4 and Claude.
+              </p>
+            </div>
+            {/* Product */}
+            <div>
+              <div className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3">Product</div>
+              <ul className="space-y-2 text-sm text-zinc-500">
+                <li><Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
+                <li><Link href="/templates" className="hover:text-white transition-colors">Templates</Link></li>
+                <li><Link href="/changelog" className="hover:text-white transition-colors">{t("footer.changelog")}</Link></li>
+                <li><Link href="/status" className="hover:text-white transition-colors">{t("footer.status")}</Link></li>
+                <li><Link href="/api-docs" className="hover:text-white transition-colors">{t("footer.api")}</Link></li>
+              </ul>
+            </div>
+            {/* Integrations */}
+            <div>
+              <div className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3">Integrations</div>
+              <ul className="space-y-2 text-sm text-zinc-500">
+                <li><Link href="/integrations/telegram" className="hover:text-white transition-colors">Telegram</Link></li>
+                <li><Link href="/integrations/whatsapp" className="hover:text-white transition-colors">WhatsApp</Link></li>
+                <li><Link href="/integrations/discord" className="hover:text-white transition-colors">Discord</Link></li>
+                <li><Link href="/integrations" className="hover:text-white transition-colors">All integrations →</Link></li>
+              </ul>
+            </div>
+            {/* Compare */}
+            <div>
+              <div className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3">Compare</div>
+              <ul className="space-y-2 text-sm text-zinc-500">
+                <li><Link href="/compare/tidio" className="hover:text-white transition-colors">vs Tidio</Link></li>
+                <li><Link href="/compare/intercom" className="hover:text-white transition-colors">vs Intercom</Link></li>
+                <li><Link href="/compare/crisp" className="hover:text-white transition-colors">vs Crisp</Link></li>
+                <li><Link href="/compare" className="hover:text-white transition-colors">All comparisons →</Link></li>
+              </ul>
+            </div>
+            {/* Resources */}
+            <div>
+              <div className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3">Resources</div>
+              <ul className="space-y-2 text-sm text-zinc-500">
+                <li><Link href="/blog" className="hover:text-white transition-colors">Blog</Link></li>
+                <li><Link href="/blog/how-to-build-telegram-chatbot" className="hover:text-white transition-colors">Telegram chatbot guide</Link></li>
+                <li><Link href="/blog/best-ai-models-for-customer-support" className="hover:text-white transition-colors">Best AI models</Link></li>
+                <li><Link href="/contact" className="hover:text-white transition-colors">{t("nav.contact")}</Link></li>
+                <li><Link href="/privacy" className="hover:text-white transition-colors">{t("footer.privacy")}</Link></li>
+                <li><Link href="/terms" className="hover:text-white transition-colors">{t("footer.terms")}</Link></li>
+              </ul>
+            </div>
+          </div>
+          {/* Bottom bar */}
+          <div className="border-t border-white/5 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-600">
             <span>{t("footer.copyright", { year: 2026 })}</span>
+            <Link href="/status" className="flex items-center gap-1.5 hover:text-zinc-400 transition-colors">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span>{t("footer.systemStatus")}</span>
+            </Link>
           </div>
-          <div className="flex gap-6">
-            <Link href="/status" className="hover:text-white transition-colors">{t("footer.status")}</Link>
-            <Link href="/api-docs" className="hover:text-white transition-colors">{t("footer.api")}</Link>
-            <Link href="/changelog" className="hover:text-white transition-colors">{t("footer.changelog")}</Link>
-            <Link href="/privacy" className="hover:text-white transition-colors">{t("footer.privacy")}</Link>
-            <Link href="/terms" className="hover:text-white transition-colors">{t("footer.terms")}</Link>
-            <Link href="/contact" className="hover:text-white transition-colors">{t("footer.contact")}</Link>
-          </div>
-          <Link href="/status" className="flex items-center gap-1.5 hover:text-white transition-colors">
-            <span className="w-2 h-2 rounded-full bg-emerald-500" />
-            <span className="text-xs">{t("footer.systemStatus")}</span>
-          </Link>
         </div>
       </footer>
 
