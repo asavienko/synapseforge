@@ -33,6 +33,15 @@ const posts = [
     category: "Comparison",
     categoryColor: "text-violet-400 bg-violet-400/10",
   },
+  {
+    slug: "reduce-customer-support-costs-with-ai",
+    title: "How to Reduce Customer Support Costs by 60% with AI",
+    excerpt: "Real numbers on AI support ROI. How businesses cut per-ticket costs while improving customer satisfaction — with a built-in calculator.",
+    date: "March 23, 2026",
+    readTime: "9 min read",
+    category: "ROI Guide",
+    categoryColor: "text-emerald-400 bg-emerald-400/10",
+  },
 ];
 
 export default function BlogPage() {

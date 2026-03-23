@@ -1053,6 +1053,7 @@ export default async function LandingPage() {
                 <li><Link href="/blog" className="hover:text-white transition-colors">Blog</Link></li>
                 <li><Link href="/blog/how-to-build-telegram-chatbot" className="hover:text-white transition-colors">Telegram chatbot guide</Link></li>
                 <li><Link href="/blog/best-ai-models-for-customer-support" className="hover:text-white transition-colors">Best AI models</Link></li>
+                <li><Link href="/blog/reduce-customer-support-costs-with-ai" className="hover:text-white transition-colors">Reduce support costs</Link></li>
                 <li><Link href="/contact" className="hover:text-white transition-colors">{t("nav.contact")}</Link></li>
                 <li><Link href="/privacy" className="hover:text-white transition-colors">{t("footer.privacy")}</Link></li>
                 <li><Link href="/terms" className="hover:text-white transition-colors">{t("footer.terms")}</Link></li>

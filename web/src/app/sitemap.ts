@@ -83,6 +83,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.7,
     },
+    {
+      url: `${baseUrl}/blog/reduce-customer-support-costs-with-ai`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
     // Integrations
     {
       url: `${baseUrl}/integrations`,
