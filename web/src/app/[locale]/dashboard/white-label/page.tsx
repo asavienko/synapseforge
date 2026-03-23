@@ -3,6 +3,11 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { WhiteLabelForm } from "@/components/WhiteLabelForm";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "White Label | Dashboard",
+};
 
 export default async function WhiteLabelPage() {
   const session = await auth();

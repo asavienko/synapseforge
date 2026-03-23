@@ -10,6 +10,11 @@ import {
 } from "lucide-react";
 import { SetupKeyForm } from "@/components/SetupKeyForm";
 import { Suspense } from "react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Setup Key | Dashboard",
+};
 
 export default async function SetupKeyPage() {
   const t = await getTranslations("setupKey");
