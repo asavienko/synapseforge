@@ -203,7 +203,7 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
               disabled={creating || !newKeyName.trim()}
               className="px-4 py-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 rounded-lg text-sm font-medium transition-colors"
             >
-              {creating ? "Creating..." : "Create Key"}
+              {creating ? "Creating..." : "Create"}
             </button>
           </div>
         </div>
@@ -275,15 +275,53 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
         )}
       </div>
 
-      {/* Usage Info */}
-      <div className="p-4 bg-white/5 rounded-xl text-sm text-zinc-500">
-        <p className="mb-2">
-          <strong className="text-zinc-300">Using your API key:</strong>
-        </p>
-        <code className="block bg-black/30 rounded p-3 text-xs font-mono mt-2">
-          curl -H &quot;Authorization: Bearer YOUR_API_KEY&quot; \\n<br />
-          &nbsp;&nbsp;https://openhelixai.com/api/instances/{instanceId}/chat
-        </code>
+      {/* Usage Examples */}
+      <div className="space-y-4">
+        <h4 className="text-sm font-semibold text-zinc-300">Usage Examples</h4>
+
+        {/* OpenHelix format */}
+        <div className="rounded-xl bg-white/[0.03] border border-white/5 overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-2 border-b border-white/5 bg-white/[0.02]">
+            <span className="text-xs font-mono text-violet-400">/api/v1/chat</span>
+            <span className="text-xs text-zinc-500">OpenHelix format</span>
+          </div>
+          <pre className="p-4 text-xs font-mono text-zinc-300 overflow-x-auto whitespace-pre-wrap break-all">{`curl -X POST https://openhelixai.com/api/v1/chat \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"message": "Hello!"}'`}</pre>
+        </div>
+
+        {/* OpenAI-compatible format */}
+        <div className="rounded-xl bg-white/[0.03] border border-white/5 overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-2 border-b border-white/5 bg-white/[0.02]">
+            <span className="text-xs font-mono text-violet-400">/api/v1/chat/completions</span>
+            <span className="text-xs text-zinc-500">OpenAI-compatible</span>
+          </div>
+          <pre className="p-4 text-xs font-mono text-zinc-300 overflow-x-auto whitespace-pre-wrap break-all">{`curl -X POST https://openhelixai.com/api/v1/chat/completions \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"messages": [{"role": "user", "content": "Hello!"}]}'`}</pre>
+        </div>
+
+        {/* Python example */}
+        <div className="rounded-xl bg-white/[0.03] border border-white/5 overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-2 border-b border-white/5 bg-white/[0.02]">
+            <span className="text-xs font-mono text-zinc-400">Python</span>
+            <span className="text-xs text-zinc-500">SDK example</span>
+          </div>
+          <pre className="p-4 text-xs font-mono text-zinc-300 overflow-x-auto whitespace-pre-wrap break-all">{`from openai import OpenAI
+
+client = OpenAI(
+    api_key="YOUR_API_KEY",
+    base_url="https://openhelixai.com/api/v1"
+)
+
+response = client.chat.completions.create(
+    model="default",
+    messages=[{"role": "user", "content": "Hello!"}]
+)
+print(response.choices[0].message.content)`}</pre>
+        </div>
       </div>
     </div>
   );

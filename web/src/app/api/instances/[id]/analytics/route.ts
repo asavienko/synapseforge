@@ -37,61 +37,61 @@ export async function GET(
       },
     });
 
-    // Get daily breakdown
-    const dailyStats = await prisma.$queryRaw<Array<{
-      date: string;
-      count: bigint;
-    }>>`
-      SELECT DATE(created_at) as date, COUNT(*) as count
-      FROM "ChatMessage"
-      WHERE instance_id = ${id}
-        AND created_at >= ${since}
-      GROUP BY DATE(created_at)
-      ORDER BY date ASC
-    `;
+    // Get all messages for daily breakdown (avoid raw SQL column name issues)
+    const messages = await prisma.chatMessage.findMany({
+      where: {
+        instanceId: id,
+        createdAt: { gte: since },
+      },
+      select: {
+        createdAt: true,
+        source: true,
+        role: true,
+        latencyMs: true,
+      },
+      orderBy: { createdAt: "asc" },
+    });
 
-    // Get source breakdown (telegram, discord, web, etc.)
-    const sourceStats = await prisma.$queryRaw<Array<{
-      source: string;
-      count: bigint;
-    }>>`
-      SELECT source, COUNT(*) as count
-      FROM "ChatMessage"
-      WHERE instance_id = ${id}
-        AND created_at >= ${since}
-        AND source IS NOT NULL
-      GROUP BY source
-      ORDER BY count DESC
-    `;
+    // Build daily stats from ORM results
+    const dailyMap = new Map<string, number>();
+    for (const msg of messages) {
+      const date = msg.createdAt.toISOString().split("T")[0];
+      dailyMap.set(date, (dailyMap.get(date) || 0) + 1);
+    }
+    const dailyStats = Array.from(dailyMap.entries())
+      .map(([date, count]) => ({ date, count }))
+      .sort((a, b) => a.date.localeCompare(b.date));
 
-    // Calculate response times between user and assistant messages
-    const avgResponseTime = await prisma.$queryRaw<Array<{
-      avg_seconds: number;
-    }>>`
-      SELECT AVG(EXTRACT(EPOCH FROM (m2.created_at - m1.created_at))) as avg_seconds
-      FROM "ChatMessage" m1
-      JOIN "ChatMessage" m2 ON m1.instance_id = m2.instance_id
-        AND m2.created_at > m1.created_at
-        AND m1.role = 'user'
-        AND m2.role = 'assistant'
-      WHERE m1.instance_id = ${id}
-        AND m1.created_at >= ${since}
-        AND EXTRACT(EPOCH FROM (m2.created_at - m1.created_at)) < 300
-    `;
+    // Build source/channel stats
+    const sourceMap = new Map<string, number>();
+    for (const msg of messages) {
+      const src = msg.source || "web";
+      sourceMap.set(src, (sourceMap.get(src) || 0) + 1);
+    }
+    const channelStats = Array.from(sourceMap.entries())
+      .map(([source, count]) => ({ source, count }))
+      .sort((a, b) => b.count - a.count);
+
+    // Avg response time from latencyMs (assistant messages have this set)
+    const assistantMessages = messages.filter(
+      (m) => m.role === "assistant" && m.latencyMs != null
+    );
+    const avgResponseTime =
+      assistantMessages.length > 0
+        ? Math.round(
+            assistantMessages.reduce((sum, m) => sum + (m.latencyMs ?? 0), 0) /
+              assistantMessages.length /
+              1000
+          )
+        : 0;
 
     return NextResponse.json({
       period: days,
       totalMessages,
       avgMessagesPerDay: Math.round(totalMessages / days),
-      avgResponseTime: Math.round((avgResponseTime[0]?.avg_seconds || 0)),
-      dailyStats: dailyStats.map((d) => ({
-        date: d.date,
-        count: Number(d.count),
-      })),
-      channelStats: sourceStats.map((c) => ({
-        source: c.source || "Unknown",
-        count: Number(c.count),
-      })),
+      avgResponseTime,
+      dailyStats,
+      channelStats,
     });
   } catch (error) {
     console.error("[analytics] Error:", error);

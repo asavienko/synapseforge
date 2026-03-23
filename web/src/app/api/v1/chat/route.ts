@@ -206,9 +206,12 @@ export async function POST(req: NextRequest) {
 
   } catch (error) {
     console.error("[api/v1/chat] Error:", error);
+    // Return 502 for LLM/upstream errors, 500 for unexpected internal errors
+    const errMsg = error instanceof Error ? error.message : String(error);
+    const isUpstreamError = errMsg.includes("openai") || errMsg.includes("anthropic") || errMsg.includes("upstream") || errMsg.includes("fetch") || errMsg.includes("ECONNREFUSED") || errMsg.includes("API") || errMsg.includes("rate limit") || errMsg.includes("timeout");
     return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
+      { error: isUpstreamError ? "Upstream LLM error" : "Internal server error" },
+      { status: isUpstreamError ? 502 : 500 }
     );
   }
 }

@@ -392,7 +392,10 @@ export function InfrastructureTab({
                 {snapshotsData.snapshots.map((s) => (
                   <tr key={s.id} className="hover:bg-white/[0.02]">
                     <td className="px-5 py-2.5 text-zinc-400 text-xs">{formatRelativeTime(s.createdAt)}</td>
-                    <td className="px-5 py-2.5 text-zinc-300 text-xs font-mono">{s.snapshotId?.slice(0, 12)}</td>
+                    <td className="px-5 py-2.5 text-zinc-300 text-xs font-mono">
+                      <span>{s.snapshotId?.slice(0, 12)}</span>
+                      {s.label && <span className="ml-2 text-xs px-1.5 py-0.5 rounded bg-white/5 text-zinc-400">{s.label}</span>}
+                    </td>
                     <td className="px-5 py-2.5 text-zinc-400 text-xs">{s.sizeBytes != null ? `${(s.sizeBytes / 1024 / 1024).toFixed(1)} MB` : "—"}</td>
                     <td className="px-5 py-2.5">
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${s.healthy ? "bg-emerald-500/20 text-emerald-300" : "bg-red-500/20 text-red-300"}`}>{s.healthy ? t("infrastructure.health.healthy") : t("infrastructure.health.down")}</span>
