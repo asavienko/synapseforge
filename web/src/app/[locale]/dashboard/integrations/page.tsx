@@ -2,6 +2,11 @@ import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { ZapierIntegrationClient } from "@/components/ZapierIntegrationClient";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Integrations | Dashboard",
+};
 
 export default async function IntegrationsPage() {
   const session = await auth();
