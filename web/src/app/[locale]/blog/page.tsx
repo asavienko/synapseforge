@@ -16,6 +16,24 @@ export const metadata: Metadata = {
 
 const posts = [
   {
+    slug: "how-to-add-ai-chatbot-to-your-website",
+    title: "How to Add an AI Chatbot to Your Website (Step-by-Step Guide)",
+    excerpt: "Complete guide to embedding AI chat on any website. Widget, iframe, and API options with code examples for WordPress, Shopify, React, and more.",
+    date: "March 23, 2026",
+    readTime: "12 min read",
+    category: "Implementation",
+    categoryColor: "text-blue-400 bg-blue-400/10",
+  },
+  {
+    slug: "ai-customer-support-roi-guide",
+    title: "AI Customer Support ROI: Calculate Your Cost Savings",
+    excerpt: "Data-driven guide to measuring AI support ROI. Real benchmarks, cost formulas, deflection rates, and what to expect in your first 90 days.",
+    date: "March 23, 2026",
+    readTime: "10 min read",
+    category: "ROI Guide",
+    categoryColor: "text-emerald-400 bg-emerald-400/10",
+  },
+  {
     slug: "how-to-build-telegram-chatbot",
     title: "How to Build a Telegram AI Chatbot in 10 Minutes",
     excerpt: "Step-by-step guide to deploying a GPT-4 powered support bot on Telegram. No coding required.",
