@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Settings2, Loader2, Send, AlertCircle, RotateCcw } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { AGENT_TEMPLATES } from "@/lib/agent-templates";
+import { ConfigImportExport } from "@/components/ConfigImportExport";
 import { Instance, Config } from "../types";
 
 interface ConfigurationTabProps {
@@ -444,6 +445,24 @@ export function ConfigurationTab({
           <RotateCcw className="w-4 h-4" />
           {t("config.reset")}
         </button>
+      </div>
+
+      {/* Config Import/Export */}
+      <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
+        <div className="p-4 border-b border-white/5">
+          <h3 className="text-sm font-semibold text-white">{t("config.importExportTitle")}</h3>
+          <p className="text-xs text-zinc-500 mt-0.5">{t("config.importExportDesc")}</p>
+        </div>
+        <div className="p-4">
+          <ConfigImportExport
+            config={config}
+            onImport={(importedConfig) => {
+              setConfig((prev) => ({ ...prev, ...importedConfig }));
+              setConfigDirty(true);
+              showToast(t("config.importSuccess"), "success");
+            }}
+          />
+        </div>
       </div>
 
       {/* Live Preview */}

@@ -753,7 +753,10 @@
       "previewDesc": "Send a message to see how your agent responds with the current config.",
       "previewPlaceholder": "Type a test message…",
       "previewClear": "Clear",
-      "previewUnsaved": "Unsaved changes — save config to test the latest version"
+      "previewUnsaved": "Unsaved changes — save config to test the latest version",
+      "importExportTitle": "Import / Export",
+      "importExportDesc": "Backup or share your configuration as JSON",
+      "importSuccess": "Configuration imported. Review and save your changes."
     },
     "apiKeys": {
       "generateTitle": "Generate new API key",
