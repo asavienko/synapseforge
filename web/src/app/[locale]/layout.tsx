@@ -85,6 +85,11 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale}>
+      <head>
+        <link rel="alternate" hrefLang="en" href={`https://openhelixai.com/en`} />
+        <link rel="alternate" hrefLang="es" href={`https://openhelixai.com/es`} />
+        <link rel="alternate" hrefLang="x-default" href={`https://openhelixai.com/en`} />
+      </head>
       <body className={`${inter.className} antialiased`}>
         <PostHogProvider>
           <NextIntlClientProvider messages={messages}>
