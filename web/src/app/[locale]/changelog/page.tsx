@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Zap, ArrowLeft, Calendar, Sparkles, Bug, Shield, ZapIcon } from "lucide-react";
 import { Metadata } from "next";
+import { SubscribeSection } from "./SubscribeSection";
 
 export const metadata: Metadata = {
   title: "Changelog | OpenHelix AI",
@@ -144,6 +145,9 @@ export default async function ChangelogPage() {
             </div>
           ))}
         </div>
+
+        {/* Subscribe */}
+        <SubscribeSection />
 
         {/* Footer */}
         <div className="mt-16 pt-8 border-t border-white/5 text-center">
