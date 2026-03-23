@@ -430,11 +430,10 @@ export function ConfigurationTab({
                 traits: [],
                 customInstructions: "",
                 businessName: "",
-                industry: "",
-                websiteUrl: "",
-                enableEscalation: true,
-                enableFollowUp: false,
-                responseStyle: "balanced",
+                businessContext: "",
+                memoryEnabled: false,
+                thinking: "off" as const,
+                language: "en",
               });
               setConfigDirty(true);
               showToast(t("config.resetSuccess"), "success");
