@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import NextLink from "next/link";
 import { Link } from "@/i18n/navigation";
-import { ArrowRight, Zap, ShoppingCart, Users, UtensilsCrossed, Building2, Globe, Headphones } from "lucide-react";
+import { ArrowRight, Zap, ShoppingCart, Users, UtensilsCrossed, Building2, Globe, Headphones, HeartPulse, Landmark } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "AI Chatbot Use Cases — Industries & Business Types",
@@ -40,13 +40,28 @@ const industries = [
     highlight: false,
   },
   {
-    slug: null,
+    slug: "healthcare",
+    icon: HeartPulse,
+    title: "Healthcare & Clinics",
+    desc: "Automate patient inquiries, appointment booking, and FAQ responses. HIPAA-aware AI support that works 24/7.",
+    tags: ["Patient support", "Appointments", "FAQ automation", "After-hours"],
+    highlight: false,
+  },
+  {
+    slug: "fintech",
+    icon: Landmark,
+    title: "Fintech & Financial Services",
+    desc: "Automate account FAQs, transaction questions, and onboarding flows. Compliant, accurate, always available.",
+    tags: ["Account support", "Transactions", "Onboarding", "Compliance"],
+    highlight: false,
+  },
+  {
+    slug: "real-estate",
     icon: Building2,
     title: "Real Estate",
     desc: "Qualify leads, answer property questions, schedule viewings — without agent involvement.",
     tags: ["Lead qualification", "Property Q&A", "Scheduling", "Listings"],
     highlight: false,
-    comingSoon: true,
   },
   {
     slug: null,
