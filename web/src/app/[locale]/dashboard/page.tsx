@@ -396,7 +396,7 @@ export default async function DashboardPage() {
         </div>
 
         {/* Referral CTA */}
-        <Link href="/dashboard/referral" className="glow-border rounded-2xl p-5 bg-white/[0.02] flex items-center gap-4 hover:bg-white/[0.04] transition-colors group">
+        <Link href="/dashboard/referrals" className="glow-border rounded-2xl p-5 bg-white/[0.02] flex items-center gap-4 hover:bg-white/[0.04] transition-colors group">
           <div className="w-10 h-10 rounded-xl bg-violet-600/20 border border-violet-500/20 flex items-center justify-center shrink-0">
             <GiftIcon className="w-5 h-5 text-violet-400" />
           </div>
