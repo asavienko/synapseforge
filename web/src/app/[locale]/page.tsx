@@ -424,7 +424,7 @@ export default async function LandingPage() {
 
         {/* CTA */}
         <div className="text-center mt-8">
-          <a
+          <Link
             href="/contact?subject=Demo+Request"
             className="inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-6 py-3 rounded-xl font-semibold text-white"
           >
@@ -432,7 +432,7 @@ export default async function LandingPage() {
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
             </svg>
-          </a>
+          </Link>
         </div>
       </section>
 
