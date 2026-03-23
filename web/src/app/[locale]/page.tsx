@@ -935,6 +935,21 @@ export default async function LandingPage() {
             <h3 className="font-semibold text-white group-hover:text-violet-300 transition-colors mb-1.5 text-sm leading-snug">AI Chatbot for Restaurants</h3>
             <p className="text-xs text-zinc-500">Reservations, menu Q&A, hours — answered 24/7.</p>
           </Link>
+          <Link href="/use-cases/healthcare" className="group bg-white/[0.02] border border-white/5 hover:border-violet-500/20 hover:bg-white/[0.04] transition-all rounded-xl p-5">
+            <div className="text-xs text-rose-400 bg-rose-400/10 px-2 py-0.5 rounded-full inline-block mb-3">Use Case</div>
+            <h3 className="font-semibold text-white group-hover:text-violet-300 transition-colors mb-1.5 text-sm leading-snug">AI Support for Healthcare & Clinics</h3>
+            <p className="text-xs text-zinc-500">Patient inquiries, appointments, FAQs — automated.</p>
+          </Link>
+          <Link href="/use-cases/fintech" className="group bg-white/[0.02] border border-white/5 hover:border-violet-500/20 hover:bg-white/[0.04] transition-all rounded-xl p-5">
+            <div className="text-xs text-cyan-400 bg-cyan-400/10 px-2 py-0.5 rounded-full inline-block mb-3">Use Case</div>
+            <h3 className="font-semibold text-white group-hover:text-violet-300 transition-colors mb-1.5 text-sm leading-snug">AI Support for Fintech</h3>
+            <p className="text-xs text-zinc-500">Account FAQs, transactions, onboarding — 24/7.</p>
+          </Link>
+          <Link href="/use-cases/real-estate" className="group bg-white/[0.02] border border-white/5 hover:border-violet-500/20 hover:bg-white/[0.04] transition-all rounded-xl p-5">
+            <div className="text-xs text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-full inline-block mb-3">Use Case</div>
+            <h3 className="font-semibold text-white group-hover:text-violet-300 transition-colors mb-1.5 text-sm leading-snug">AI Chatbot for Real Estate</h3>
+            <p className="text-xs text-zinc-500">Lead qualification, property Q&A, viewings.</p>
+          </Link>
           <Link href="/blog/how-to-automate-ecommerce-customer-support" className="group bg-white/[0.02] border border-white/5 hover:border-violet-500/20 hover:bg-white/[0.04] transition-all rounded-xl p-5">
             <div className="text-xs text-blue-400 bg-blue-400/10 px-2 py-0.5 rounded-full inline-block mb-3">Playbook</div>
             <h3 className="font-semibold text-white group-hover:text-violet-300 transition-colors mb-1.5 text-sm leading-snug">Ecommerce Support Automation Playbook</h3>
@@ -1064,7 +1079,9 @@ export default async function LandingPage() {
               <ul className="space-y-2 text-sm text-zinc-500">
                 <li><Link href="/use-cases/ecommerce" className="hover:text-white transition-colors">Ecommerce</Link></li>
                 <li><Link href="/use-cases/saas" className="hover:text-white transition-colors">SaaS</Link></li>
-                <li><Link href="/use-cases/restaurant" className="hover:text-white transition-colors">Restaurants</Link></li>
+                <li><Link href="/use-cases/healthcare" className="hover:text-white transition-colors">Healthcare</Link></li>
+                <li><Link href="/use-cases/fintech" className="hover:text-white transition-colors">Fintech</Link></li>
+                <li><Link href="/use-cases/real-estate" className="hover:text-white transition-colors">Real Estate</Link></li>
                 <li><Link href="/use-cases" className="hover:text-white transition-colors">All use cases →</Link></li>
               </ul>
             </div>

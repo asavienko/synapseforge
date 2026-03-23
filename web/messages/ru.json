@@ -503,7 +503,21 @@
       "profileUpdateError": "Что-то пошло не так.",
       "themeSection": "Внешний вид",
       "appearance": "Тема",
-      "themeDescription": "Выберите между светлой и темной темой"
+      "themeDescription": "Выберите между светлой и темной темой",
+      "deleteAccountTitle": "Delete Account",
+      "deleteAccountDesc": "Permanently delete your account and all associated data. This action cannot be undone.",
+      "deleteAllInstances": "All AI instances will be deleted",
+      "deleteAllData": "All knowledge base data will be removed",
+      "cancelSubscription": "Your subscription will be cancelled",
+      "cannotUndo": "This action cannot be undone",
+      "deleteAccountButton": "Delete Account",
+      "deleteConfirmTitle": "Confirm Account Deletion",
+      "deleteConfirmDesc": "Please type 'DELETE' to confirm you want to permanently delete your account.",
+      "deleteConfirmError": "Please type DELETE to confirm",
+      "deleteError": "Failed to delete account. Please try again.",
+      "deleting": "Deleting...",
+      "confirmDelete": "DELETE",
+      "cancel": "Cancel"
     }
   },
   "common": {
@@ -1777,5 +1791,6 @@
     "agencyRequired": "Требуется план Агентства",
     "save": "Сохранить Изменения",
     "saved": "Изменения сохранены"
-  }
+  },
+  "newInstance": "Новый экземпляр"
 }

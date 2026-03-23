@@ -517,7 +517,21 @@
       "profileUpdateError": "Algo salió mal.",
       "themeSection": "Apariencia",
       "appearance": "Tema",
-      "themeDescription": "Elige entre modo claro y oscuro"
+      "themeDescription": "Elige entre modo claro y oscuro",
+      "deleteAccountTitle": "Delete Account",
+      "deleteAccountDesc": "Permanently delete your account and all associated data. This action cannot be undone.",
+      "deleteAllInstances": "All AI instances will be deleted",
+      "deleteAllData": "All knowledge base data will be removed",
+      "cancelSubscription": "Your subscription will be cancelled",
+      "cannotUndo": "This action cannot be undone",
+      "deleteAccountButton": "Delete Account",
+      "deleteConfirmTitle": "Confirm Account Deletion",
+      "deleteConfirmDesc": "Please type 'DELETE' to confirm you want to permanently delete your account.",
+      "deleteConfirmError": "Please type DELETE to confirm",
+      "deleteError": "Failed to delete account. Please try again.",
+      "deleting": "Deleting...",
+      "confirmDelete": "DELETE",
+      "cancel": "Cancel"
     }
   },
   "common": {
@@ -1777,5 +1791,6 @@
     "agencyRequired": "Requiere plan de Agencia",
     "save": "Guardar Cambios",
     "saved": "Cambios guardados"
-  }
+  },
+  "newInstance": "Nueva Instancia"
 }
