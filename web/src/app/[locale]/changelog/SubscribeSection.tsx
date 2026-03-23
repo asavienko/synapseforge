@@ -47,7 +47,7 @@ export function SubscribeSection() {
             </svg>
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-white">You're subscribed!</h3>
+            <h3 className="text-lg font-semibold text-white">You&apos;re subscribed!</h3>
             <p className="text-sm text-zinc-400">{message}</p>
           </div>
         </div>
