@@ -191,7 +191,7 @@ export function KnowledgeSuggestions({ instanceId }: KnowledgeSuggestionsProps) 
               </button>
             </div>
 
-            <p className="text-sm text-zinc-300 mb-2">"{suggestion.question}"...</p>
+            <p className="text-sm text-zinc-300 mb-2">&ldquo;{suggestion.question}&rdquo;...</p>
 
             <div className="bg-black/20 rounded-lg p-3 mb-3">
               <p className="text-xs text-zinc-400 mb-1">{t("suggestions.suggestedAnswer")}:</p>
