@@ -7,6 +7,12 @@
     "needHelp": "¿Necesitas ayuda?",
     "contactSupport": "Contactar soporte"
   },
+  "status": {
+    "title": "Estado del Sistema",
+    "subtitle": "Estado en tiempo real de los servicios de SynapseForge",
+    "allSystemsOperational": "Todos los Sistemas Operativos",
+    "questions": "¿Preguntas? Contáctanos en"
+  },
   "notifications": {
     "title": "Notificaciones",
     "bellLabel": "Notificaciones",

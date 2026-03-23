@@ -197,6 +197,12 @@
     "needHelp": "Need help?",
     "contactSupport": "Contact support"
   },
+  "status": {
+    "title": "System Status",
+    "subtitle": "Real-time status of SynapseForge services",
+    "allSystemsOperational": "All Systems Operational",
+    "questions": "Questions? Contact us at"
+  },
   "auth": {
     "signIn": {
       "title": "Welcome back",
