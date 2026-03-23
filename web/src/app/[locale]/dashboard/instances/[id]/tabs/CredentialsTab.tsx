@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { IntegrationCard } from "@/components/IntegrationCard";
 import { WhatsAppWizard } from "@/components/WhatsAppWizard";
+import { Tooltip, CREDENTIAL_HELP } from "@/components/Tooltip";
 import { Instance, CredentialRow } from "../types";
 import { LLM_CRED_KEYS, CREDENTIAL_KEY_LABELS } from "../types";
 
@@ -391,7 +392,12 @@ export function CredentialsTab({
                 <div key={key} className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-sm font-medium text-white">{CREDENTIAL_KEY_LABELS[key]}</div>
+                      <div className="flex items-center gap-2">
+                        <div className="text-sm font-medium text-white">{CREDENTIAL_KEY_LABELS[key]}</div>
+                        {CREDENTIAL_HELP[key] && (
+                          <Tooltip content={CREDENTIAL_HELP[key]} />
+                        )}
+                      </div>
                       {existing && !isEditing && (
                         <div className="text-xs font-mono text-zinc-500 mt-0.5">
                           {revealedCreds[key] ? (
