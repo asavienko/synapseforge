@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { Link } from "@/i18n/navigation";
+import NextLink from "next/link";
 import { ArrowRight, Zap, Clock, Calendar } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -49,9 +50,9 @@ export default function BlogPage() {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {posts.map((post) => (
-            <Link
+            <NextLink
               key={post.slug}
-              href={`/blog/${post.slug}` as any}
+              href={`/blog/${post.slug}`}
               className="group bg-white/[0.02] border border-white/10 hover:border-violet-500/30 hover:bg-white/[0.04] transition-all rounded-xl overflow-hidden"
             >
               {/* Thumbnail placeholder */}
@@ -73,7 +74,7 @@ export default function BlogPage() {
                   <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{post.readTime}</span>
                 </div>
               </div>
-            </Link>
+            </NextLink>
           ))}
         </div>
       </main>

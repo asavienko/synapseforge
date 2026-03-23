@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { Link } from "@/i18n/navigation";
+import NextLink from "next/link";
 import { ArrowRight, Zap, MessageCircle } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -10,6 +11,7 @@ export const metadata: Metadata = {
 const integrations = [
   { slug: "telegram", name: "Telegram", desc: "Deploy a GPT-4 or Claude bot to any Telegram channel, group, or 1-on-1 chat.", badge: "Most popular", color: "text-blue-400" },
   { slug: "whatsapp", name: "WhatsApp Business", desc: "Connect to your WhatsApp Business number via Twilio. Handle customer messages 24/7.", badge: null, color: "text-emerald-400" },
+  { slug: "discord", name: "Discord", desc: "Add an AI bot to your Discord server. Handles support, FAQs, and community questions.", badge: null, color: "text-indigo-400" },
 ];
 
 export default function IntegrationsPage() {
@@ -30,7 +32,7 @@ export default function IntegrationsPage() {
         <p className="text-zinc-400 mb-12 max-w-xl">Connect OpenHelix AI to your channels and tools. Step-by-step setup guides for each platform.</p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {integrations.map((item) => (
-            <Link key={item.slug} href={`/integrations/${item.slug}` as any} className="bg-white/[0.02] border border-white/10 hover:border-violet-500/30 hover:bg-white/[0.04] transition-all rounded-xl p-5 group">
+            <NextLink key={item.slug} href={`/integrations/${item.slug}`} className="bg-white/[0.02] border border-white/10 hover:border-violet-500/30 hover:bg-white/[0.04] transition-all rounded-xl p-5 group">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <MessageCircle className={`w-5 h-5 ${item.color}`} />
@@ -42,7 +44,7 @@ export default function IntegrationsPage() {
               <div className="flex items-center gap-1 text-sm text-violet-400">
                 Setup guide <ArrowRight className="w-3.5 h-3.5" />
               </div>
-            </Link>
+            </NextLink>
           ))}
         </div>
       </main>

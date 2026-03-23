@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { Link } from "@/i18n/navigation";
+import NextLink from "next/link";
 import { ArrowRight, Zap } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -32,7 +33,7 @@ export default function ComparePage() {
         <p className="text-zinc-400 mb-12 max-w-xl">Honest comparisons to help you pick the right AI customer support platform for your business.</p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {comparisons.map((c) => (
-            <Link key={c.slug} href={`/compare/${c.slug}` as any} className="bg-white/[0.02] border border-white/10 hover:border-violet-500/30 hover:bg-white/[0.04] transition-all rounded-xl p-5 group">
+            <NextLink key={c.slug} href={`/compare/${c.slug}`} className="bg-white/[0.02] border border-white/10 hover:border-violet-500/30 hover:bg-white/[0.04] transition-all rounded-xl p-5 group">
               <div className="flex items-start justify-between mb-3">
                 <h2 className="font-semibold text-white group-hover:text-violet-300 transition-colors">
                   OpenHelix vs {c.name}
@@ -43,7 +44,7 @@ export default function ComparePage() {
               <div className="flex items-center gap-1 text-sm text-violet-400">
                 Compare <ArrowRight className="w-3.5 h-3.5" />
               </div>
-            </Link>
+            </NextLink>
           ))}
         </div>
       </main>
