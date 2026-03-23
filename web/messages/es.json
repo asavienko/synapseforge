@@ -1765,7 +1765,16 @@
     "role2": "Fundador, tienda de comercio electrónico",
     "quote3": "Nuestro bot de Telegram ahora califica leads 24/7. Dejamos de perder consultas que llegan de noche. Los ingresos de esos leads cubren con creces el coste de la suscripción.",
     "name3": "Olena Marchuk",
-    "role3": "CEO, Agencia Digital"
+    "role3": "CEO, Agencia Digital",
+    "quote4": "We cut our support response time from 4 hours to instant. Customers love getting answers immediately, and our team can focus on complex issues.",
+    "name4": "David Chen",
+    "role4": "CTO, Fintech Startup",
+    "quote5": "The AI handled 80% of our FAQs on day one. Setup was incredibly easy - just uploaded our docs and it started working.",
+    "name5": "Sarah Johnson",
+    "role5": "Customer Success Lead, SaaS Company",
+    "quote6": "After 3 months, we've saved over $10K in support costs. The ROI was obvious within the first week.",
+    "name6": "Michael Torres",
+    "role6": "Operations Director, Ecommerce"
   },
   "cta": {
     "title": "¿Listo para desplegar tu agente de IA?",

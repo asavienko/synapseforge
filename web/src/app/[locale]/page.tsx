@@ -765,14 +765,24 @@ export default async function LandingPage() {
         </div>
       </section>
 
+      {/* ── Trusted By ──────────────────────────────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-12 border-y border-white/5">
+        <p className="text-center text-xs text-zinc-500 uppercase tracking-wider mb-8">Trusted by teams at</p>
+        <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 opacity-50">
+          {["Shopify Store", "SaaS Startup", "Ecommerce Brand", "Tech Agency", "Consulting Firm"].map((company) => (
+            <div key={company} className="text-zinc-400 font-semibold text-sm">{company}</div>
+          ))}
+        </div>
+      </section>
+
       {/* ── Testimonials ─────────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
         <div className="text-center mb-10 sm:mb-14">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{t("testimonials.title")}</h2>
           <p className="text-zinc-400 text-sm sm:text-base">{t("testimonials.subtitle")}</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-          {([1, 2, 3] as const).map((n) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          {([1, 2, 3, 4, 5, 6] as const).map((n) => (
             <div key={n} className="bg-white/[0.02] border border-white/8 rounded-2xl p-4 sm:p-6 flex flex-col gap-3 sm:gap-4">
               <div className="flex gap-1">
                 {Array.from({ length: 5 }).map((_, i) => (

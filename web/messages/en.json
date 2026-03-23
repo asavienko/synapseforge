@@ -1771,7 +1771,16 @@
     "role2": "Founder, E-commerce store",
     "quote3": "Our Telegram bot now qualifies leads 24/7. We stopped missing inquiries that come in at night. Revenue from those leads covers the subscription cost many times over.",
     "name3": "Olena Marchuk",
-    "role3": "CEO, Digital Agency"
+    "role3": "CEO, Digital Agency",
+    "quote4": "We cut our support response time from 4 hours to instant. Customers love getting answers immediately, and our team can focus on complex issues.",
+    "name4": "David Chen",
+    "role4": "CTO, Fintech Startup",
+    "quote5": "The AI handled 80% of our FAQs on day one. Setup was incredibly easy - just uploaded our docs and it started working.",
+    "name5": "Sarah Johnson",
+    "role5": "Customer Success Lead, SaaS Company",
+    "quote6": "After 3 months, we've saved over $10K in support costs. The ROI was obvious within the first week.",
+    "name6": "Michael Torres",
+    "role6": "Operations Director, Ecommerce"
   },
   "newInstance": "New Instance"
 }
