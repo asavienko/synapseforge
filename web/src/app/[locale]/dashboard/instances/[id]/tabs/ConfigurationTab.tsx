@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Settings2, Loader2, Send, AlertCircle } from "lucide-react";
+import { Settings2, Loader2, Send, AlertCircle, RotateCcw } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { AGENT_TEMPLATES } from "@/lib/agent-templates";
 import { Instance, Config } from "../types";
@@ -410,11 +410,42 @@ export function ConfigurationTab({
         )}
       </div>
 
-      <button onClick={saveConfig} disabled={!configDirty || savingConfig}
-        className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 transition-colors px-5 py-3 rounded-xl text-sm font-semibold text-white">
-        {savingConfig ? <Loader2 className="w-4 h-4 animate-spin" /> : <Settings2 className="w-4 h-4" />}
-        {savingConfig ? t("config.saving") : configDirty ? t("config.save") : t("config.saved")}
-      </button>
+      <div className="flex items-center gap-3">
+        <button onClick={saveConfig} disabled={!configDirty || savingConfig}
+          className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 transition-colors px-5 py-3 rounded-xl text-sm font-semibold text-white">
+          {savingConfig ? <Loader2 className="w-4 h-4 animate-spin" /> : <Settings2 className="w-4 h-4" />}
+          {savingConfig ? t("config.saving") : configDirty ? t("config.save") : t("config.saved")}
+        </button>
+        
+        <button
+          onClick={() => {
+            if (confirm(t("config.resetConfirm"))) {
+              setConfig({
+                model: "gpt-4o-mini",
+                systemPrompt: "",
+                temperature: 0.7,
+                maxTokens: 1024,
+                agentName: "",
+                role: "",
+                traits: [],
+                customInstructions: "",
+                businessName: "",
+                industry: "",
+                websiteUrl: "",
+                enableEscalation: true,
+                enableFollowUp: false,
+                responseStyle: "balanced",
+              });
+              setConfigDirty(true);
+              showToast(t("config.resetSuccess"), "success");
+            }
+          }}
+          className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors px-5 py-3 rounded-xl text-sm font-semibold text-zinc-300"
+        >
+          <RotateCcw className="w-4 h-4" />
+          {t("config.reset")}
+        </button>
+      </div>
 
       {/* Live Preview */}
       <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
