@@ -14,6 +14,7 @@ const comparisons = [
   { slug: "zendesk", name: "Zendesk", desc: "The biggest help desk — but $55/agent/month adds up fast. See how we compare on AI automation.", badge: "🔥 High traffic" },
   { slug: "freshdesk", name: "Freshdesk", desc: "Freshdesk hides AI behind Freddy AI add-ons. Compare real costs and automation capabilities.", badge: null },
   { slug: "crisp", name: "Crisp", desc: "Multi-channel support platform with new AI features. Honest feature-by-feature breakdown.", badge: null },
+  { slug: "livechat", name: "LiveChat", desc: "Traditional live chat at $52/agent/month vs AI at $29/month. Cost comparison and feature breakdown.", badge: "🔥 High intent" },
 ];
 
 export default function ComparePage() {

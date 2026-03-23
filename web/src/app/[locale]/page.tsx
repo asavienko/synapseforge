@@ -930,6 +930,11 @@ export default async function LandingPage() {
             <h3 className="font-semibold text-white group-hover:text-violet-300 transition-colors mb-1.5 text-sm leading-snug">OpenHelix vs Zendesk — 90% Cheaper Alternative</h3>
             <p className="text-xs text-zinc-500">$55/agent/month vs $0 to start. Full comparison.</p>
           </Link>
+          <Link href="/compare/livechat" className="group bg-white/[0.02] border border-white/5 hover:border-violet-500/20 hover:bg-white/[0.04] transition-all rounded-xl p-5">
+            <div className="text-xs text-zinc-400 bg-white/5 px-2 py-0.5 rounded-full inline-block mb-3">Compare</div>
+            <h3 className="font-semibold text-white group-hover:text-violet-300 transition-colors mb-1.5 text-sm leading-snug">OpenHelix vs LiveChat — 80% Cost Reduction</h3>
+            <p className="text-xs text-zinc-500">$52/agent/month vs AI at $29/month. See the difference.</p>
+          </Link>
           <Link href="/use-cases/restaurant" className="group bg-white/[0.02] border border-white/5 hover:border-violet-500/20 hover:bg-white/[0.04] transition-all rounded-xl p-5">
             <div className="text-xs text-orange-400 bg-orange-400/10 px-2 py-0.5 rounded-full inline-block mb-3">Use Case</div>
             <h3 className="font-semibold text-white group-hover:text-violet-300 transition-colors mb-1.5 text-sm leading-snug">AI Chatbot for Restaurants</h3>
