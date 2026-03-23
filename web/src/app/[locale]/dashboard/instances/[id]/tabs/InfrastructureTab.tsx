@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Server, Wifi, WifiOff, Zap, Loader2, AlertCircle, Database, MessageSquare, Send } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { formatRelativeTime } from "@/lib/utils";
+import { formatRelativeTime, cn } from "@/lib/utils";
 import { MobileTableWrapper } from "@/components/MobileTableWrapper";
 import { Instance, HealthData, SnapshotsData, CommandRow, GatewayStatus } from "../types";
 
