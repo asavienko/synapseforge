@@ -8,6 +8,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { formatDate, formatRelativeTime } from "@/lib/utils";
 import { SANDBOX_LIMIT } from "@/lib/sandbox";
+import { AnalyticsSummary } from "@/components/AnalyticsSummary";
 import { Instance, CredentialRow, UsageData, LogRow, Config } from "../types";
 import { SetupChecklistCard } from "../components/SetupChecklistCard";
 
@@ -421,6 +422,9 @@ export function OverviewTab({
           </div>
         </div>
       )}
+
+      {/* Analytics Summary */}
+      <AnalyticsSummary instanceId={id} />
 
       <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-sm text-amber-300 flex gap-3">
         <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
