@@ -367,6 +367,75 @@ export default async function LandingPage() {
         </div>
       </section>
 
+      {/* ── Video Demo ──────────────────────────────────────────────────── */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-20">
+        <div className="text-center mb-12">
+          <span className="inline-flex items-center gap-2 text-violet-400 text-sm font-medium mb-4">
+            <span className="w-2 h-2 rounded-full bg-violet-400 animate-pulse" />
+            Watch Demo
+          </span>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">See it in action</h2>
+          <p className="text-zinc-400 max-w-xl mx-auto">
+            Deploy your AI agent in under 3 minutes. No DevOps required.
+          </p>
+        </div>
+
+        {/* Video placeholder with play button */}
+        <div className="max-w-4xl mx-auto">
+          <div className="relative rounded-2xl border border-white/10 bg-gradient-to-br from-violet-900/20 to-black overflow-hidden shadow-2xl shadow-violet-500/10 aspect-video group cursor-pointer">
+            {/* Video thumbnail / dashboard preview */}
+            <div className="absolute inset-0 bg-[#0a0a0f]">
+              {/* Mock dashboard UI */}
+              <div className="absolute inset-0 opacity-50">
+                <div className="h-full flex">
+                  {/* Sidebar */}
+                  <div className="w-16 border-r border-white/10 bg-[#12121a] h-full" />
+                  {/* Main content */}
+                  <div className="flex-1 p-6">
+                    <div className="h-8 w-48 bg-white/5 rounded-lg mb-6" />
+                    <div className="grid grid-cols-3 gap-4 mb-6">
+                      <div className="h-24 bg-white/5 rounded-xl" />
+                      <div className="h-24 bg-white/5 rounded-xl" />
+                      <div className="h-24 bg-white/5 rounded-xl" />
+                    </div>
+                    <div className="h-64 bg-white/5 rounded-xl" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Play button overlay */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-20 h-20 rounded-full bg-violet-600/90 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-violet-600/30">
+                <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Video coming soon badge */}
+            <div className="absolute bottom-4 left-4">
+              <span className="text-xs bg-black/60 text-zinc-400 px-3 py-1.5 rounded-full border border-white/10">
+                Video coming soon — Book a live demo below
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div className="text-center mt-8">
+          <a
+            href="/contact?subject=Demo+Request"
+            className="inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-6 py-3 rounded-xl font-semibold text-white"
+          >
+            Book Live Demo
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
       {/* ── Product Preview ──────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-20">
         <div className="text-center mb-12">
