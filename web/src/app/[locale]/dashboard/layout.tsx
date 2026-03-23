@@ -6,6 +6,7 @@ import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { EmailVerifyBanner } from "@/components/EmailVerifyBanner";
 import { VerifiedSuccessBanner } from "@/components/VerifiedSuccessBanner";
 import { UsageWarningBanner } from "@/components/UsageWarningBanner";
+import { AnnouncementBanner } from "@/components/AnnouncementBanner";
 import { CommandPalette } from "@/components/CommandPalette";
 import { PageTracker } from "@/components/PageTracker";
 import { KeyboardShortcutsModal } from "@/components/KeyboardShortcutsModal";
@@ -56,6 +57,7 @@ export default async function DashboardLayout({
           <ProductTour />
           <NotificationPoller />
           <UsageWarningBanner />
+          <AnnouncementBanner />
           {children}
         </main>
       </div>
