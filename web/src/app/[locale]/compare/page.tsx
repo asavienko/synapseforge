@@ -11,6 +11,7 @@ const comparisons = [
   { slug: "tidio", name: "Tidio", desc: "SMB live chat with AI add-on. Compare features, pricing, and Telegram/WhatsApp support.", badge: "Most popular" },
   { slug: "intercom", name: "Intercom", desc: "Enterprise customer messaging platform. See how we compare on AI capabilities and pricing.", badge: "High intent" },
   { slug: "crisp", name: "Crisp", desc: "Multi-channel support platform with new AI features. Honest feature-by-feature breakdown.", badge: null },
+  { slug: "intercom", name: "Intercom", desc: "Enterprise customer messaging platform. See how we compare on AI capabilities and pricing.", badge: "High intent" },
 ];
 
 export default function ComparePage() {

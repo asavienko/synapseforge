@@ -149,10 +149,11 @@ export default async function LandingPage() {
           </div>
           <div className="hidden md:flex items-center gap-6 lg:gap-8 text-sm text-zinc-400">
             <Link href="/templates" className="hover:text-white transition-colors">Templates</Link>
+            <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
             <a href="#demo" className="hover:text-white transition-colors">Demo</a>
             <a href="#how" className="hover:text-white transition-colors">{t("nav.services")}</a>
             <a href="#pricing" className="hover:text-white transition-colors">{t("nav.pricing")}</a>
-            <a href="#about" className="hover:text-white transition-colors">{t("nav.about")}</a>
+            <Link href="/compare" className="hover:text-white transition-colors">Compare</Link>
             <Link href="/contact" className="hover:text-white transition-colors">{t("nav.contact")}</Link>
           </div>
           <div className="flex items-center gap-2 md:gap-3">
