@@ -50,8 +50,94 @@ export default async function LandingPage() {
 
   const featuredTemplates = getFeaturedTemplates().slice(0, 4);
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": tl("faq.q1"),
+        "acceptedAnswer": { "@type": "Answer", "text": tl("faq.a1") },
+      },
+      {
+        "@type": "Question",
+        "name": tl("faq.q2"),
+        "acceptedAnswer": { "@type": "Answer", "text": tl("faq.a2") },
+      },
+      {
+        "@type": "Question",
+        "name": tl("faq.q3"),
+        "acceptedAnswer": { "@type": "Answer", "text": tl("faq.a3") },
+      },
+      {
+        "@type": "Question",
+        "name": tl("faq.q4"),
+        "acceptedAnswer": { "@type": "Answer", "text": tl("faq.a4") },
+      },
+      {
+        "@type": "Question",
+        "name": tl("faq.q5"),
+        "acceptedAnswer": { "@type": "Answer", "text": tl("faq.a5") },
+      },
+      {
+        "@type": "Question",
+        "name": tl("faq.q6"),
+        "acceptedAnswer": { "@type": "Answer", "text": tl("faq.a6") },
+      },
+    ],
+  };
+
+  const softwareSchema = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "OpenHelix AI",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "url": "https://openhelixai.com",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "description": "Free plan with 2,000 messages/month",
+    },
+    "description": "Deploy AI customer support agents in minutes. Multi-channel support for Telegram, WhatsApp and web. Powered by GPT-4, Claude, and 50+ models.",
+    "featureList": [
+      "Telegram & WhatsApp integration",
+      "GPT-4, Claude, OpenRouter support",
+      "Real-time manager dashboard",
+      "Knowledge base & AI suggestions",
+      "White-label ready",
+      "Usage analytics",
+    ],
+  };
+
+  const orgSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "SynapseForge",
+    "url": "https://openhelixai.com",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "customer support",
+      "url": "https://openhelixai.com/contact",
+    },
+  };
+
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white grid-bg">
+      {/* ── JSON-LD Structured Data ───────────────────────────────────────── */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+      />
 
       {/* ── Nav ──────────────────────────────────────────────────────────── */}
       <nav className="border-b border-white/5 backdrop-blur-md sticky top-0 z-50 bg-[#0a0a0f]/80">
