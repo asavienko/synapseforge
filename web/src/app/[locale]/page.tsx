@@ -929,6 +929,16 @@ export default async function LandingPage() {
             <h3 className="font-semibold text-white group-hover:text-violet-300 transition-colors mb-1.5 text-sm leading-snug">OpenHelix vs Zendesk — 90% Cheaper Alternative</h3>
             <p className="text-xs text-zinc-500">$55/agent/month vs $0 to start. Full comparison.</p>
           </Link>
+          <Link href="/use-cases/restaurant" className="group bg-white/[0.02] border border-white/5 hover:border-violet-500/20 hover:bg-white/[0.04] transition-all rounded-xl p-5">
+            <div className="text-xs text-orange-400 bg-orange-400/10 px-2 py-0.5 rounded-full inline-block mb-3">Use Case</div>
+            <h3 className="font-semibold text-white group-hover:text-violet-300 transition-colors mb-1.5 text-sm leading-snug">AI Chatbot for Restaurants</h3>
+            <p className="text-xs text-zinc-500">Reservations, menu Q&A, hours — answered 24/7.</p>
+          </Link>
+          <Link href="/blog/how-to-automate-ecommerce-customer-support" className="group bg-white/[0.02] border border-white/5 hover:border-violet-500/20 hover:bg-white/[0.04] transition-all rounded-xl p-5">
+            <div className="text-xs text-blue-400 bg-blue-400/10 px-2 py-0.5 rounded-full inline-block mb-3">Playbook</div>
+            <h3 className="font-semibold text-white group-hover:text-violet-300 transition-colors mb-1.5 text-sm leading-snug">Ecommerce Support Automation Playbook</h3>
+            <p className="text-xs text-zinc-500">Step-by-step: audit → knowledge base → 80% automated.</p>
+          </Link>
         </div>
         <div className="text-center">
           <Link href="/blog" className="text-sm text-violet-400 hover:text-violet-300 transition-colors">View all guides →</Link>
@@ -1053,6 +1063,7 @@ export default async function LandingPage() {
               <ul className="space-y-2 text-sm text-zinc-500">
                 <li><Link href="/use-cases/ecommerce" className="hover:text-white transition-colors">Ecommerce</Link></li>
                 <li><Link href="/use-cases/saas" className="hover:text-white transition-colors">SaaS</Link></li>
+                <li><Link href="/use-cases/restaurant" className="hover:text-white transition-colors">Restaurants</Link></li>
                 <li><Link href="/use-cases" className="hover:text-white transition-colors">All use cases →</Link></li>
               </ul>
             </div>
@@ -1061,6 +1072,7 @@ export default async function LandingPage() {
               <div className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3">Compare</div>
               <ul className="space-y-2 text-sm text-zinc-500">
                 <li><Link href="/compare/zendesk" className="hover:text-white transition-colors">vs Zendesk</Link></li>
+                <li><Link href="/compare/freshdesk" className="hover:text-white transition-colors">vs Freshdesk</Link></li>
                 <li><Link href="/compare/tidio" className="hover:text-white transition-colors">vs Tidio</Link></li>
                 <li><Link href="/compare/intercom" className="hover:text-white transition-colors">vs Intercom</Link></li>
                 <li><Link href="/compare/crisp" className="hover:text-white transition-colors">vs Crisp</Link></li>

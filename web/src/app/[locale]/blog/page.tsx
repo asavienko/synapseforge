@@ -42,6 +42,15 @@ const posts = [
     category: "ROI Guide",
     categoryColor: "text-emerald-400 bg-emerald-400/10",
   },
+  {
+    slug: "how-to-automate-ecommerce-customer-support",
+    title: "How to Automate Ecommerce Customer Support with AI (2026 Playbook)",
+    excerpt: "Step-by-step playbook: audit your tickets, build your knowledge base, configure AI, pick channels, and reach 80% automation in 2 weeks.",
+    date: "March 23, 2026",
+    readTime: "11 min read",
+    category: "Playbook",
+    categoryColor: "text-blue-400 bg-blue-400/10",
+  },
 ];
 
 export default function BlogPage() {

@@ -32,13 +32,12 @@ const industries = [
     highlight: true,
   },
   {
-    slug: null,
+    slug: "restaurant",
     icon: UtensilsCrossed,
     title: "Restaurants & Hospitality",
     desc: "Handle reservation questions, menu inquiries, hours, and special requests automatically.",
     tags: ["Reservations", "Menu Q&A", "Hours", "Reviews"],
     highlight: false,
-    comingSoon: true,
   },
   {
     slug: null,
