@@ -5,8 +5,8 @@ import { Download, Upload, Copy, Check, FileJson, AlertCircle } from "lucide-rea
 import { cn } from "@/lib/utils";
 
 interface ConfigImportExportProps {
-  config: Record<string, any>;
-  onImport?: (config: Record<string, any>) => void;
+  config: Record<string, unknown>;
+  onImport?: (config: Record<string, unknown>) => void;
   readOnly?: boolean;
 }
 

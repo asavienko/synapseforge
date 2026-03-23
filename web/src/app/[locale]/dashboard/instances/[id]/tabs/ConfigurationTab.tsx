@@ -455,7 +455,7 @@ export function ConfigurationTab({
         </div>
         <div className="p-4">
           <ConfigImportExport
-            config={config}
+            config={config as unknown as Record<string, unknown>}
             onImport={(importedConfig) => {
               setConfig((prev) => ({ ...prev, ...importedConfig }));
               setConfigDirty(true);

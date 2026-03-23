@@ -746,7 +746,10 @@
       "previewDesc": "Envía un mensaje para ver cómo responde tu agente con la configuración actual.",
       "previewPlaceholder": "Escribe un mensaje de prueba…",
       "previewClear": "Limpiar",
-      "previewUnsaved": "Cambios sin guardar — guarda la configuración para probar la última versión"
+      "previewUnsaved": "Cambios sin guardar — guarda la configuración para probar la última versión",
+      "importExportTitle": "Importar / Exportar",
+      "importExportDesc": "Haz una copia de seguridad o comparte tu configuración como JSON",
+      "importSuccess": "Configuración importada. Revisa y guarda los cambios."
     },
     "apiKeys": {
       "generateTitle": "Generar nueva clave API",
