@@ -16,6 +16,7 @@ const comparisons = [
   { slug: "crisp", name: "Crisp", desc: "Multi-channel support platform with new AI features. Honest feature-by-feature breakdown.", badge: null },
   { slug: "livechat", name: "LiveChat", desc: "Traditional live chat at $52/agent/month vs AI at $29/month. Cost comparison and feature breakdown.", badge: "🔥 High intent" },
   { slug: "helpscout", name: "Help Scout", desc: "Email-first help desk at $50/user/mo vs AI-native support. Feature and pricing comparison.", badge: null },
+  { slug: "gorgias", name: "Gorgias", desc: "Ecommerce help desk at $60/agent/mo vs AI. Shopify integration comparison and automation features.", badge: "Ecommerce" },
 ];
 
 export default function ComparePage() {
