@@ -153,6 +153,7 @@ export default async function LandingPage() {
             <a href="#demo" className="hover:text-white transition-colors">Demo</a>
             <a href="#how" className="hover:text-white transition-colors">{t("nav.services")}</a>
             <a href="#pricing" className="hover:text-white transition-colors">{t("nav.pricing")}</a>
+            <Link href="/use-cases" className="hover:text-white transition-colors">Use Cases</Link>
             <Link href="/compare" className="hover:text-white transition-colors">Compare</Link>
             <Link href="/contact" className="hover:text-white transition-colors">{t("nav.contact")}</Link>
           </div>
@@ -918,6 +919,16 @@ export default async function LandingPage() {
             <h3 className="font-semibold text-white group-hover:text-violet-300 transition-colors mb-1.5 text-sm leading-snug">OpenHelix vs Intercom — Is the Price Worth It?</h3>
             <p className="text-xs text-zinc-500">Honest comparison for SMBs evaluating Intercom.</p>
           </Link>
+          <Link href="/use-cases/ecommerce" className="group bg-white/[0.02] border border-white/5 hover:border-violet-500/20 hover:bg-white/[0.04] transition-all rounded-xl p-5">
+            <div className="text-xs text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-full inline-block mb-3">Use Case</div>
+            <h3 className="font-semibold text-white group-hover:text-violet-300 transition-colors mb-1.5 text-sm leading-snug">AI Chatbot for Ecommerce Stores</h3>
+            <p className="text-xs text-zinc-500">Order tracking, returns, and cart recovery — automated.</p>
+          </Link>
+          <Link href="/compare/zendesk" className="group bg-white/[0.02] border border-white/5 hover:border-violet-500/20 hover:bg-white/[0.04] transition-all rounded-xl p-5">
+            <div className="text-xs text-zinc-400 bg-white/5 px-2 py-0.5 rounded-full inline-block mb-3">Compare</div>
+            <h3 className="font-semibold text-white group-hover:text-violet-300 transition-colors mb-1.5 text-sm leading-snug">OpenHelix vs Zendesk — 90% Cheaper Alternative</h3>
+            <p className="text-xs text-zinc-500">$55/agent/month vs $0 to start. Full comparison.</p>
+          </Link>
         </div>
         <div className="text-center">
           <Link href="/blog" className="text-sm text-violet-400 hover:text-violet-300 transition-colors">View all guides →</Link>
@@ -1036,10 +1047,20 @@ export default async function LandingPage() {
                 <li><Link href="/integrations" className="hover:text-white transition-colors">All integrations →</Link></li>
               </ul>
             </div>
+            {/* Use Cases */}
+            <div>
+              <div className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3">Use Cases</div>
+              <ul className="space-y-2 text-sm text-zinc-500">
+                <li><Link href="/use-cases/ecommerce" className="hover:text-white transition-colors">Ecommerce</Link></li>
+                <li><Link href="/use-cases/saas" className="hover:text-white transition-colors">SaaS</Link></li>
+                <li><Link href="/use-cases" className="hover:text-white transition-colors">All use cases →</Link></li>
+              </ul>
+            </div>
             {/* Compare */}
             <div>
               <div className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3">Compare</div>
               <ul className="space-y-2 text-sm text-zinc-500">
+                <li><Link href="/compare/zendesk" className="hover:text-white transition-colors">vs Zendesk</Link></li>
                 <li><Link href="/compare/tidio" className="hover:text-white transition-colors">vs Tidio</Link></li>
                 <li><Link href="/compare/intercom" className="hover:text-white transition-colors">vs Intercom</Link></li>
                 <li><Link href="/compare/crisp" className="hover:text-white transition-colors">vs Crisp</Link></li>
