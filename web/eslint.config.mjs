@@ -13,6 +13,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Node CLI scripts — use CommonJS require(), not subject to Next.js ESLint rules
+    "scripts/**",
   ]),
   {
     rules: {
