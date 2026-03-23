@@ -1,4 +1,5 @@
 import { Link } from "@/i18n/navigation";
+import { Metadata } from "next";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
 import { MobileNav } from "@/components/MobileNav";
 import { LandingDemoChat } from "@/components/LandingDemoChat";
@@ -24,6 +25,17 @@ import {
   AIBrainIcon,
 } from "@/components/icons/BrandIcons";
 import { getTranslations } from "next-intl/server";
+
+export const metadata: Metadata = {
+  title: "SynapseForge — AI Agents for Business",
+  description: "Deploy AI agents in minutes. Managed setup, human oversight, and seamless integrations. Start free with 2,000 messages.",
+  keywords: ["AI", "chatbot", "customer support", "automation", "business AI", "virtual assistant"],
+  openGraph: {
+    title: "SynapseForge — AI Agents for Business",
+    description: "Deploy AI agents in minutes. Managed setup, human oversight, and seamless integrations.",
+    type: "website",
+  },
+};
 
 export default async function LandingPage() {
   const t = await getTranslations();
