@@ -18,4 +18,13 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
+echo "🌍 Checking translation completeness..."
+node scripts/check-translations.js
+# Non-zero exit only on JSON parse errors (strict mode not enabled by default).
+# To block push on any missing key, change to: node scripts/check-translations.js --strict
+if [ $? -ne 0 ]; then
+  echo "❌ Translation check failed (JSON parse error). Fix messages/*.json before pushing."
+  exit 1
+fi
+
 echo "✅ All checks passed — pushing."

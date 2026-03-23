@@ -19,7 +19,9 @@
     "cy:run:chrome": "cypress run --browser chrome",
     "cy:seed": "npx tsx cypress/support/seed.ts",
     "migrate:embeddings": "tsx scripts/migrate-embeddings.ts",
-    "prepare": "node -e \"if(process.env.CI||process.env.VERCEL)process.exit(0)\" || (cd .. && node web/node_modules/.bin/husky)"
+    "prepare": "node -e \"if(process.env.CI||process.env.VERCEL)process.exit(0)\" || (cd .. && node web/node_modules/.bin/husky)",
+    "check-i18n": "node scripts/check-translations.js",
+    "check-i18n:strict": "node scripts/check-translations.js --strict"
   },
   "overrides": {
     "@swc/helpers": "0.5.19"

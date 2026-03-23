@@ -1631,6 +1631,7 @@
     "recentUnanswered": "Recent Unanswered Questions",
     "empty": "No conversation data yet. Start chatting to see insights."
   },
+  "whiteLabelPage": {
     "title": "White Label",
     "subtitle": "Customize the branding for your clients",
     "brandName": "Brand Name",
