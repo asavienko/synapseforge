@@ -70,19 +70,19 @@ const useCases = [
     icon: Clock,
     title: "Appointment Booking & Reminders",
     desc: "Patients can check availability and book appointments anytime. Automatic reminders reduce no-shows by up to 30%.",
-    example: "Patient: 'When is the next available slot for Dr. Smith?' → AI checks calendar and books the appointment instantly",
+    example: "Patient: u0026apos;When is the next available slot for Dr. Smith?u0026apos; → AI checks calendar and books the appointment instantly",
   },
   {
     icon: Shield,
     title: "Insurance & Billing Questions",
     desc: "Answer questions about accepted insurance, co-pays, payment options, and billing policies — instantly and accurately.",
-    example: "Patient: 'Do you accept Blue Cross?' → AI provides insurance information and verifies coverage requirements",
+    example: "Patient: u0026apos;Do you accept Blue Cross?u0026apos; → AI provides insurance information and verifies coverage requirements",
   },
   {
     icon: MessageSquare,
     title: "Pre-Visit Instructions",
     desc: "Automatically provide preparation instructions for procedures, required documents, and what to bring to appointments.",
-    example: "Patient: 'What do I need to bring for my MRI?' → AI provides preparation checklist and facility directions",
+    example: "Patient: u0026apos;What do I need to bring for my MRI?u0026apos; → AI provides preparation checklist and facility directions",
   },
   {
     icon: Globe,
@@ -100,7 +100,7 @@ const useCases = [
     icon: UserPlus,
     title: "New Patient Onboarding",
     desc: "Guide new patients through registration, intake forms, and first appointment scheduling — reducing administrative overhead.",
-    example: "New patient: 'How do I become a patient?' → AI sends intake forms and schedules initial consultation",
+    example: "New patient: &apos;How do I become a patient?u0026apos; → AI sends intake forms and schedules initial consultation",
   },
 ];
 

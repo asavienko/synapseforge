@@ -70,7 +70,7 @@ const useCases = [
     icon: MessageSquare,
     title: "Property Q&A",
     desc: "Answer detailed questions about listings — square footage, bedrooms, amenities, neighborhood info, and availability — instantly and accurately.",
-    example: "Prospect: 'Does this home have a pool?' → AI checks listing and provides answer with photos, plus suggests similar properties with pools",
+    example: "Prospect: 'Does this home have a pool?&apos; → AI checks listing and provides answer with photos, plus suggests similar properties with pools",
   },
   {
     icon: Zap,
@@ -82,7 +82,7 @@ const useCases = [
     icon: Calendar,
     title: "Viewing Scheduling",
     desc: "Check agent availability and book viewings directly into calendars. Send confirmations and reminders automatically to reduce no-shows.",
-    example: "Prospect: 'Can I see the property this weekend?' → AI checks calendar and books Saturday 2 PM showing with confirmation email",
+    example: "Prospect: 'Can I see the property this weekend?&apos; → AI checks calendar and books Saturday 2 PM showing with confirmation email",
   },
   {
     icon: Globe,
@@ -100,7 +100,7 @@ const useCases = [
     icon: Home,
     title: "Neighborhood Expertise",
     desc: "Answer questions about schools, commute times, nearby amenities, and neighborhood features — positioning your agency as the local expert.",
-    example: "Prospect: 'How are the schools in this area?' → AI provides school ratings, district info, and family-friendly neighborhood highlights",
+    example: "Prospect: 'How are the schools in this area?&apos; → AI provides school ratings, district info, and family-friendly neighborhood highlights",
   },
 ];
 
@@ -210,7 +210,7 @@ export default function RealEstatePage() {
 
         {/* Pain points */}
         <section className="mb-16">
-          <h2 className="text-2xl font-bold mb-6">Solving Real Estate's Biggest Challenges</h2>
+          <h2 className="text-2xl font-bold mb-6">Solving Real Estate&apos;s Biggest Challenges</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="bg-white/[0.02] border border-white/5 rounded-xl p-5">
               <h3 className="font-semibold mb-3 flex items-center gap-2">

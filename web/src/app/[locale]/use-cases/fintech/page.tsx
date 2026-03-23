@@ -70,19 +70,19 @@ const useCases = [
     icon: FileText,
     title: "Account & Feature FAQs",
     desc: "Answer questions about account types, features, eligibility requirements, and platform capabilities instantly and consistently.",
-    example: "Customer: 'What's the difference between Basic and Pro accounts?' → AI provides detailed comparison with fees and features",
+    example: "Customer: &apos;What's the difference between Basic and Pro accounts?&apos; → AI provides detailed comparison with fees and features",
   },
   {
     icon: MessageSquare,
     title: "Transaction Support",
     desc: "Guide customers through transaction statuses, processing times, and general troubleshooting without accessing sensitive data.",
-    example: "Customer: 'How long do wire transfers take?' → AI explains processing times and cut-off requirements",
+    example: "Customer: &apos;How long do wire transfers take?&apos; → AI explains processing times and cut-off requirements",
   },
   {
     icon: Zap,
     title: "Onboarding & Verification",
     desc: "Walk new users through account setup, KYC requirements, and verification processes — reducing drop-off and support tickets.",
-    example: "Customer: 'What documents do I need to verify?' → AI provides checklist and guides through submission process",
+    example: "Customer: &apos;What documents do I need to verify?&apos; → AI provides checklist and guides through submission process",
   },
   {
     icon: Globe,
@@ -100,7 +100,7 @@ const useCases = [
     icon: Shield,
     title: "Compliance-First Escalation",
     desc: "Automatically route sensitive requests, complaints, and regulatory questions to specialized teams with full context.",
-    example: "Keywords like 'complaint' or 'regulator' trigger immediate escalation with conversation history attached",
+    example: "Keywords like &apos;complaint' or 'regulator&apos; trigger immediate escalation with conversation history attached",
   },
 ];
 
