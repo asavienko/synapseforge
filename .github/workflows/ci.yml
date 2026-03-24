@@ -42,24 +42,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: 10
-          
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-          cache-dependency-path: web/pnpm-lock.yaml
-          
-      - name: Install dependencies
-        run: cd web && pnpm install --frozen-lockfile
-        
-      - name: Build application
-        run: cd web && pnpm build
-        
       - name: Deploy to Vercel (Production)
         if: github.ref == 'refs/heads/main'
         uses: amondnet/vercel-action@v25
