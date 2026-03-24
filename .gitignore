@@ -1,1 +1,34 @@
+# Vercel
 .vercel
+
+# Dependencies
+node_modules/
+.npm
+
+# Local environment files
+.env
+.env.local
+.env.*.local
+
+# Claude / AI tools local settings
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Build outputs
+dist/
+build/
+.next/
+out/
