@@ -80,7 +80,10 @@ export function ChatTab({
     try {
       const res = await fetch(`/api/instances/${id}/chat`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "text/event-stream",
+        },
         body: JSON.stringify({
           messages: updatedMessages.map((m) => ({ role: m.role, content: m.content })),
         }),
@@ -116,21 +119,44 @@ export function ChatTab({
 
       const decoder = new TextDecoder();
       let fullText = "";
+      let sseBuffer = "";
 
       try {
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
-          fullText += decoder.decode(value, { stream: true });
-          setChatMessages((prev) =>
-            prev.map((m) => (m.id === streamingId ? { ...m, content: fullText } : m))
-          );
+
+          sseBuffer += decoder.decode(value, { stream: true });
+
+          // Parse SSE: split on double-newline boundaries
+          const parts = sseBuffer.split("\n\n");
+          // Keep last incomplete chunk in buffer
+          sseBuffer = parts.pop() ?? "";
+
+          for (const part of parts) {
+            const line = part.trim();
+            if (!line.startsWith("data:")) continue;
+            const payload = line.slice(5).trim();
+            if (payload === "[DONE]") break;
+            try {
+              const parsed = JSON.parse(payload) as { delta?: string; error?: string };
+              if (parsed.error) throw new Error(parsed.error);
+              if (parsed.delta) {
+                fullText += parsed.delta;
+                setChatMessages((prev) =>
+                  prev.map((m) => (m.id === streamingId ? { ...m, content: fullText } : m))
+                );
+              }
+            } catch {
+              // Ignore malformed SSE lines
+            }
+          }
         }
-        fullText += decoder.decode();
       } finally {
         reader.releaseLock();
       }
 
+      // Finalize: replace streaming placeholder with committed message
       setChatMessages((prev) =>
         prev.map((m) =>
           m.id === streamingId ? { role: "assistant" as const, content: fullText } : m

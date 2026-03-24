@@ -7,6 +7,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 interface Message {
+  id?: string;
   role: "user" | "assistant";
   content: string;
   error?: boolean;
@@ -64,35 +65,68 @@ export function PublicChatUI({ instanceId, branding }: Props) {
       .filter((m) => !m.error)
       .map((m) => ({ role: m.role, content: m.content }));
 
+    // Add streaming placeholder
+    const streamingId = `streaming-${Date.now()}`;
+    setMessages((prev) => [...prev, { id: streamingId, role: "assistant", content: "" }]);
+
     try {
       const res = await fetch(`/api/chat/${instanceId}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Accept": "text/event-stream" },
         body: JSON.stringify({ message: msg, history }),
       });
 
-      const data = await res.json();
-
-      if (!res.ok || data.error) {
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: "assistant",
-            content: data.error || t("somethingWentWrong"),
-            error: true,
-          },
-        ]);
-      } else {
-        setMessages((prev) => [
-          ...prev,
-          { role: "assistant", content: data.response },
-        ]);
+      if (!res.ok) {
+        setMessages((prev) => prev.filter((m) => m.id !== streamingId));
+        let errData: { error?: string } = {};
+        try { errData = await res.json(); } catch { /* ignore */ }
+        setMessages((prev) => [...prev, { role: "assistant", content: errData.error || t("somethingWentWrong"), error: true }]);
+        return;
       }
+
+      const reader = res.body?.getReader();
+      if (!reader) {
+        setMessages((prev) => prev.filter((m) => m.id !== streamingId));
+        return;
+      }
+
+      const decoder = new TextDecoder();
+      let fullText = "";
+      let sseBuffer = "";
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          sseBuffer += decoder.decode(value, { stream: true });
+          const parts = sseBuffer.split("\n\n");
+          sseBuffer = parts.pop() ?? "";
+          for (const part of parts) {
+            const line = part.trim();
+            if (!line.startsWith("data:")) continue;
+            const payload = line.slice(5).trim();
+            if (payload === "[DONE]") break;
+            try {
+              const parsed = JSON.parse(payload) as { delta?: string; error?: string };
+              if (parsed.delta) {
+                fullText += parsed.delta;
+                setMessages((prev) =>
+                  prev.map((m) => (m.id === streamingId ? { ...m, content: fullText } : m))
+                );
+              }
+            } catch { /* ignore malformed lines */ }
+          }
+        }
+      } finally {
+        reader.releaseLock();
+      }
+
+      setMessages((prev) =>
+        prev.map((m) => (m.id === streamingId ? { role: "assistant" as const, content: fullText } : m))
+      );
     } catch {
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: t("connectionError"), error: true },
-      ]);
+      setMessages((prev) => prev.filter((m) => m.id !== streamingId));
+      setMessages((prev) => [...prev, { role: "assistant", content: t("connectionError"), error: true }]);
     } finally {
       setSending(false);
       setTimeout(() => inputRef.current?.focus(), 50);
