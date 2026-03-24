@@ -21,6 +21,9 @@ import { auth } from "@/lib/auth";
 import { getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 
+// Skip static generation to avoid next-intl config issues during build
+export const dynamic = 'force-dynamic';
+
 interface Props {
   params: Promise<{ id: string; locale: string }>;
 }
