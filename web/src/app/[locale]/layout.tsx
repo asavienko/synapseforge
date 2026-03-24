@@ -97,7 +97,9 @@ export default async function LocaleLayout({
               <Suspense fallback={null}>
                 <PostHogPageView />
               </Suspense>
-              {children}
+              <ThemeProvider>
+                {children}
+              </ThemeProvider>
             </AnalyticsProvider>
           </NextIntlClientProvider>
         </PostHogProvider>

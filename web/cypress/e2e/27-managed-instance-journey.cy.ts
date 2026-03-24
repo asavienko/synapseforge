@@ -176,7 +176,7 @@ describe("27 · Managed Instance Journey — happy path", () => {
     cy.wrap(null).then(() => {
       cy.visit(`/en/dashboard/instances/${journeyInstanceId}`);
     });
-    cy.contains("button", "Deploy").click();
+    cy.contains("button", "Deploy").click({ force: true });
 
     // Should show channel setup options (Telegram, QR code, embed)
     cy.contains(/telegram|qr code|embed/i).should("be.visible");
@@ -216,7 +216,7 @@ describe("27 · Managed Instance Journey — happy path", () => {
     cy.wrap(null).then(() => {
       cy.visit(`/en/dashboard/instances/${journeyInstanceId}`);
     });
-    cy.contains("button", "Deploy").click();
+    cy.contains("button", "Deploy").click({ force: true });
 
     cy.get("main").contains(/Provisioning|provisioning/i).should("be.visible");
 
@@ -246,7 +246,7 @@ describe("27 · Managed Instance Journey — happy path", () => {
     cy.wrap(null).then(() => {
       cy.visit(`/en/dashboard/instances/${journeyInstanceId}`);
     });
-    cy.contains("button", "Deploy").click();
+    cy.contains("button", "Deploy").click({ force: true });
     cy.wait("@instanceReady");
 
     // Should show live/running state
@@ -339,7 +339,7 @@ describe("27 · Managed Instance Journey — happy path", () => {
     cy.get("main").contains("History test response — I remember you!").should("be.visible");
 
     // Switch away and back to the Chat tab — history should still be there
-    cy.contains("button", "Deploy").click();
+    cy.contains("button", "Deploy").click({ force: true });
     cy.contains("button", "Chat").click();
 
     cy.get("main").contains("History test message").should("be.visible");

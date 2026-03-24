@@ -188,7 +188,7 @@ function SidebarContent({ userName, userEmail, unreadCount, isAdmin, isManager, 
           </div>
         </div>
         <button
-          onClick={() => signOut({ callbackUrl: "/", redirect: true })}
+          onClick={() => signOut({ callbackUrl: "/sign-in", redirect: true })}
           className="flex items-center gap-2 text-xs text-zinc-500 hover:text-white transition-colors py-2 px-3 rounded-lg hover:bg-white/5 w-full"
         >
           <LogoutIcon className="w-3.5 h-3.5" />
