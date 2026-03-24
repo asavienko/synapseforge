@@ -12,6 +12,7 @@ const integrations = [
   { slug: "telegram", name: "Telegram", desc: "Deploy a GPT-4 or Claude bot to any Telegram channel, group, or 1-on-1 chat.", badge: "Most popular", color: "text-blue-400" },
   { slug: "whatsapp", name: "WhatsApp Business", desc: "Connect to your WhatsApp Business number via Twilio. Handle customer messages 24/7.", badge: null, color: "text-emerald-400" },
   { slug: "discord", name: "Discord", desc: "Add an AI bot to your Discord server. Handles support, FAQs, and community questions.", badge: null, color: "text-indigo-400" },
+  { slug: "slack", name: "Slack", desc: "Add an AI bot to your Slack workspace. Channel support, DMs, and thread handling.", badge: null, color: "text-rose-400" },
 ];
 
 export default function IntegrationsPage() {

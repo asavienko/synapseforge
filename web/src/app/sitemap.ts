@@ -186,6 +186,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.7,
     },
+    {
+      url: `${baseUrl}/integrations/slack`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
     // Comparisons
     {
       url: `${baseUrl}/compare`,
