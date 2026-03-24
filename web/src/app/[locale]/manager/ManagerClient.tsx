@@ -379,7 +379,11 @@ export function ManagerClient({ manager, clients: initialClients }: {
     setThreadLoading(true);
     setMessages([]);
     const res = await fetch(`/api/messages?userId=${client.id}`);
-    if (res.ok) setMessages(await res.json());
+    if (res.ok) {
+      const data = await res.json();
+      // API returns { messages: [], calLink: ... } — extract the array
+      setMessages(Array.isArray(data) ? data : data.messages ?? []);
+    }
     setThreadLoading(false);
     setClients((prev) => prev.map((c) => c.id === client.id ? { ...c, unreadMessages: 0 } : c));
   }

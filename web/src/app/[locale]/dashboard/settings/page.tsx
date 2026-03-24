@@ -29,7 +29,7 @@ export default async function SettingsPage() {
 
   if (!user) return null;
 
-  const plan = PLANS[user.plan as keyof typeof PLANS];
+  const plan = PLANS[user.plan as keyof typeof PLANS] ?? PLANS.free;
 
   return (
     <div className="p-4 pt-14 md:p-8 md:pt-6 max-w-2xl">
