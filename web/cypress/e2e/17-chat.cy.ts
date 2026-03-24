@@ -8,6 +8,18 @@
 const EMAIL = () => Cypress.env("TEST_EMAIL");
 const PASS  = () => Cypress.env("TEST_PASSWORD");
 
+/** Build a SSE-format intercept body for a given response text. */
+function sseBody(text: string): string {
+  return `data: ${JSON.stringify({ delta: text })}\n\ndata: [DONE]\n\n`;
+}
+function sseReply(text: string) {
+  return {
+    statusCode: 200,
+    headers: { "Content-Type": "text/event-stream" },
+    body: sseBody(text),
+  };
+}
+
 describe("17 · Chat Tab", () => {
   let instanceId: string;
 
@@ -163,10 +175,7 @@ describe("17 · Chat Tab", () => {
       }
     });
 
-    cy.intercept("POST", "/api/instances/*/chat", {
-      statusCode: 200,
-      body: { response: "Hello! How can I help you today?", latencyMs: 123, model: "gpt-4o", provider: "openai" },
-    }).as("chatSuccess");
+    cy.intercept("POST", "/api/instances/*/chat", sseReply("Hello! How can I help you today?")).as("chatSuccess");
 
     cy.contains("button", "Chat").click();
     cy.get("main").find("textarea").should("be.visible").type("Hello there");
@@ -198,15 +207,8 @@ describe("17 · Chat Tab", () => {
     let callCount = 0;
     cy.intercept("POST", "/api/instances/*/chat", (req) => {
       callCount++;
-      req.reply({
-        statusCode: 200,
-        body: {
-          response: callCount === 1 ? "I am an AI assistant." : "I can answer questions!",
-          latencyMs: 100,
-          model: "gpt-4o",
-          provider: "openai",
-        },
-      });
+      const text = callCount === 1 ? "I am an AI assistant." : "I can answer questions!";
+      req.reply(sseReply(text));
     }).as("chatMulti");
 
     cy.contains("button", "Chat").click();
@@ -245,10 +247,7 @@ describe("17 · Chat Tab", () => {
       }
     });
 
-    cy.intercept("POST", "/api/instances/*/chat", {
-      statusCode: 200,
-      body: { response: "Enter key works!", latencyMs: 50, model: "gpt-4o", provider: "openai" },
-    }).as("chatEnter");
+    cy.intercept("POST", "/api/instances/*/chat", sseReply("Enter key works!")).as("chatEnter");
 
     cy.contains("button", "Chat").click();
     cy.get("main").find("textarea").type("Test enter key{enter}");
@@ -272,10 +271,7 @@ describe("17 · Chat Tab", () => {
       }
     });
 
-    cy.intercept("POST", "/api/instances/*/chat", {
-      statusCode: 200,
-      body: { response: "This will be cleared.", latencyMs: 42, model: "gpt-4o", provider: "openai" },
-    }).as("chatClear");
+    cy.intercept("POST", "/api/instances/*/chat", sseReply("This will be cleared.")).as("chatClear");
 
     cy.contains("button", "Chat").click();
     cy.get("main").find("textarea").type("Clear me");

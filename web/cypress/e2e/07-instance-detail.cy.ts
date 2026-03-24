@@ -172,7 +172,7 @@ describe("07 · Instance Detail", () => {
       cy.contains("button", "Create").click();
       cy.get("[class*='amber-500'], [class*='bg-amber']", { timeout: 8000 }).should("be.visible");
       // Dismiss the key reveal banner
-      cy.contains("I've copied it").click();
+      cy.contains("I've copied it").click({ force: true });
       // Revoke the key
       cy.contains("To Be Revoked").parents("tr, [class*='flex']").first().find("button").last().click();
       cy.contains("To Be Revoked").should("not.exist");

@@ -272,15 +272,8 @@ describe("27 · Managed Instance Journey — happy path", () => {
 
     cy.intercept("POST", `/api/instances/${journeyInstanceId}/chat`, {
       statusCode: 200,
-      body: {
-        response: "Hello! I'm your AI assistant. How can I help you?",
-        provider: "openai",
-        model: "gpt-4o",
-        latencyMs: 312,
-        inputTokens: 10,
-        outputTokens: 20,
-        source: "direct",
-      },
+      headers: { "Content-Type": "text/event-stream" },
+      body: `data: ${JSON.stringify({ delta: "Hello! I'm your AI assistant. How can I help you?" })}\n\ndata: [DONE]\n\n`,
     }).as("chatReq");
 
     cy.wrap(null).then(() => {
@@ -317,15 +310,8 @@ describe("27 · Managed Instance Journey — happy path", () => {
     // First visit: send a message and get a response
     cy.intercept("POST", `/api/instances/${journeyInstanceId}/chat`, {
       statusCode: 200,
-      body: {
-        response: "History test response — I remember you!",
-        provider: "openai",
-        model: "gpt-4o",
-        latencyMs: 150,
-        inputTokens: 8,
-        outputTokens: 12,
-        source: "direct",
-      },
+      headers: { "Content-Type": "text/event-stream" },
+      body: `data: ${JSON.stringify({ delta: "History test response — I remember you!" })}\n\ndata: [DONE]\n\n`,
     }).as("chatHistory");
 
     cy.wrap(null).then(() => {
