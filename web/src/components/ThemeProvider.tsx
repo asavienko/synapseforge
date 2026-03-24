@@ -51,10 +51,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("theme", theme);
   }, [theme, mounted]);
 
-  if (!mounted) {
-    return <>{children}</>;
-  }
-
   return (
     <ThemeContext.Provider value={{ theme, setTheme, resolvedTheme }}>
       {children}
@@ -62,10 +58,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+const DEFAULT_THEME_CONTEXT: ThemeContextType = {
+  theme: "system",
+  setTheme: () => {},
+  resolvedTheme: "dark",
+};
+
 export function useTheme() {
   const context = useContext(ThemeContext);
-  if (context === undefined) {
-    throw new Error("useTheme must be used within a ThemeProvider");
-  }
-  return context;
+  // Return safe defaults during SSR / before ThemeProvider mounts
+  return context ?? DEFAULT_THEME_CONTEXT;
 }
