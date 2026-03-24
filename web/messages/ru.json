@@ -703,7 +703,9 @@
       "tryAnother": "Try another →",
       "recentActivity": "Recent Activity",
       "seeAll": "See all →",
-      "upgradeHint": "Need a tier upgrade or custom integration? Contact your manager — they handle it for you."
+      "upgradeHint": "Need a tier upgrade or custom integration? Contact your manager — they handle it for you.",
+      "addApiKey": "Добавить API-ключ →",
+      "sandboxExhaustedHint": "Добавьте свой API-ключ, чтобы продолжить без ограничений."
     },
     "config": {
       "aiModel": "Модель AI",

@@ -190,12 +190,12 @@ export function OverviewTab({
             </div>
             {exhausted ? (
               <div className="mt-3 flex items-center gap-3">
-                <p className="text-xs text-amber-400/80 flex-1">Add your own API key to keep going — no per-message limits.</p>
+                <p className="text-xs text-amber-400/80 flex-1">{t("overview.sandboxExhaustedHint")}</p>
                 <button
                   onClick={onGoToCredentials}
                   className="shrink-0 text-xs font-semibold text-white bg-violet-600 hover:bg-violet-500 px-3 py-1.5 rounded-lg transition-colors"
                 >
-                  Add API Key →
+                  {t("overview.addApiKey")}
                 </button>
               </div>
             ) : (

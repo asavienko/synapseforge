@@ -714,7 +714,9 @@
       "tryAnother": "Try another →",
       "recentActivity": "Recent Activity",
       "seeAll": "See all →",
-      "upgradeHint": "Need a tier upgrade or custom integration? Contact your manager — they handle it for you."
+      "upgradeHint": "Need a tier upgrade or custom integration? Contact your manager — they handle it for you.",
+      "addApiKey": "Add API Key →",
+      "sandboxExhaustedHint": "Add your own API key to keep going — no per-message limits."
     },
     "config": {
       "aiModel": "AI Model",

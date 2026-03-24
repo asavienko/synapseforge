@@ -31,7 +31,7 @@ export function UsageWarningBanner() {
                 ? "Sandbox limit reached — add your own API key to continue chatting"
                 : `Sandbox: ${data.sandbox.used}/${data.sandbox.limit} messages used`,
               percentage: pct,
-              action: { label: "Add API key →", href: "/dashboard/instances" },
+              action: { label: "Set up credentials", href: "/dashboard/instances" },
             });
           }
         }
