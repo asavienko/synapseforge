@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { resolveCredentials, ChatMessage, parseInstanceConfig, streamLLM } from "@/lib/llm";

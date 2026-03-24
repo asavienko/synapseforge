@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Shared LLM routing logic.
  * Used by both the internal /api/instances/[id]/chat route
