@@ -8,7 +8,22 @@ import { ApiKeySettings } from "@/components/ApiKeySettings";
 
 export default async function SettingsPage() {
   const session = await auth();
-  const userId = session!.user!.id!;
+  
+  // Handle static generation (no session during build) or unauthenticated users
+  if (!session?.user?.id) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h1 className="text-2xl font-semibold mb-4">Please sign in</h1>
+          <a href="/sign-in" className="text-blue-600 hover:underline">
+            Go to sign in →
+          </a>
+        </div>
+      </div>
+    );
+  }
+  
+  const userId = session.user.id;
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
