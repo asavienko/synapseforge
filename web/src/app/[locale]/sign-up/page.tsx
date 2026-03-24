@@ -133,45 +133,60 @@ export default function SignUpPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] grid-bg flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 mb-6">
-            <Zap className="w-6 h-6 text-violet-400" />
-            <span className="font-bold text-lg tracking-tight text-white">OpenHelix AI</span>
-          </Link>
-          <h1 className="text-2xl font-bold text-white">{t("title")}</h1>
-          <p className="text-zinc-400 mt-2 text-sm">{t("subtitle")}</p>
-        </div>
+    <div className="min-h-screen bg-[#050507] flex items-center justify-center px-4 py-8 relative overflow-hidden">
+      {/* Ambient glow orbs */}
+      <div className="glow-orb w-[500px] h-[500px] bg-violet-500/20 -top-40 -right-40 fixed -z-10" />
+      <div className="glow-orb w-[400px] h-[400px] bg-indigo-500/15 bottom-10 left-10 fixed -z-10" />
+      <div className="glow-orb w-[300px] h-[300px] bg-purple-500/10 top-1/3 left-1/2 -translate-x-1/2 fixed -z-10" />
 
-        <div className="glow-border rounded-2xl p-8 bg-white/[0.02]">
+      <div className="w-full max-w-md">
+        {/* Glass card container */}
+        <div className="bg-white/[0.04] border border-white/[0.08] backdrop-blur-xl rounded-2xl p-8">
+          {/* Logo area */}
+          <div className="flex justify-center mb-6">
+            <Link href="/" className="flex items-center gap-2">
+              <Zap className="w-6 h-6 text-violet-400" />
+              <span className="text-xl font-bold text-white/90 tracking-tight">OpenHelix AI</span>
+            </Link>
+          </div>
+
+          {/* Heading */}
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-semibold text-white/90 mb-2">{t("title")}</h1>
+            <p className="text-white/40 text-sm">{t("subtitle")}</p>
+          </div>
+
           {/* Referral banner */}
           {referralCode && (
-            <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3 mb-5">
+            <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3 mb-6">
               <Gift className="w-4 h-4 text-emerald-400 shrink-0" />
               <p className="text-sm text-emerald-300">
                 You were invited! You&apos;ll get <span className="font-semibold">1 free month</span> when you upgrade.
               </p>
             </div>
           )}
-          {/* Google OAuth — fastest path to sign up */}
+
+          {/* Google OAuth */}
           <div className="mb-6">
             <GoogleButton callbackUrl={searchParams.get("template") ? `/onboarding?template=${searchParams.get("template")}` : "/onboarding"} referralCode={referralCode ?? undefined} />
           </div>
+
+          {/* Divider */}
           <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-white/10" />
             </div>
-            <div className="relative flex justify-center text-xs">
-              <span className="bg-[#111113] px-3 text-zinc-500">or sign up with email</span>
+            <div className="relative flex justify-center">
+              <span className="bg-[#050507] px-3 text-white/25 text-xs">or sign up with email</span>
             </div>
           </div>
 
+          {/* Features list */}
           <div className="flex items-start gap-3 bg-violet-500/10 border border-violet-500/20 rounded-xl p-4 mb-6">
             <Zap className="w-4 h-4 text-violet-400 mt-0.5 shrink-0" />
             <div className="text-sm">
               <div className="text-violet-300 font-medium mb-1">Free plan includes:</div>
-              <div className="text-zinc-400 space-y-0.5">
+              <div className="text-white/40 space-y-0.5">
                 {["1 AI instance (minimal tier)", "Dedicated manager assigned", "Upgrade by request anytime"].map((f) => (
                   <div key={f} className="flex items-center gap-2">
                     <Check className="w-3 h-3 text-emerald-400" />
@@ -182,20 +197,21 @@ export default function SignUpPage() {
             </div>
           </div>
 
+          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-1.5">{t("name")}</label>
+              <label className="block text-white/50 text-sm mb-1.5">{t("name")}</label>
               <input
                 type="text"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 required
                 placeholder="John Doe"
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
+                className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-white placeholder-white/25 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-1.5">{t("email")}</label>
+              <label className="block text-white/50 text-sm mb-1.5">{t("email")}</label>
               <input
                 type="email"
                 value={form.email}
@@ -210,7 +226,7 @@ export default function SignUpPage() {
                 }}
                 required
                 placeholder="you@company.com"
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
+                className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-white placeholder-white/25 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all"
               />
               {emailError && (
                 <p className="text-xs text-red-400 mt-1">{emailError}</p>
@@ -219,11 +235,11 @@ export default function SignUpPage() {
                 <p className="text-xs text-emerald-400 mt-1">✓ Email available</p>
               )}
               {emailChecking && (
-                <p className="text-xs text-zinc-500 mt-1">Checking...</p>
+                <p className="text-xs text-white/30 mt-1">Checking...</p>
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-1.5">{t("password")}</label>
+              <label className="block text-white/50 text-sm mb-1.5">{t("password")}</label>
               <input
                 type="password"
                 value={form.password}
@@ -238,7 +254,7 @@ export default function SignUpPage() {
                 required
                 minLength={8}
                 placeholder={t("passwordHint")}
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
+                className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-white placeholder-white/25 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all"
               />
               {form.password && (
                 <div className="mt-2">
@@ -276,25 +292,29 @@ export default function SignUpPage() {
                 </div>
               )}
             </div>
+
+            {/* Error message */}
             {error && (
               isAlreadyRegistered ? (
-                <div className="text-sm bg-amber-400/10 border border-amber-400/20 rounded-lg px-4 py-3">
+                <div className="text-sm bg-amber-400/10 border border-amber-400/20 rounded-xl px-4 py-3">
                   <span className="text-amber-300">{t("alreadyRegistered")}</span>
                   {" → "}
-                  <Link href="/sign-in" className="text-violet-400 hover:text-violet-300 font-semibold transition-colors">
+                  <Link href="/sign-in" className="text-violet-400/80 hover:text-violet-300 font-semibold transition-colors">
                     {t("signInInstead")}
                   </Link>
                 </div>
               ) : (
-                <div className="text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-4 py-3">
+                <div className="text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-xl px-4 py-3">
                   {error}
                 </div>
               )
             )}
+
+            {/* Submit button */}
             <button
               type="submit"
               disabled={loading || success}
-              className="w-full flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors py-3 rounded-lg font-semibold text-white"
+              className="glass-btn-primary w-full py-3 rounded-xl font-semibold text-base text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {loading || success ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
               {success ? t("creatingAccount") : t("submit")}
@@ -303,7 +323,7 @@ export default function SignUpPage() {
 
           {/* Success Banner */}
           {success && (
-            <div className="mt-4 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-center">
+            <div className="mt-4 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-center">
               <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-2">
                 <Check className="w-5 h-5 text-emerald-400" />
               </div>
@@ -313,12 +333,26 @@ export default function SignUpPage() {
           )}
         </div>
 
-        <p className="text-center text-sm text-zinc-500 mt-6">
+        {/* Sign in link */}
+        <p className="text-center text-sm text-white/30 mt-6">
           {t("hasAccount")}{" "}
-          <Link href="/sign-in" className="text-violet-400 hover:text-violet-300 transition-colors">
+          <Link href="/sign-in" className="text-violet-400/80 hover:text-violet-300 transition-colors font-medium">
             {t("signInLink")}
           </Link>
         </p>
+
+        {/* Footer links */}
+        <div className="flex justify-center gap-4 mt-4">
+          <Link href="/" className="text-xs text-white/30 hover:text-white/50 transition-colors">
+            Home
+          </Link>
+          <Link href="/privacy" className="text-xs text-white/30 hover:text-white/50 transition-colors">
+            Privacy
+          </Link>
+          <Link href="/terms" className="text-xs text-white/30 hover:text-white/50 transition-colors">
+            Terms
+          </Link>
+        </div>
       </div>
     </div>
   );
