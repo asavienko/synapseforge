@@ -27,9 +27,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Find instance by WhatsApp phone number ID
-    // Using any type since Prisma client hasn't been regenerated with new fields yet
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const instance: any = await (prisma as any).aIInstance.findFirst({
+    const instance = await prisma.aIInstance.findFirst({
       where: { 
         whatsappEnabled: true,
         whatsappPhoneNumber: { not: null },
@@ -43,8 +41,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Verify webhook signature
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const encryptedSecret = (instance as any).whatsappWebhookSecret;
+    const encryptedSecret = instance.whatsappWebhookSecret;
     if (!encryptedSecret) {
       console.warn("[WhatsApp Webhook] No webhook secret configured");
       return NextResponse.json({ error: "Not configured" }, { status: 400 });
@@ -77,8 +74,7 @@ export async function POST(req: NextRequest) {
 
     // Check for LLM credentials
     const llmKeys = ["openai_api_key", "anthropic_api_key", "openrouter_api_key"];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const hasLLMCreds = (instance as any).credentials?.some((c: { key: string }) => llmKeys.includes(c.key));
+    const hasLLMCreds = instance.credentials?.some((c) => llmKeys.includes(c.key));
 
     // Handle sandbox exhaustion
     if (!hasLLMCreds && instance.sandboxMode && isSandboxExhausted(instance.sandboxUsed ?? 0)) {
@@ -175,9 +171,7 @@ export async function GET(req: NextRequest) {
   }
 
   // Find instance by verify token
-  // Using any type since Prisma client hasn't been regenerated with new fields yet
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const instances: any[] = await (prisma as any).aIInstance.findMany({
+  const instances = await prisma.aIInstance.findMany({
     where: { 
       whatsappEnabled: true,
       whatsappWebhookSecret: { not: null },

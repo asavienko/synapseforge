@@ -52,9 +52,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     const webhookSecret = crypto.randomUUID();
 
     // Update instance with WhatsApp credentials
-    // Using any type since Prisma client hasn't been regenerated with new fields yet
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (prisma as any).aIInstance.update({
+    await prisma.aIInstance.update({
       where: { id },
       data: {
         whatsappEnabled: true,

@@ -18,9 +18,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const { id } = await params;
   
   // Verify instance ownership
-  // Using any type since Prisma client hasn't been regenerated with new fields yet
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const instance: any = await (prisma as any).aIInstance.findFirst({
+  const instance = await prisma.aIInstance.findFirst({
     where: { id, userId: session.user.id },
     select: {
       id: true,
