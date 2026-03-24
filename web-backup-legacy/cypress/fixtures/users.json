@@ -1,0 +1,7 @@
+{
+  "testUser": {
+    "name": "Cypress Test",
+    "email": "cypress@synapseforge.ai",
+    "password": "Cypress123!"
+  }
+}

@@ -1,0 +1,292 @@
+import type { Song, UserSong, DetailedLyricLine } from "@/types"
+
+// ===========================================
+// Community/Library Songs
+// ===========================================
+
+export const SAMPLE_SONGS: Song[] = [
+  {
+    id: "1",
+    title: "Cafe Conversations",
+    language: "Spanish",
+    languageFlag: "🇪🇸",
+    topic: "Food",
+    style: "Pop",
+    words: ["café", "leche", "azúcar", "taza", "caliente"],
+    lyrics: [
+      { text: "En la mañana temprano", highlighted: [] },
+      { text: "Pido un café con leche", highlighted: ["café", "leche"] },
+      { text: "Con una taza caliente", highlighted: ["taza", "caliente"] },
+      { text: "Y un poco de azúcar", highlighted: ["azúcar"] },
+      { text: "El aroma llena el aire", highlighted: [] },
+      { text: "Mientras el sol aparece", highlighted: [] },
+      { text: "Otra taza de café", highlighted: ["café", "taza"] },
+      { text: "Para empezar el día", highlighted: [] },
+    ],
+    duration: "2:34",
+    createdAt: "2024-01-15",
+    likes: 1247,
+  },
+  {
+    id: "2",
+    title: "Paris Morning",
+    language: "French",
+    languageFlag: "🇫🇷",
+    topic: "Travel",
+    style: "Jazz",
+    words: ["bonjour", "merci", "croissant", "rue", "soleil"],
+    lyrics: [
+      { text: "Bonjour Paris, la ville lumière", highlighted: ["bonjour"] },
+      { text: "Je marche dans la rue", highlighted: ["rue"] },
+      { text: "Le soleil brille sur moi", highlighted: ["soleil"] },
+      { text: "Merci pour ce moment", highlighted: ["merci"] },
+      { text: "Un croissant au petit matin", highlighted: ["croissant"] },
+      { text: "Les oiseaux chantent tout autour", highlighted: [] },
+      { text: "Paris, tu es mon amour", highlighted: [] },
+      { text: "Je reviendrai toujours", highlighted: [] },
+    ],
+    duration: "3:12",
+    createdAt: "2024-01-14",
+    likes: 892,
+  },
+  {
+    id: "3",
+    title: "Business Meeting",
+    language: "German",
+    languageFlag: "🇩🇪",
+    topic: "Business",
+    style: "Acoustic",
+    words: ["arbeit", "büro", "kollege", "projekt", "erfolg"],
+    lyrics: [
+      { text: "Im Büro am Morgen", highlighted: ["büro"] },
+      { text: "Mit meinem Kollege", highlighted: ["kollege"] },
+      { text: "Wir arbeiten am Projekt", highlighted: ["projekt"] },
+      { text: "Für unseren Erfolg", highlighted: ["erfolg"] },
+      { text: "Die Arbeit macht uns stark", highlighted: ["arbeit"] },
+      { text: "Zusammen sind wir ein Team", highlighted: [] },
+    ],
+    duration: "2:48",
+    createdAt: "2024-01-13",
+    likes: 534,
+  },
+  {
+    id: "4",
+    title: "Love Letter",
+    language: "Italian",
+    languageFlag: "🇮🇹",
+    topic: "Romance",
+    style: "R&B",
+    words: ["amore", "cuore", "bella", "sempre", "insieme"],
+    lyrics: [
+      { text: "Il mio cuore batte per te", highlighted: ["cuore"] },
+      { text: "Sei così bella stasera", highlighted: ["bella"] },
+      { text: "Ti amo per sempre", highlighted: ["sempre"] },
+      { text: "Voglio stare insieme", highlighted: ["insieme"] },
+      { text: "Il nostro amore è eterno", highlighted: ["amore"] },
+      { text: "Come le stelle nel cielo", highlighted: [] },
+      { text: "Tu sei il mio destino", highlighted: [] },
+      { text: "Per sempre insieme", highlighted: ["insieme"] },
+    ],
+    duration: "3:45",
+    createdAt: "2024-01-12",
+    likes: 2156,
+  },
+  {
+    id: "5",
+    title: "Tokyo Night",
+    language: "Japanese",
+    languageFlag: "🇯🇵",
+    topic: "Travel",
+    style: "Pop",
+    words: ["東京", "夜", "光", "電車", "夢"],
+    lyrics: [
+      { text: "東京の夜は輝く", highlighted: ["東京", "夜"] },
+      { text: "光が街を照らす", highlighted: ["光"] },
+      { text: "電車が走り抜ける", highlighted: ["電車"] },
+      { text: "夢を追いかけて", highlighted: ["夢"] },
+      { text: "ネオンの光の中で", highlighted: ["光"] },
+      { text: "明日を信じて歩く", highlighted: [] },
+    ],
+    duration: "2:56",
+    createdAt: "2024-01-11",
+    likes: 1823,
+  },
+  {
+    id: "6",
+    title: "Seoul Rhythm",
+    language: "Korean",
+    languageFlag: "🇰🇷",
+    topic: "Food",
+    style: "R&B",
+    words: ["김치", "밥", "맛있다", "먹다", "좋아"],
+    lyrics: [
+      { text: "오늘 김치를 먹었어", highlighted: ["김치", "먹다"] },
+      { text: "밥이랑 같이 먹으면", highlighted: ["밥"] },
+      { text: "정말 맛있다", highlighted: ["맛있다"] },
+      { text: "나는 한국 음식이 좋아", highlighted: ["좋아"] },
+      { text: "매일 매일 먹고 싶어", highlighted: ["먹다"] },
+      { text: "맛있는 음식 최고야", highlighted: ["맛있다"] },
+    ],
+    duration: "3:22",
+    createdAt: "2024-01-10",
+    likes: 967,
+  },
+  {
+    id: "7",
+    title: "Beijing Dreams",
+    language: "Mandarin",
+    languageFlag: "🇨🇳",
+    topic: "Business",
+    style: "Jazz",
+    words: ["工作", "成功", "努力", "公司", "未来"],
+    lyrics: [
+      { text: "在公司工作每一天", highlighted: ["公司", "工作"] },
+      { text: "努力追求成功", highlighted: ["努力", "成功"] },
+      { text: "我相信未来", highlighted: ["未来"] },
+      { text: "梦想会实现", highlighted: [] },
+      { text: "每一步都是进步", highlighted: [] },
+      { text: "成功就在前方", highlighted: ["成功"] },
+    ],
+    duration: "2:44",
+    createdAt: "2024-01-09",
+    likes: 743,
+  },
+  {
+    id: "8",
+    title: "Lisbon Sunset",
+    language: "Portuguese",
+    languageFlag: "🇵🇹",
+    topic: "Travel",
+    style: "Acoustic",
+    words: ["praia", "sol", "mar", "saudade", "amor"],
+    lyrics: [
+      { text: "Na praia ao pôr do sol", highlighted: ["praia", "sol"] },
+      { text: "Olhando para o mar", highlighted: ["mar"] },
+      { text: "Sinto saudade de ti", highlighted: ["saudade"] },
+      { text: "Meu eterno amor", highlighted: ["amor"] },
+      { text: "As ondas cantam canções", highlighted: [] },
+      { text: "De amor e saudade", highlighted: ["amor", "saudade"] },
+      { text: "O sol se põe devagar", highlighted: ["sol"] },
+      { text: "E eu fico a sonhar", highlighted: [] },
+    ],
+    duration: "3:18",
+    createdAt: "2024-01-08",
+    likes: 1456,
+  },
+]
+
+// ===========================================
+// User's Recent Songs (Dashboard)
+// ===========================================
+
+export const RECENT_USER_SONGS: UserSong[] = [
+  {
+    id: "1",
+    title: "Cafe Conversations",
+    language: "Spanish",
+    flag: "🇪🇸",
+    duration: "2:34",
+    wordsCount: 5,
+    lastPlayed: "2 hours ago",
+  },
+  {
+    id: "2",
+    title: "Market Day",
+    language: "Spanish",
+    flag: "🇪🇸",
+    duration: "3:12",
+    wordsCount: 8,
+    lastPlayed: "Yesterday",
+  },
+  {
+    id: "3",
+    title: "Beach Sunset",
+    language: "Spanish",
+    flag: "🇪🇸",
+    duration: "2:48",
+    wordsCount: 6,
+    lastPlayed: "2 days ago",
+  },
+]
+
+// ===========================================
+// Demo Song with Detailed Lyrics (for player)
+// ===========================================
+
+export const DEMO_SONG_LYRICS: DetailedLyricLine[] = [
+  {
+    text: "En la mañana temprano",
+    words: [
+      { word: "En", translation: "In" },
+      { word: "la", translation: "the" },
+      { word: "mañana", translation: "morning" },
+      { word: "temprano", translation: "early" },
+    ],
+  },
+  {
+    text: "Pido un café con leche",
+    words: [
+      { word: "Pido", translation: "I ask for" },
+      { word: "un", translation: "a" },
+      { word: "café", translation: "coffee" },
+      { word: "con", translation: "with" },
+      { word: "leche", translation: "milk" },
+    ],
+  },
+  {
+    text: "Con una taza caliente",
+    words: [
+      { word: "Con", translation: "With" },
+      { word: "una", translation: "a" },
+      { word: "taza", translation: "cup" },
+      { word: "caliente", translation: "hot" },
+    ],
+  },
+  {
+    text: "Y un poco de azúcar",
+    words: [
+      { word: "Y", translation: "And" },
+      { word: "un", translation: "a" },
+      { word: "poco", translation: "little" },
+      { word: "de", translation: "of" },
+      { word: "azúcar", translation: "sugar" },
+    ],
+  },
+  {
+    text: "El aroma llena el aire",
+    words: [
+      { word: "El", translation: "The" },
+      { word: "aroma", translation: "aroma" },
+      { word: "llena", translation: "fills" },
+      { word: "el", translation: "the" },
+      { word: "aire", translation: "air" },
+    ],
+  },
+  {
+    text: "Mientras el sol aparece",
+    words: [
+      { word: "Mientras", translation: "While" },
+      { word: "el", translation: "the" },
+      { word: "sol", translation: "sun" },
+      { word: "aparece", translation: "appears" },
+    ],
+  },
+  {
+    text: "Otra taza de café",
+    words: [
+      { word: "Otra", translation: "Another" },
+      { word: "taza", translation: "cup" },
+      { word: "de", translation: "of" },
+      { word: "café", translation: "coffee" },
+    ],
+  },
+  {
+    text: "Para empezar el día",
+    words: [
+      { word: "Para", translation: "To" },
+      { word: "empezar", translation: "start" },
+      { word: "el", translation: "the" },
+      { word: "día", translation: "day" },
+    ],
+  },
+]
