@@ -1,0 +1,215 @@
+// Supported providers
+export type LLMProvider = "openai" | "anthropic" | "openrouter";
+
+// Supported channels
+export type ChannelType = "telegram" | "discord" | "slack";
+
+// Template presets
+export type InstanceTemplate = "general" | "customer_support" | "faq_bot" | "lead_qualification";
+
+export interface InstanceConfig {
+  model: string;
+  systemPrompt: string;
+  temperature: number;
+  maxTokens: number;
+  template?: InstanceTemplate;
+
+  // Structured identity fields (UI-driven)
+  agentName?: string;
+  role?: string;
+  traits?: string[];
+  customInstructions?: string;
+  businessName?: string;
+  businessContext?: string;
+  memoryEnabled?: boolean;
+  thinking?: "adaptive" | "off";
+  language?: string;
+}
+
+export interface CredentialMap {
+  openai_api_key?: string;
+  anthropic_api_key?: string;
+  openrouter_api_key?: string;
+  telegram_bot_token?: string;
+  discord_bot_token?: string;
+  slack_app_token?: string;
+  slack_bot_token?: string;
+  gateway_token: string;
+}
+
+/**
+ * Generates openclaw.json config (valid JSON, not JSON5) for a deployed VPS.
+ *
+ * Key design decisions:
+ * - Uses JSON.stringify for safe serialization — no injection via special chars in tokens
+ * - LLM API keys go in `env` section so OpenAI/Anthropic SDKs pick them up via process.env
+ * - Channel tokens go directly in channel config
+ * - dmPolicy: "open" — business bots must be reachable without QR code pairing
+ * - gateway.auth.token set directly (OPENCLAW_GATEWAY_TOKEN env var is also set in
+ *   docker-compose as a backup/override)
+ */
+export function generateOpenClawConfig(
+  config: InstanceConfig,
+  creds: CredentialMap,
+  onboardingData?: { business?: string; industry?: string; useCase?: string }
+): string {
+  // Build env section for LLM keys
+  const env: Record<string, string> = {};
+  if (creds.openai_api_key) env.OPENAI_API_KEY = creds.openai_api_key;
+  if (creds.anthropic_api_key) env.ANTHROPIC_API_KEY = creds.anthropic_api_key;
+  if (creds.openrouter_api_key) env.OPENROUTER_API_KEY = creds.openrouter_api_key;
+
+  // Build enriched system prompt
+  // Priority: structured fields > template > raw systemPrompt
+  let systemPrompt: string;
+
+  if (config.agentName || config.role || (config.traits && config.traits.length > 0)) {
+    // Build from structured identity fields
+    const parts: string[] = [];
+    const name = config.agentName || "Assistant";
+    const role = config.role || "a helpful AI assistant";
+    parts.push(`You are ${name}, ${role}.`);
+
+    if (config.traits && config.traits.length > 0) {
+      parts.push(`Personality: ${config.traits.join(", ")}.`);
+    }
+
+    if (config.businessName) {
+      parts.push(`\nBusiness: ${config.businessName}.`);
+    }
+
+    if (config.businessContext) {
+      parts.push(`\n${config.businessContext}`);
+    }
+
+    if (config.customInstructions) {
+      parts.push(`\n\n${config.customInstructions}`);
+    }
+
+    systemPrompt = parts.join(" ");
+  } else if (config.template && TEMPLATE_PROMPTS[config.template]) {
+    systemPrompt = TEMPLATE_PROMPTS[config.template];
+  } else {
+    systemPrompt = config.systemPrompt;
+  }
+
+  // Append onboarding context if available (legacy / fallback)
+  if (onboardingData && !config.agentName && !config.role) {
+    const { business, industry, useCase } = onboardingData;
+    if (business || industry || useCase) {
+      const contextParts: string[] = [];
+      if (business && industry) {
+        contextParts.push(`You are a helpful AI assistant for ${business}, a ${industry} company.`);
+      } else if (business) {
+        contextParts.push(`You are a helpful AI assistant for ${business}.`);
+      } else if (industry) {
+        contextParts.push(`You are a helpful AI assistant for a ${industry} company.`);
+      }
+      if (useCase) {
+        contextParts.push(`Your primary role is ${useCase}.`);
+      }
+      if (contextParts.length > 0) {
+        systemPrompt = contextParts.join(" ") + "\n\n" + systemPrompt;
+      }
+    }
+  }
+
+  // Build channels section
+  const channels: Record<string, unknown> = {};
+
+  if (creds.telegram_bot_token) {
+    channels.telegram = {
+      enabled: true,
+      botToken: creds.telegram_bot_token,
+      // "open" = anyone can message the bot without QR code pairing
+      // Required for deployed business bots (pairing is for personal use only)
+      dmPolicy: "open",
+      groups: {
+        // Allow all groups the bot is added to
+        "*": { requireMention: false, groupPolicy: "open" },
+      },
+    };
+  }
+
+  if (creds.discord_bot_token) {
+    channels.discord = {
+      enabled: true,
+      token: creds.discord_bot_token,
+    };
+  }
+
+  if (creds.slack_app_token) {
+    channels.slack = {
+      enabled: true,
+      mode: "socket",
+      appToken: creds.slack_app_token,
+      ...(creds.slack_bot_token ? { botToken: creds.slack_bot_token } : {}),
+    };
+  }
+
+  const configObj = {
+    ...(Object.keys(env).length > 0 ? { env } : {}),
+
+    agents: {
+      defaults: {
+        model: { primary: config.model },
+        systemPrompt,
+        temperature: config.temperature,
+        maxTokens: config.maxTokens,
+        thinking: config.thinking ?? "adaptive",
+        memoryEnabled: config.memoryEnabled ?? true,
+        ...(config.language ? { language: config.language } : {}),
+      },
+    },
+
+    ...(Object.keys(channels).length > 0 ? { channels } : {}),
+
+    // Hooks: use same token as gateway auth for simplicity.
+    // /hooks/wake is used by our health checks and config-sync restart signal.
+    hooks: {
+      enabled: true,
+      token: creds.gateway_token,
+    },
+
+    gateway: {
+      bind: "lan",
+      port: 18789,
+      auth: {
+        mode: "token",
+        token: creds.gateway_token,
+      },
+      http: {
+        endpoints: {
+          chatCompletions: { enabled: true },
+        },
+      },
+    },
+  };
+
+  return JSON.stringify(configObj, null, 2);
+}
+
+export const TEMPLATE_PROMPTS: Record<InstanceTemplate, string> = {
+  general: "You are a helpful AI assistant. Answer questions clearly and concisely.",
+  customer_support: "You are a friendly customer support agent. Help customers resolve their issues efficiently and empathetically. If you cannot resolve an issue, escalate to a human agent.",
+  faq_bot: "You are a FAQ bot. Answer questions based on your knowledge base. If a question is outside your knowledge, say so clearly and offer to connect them with a human.",
+  lead_qualification: "You are a sales assistant. Your job is to qualify leads by understanding their needs, budget, and timeline. Ask relevant questions and gather contact information for follow-up.",
+};
+
+export const MODEL_OPTIONS: Record<LLMProvider, { value: string; label: string }[]> = {
+  openai: [
+    { value: "openai/gpt-4o", label: "GPT-4o (recommended)" },
+    { value: "openai/gpt-4o-mini", label: "GPT-4o Mini (fast, cheap)" },
+    { value: "openai/gpt-4-turbo", label: "GPT-4 Turbo" },
+  ],
+  anthropic: [
+    { value: "anthropic/claude-sonnet-4-6", label: "Claude Sonnet 4.6 (recommended)" },
+    { value: "anthropic/claude-haiku-4-5", label: "Claude Haiku 4.5 (fast, cheap)" },
+    { value: "anthropic/claude-opus-4-6", label: "Claude Opus 4.6 (most capable)" },
+  ],
+  openrouter: [
+    { value: "openrouter/anthropic/claude-sonnet-4-5", label: "Claude Sonnet via OpenRouter" },
+    { value: "openrouter/openai/gpt-4o", label: "GPT-4o via OpenRouter" },
+    { value: "openrouter/meta-llama/llama-3.3-70b-instruct", label: "Llama 3.3 70B (free tier)" },
+  ],
+};

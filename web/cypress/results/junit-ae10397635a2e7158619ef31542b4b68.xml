@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="23.236" tests="5" failures="0">
+  <testsuite name="Root Suite" timestamp="2026-03-13T15:24:17" tests="0" file="cypress/e2e/30-public-chat.cy.ts" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="30 · Public Chat Page + Widget" timestamp="2026-03-13T15:24:17" tests="5" time="23.234" failures="0">
+    <testcase name="30 · Public Chat Page + Widget renders the public chat page with agent name and welcome message" time="10.222" classname="renders the public chat page with agent name and welcome message">
+    </testcase>
+    <testcase name="30 · Public Chat Page + Widget sends a message and renders the assistant reply" time="2.031" classname="sends a message and renders the assistant reply">
+    </testcase>
+    <testcase name="30 · Public Chat Page + Widget returns 404 for unknown instance ID" time="0.255" classname="returns 404 for unknown instance ID">
+    </testcase>
+    <testcase name="30 · Public Chat Page + Widget widget.js injects the chat bubble and iframe container" time="5.741" classname="widget.js injects the chat bubble and iframe container">
+    </testcase>
+    <testcase name="30 · Public Chat Page + Widget widget bubble opens and closes the iframe on click" time="4.858" classname="widget bubble opens and closes the iframe on click">
+    </testcase>
+  </testsuite>
+</testsuites>

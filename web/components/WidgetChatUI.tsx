@@ -1,0 +1,386 @@
+"use client";
+
+import { useState, useRef, useEffect } from "react";
+import { Bot, Send, X, Loader2, Zap } from "lucide-react";
+
+interface Message {
+  role: "user" | "assistant";
+  content: string;
+  error?: boolean;
+  streaming?: boolean;
+}
+
+interface WidgetChatUIProps {
+  instanceId: string;
+  greeting?: string;
+  brandColor?: string;
+  logoUrl?: string | null;
+  agentName?: string;
+  onClose?: () => void;
+}
+
+export function WidgetChatUI({
+  instanceId,
+  greeting,
+  brandColor = "#7c3aed",
+  logoUrl,
+  agentName = "AI Assistant",
+  onClose,
+}: WidgetChatUIProps) {
+  const [sandboxExhausted, setSandboxExhausted] = useState(false);
+  const [messages, setMessages] = useState<Message[]>(() => [
+    {
+      role: "assistant",
+      content: greeting || `Hi! I'm ${agentName}. How can I help you today?`,
+    },
+  ]);
+  const [input, setInput] = useState("");
+  const [sending, setSending] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  // Focus input on mount
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
+  // Cleanup abort controller on unmount
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
+
+  const handleSend = async () => {
+    const msg = input.trim();
+    if (!msg || sending) return;
+
+    setSending(true);
+    setInput("");
+
+    // Add user message
+    const nextMessages: Message[] = [...messages, { role: "user", content: msg }];
+    setMessages(nextMessages);
+
+    // Build history to send
+    const history = nextMessages
+      .slice(1) // skip initial welcome
+      .slice(0, -1) // exclude just-added user message
+      .filter((m) => !m.error)
+      .map((m) => ({ role: m.role, content: m.content }));
+
+    // Create abort controller for this request
+    abortControllerRef.current = new AbortController();
+
+    try {
+      const res = await fetch(`/api/chat/${instanceId}?stream=true`, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept": "text/event-stream",
+        },
+        body: JSON.stringify({ message: msg, history }),
+        signal: abortControllerRef.current.signal,
+      });
+
+      if (!res.ok) {
+        if (res.status === 402) {
+          setSandboxExhausted(true);
+          setSending(false);
+          return;
+        }
+        const errorData = await res.json().catch(() => ({ error: "Unknown error" }));
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: errorData.error || "Sorry, something went wrong. Please try again.",
+            error: true,
+          },
+        ]);
+        setSending(false);
+        return;
+      }
+
+      // Handle streaming response with SSE format
+      if (res.headers.get("content-type")?.includes("text/event-stream")) {
+        const reader = res.body?.getReader();
+        const decoder = new TextDecoder();
+        let assistantMessage = "";
+
+        // Add empty assistant message for streaming
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: "", streaming: true },
+        ]);
+
+        if (reader) {
+          try {
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+
+              const chunk = decoder.decode(value, { stream: true });
+              
+              // Parse SSE format
+              const lines = chunk.split("\n");
+              for (const line of lines) {
+                if (line.startsWith("data: ")) {
+                  const data = line.slice(6);
+                  
+                  if (data === "[DONE]") {
+                    continue;
+                  }
+
+                  try {
+                    const parsed = JSON.parse(data);
+                    
+                    if (parsed.error) {
+                      // Handle error in stream
+                      setMessages((prev) =>
+                        prev.map((m, i) =>
+                          i === prev.length - 1 && m.role === "assistant"
+                            ? { ...m, content: parsed.error, streaming: false, error: true }
+                            : m
+                        )
+                      );
+                    } else if (parsed.delta) {
+                      // Append delta to message
+                      assistantMessage += parsed.delta;
+                      setMessages((prev) =>
+                        prev.map((m, i) =>
+                          i === prev.length - 1 && m.role === "assistant"
+                            ? { ...m, content: assistantMessage, streaming: true }
+                            : m
+                        )
+                      );
+                    }
+                  } catch {
+                    // Ignore parse errors for malformed lines
+                  }
+                }
+              }
+            }
+
+            // Flush any remaining bytes
+            const finalChunk = decoder.decode();
+            if (finalChunk) {
+              const lines = finalChunk.split("\n");
+              for (const line of lines) {
+                if (line.startsWith("data: ")) {
+                  const data = line.slice(6);
+                  if (data && data !== "[DONE]") {
+                    try {
+                      const parsed = JSON.parse(data);
+                      if (parsed.delta) {
+                        assistantMessage += parsed.delta;
+                      }
+                    } catch {
+                      // Ignore parse errors
+                    }
+                  }
+                }
+              }
+            }
+          } finally {
+            reader.releaseLock();
+          }
+        }
+
+        // Mark as complete
+        setMessages((prev) =>
+          prev.map((m, i) =>
+            i === prev.length - 1 && m.role === "assistant"
+              ? { ...m, content: assistantMessage, streaming: false }
+              : m
+          )
+        );
+
+        // Notify parent of new message
+        if (window.parent !== window) {
+          window.parent.postMessage({ type: "openhelix-chat", action: "new-message" }, "*");
+        }
+      } else {
+        // Fallback for non-streaming responses
+        const data = await res.json();
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: data.response },
+        ]);
+      }
+    } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") {
+        // Request was aborted - user likely closed widget
+        return;
+      }
+      
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: "Sorry, I'm having trouble connecting. Please try again later.",
+          error: true,
+        },
+      ]);
+    } finally {
+      setSending(false);
+      abortControllerRef.current = null;
+      setTimeout(() => inputRef.current?.focus(), 50);
+    }
+  };
+
+  // Handle close button
+  const handleClose = () => {
+    // Abort any in-flight request
+    abortControllerRef.current?.abort();
+    onClose?.();
+  };
+
+  return (
+    <div className="flex flex-col h-screen bg-[#0a0a0f] text-white">
+      {/* Header */}
+      <div
+        className="flex items-center gap-3 px-4 py-3 border-b border-white/10"
+        style={{ borderBottomColor: `${brandColor}30` }}
+      >
+        {logoUrl ? (
+          <img
+            src={logoUrl}
+            alt={agentName}
+            className="w-9 h-9 rounded-full object-cover"
+          />
+        ) : (
+          <div
+            className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0"
+            style={{ backgroundColor: brandColor }}
+          >
+            <Bot className="w-5 h-5" />
+          </div>
+        )}
+        <div className="flex-1 min-w-0">
+          <p className="font-semibold text-white text-sm truncate">{agentName}</p>
+          <div className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-xs text-zinc-500">Online</span>
+          </div>
+        </div>
+        
+        {/* Close button (visible in iframe) */}
+        <button
+          onClick={handleClose}
+          className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+          aria-label="Close chat"
+        >
+          <X className="w-5 h-5 text-zinc-400" />
+        </button>
+      </div>
+
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+        {messages.map((msg, i) => (
+          <div
+            key={i}
+            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+          >
+            <div
+              className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
+                msg.role === "user"
+                  ? "bg-violet-600 text-white rounded-br-md"
+                  : msg.error
+                  ? "bg-red-500/10 border border-red-500/20 text-red-200 rounded-bl-md"
+                  : "bg-white/10 text-zinc-100 rounded-bl-md"
+              }`}
+            >
+              {msg.content}
+              {msg.streaming && (
+                <span className="inline-flex ml-1">
+                  <span className="w-1.5 h-1.5 bg-violet-400 rounded-full animate-pulse" />
+                  <span className="w-1.5 h-1.5 bg-violet-400 rounded-full animate-pulse ml-0.5" style={{ animationDelay: "0.1s" }} />
+                  <span className="w-1.5 h-1.5 bg-violet-400 rounded-full animate-pulse ml-0.5" style={{ animationDelay: "0.2s" }} />
+                </span>
+              )}
+            </div>
+          </div>
+        ))}
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Sandbox exhausted upsell */}
+      {sandboxExhausted && (
+        <div className="mx-4 mb-3 rounded-2xl border border-violet-500/30 bg-violet-600/10 p-4">
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 rounded-full bg-violet-600/30 border border-violet-500/30 flex items-center justify-center shrink-0">
+              <Zap className="w-4 h-4 text-violet-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-white mb-0.5">Free messages used up</p>
+              <p className="text-xs text-zinc-400 leading-relaxed mb-3">
+                Add your own API key to keep chatting — it only takes a minute.
+              </p>
+              <a
+                href={`/dashboard/instances/${instanceId}?tab=Credentials`}
+                target="_parent"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-violet-300 hover:text-white bg-violet-600/30 hover:bg-violet-600/50 border border-violet-500/40 px-3 py-1.5 rounded-lg transition-colors"
+              >
+                <Zap className="w-3 h-3" />
+                Add API Key →
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Input */}
+      <div className="px-4 py-3 border-t border-white/10 bg-[#0a0a0f]">
+        <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-2"
+        >
+          <input
+            ref={inputRef}
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+              }
+            }}
+            placeholder={sandboxExhausted ? "Add an API key to continue..." : "Type a message..."}
+            disabled={sending || sandboxExhausted}
+            className="flex-1 bg-transparent text-sm text-white placeholder-zinc-600 focus:outline-none disabled:opacity-50"
+          />
+          <button
+            onClick={handleSend}
+            disabled={sending || !input.trim() || sandboxExhausted}
+            className="p-2 rounded-lg bg-violet-600 hover:bg-violet-500 disabled:opacity-40 disabled:hover:bg-violet-600 transition-colors"
+            style={{ backgroundColor: sending ? undefined : brandColor }}
+            aria-label="Send message"
+          >
+            {sending ? (
+              <Loader2 className="w-4 h-4 text-white animate-spin" />
+            ) : (
+              <Send className="w-4 h-4 text-white" />
+            )}
+          </button>
+        </div>
+        <p className="text-[10px] text-zinc-600 text-center mt-2">
+          Powered by{" "}
+          <a
+            href="https://openhelixai.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-violet-400 hover:text-violet-300"
+          >
+            OpenHelix AI
+          </a>
+        </p>
+      </div>
+    </div>
+  );
+}

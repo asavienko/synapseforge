@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+
+Disallow: /api/
+Disallow: /en/dashboard/
+Disallow: /es/dashboard/
+Disallow: /uk/dashboard/
+Disallow: /ru/dashboard/
+Disallow: /en/onboarding/
+Disallow: /es/onboarding/
+Disallow: /en/manager/
+Disallow: /es/manager/
+Disallow: /en/admin/
+Disallow: /es/admin/
+Disallow: /widget-chat/
+Disallow: /internal/
+Disallow: /admin/
+
+Allow: /api-docs
+Allow: /status
+
+Sitemap: https://openhelixai.com/sitemap.xml

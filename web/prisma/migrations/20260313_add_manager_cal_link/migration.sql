@@ -1,0 +1,1 @@
+ALTER TABLE "Manager" ADD COLUMN IF NOT EXISTS "calLink" TEXT;

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="669.799" tests="16" failures="5">
+  <testsuite name="Root Suite" timestamp="2026-03-24T15:30:48" tests="0" file="cypress/e2e/01-landing.cy.ts" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="01 · Landing Page" timestamp="2026-03-24T15:30:48" tests="16" time="669.788" failures="5">
+    <testcase name="01 · Landing Page renders hero section with product-focused headline" time="0.000" classname="renders hero section with product-focused headline">
+      <failure message="`cy.screenshot()` timed out waiting `30000ms` to complete.
+
+https://on.cypress.io/screenshot" type="CypressError"><![CDATA[CypressError: `cy.screenshot()` timed out waiting `30000ms` to complete.
+
+https://on.cypress.io/screenshot
+    at <unknown> (http://localhost:3000/__cypress/runner/cypress_runner.js:137761:73)
+    at tryCatcher (http://localhost:3000/__cypress/runner/cypress_runner.js:1777:23)
+    at <unknown> (http://localhost:3000/__cypress/runner/cypress_runner.js:4156:41)
+    at tryCatcher (http://localhost:3000/__cypress/runner/cypress_runner.js:1777:23)
+    at Promise._settlePromiseFromHandler (http://localhost:3000/__cypress/runner/cypress_runner.js:1489:31)
+    at Promise._settlePromise (http://localhost:3000/__cypress/runner/cypress_runner.js:1546:18)
+    at Promise._settlePromise0 (http://localhost:3000/__cypress/runner/cypress_runner.js:1591:10)
+    at Promise._settlePromises (http://localhost:3000/__cypress/runner/cypress_runner.js:1667:18)
+    at _drainQueueStep (http://localhost:3000/__cypress/runner/cypress_runner.js:2377:12)
+    at _drainQueue (http://localhost:3000/__cypress/runner/cypress_runner.js:2370:9)
+    at Async._drainQueues (http://localhost:3000/__cypress/runner/cypress_runner.js:2386:5)
+    at Async.drainQueues (http://localhost:3000/__cypress/runner/cypress_runner.js:2256:14)]]></failure>
+    </testcase>
+    <testcase name="01 · Landing Page shows CTA buttons in hero" time="0.000" classname="shows CTA buttons in hero">
+      <failure message="`cy.screenshot()` timed out waiting `30000ms` to complete.
+
+https://on.cypress.io/screenshot" type="CypressError"><![CDATA[CypressError: `cy.screenshot()` timed out waiting `30000ms` to complete.
+
+https://on.cypress.io/screenshot
+    at <unknown> (http://localhost:3000/__cypress/runner/cypress_runner.js:137761:73)
+    at tryCatcher (http://localhost:3000/__cypress/runner/cypress_runner.js:1777:23)
+    at <unknown> (http://localhost:3000/__cypress/runner/cypress_runner.js:4156:41)
+    at tryCatcher (http://localhost:3000/__cypress/runner/cypress_runner.js:1777:23)
+    at Promise._settlePromiseFromHandler (http://localhost:3000/__cypress/runner/cypress_runner.js:1489:31)
+    at Promise._settlePromise (http://localhost:3000/__cypress/runner/cypress_runner.js:1546:18)
+    at Promise._settlePromise0 (http://localhost:3000/__cypress/runner/cypress_runner.js:1591:10)
+    at Promise._settlePromises (http://localhost:3000/__cypress/runner/cypress_runner.js:1667:18)
+    at _drainQueueStep (http://localhost:3000/__cypress/runner/cypress_runner.js:2377:12)
+    at _drainQueue (http://localhost:3000/__cypress/runner/cypress_runner.js:2370:9)
+    at Async._drainQueues (http://localhost:3000/__cypress/runner/cypress_runner.js:2386:5)
+    at Async.drainQueues (http://localhost:3000/__cypress/runner/cypress_runner.js:2256:14)]]></failure>
+    </testcase>
+    <testcase name="01 · Landing Page shows trust signals bar" time="75.941" classname="shows trust signals bar">
+    </testcase>
+    <testcase name="01 · Landing Page shows nav with sign in and get started links" time="39.898" classname="shows nav with sign in and get started links">
+    </testcase>
+    <testcase name="01 · Landing Page shows language switcher in nav" time="41.207" classname="shows language switcher in nav">
+    </testcase>
+    <testcase name="01 · Landing Page How it works section shows steps" time="40.765" classname="How it works section shows steps">
+    </testcase>
+    <testcase name="01 · Landing Page features section shows service cards" time="41.136" classname="features section shows service cards">
+    </testcase>
+    <testcase name="01 · Landing Page pricing section shows all 3 plans with prices" time="42.866" classname="pricing section shows all 3 plans with prices">
+    </testcase>
+    <testcase name="01 · Landing Page about section shows content" time="35.520" classname="about section shows content">
+    </testcase>
+    <testcase name="01 · Landing Page CTA banner at bottom has get started button" time="34.607" classname="CTA banner at bottom has get started button">
+    </testcase>
+    <testcase name="01 · Landing Page footer has privacy and terms links" time="35.562" classname="footer has privacy and terms links">
+    </testcase>
+    <testcase name="01 · Landing Page locale switcher — switches to Spanish" time="0.000" classname="locale switcher — switches to Spanish">
+      <failure message="Timed out retrying after 8000ms: expected &apos;http://localhost:3000/en&apos; to include &apos;/es&apos;" type="AssertionError"><![CDATA[AssertionError: Timed out retrying after 8000ms: expected 'http://localhost:3000/en' to include '/es'
+    at Context.eval (webpack://openhelix-web/./cypress/e2e/01-landing.cy.ts:81:30)]]></failure>
+    </testcase>
+    <testcase name="01 · Landing Page locale switcher — switches to Ukrainian" time="0.000" classname="locale switcher — switches to Ukrainian">
+      <failure message="Timed out retrying after 15000ms: Expected to find content: &apos;UK&apos; but never did." type="AssertionError"><![CDATA[AssertionError: Timed out retrying after 15000ms: Expected to find content: 'UK' but never did.
+    at Context.eval (webpack://openhelix-web/./cypress/e2e/01-landing.cy.ts:88:7)]]></failure>
+    </testcase>
+    <testcase name="01 · Landing Page locale switcher — switches to Russian" time="0.000" classname="locale switcher — switches to Russian">
+      <failure message="Timed out retrying after 15000ms: Expected to find content: &apos;RU&apos; but never did." type="AssertionError"><![CDATA[AssertionError: Timed out retrying after 15000ms: Expected to find content: 'RU' but never did.
+    at Context.eval (webpack://openhelix-web/./cypress/e2e/01-landing.cy.ts:96:7)]]></failure>
+    </testcase>
+    <testcase name="01 · Landing Page CTA navigates to sign up (logged out)" time="22.269" classname="CTA navigates to sign up (logged out)">
+    </testcase>
+    <testcase name="01 · Landing Page nav sign in navigates to sign in (logged out)" time="9.576" classname="nav sign in navigates to sign in (logged out)">
+    </testcase>
+  </testsuite>
+</testsuites>

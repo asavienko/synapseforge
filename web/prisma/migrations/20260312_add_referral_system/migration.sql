@@ -1,0 +1,3 @@
+-- Migration merged into init (20260309174229)
+-- This file is kept for historical reference but is now a no-op
+-- since the Referral tables were included in the regenerated init migration.

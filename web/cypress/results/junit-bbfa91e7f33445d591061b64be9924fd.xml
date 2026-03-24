@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="512.627" tests="16" failures="3">
+  <testsuite name="Root Suite" timestamp="2026-03-24T15:35:45" tests="0" file="cypress/e2e/01-landing.cy.ts" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="01 · Landing Page" timestamp="2026-03-24T15:35:45" tests="16" time="512.620" failures="3">
+    <testcase name="01 · Landing Page renders hero section with product-focused headline" time="54.285" classname="renders hero section with product-focused headline">
+    </testcase>
+    <testcase name="01 · Landing Page shows CTA buttons in hero" time="40.160" classname="shows CTA buttons in hero">
+    </testcase>
+    <testcase name="01 · Landing Page shows trust signals bar" time="39.200" classname="shows trust signals bar">
+    </testcase>
+    <testcase name="01 · Landing Page shows nav with sign in and get started links" time="42.583" classname="shows nav with sign in and get started links">
+    </testcase>
+    <testcase name="01 · Landing Page shows language switcher in nav" time="35.132" classname="shows language switcher in nav">
+    </testcase>
+    <testcase name="01 · Landing Page How it works section shows steps" time="34.943" classname="How it works section shows steps">
+    </testcase>
+    <testcase name="01 · Landing Page features section shows service cards" time="35.168" classname="features section shows service cards">
+    </testcase>
+    <testcase name="01 · Landing Page pricing section shows all 3 plans with prices" time="47.064" classname="pricing section shows all 3 plans with prices">
+    </testcase>
+    <testcase name="01 · Landing Page about section shows content" time="48.109" classname="about section shows content">
+    </testcase>
+    <testcase name="01 · Landing Page CTA banner at bottom has get started button" time="25.768" classname="CTA banner at bottom has get started button">
+    </testcase>
+    <testcase name="01 · Landing Page footer has privacy and terms links" time="23.450" classname="footer has privacy and terms links">
+    </testcase>
+    <testcase name="01 · Landing Page locale switcher — switches to Spanish" time="0.000" classname="locale switcher — switches to Spanish">
+      <failure message="Timed out retrying after 8000ms: expected &apos;http://localhost:3000/en&apos; to include &apos;/es&apos;" type="AssertionError"><![CDATA[AssertionError: Timed out retrying after 8000ms: expected 'http://localhost:3000/en' to include '/es'
+    at Context.eval (webpack://openhelix-web/./cypress/e2e/01-landing.cy.ts:81:30)]]></failure>
+    </testcase>
+    <testcase name="01 · Landing Page locale switcher — switches to Ukrainian" time="29.808" classname="locale switcher — switches to Ukrainian">
+    </testcase>
+    <testcase name="01 · Landing Page locale switcher — switches to Russian" time="0.000" classname="locale switcher — switches to Russian">
+      <failure message="Timed out retrying after 15000ms: Expected to find content: &apos;RU&apos; but never did." type="AssertionError"><![CDATA[AssertionError: Timed out retrying after 15000ms: Expected to find content: 'RU' but never did.
+    at Context.eval (webpack://openhelix-web/./cypress/e2e/01-landing.cy.ts:96:7)]]></failure>
+    </testcase>
+    <testcase name="01 · Landing Page CTA navigates to sign up (logged out)" time="0.000" classname="CTA navigates to sign up (logged out)">
+      <failure message="Timed out retrying after 15000ms: expected &apos;http://localhost:3000/en&apos; to include &apos;/sign-up&apos;" type="AssertionError"><![CDATA[AssertionError: Timed out retrying after 15000ms: expected 'http://localhost:3000/en' to include '/sign-up'
+    at Context.eval (webpack://openhelix-web/./cypress/e2e/01-landing.cy.ts:106:13)]]></failure>
+    </testcase>
+    <testcase name="01 · Landing Page nav sign in navigates to sign in (logged out)" time="5.069" classname="nav sign in navigates to sign in (logged out)">
+    </testcase>
+  </testsuite>
+</testsuites>

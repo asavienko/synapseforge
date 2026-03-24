@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="32.787" tests="6" failures="0">
+  <testsuite name="Root Suite" timestamp="2026-03-13T15:15:13" tests="0" file="cypress/e2e/29-sandbox-mode.cy.ts" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="29 · Sandbox Mode — free-to-paid funnel" timestamp="2026-03-13T15:15:13" tests="6" time="32.784" failures="0">
+    <testcase name="29 · Sandbox Mode — free-to-paid funnel 01 Chat tab shows violet sandbox banner on fresh instance" time="12.312" classname="01 Chat tab shows violet sandbox banner on fresh instance">
+    </testcase>
+    <testcase name="29 · Sandbox Mode — free-to-paid funnel 02 Overview tab shows sandbox progress bar widget" time="2.490" classname="02 Overview tab shows sandbox progress bar widget">
+    </testcase>
+    <testcase name="29 · Sandbox Mode — free-to-paid funnel 03 banner turns amber when ≤5 messages remain" time="2.530" classname="03 banner turns amber when ≤5 messages remain">
+    </testcase>
+    <testcase name="29 · Sandbox Mode — free-to-paid funnel 04 banner turns red and shows Add API Key button when exhausted" time="2.754" classname="04 banner turns red and shows Add API Key button when exhausted">
+    </testcase>
+    <testcase name="29 · Sandbox Mode — free-to-paid funnel 05 sending chat when exhausted triggers 402 → out-of-credits inline message" time="3.530" classname="05 sending chat when exhausted triggers 402 → out-of-credits inline message">
+    </testcase>
+    <testcase name="29 · Sandbox Mode — free-to-paid funnel 06 saving LLM credential graduates instance — banner disappears" time="7.090" classname="06 saving LLM credential graduates instance — banner disappears">
+    </testcase>
+  </testsuite>
+</testsuites>

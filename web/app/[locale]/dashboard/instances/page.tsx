@@ -1,0 +1,597 @@
+"use client";
+
+import { useEffect, useState, useCallback, useMemo } from "react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  BotIcon,
+  PlusIcon,
+  CloseIcon,
+  SparklesIcon,
+  ArrowRightIcon,
+  RefreshIcon,
+  LoadingIcon,
+} from "@/components/icons/BrandIcons";
+import { Play, Square, Loader2, Copy, Search, X } from "lucide-react";
+import { STATUS_COLORS, INSTANCE_TYPES, formatRelativeTime } from "@/lib/utils";
+import { getTemplateById, type AgentTemplate, agentTemplates } from "@/lib/templates";
+import { useTranslations } from "next-intl";
+import { InstanceSetupWizard } from "@/components/InstanceSetupWizard";
+import { useAnalytics } from "@/components/AnalyticsProvider";
+
+interface Instance {
+  id: string;
+  name: string;
+  type: string;
+  status: string;
+  tier: string;
+  description?: string;
+  createdAt: string;
+  healthStatus?: string | null;
+  lastCheckedAt?: string | null;
+  provisionStatus?: string | null;
+}
+
+function HealthDot({ healthStatus, lastCheckedAt }: { healthStatus?: string | null; lastCheckedAt?: string | null }) {
+  const t = useTranslations("dashboard.instances");
+  const tooltip = lastCheckedAt
+    ? `Last checked: ${formatRelativeTime(lastCheckedAt)}`
+    : t("noHealthData");
+
+  if (healthStatus === "healthy") {
+    return (
+      <span title={tooltip} className="inline-flex items-center gap-1 text-xs text-zinc-500 cursor-default">
+        <span className="relative inline-flex w-2 h-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-50" />
+          <span className="relative inline-flex rounded-full w-2 h-2 bg-emerald-400" />
+        </span>
+      </span>
+    );
+  }
+  if (healthStatus === "degraded") {
+    return (
+      <span title={tooltip} className="inline-flex items-center gap-1 text-xs text-zinc-500 cursor-default">
+        <span className="w-2 h-2 rounded-full bg-yellow-400 inline-block" />
+      </span>
+    );
+  }
+  if (healthStatus === "down") {
+    return (
+      <span title={tooltip} className="inline-flex items-center gap-1 text-xs text-zinc-500 cursor-default">
+        <span className="w-2 h-2 rounded-full bg-red-500 inline-block" />
+      </span>
+    );
+  }
+  return (
+    <span title={tooltip} className="inline-flex items-center gap-1 text-xs text-zinc-500 cursor-default">
+      <span className="w-2 h-2 rounded-full bg-zinc-600 inline-block" />
+    </span>
+  );
+}
+
+function Toast({ text, type }: { text: string; type: "success" | "error" }) {
+  return (
+    <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-xl text-sm font-medium shadow-2xl border flex items-center gap-2 ${
+      type === "success"
+        ? "bg-emerald-600/90 border-emerald-500 text-white"
+        : "bg-red-600/90 border-red-500 text-white"
+    }`}>
+      {text}
+    </div>
+  );
+}
+
+export default function InstancesPage() {
+  const t = useTranslations("dashboard.instances");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { track } = useAnalytics();
+  const templateIdFromUrl = searchParams.get("template");
+
+  const [instances, setInstances] = useState<Instance[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showCreate, setShowCreate] = useState(false);
+  const [showWizard, setShowWizard] = useState(false);
+  const [showTemplateSelector, setShowTemplateSelector] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [error, setError] = useState("");
+  const [planLimitHit, setPlanLimitHit] = useState(false);
+  const [form, setForm] = useState({ name: "", type: "assistant", description: "" });
+  const [toast, setToast] = useState<{ text: string; type: "success" | "error" } | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<AgentTemplate | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Filter instances by search query
+  const filteredInstances = useMemo(() => {
+    if (!searchQuery.trim()) return instances;
+    const query = searchQuery.toLowerCase();
+    return instances.filter(
+      (i) =>
+        i.name.toLowerCase().includes(query) ||
+        i.type.toLowerCase().includes(query) ||
+        i.status.toLowerCase().includes(query)
+    );
+  }, [instances, searchQuery]);
+
+  // Handle template from URL
+  useEffect(() => {
+    if (templateIdFromUrl) {
+      const template = getTemplateById(templateIdFromUrl);
+      if (template) {
+        setSelectedTemplate(template);
+        setShowTemplateSelector(true);
+      }
+    }
+  }, [templateIdFromUrl]);
+
+  function showToast(text: string, type: "success" | "error" = "success") {
+    setToast({ text, type });
+    setTimeout(() => setToast(null), 3000);
+  }
+
+  const loadInstances = useCallback(async () => {
+    const res = await fetch("/api/instances");
+    const data = await res.json();
+    setInstances(Array.isArray(data) ? data : []);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => { loadInstances(); }, [loadInstances]);
+
+  // Poll every 30s to keep health status fresh (even without provisioning)
+  useEffect(() => {
+    const interval = setInterval(loadInstances, 30_000);
+    return () => clearInterval(interval);
+  }, [loadInstances]);
+
+  // Poll every 10s if any instance is provisioning (more frequent)
+  useEffect(() => {
+    const hasProvisioning = instances.some((i) => i.provisionStatus === "provisioning");
+    if (!hasProvisioning) return;
+    const interval = setInterval(loadInstances, 10_000);
+    return () => clearInterval(interval);
+  }, [instances, loadInstances]);
+
+  // Quick toggle instance status
+  const [togglingId, setTogglingId] = useState<string | null>(null);
+
+  async function toggleInstance(instance: Instance, e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (togglingId) return;
+
+    setTogglingId(instance.id);
+    const newStatus = instance.status === "running" ? "stopped" : "running";
+
+    try {
+      const res = await fetch(`/api/instances/${instance.id}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (res.ok) {
+        showToast(`${instance.name} ${newStatus === "running" ? "started" : "stopped"}`);
+        loadInstances();
+        track("instance_quick_toggle", { instanceId: instance.id, status: newStatus });
+      } else {
+        showToast("Failed to toggle instance", "error");
+      }
+    } catch {
+      showToast("Failed to toggle instance", "error");
+    } finally {
+      setTogglingId(null);
+    }
+  }
+
+  // Duplicate instance
+  async function duplicateInstance(instance: Instance, e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (creating) return;
+
+    setCreating(true);
+    
+    try {
+      const res = await fetch("/api/instances", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: `${instance.name} (Copy)`,
+          type: instance.type,
+          description: instance.description || "",
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        showToast("Instance duplicated successfully");
+        loadInstances();
+        track("instance_duplicated", { originalId: instance.id, newId: data.id });
+      } else if (res.status === 403 && data.error === "plan_limit_reached") {
+        setPlanLimitHit(true);
+        setError(t("planLimitReached"));
+      } else {
+        showToast(data.error || "Failed to duplicate instance", "error");
+      }
+    } catch {
+      showToast("Failed to duplicate instance", "error");
+    } finally {
+      setCreating(false);
+    }
+  }
+
+  async function handleCreateFromTemplate(template: AgentTemplate) {
+    setError("");
+    setPlanLimitHit(false);
+    setCreating(true);
+
+    const res = await fetch("/api/instances", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: template.name,
+        type: "assistant",
+        description: template.shortDescription,
+        templateId: template.id,
+      }),
+    });
+
+    const data = await res.json();
+    setCreating(false);
+
+    if (!res.ok) {
+      if (res.status === 403) setPlanLimitHit(true);
+      setError(data.error || t("modal.failedError"));
+      track("instance_create_failed", { error: data.error, template: template.id });
+    } else {
+      setShowTemplateSelector(false);
+      setSelectedTemplate(null);
+      loadInstances();
+      showToast(t("createdSuccess"));
+      track("instance_created", { instanceId: data.id, source: "template", template: template.id });
+      // Navigate to the new instance
+      router.push(`/dashboard/instances/${data.id}`);
+    }
+  }
+
+  async function handleCreate(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setPlanLimitHit(false);
+    setCreating(true);
+
+    const res = await fetch("/api/instances", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+
+    const data = await res.json();
+    setCreating(false);
+
+    if (!res.ok) {
+      if (res.status === 403) setPlanLimitHit(true);
+      setError(data.error || t("modal.failedError"));
+      track("instance_create_failed", { error: data.error, source: "manual" });
+    } else {
+      setShowCreate(false);
+      setForm({ name: "", type: "assistant", description: "" });
+      loadInstances();
+      showToast(t("createdSuccess"));
+      track("instance_created", { instanceId: data.id, source: "manual", type: form.type });
+    }
+  }
+
+  return (
+    <div className="p-4 pt-14 md:p-8 md:pt-6">
+      {toast && <Toast text={toast.text} type={toast.type} />}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <div>
+          <h1 className="text-2xl font-bold text-white">{t("title")}</h1>
+          <p className="text-zinc-400 mt-1">{t("subtitle")}</p>
+        </div>
+        <div className="flex items-center gap-2">
+          {/* Search */}
+          {instances.length > 0 && (
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search instances..."
+                className="w-40 sm:w-48 bg-white/5 border border-white/10 rounded-lg pl-9 pr-8 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 transition-colors"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          )}
+          <button
+            onClick={loadInstances}
+            disabled={loading}
+            title="Refresh health status"
+            className="flex items-center justify-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] disabled:opacity-50 transition-colors px-3 py-2.5 rounded-lg text-sm font-semibold text-zinc-300"
+          >
+            <RefreshIcon className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+          </button>
+          <Link
+            href="/templates"
+            className="hidden sm:flex items-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] transition-colors px-4 py-2.5 rounded-lg text-sm font-semibold text-zinc-300"
+          >
+            <SparklesIcon className="w-4 h-4" />
+            Browse Templates
+          </Link>
+          <button
+            onClick={() => setShowTemplateSelector(true)}
+            className="flex items-center justify-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] transition-colors px-3 sm:px-4 py-2.5 rounded-lg text-sm font-semibold text-zinc-300 whitespace-nowrap"
+          >
+            <SparklesIcon className="w-4 h-4" />
+            <span className="hidden sm:inline">From Template</span>
+            <span className="sm:hidden">Template</span>
+          </button>
+          <button
+            onClick={() => setShowWizard(true)}
+            className="flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-3 sm:px-4 py-2.5 rounded-lg text-sm font-semibold text-white whitespace-nowrap"
+          >
+            <PlusIcon className="w-4 h-4" />
+            <span className="hidden sm:inline">{t("newInstance")}</span>
+            <span className="sm:hidden">New</span>
+          </button>
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <LoadingIcon className="w-6 h-6 text-zinc-500 animate-spin" />
+        </div>
+      ) : instances.length === 0 ? (
+        <div className="space-y-8">
+          {/* Empty state with quick start */}
+          <div className="glow-border rounded-2xl p-12 bg-white/[0.02] text-center">
+            <BotIcon className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-white mb-2">{t("emptyTitle")}</h3>
+            <p className="text-zinc-400 text-sm mb-6 max-w-md mx-auto">{t("emptyDesc")}</p>
+            <div className="flex items-center justify-center gap-3">
+              <button
+                onClick={() => setShowWizard(true)}
+                className="inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-6 py-3 rounded-lg text-sm font-semibold text-white"
+              >
+                <PlusIcon className="w-4 h-4" />
+                {t("createInstance")}
+              </button>
+              <Link
+                href="/templates"
+                className="inline-flex items-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] transition-colors px-6 py-3 rounded-lg text-sm font-semibold text-zinc-300"
+              >
+                <SparklesIcon className="w-4 h-4" />
+                Browse Templates
+              </Link>
+            </div>
+          </div>
+
+          {/* Featured templates */}
+          <div>
+            <h4 className="text-sm font-medium text-zinc-500 mb-4 uppercase tracking-wider">Quick Start Templates</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {agentTemplates
+                .filter((t) => t.featured || t.popular)
+                .slice(0, 3)
+                .map((template) => (
+                  <button
+                    key={template.id}
+                    onClick={() => {
+                      setSelectedTemplate(template);
+                      setShowWizard(true);
+                    }}
+                    className="glow-border rounded-2xl p-5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors text-left"
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-violet-600/20 border border-violet-500/20 flex items-center justify-center text-xl">
+                        {template.icon}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h5 className="font-semibold text-white mb-1">{template.name}</h5>
+                        <p className="text-xs text-zinc-500 line-clamp-2">{template.shortDescription}</p>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <>
+          {filteredInstances.length === 0 && searchQuery ? (
+            <div className="text-center py-12">
+              <Search className="w-8 h-8 text-zinc-600 mx-auto mb-3" />
+              <p className="text-zinc-500">No instances match &ldquo;{searchQuery}&rdquo;</p>
+              <button
+                onClick={() => setSearchQuery("")}
+                className="text-violet-400 hover:text-violet-300 text-sm mt-2"
+              >
+                Clear search
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredInstances.map((instance) => {
+                const isProvisioning = instance.provisionStatus === "provisioning";
+                const isToggling = togglingId === instance.id;
+            return (
+              <Link
+                key={instance.id}
+                href={`/dashboard/instances/${instance.id}`}
+                className="glow-border rounded-2xl p-5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors block group"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="relative w-10 h-10 rounded-xl bg-violet-600/20 border border-violet-500/20 flex items-center justify-center">
+                    <BotIcon className="w-5 h-5 text-violet-400" />
+                    {isProvisioning && (
+                      <span className="absolute -top-1 -right-1 w-3.5 h-3.5">
+                        <LoadingIcon className="w-3.5 h-3.5 text-amber-400 animate-spin" />
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <HealthDot healthStatus={instance.healthStatus} lastCheckedAt={instance.lastCheckedAt} />
+                    {isProvisioning ? (
+                      <span className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full font-medium bg-amber-400/10 text-amber-400 border border-amber-400/20">
+                        <LoadingIcon className="w-2.5 h-2.5 animate-spin" />
+                        Provisioning…
+                      </span>
+                    ) : (
+                      <>
+                        <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${STATUS_COLORS[instance.status]}`}>
+                          {instance.status}
+                        </span>
+                        {/* Quick toggle button */}
+                        <button
+                          onClick={(e) => toggleInstance(instance, e)}
+                          disabled={isToggling}
+                          className={`opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg ${
+                            instance.status === "running"
+                              ? "bg-zinc-700 hover:bg-zinc-600 text-white"
+                              : "bg-emerald-600 hover:bg-emerald-500 text-white"
+                          } disabled:opacity-50`}
+                          title={instance.status === "running" ? "Stop instance" : "Start instance"}
+                        >
+                          {isToggling ? (
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          ) : instance.status === "running" ? (
+                            <Square className="w-3.5 h-3.5" />
+                          ) : (
+                            <Play className="w-3.5 h-3.5" />
+                          )}
+                        </button>
+                        {/* Duplicate button */}
+                        <button
+                          onClick={(e) => duplicateInstance(instance, e)}
+                          disabled={creating}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white disabled:opacity-50"
+                          title="Duplicate instance"
+                        >
+                          {creating ? (
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          ) : (
+                            <Copy className="w-3.5 h-3.5" />
+                          )}
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+                <h3 className="font-semibold text-white mb-1 truncate">{instance.name}</h3>
+                <p className="text-xs text-zinc-500 mb-3 capitalize">{instance.type} · {instance.tier}</p>
+                {instance.description && (
+                  <p className="text-sm text-zinc-400 line-clamp-2">{instance.description}</p>
+                )}
+              </Link>
+            );
+          })}
+            </div>
+          )}
+        </>
+      )}
+
+      {showCreate && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+          <div className="bg-[#111118] border border-white/10 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-bold text-white">{t("modal.title")}</h2>
+              <button onClick={() => setShowCreate(false)} className="text-zinc-500 hover:text-white transition-colors">
+                <CloseIcon className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreate} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-zinc-300 mb-1.5">{t("modal.nameLabel")}</label>
+                <input
+                  type="text"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  required
+                  placeholder={t("modal.namePlaceholder")}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-zinc-300 mb-1.5">{t("modal.typeLabel")}</label>
+                <select
+                  value={form.type}
+                  onChange={(e) => setForm({ ...form, type: e.target.value })}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
+                >
+                  {INSTANCE_TYPES.map((tp) => (
+                    <option key={tp.value} value={tp.value} className="bg-zinc-900">
+                      {tp.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-zinc-300 mb-1.5">{t("modal.descLabel")}</label>
+                <textarea
+                  value={form.description}
+                  onChange={(e) => setForm({ ...form, description: e.target.value })}
+                  rows={3}
+                  placeholder={t("modal.descPlaceholder")}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors resize-none"
+                />
+              </div>
+
+              {error && (
+                <div className="text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-4 py-3">
+                  {error}
+                  {planLimitHit && (
+                    <Link href="/dashboard/billing" className="block mt-2 text-violet-400 hover:text-violet-300 font-medium transition-colors">
+                      Upgrade your plan →
+                    </Link>
+                  )}
+                </div>
+              )}
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowCreate(false)}
+                  className="flex-1 py-3 border border-white/10 hover:border-white/20 text-zinc-300 rounded-lg text-sm font-semibold transition-colors"
+                >
+                  {t("modal.cancelBtn")}
+                </button>
+                <button
+                  type="submit"
+                  disabled={creating}
+                  className="flex-1 flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 transition-colors py-3 rounded-lg text-sm font-semibold text-white"
+                >
+                  {creating ? <LoadingIcon className="w-4 h-4 animate-spin" /> : null}
+                  {t("modal.createBtn")}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showWizard && (
+        <InstanceSetupWizard
+          onClose={() => setShowWizard(false)}
+          onCreated={(instanceId?: string) => {
+            setShowWizard(false);
+            loadInstances();
+            showToast(t("createdSuccess"));
+            track("instance_created", { instanceId, source: "wizard" });
+          }}
+        />
+      )}
+    </div>
+  );
+}

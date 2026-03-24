@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="35.706" tests="6" failures="0">
+  <testsuite name="Root Suite" timestamp="2026-03-13T15:22:51" tests="6" file="cypress/e2e/31-version-management.cy.ts" time="35.705" failures="0">
+    <testcase name="Infrastructure tab shows version panel and empty snapshots" time="15.199" classname="Infrastructure tab shows version panel and empty snapshots">
+    </testcase>
+    <testcase name="snapshots table renders rows from API response" time="4.981" classname="snapshots table renders rows from API response">
+    </testcase>
+    <testcase name="restore button shows confirm step, confirm triggers request-rollback" time="5.559" classname="restore button shows confirm step, confirm triggers request-rollback">
+    </testcase>
+    <testcase name="command queue shows commands with status colors" time="5.160" classname="command queue shows commands with status colors">
+    </testcase>
+    <testcase name="GET /api/admin/versions returns 401 for non-admin" time="0.109" classname="GET /api/admin/versions returns 401 for non-admin">
+    </testcase>
+    <testcase name="auto-update toggle fires PATCH /api/instances/[id] with autoUpdate" time="4.532" classname="auto-update toggle fires PATCH /api/instances/[id] with autoUpdate">
+    </testcase>
+  </testsuite>
+</testsuites>
