@@ -30,6 +30,9 @@ jobs:
           
       - name: Install dependencies
         run: cd web && pnpm install --frozen-lockfile
+
+      - name: Type check
+        run: cd web && npx tsc --noEmit
         
       - name: Build application
         run: cd web && pnpm build
