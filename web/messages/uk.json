@@ -342,6 +342,42 @@
         "label": "Інше",
         "desc": "Мій менеджер допоможе розібратися"
       }
+    },
+    "useCaseDescLabel": "Опишіть ваш сценарій використання",
+    "useCaseDescPlaceholder": "Розкажіть детальніше, як ви плануєте використовувати ІІ. Наприклад: «Хочу автоматизувати підтримку клієнтів у своєму інтернет-магазині...»",
+    "channelsOptionalNote": "Необов'язково — ваш агент працює у веб-чаті без цього. Додайте канали, щоб користувачі могли спілкуватися з ним на зручних платформах.",
+    "docsLink": "Документація ↗",
+    "llm": {
+      "openai": {
+        "badge": "Найпопулярніший",
+        "desc": "GPT-4o, GPT-4 Turbo"
+      },
+      "anthropic": {
+        "badge": "Claude",
+        "desc": "Claude Sonnet, Claude Haiku"
+      },
+      "openrouter": {
+        "badge": "Мульти-модель",
+        "desc": "Доступ до 200+ моделей вкл. безкоштовний рівень"
+      }
+    },
+    "channels": {
+      "telegram": {
+        "desc": "Ваш ІІ відповідає на повідомлення в Telegram",
+        "howTo": "Створіть бота через @BotFather, скопіюйте токен"
+      },
+      "whatsapp": {
+        "desc": "Ваш ІІ відповідає через WhatsApp Business API",
+        "howTo": "Налаштуйте WhatsApp Business API, скопіюйте токен доступу"
+      },
+      "discord": {
+        "desc": "Ваш ІІ вступає та відповідає в каналах Discord",
+        "howTo": "Створіть бота на discord.com/developers, скопіюйте Bot Token"
+      },
+      "slack": {
+        "desc": "Ваш ІІ працює всередині вашого Slack workspace",
+        "howTo": "Створіть застосунок Slack із увімкненим Socket Mode"
+      }
     }
   },
   "dashboard": {

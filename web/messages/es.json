@@ -358,6 +358,42 @@
         "label": "Otra cosa",
         "desc": "Mi gestor me ayudará a descubrirlo"
       }
+    },
+    "useCaseDescLabel": "Describe tu caso de uso",
+    "useCaseDescPlaceholder": "Cuéntanos cómo planeas usar la IA. Por ejemplo: \"Quiero automatizar el soporte al cliente de mi tienda online...\"",
+    "channelsOptionalNote": "Opcional — tu agente funciona en el chat web sin esto. Añade canales para que los usuarios hablen contigo en sus plataformas preferidas.",
+    "docsLink": "Docs ↗",
+    "llm": {
+      "openai": {
+        "badge": "Más popular",
+        "desc": "GPT-4o, GPT-4 Turbo"
+      },
+      "anthropic": {
+        "badge": "Claude",
+        "desc": "Claude Sonnet, Claude Haiku"
+      },
+      "openrouter": {
+        "badge": "Multi-modelo",
+        "desc": "Accede a 200+ modelos incl. nivel gratuito"
+      }
+    },
+    "channels": {
+      "telegram": {
+        "desc": "Tu IA responde mensajes en Telegram",
+        "howTo": "Crea un bot con @BotFather, copia el token"
+      },
+      "whatsapp": {
+        "desc": "Tu IA responde en la API de WhatsApp Business",
+        "howTo": "Configura la API de WhatsApp Business, copia el token"
+      },
+      "discord": {
+        "desc": "Tu IA se une y responde en canales de Discord",
+        "howTo": "Crea un bot en discord.com/developers, copia el Bot Token"
+      },
+      "slack": {
+        "desc": "Tu IA trabaja dentro de tu workspace de Slack",
+        "howTo": "Crea una app de Slack con Socket Mode activado"
+      }
     }
   },
   "dashboard": {

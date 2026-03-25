@@ -355,6 +355,42 @@
         "label": "Something else",
         "desc": "My manager will help me figure it out"
       }
+    },
+    "useCaseDescLabel": "Describe your use case",
+    "useCaseDescPlaceholder": "Tell us more about how you plan to use AI. For example: \"I want to automate customer support for my e-commerce store...\"",
+    "channelsOptionalNote": "Optional — your agent works in the web chat without this. Add channels to let users talk to it on your preferred platforms.",
+    "docsLink": "Docs ↗",
+    "llm": {
+      "openai": {
+        "badge": "Most popular",
+        "desc": "GPT-4o, GPT-4 Turbo"
+      },
+      "anthropic": {
+        "badge": "Claude",
+        "desc": "Claude Sonnet, Claude Haiku"
+      },
+      "openrouter": {
+        "badge": "Multi-model",
+        "desc": "Access 200+ models incl. free tier"
+      }
+    },
+    "channels": {
+      "telegram": {
+        "desc": "Your AI responds to messages in Telegram",
+        "howTo": "Create a bot via @BotFather, copy the token"
+      },
+      "whatsapp": {
+        "desc": "Your AI responds on WhatsApp Business API",
+        "howTo": "Set up WhatsApp Business API, copy the access token"
+      },
+      "discord": {
+        "desc": "Your AI joins and responds in Discord channels",
+        "howTo": "Create a bot at discord.com/developers, copy the Bot Token"
+      },
+      "slack": {
+        "desc": "Your AI works inside your Slack workspace",
+        "howTo": "Create a Slack app with Socket Mode enabled"
+      }
     }
   },
   "dashboard": {

@@ -17,23 +17,22 @@ const TOTAL_STEPS = 5;
 const INDUSTRIES = [
   "SaaS / Software", "E-commerce", "Healthcare", "Finance",
   "Education", "Agency", "Real Estate", "Hospitality", "Other",
-];
+] as const;
 
 const USE_CASES = [
-  { value: "customer-support", label: "Customer Support", desc: "Handle inquiries, FAQs, tickets", icon: "🎧" },
-  { value: "sales-assistant",  label: "Sales Assistant",  desc: "Qualify leads, answer product questions", icon: "📈" },
-  { value: "data-analyst",     label: "Data & Analytics", desc: "Query data, generate reports", icon: "📊" },
-  { value: "internal-tools",   label: "Internal Automation", desc: "Automate workflows, internal helpdesk", icon: "⚙️" },
-  { value: "content",          label: "Content Creation", desc: "Drafts, summaries, translations", icon: "✍️" },
-  { value: "custom",           label: "Something else",   desc: "My manager will help me figure it out", icon: "💬" },
-];
+  { value: "customer-support", icon: "🎧" },
+  { value: "sales-assistant",  icon: "📈" },
+  { value: "data-analyst",     icon: "📊" },
+  { value: "internal-tools",   icon: "⚙️" },
+  { value: "content",          icon: "✍️" },
+  { value: "custom",           icon: "💬" },
+] as const;
 
 const LLM_PROVIDERS = [
   {
     key: "openai_api_key",
     label: "OpenAI",
-    badge: "Most popular",
-    desc: "GPT-4o, GPT-4 Turbo",
+    badgeKey: "openai",
     placeholder: "sk-...",
     docsUrl: "https://platform.openai.com/api-keys",
     color: "border-emerald-500/40 bg-emerald-500/5",
@@ -42,8 +41,7 @@ const LLM_PROVIDERS = [
   {
     key: "anthropic_api_key",
     label: "Anthropic",
-    badge: "Claude",
-    desc: "Claude Sonnet, Claude Haiku",
+    badgeKey: "anthropic",
     placeholder: "sk-ant-...",
     docsUrl: "https://console.anthropic.com/settings/keys",
     color: "border-violet-500/40 bg-violet-500/5",
@@ -52,8 +50,7 @@ const LLM_PROVIDERS = [
   {
     key: "openrouter_api_key",
     label: "OpenRouter",
-    badge: "Multi-model",
-    desc: "Access 200+ models incl. free tier",
+    badgeKey: "openrouter",
     placeholder: "sk-or-...",
     docsUrl: "https://openrouter.ai/keys",
     color: "border-blue-500/40 bg-blue-500/5",
@@ -66,37 +63,33 @@ const CHANNEL_OPTIONS = [
   {
     key: "telegram_bot_token",
     label: "Telegram",
-    desc: "Your AI responds to messages in Telegram",
+    channelKey: "telegram",
     icon: "✈️",
     placeholder: "1234567890:AAFake...",
-    howTo: "Create a bot via @BotFather, copy the token",
     docsUrl: "https://core.telegram.org/bots#6-botfather",
   },
   {
     key: "whatsapp_business_token",
     label: "WhatsApp",
-    desc: "Your AI responds on WhatsApp Business API",
+    channelKey: "whatsapp",
     icon: "💬",
     placeholder: "EAAG...",
-    howTo: "Set up WhatsApp Business API, copy the access token",
     docsUrl: "https://business.whatsapp.com/products/business-platform",
   },
   {
     key: "discord_bot_token",
     label: "Discord",
-    desc: "Your AI joins and responds in Discord channels",
+    channelKey: "discord",
     icon: "🎮",
     placeholder: "MTI3NDU2NzA4...",
-    howTo: "Create a bot at discord.com/developers, copy the Bot Token",
     docsUrl: "https://discord.com/developers/applications",
   },
   {
     key: "slack_app_token",
     label: "Slack",
-    desc: "Your AI works inside your Slack workspace",
+    channelKey: "slack",
     icon: "💼",
     placeholder: "xapp-1-...",
-    howTo: "Create a Slack app with Socket Mode enabled",
     docsUrl: "https://api.slack.com/apps",
   },
 ];
@@ -376,7 +369,7 @@ export default function OnboardingPage() {
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-zinc-200 focus:outline-none focus:border-violet-500 transition-colors"
                 >
                   <option value="">{t("selectIndustry")}</option>
-                  {INDUSTRIES.map((i) => <option key={i} value={i}>{i}</option>)}
+                  {INDUSTRIES.map((i) => <option key={i} value={i}>{t(`industries.${i}` as Parameters<typeof t>[0])}</option>)}
                 </select>
               </div>
             </div>
@@ -418,8 +411,8 @@ export default function OnboardingPage() {
                 >
                   <span className="text-lg shrink-0">{uc.icon}</span>
                   <div>
-                    <div className="text-sm font-medium">{uc.label}</div>
-                    <div className="text-xs text-zinc-500 mt-0.5">{uc.desc}</div>
+                    <div className="text-sm font-medium">{t(`useCases.${uc.value}.label` as Parameters<typeof t>[0])}</div>
+                    <div className="text-xs text-zinc-500 mt-0.5">{t(`useCases.${uc.value}.desc` as Parameters<typeof t>[0])}</div>
                   </div>
                 </button>
               ))}
@@ -428,12 +421,12 @@ export default function OnboardingPage() {
             {/* Use case description textarea */}
             <div>
               <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-2">
-                Describe your use case <span className="text-zinc-600 normal-case">(optional)</span>
+                {t("useCaseDescLabel")} <span className="text-zinc-600 normal-case">({t("optional")})</span>
               </label>
               <textarea
                 value={useCaseDescription}
                 onChange={(e) => setUseCaseDescription(e.target.value)}
-                placeholder="Tell us more about how you plan to use AI. For example: 'I want to automate customer support for my e-commerce store that sells handmade jewelry...'"
+                placeholder={t("useCaseDescPlaceholder")}
                 rows={4}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors resize-none"
               />
@@ -466,7 +459,7 @@ export default function OnboardingPage() {
             </div>
 
             <p className="text-xs text-zinc-600 mb-5">
-              Optional — your agent works in the web chat without this. Add channels to let users talk to it on your preferred platforms.
+              {t("channelsOptionalNote")}
             </p>
 
             {/* Multi-select channel checkboxes */}
@@ -495,7 +488,7 @@ export default function OnboardingPage() {
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-semibold text-white">{c.label}</span>
                       </div>
-                      <div className="text-xs text-zinc-500 mt-0.5">{c.desc}</div>
+                      <div className="text-xs text-zinc-500 mt-0.5">{t(`channels.${c.channelKey}.desc` as Parameters<typeof t>[0])}</div>
                     </div>
                   </button>
 
@@ -517,7 +510,7 @@ export default function OnboardingPage() {
                         {showChannelKey[c.key] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                       <p className="text-xs text-zinc-600 mt-1.5">
-                        {c.howTo} — <a href={c.docsUrl} target="_blank" rel="noopener noreferrer" className="text-violet-400 hover:text-violet-300">Docs ↗</a>
+                        {t(`channels.${c.channelKey}.howTo` as Parameters<typeof t>[0])} — <a href={c.docsUrl} target="_blank" rel="noopener noreferrer" className="text-violet-400 hover:text-violet-300">{t("docsLink")}</a>
                       </p>
                     </div>
                   )}
@@ -578,9 +571,9 @@ export default function OnboardingPage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-semibold text-white">{p.label}</span>
-                      <span className="text-xs px-1.5 py-0.5 rounded bg-white/10 text-zinc-400">{p.badge}</span>
+                      <span className="text-xs px-1.5 py-0.5 rounded bg-white/10 text-zinc-400">{t(`llm.${p.badgeKey}.badge` as Parameters<typeof t>[0])}</span>
                     </div>
-                    <div className="text-xs text-zinc-500 mt-0.5">{p.desc}</div>
+                    <div className="text-xs text-zinc-500 mt-0.5">{t(`llm.${p.badgeKey}.desc` as Parameters<typeof t>[0])}</div>
                   </div>
                   <a
                     href={p.docsUrl}
@@ -669,7 +662,7 @@ export default function OnboardingPage() {
             <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4 mb-6 text-left space-y-2">
               <div className="flex justify-between text-sm"><span className="text-zinc-500">Business</span><span className="text-zinc-200">{business}</span></div>
               <div className="flex justify-between text-sm"><span className="text-zinc-500">Industry</span><span className="text-zinc-200">{industry}</span></div>
-              <div className="flex justify-between text-sm"><span className="text-zinc-500">Use case</span><span className="text-zinc-200">{USE_CASES.find((u) => u.value === useCase)?.label}</span></div>
+              <div className="flex justify-between text-sm"><span className="text-zinc-500">Use case</span><span className="text-zinc-200">{useCase ? t(`useCases.${useCase}.label` as Parameters<typeof t>[0]) : ""}</span></div>
               {selectedChannels.length > 0 && (
                 <div className="flex justify-between text-sm">
                   <span className="text-zinc-500">Channels</span>

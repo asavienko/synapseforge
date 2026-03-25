@@ -342,6 +342,42 @@
         "label": "Другое",
         "desc": "Мой менеджер поможет разобраться"
       }
+    },
+    "useCaseDescLabel": "Опишите ваш сценарий использования",
+    "useCaseDescPlaceholder": "Расскажите подробнее, как вы планируете использовать ИИ. Например: «Хочу автоматизировать поддержку клиентов в своём интернет-магазине...»",
+    "channelsOptionalNote": "Необязательно — ваш агент работает в веб-чате без этого. Добавьте каналы, чтобы пользователи могли общаться с ним на удобных платформах.",
+    "docsLink": "Документация ↗",
+    "llm": {
+      "openai": {
+        "badge": "Самый популярный",
+        "desc": "GPT-4o, GPT-4 Turbo"
+      },
+      "anthropic": {
+        "badge": "Claude",
+        "desc": "Claude Sonnet, Claude Haiku"
+      },
+      "openrouter": {
+        "badge": "Мульти-модель",
+        "desc": "Доступ к 200+ моделям вкл. бесплатный уровень"
+      }
+    },
+    "channels": {
+      "telegram": {
+        "desc": "Ваш ИИ отвечает на сообщения в Telegram",
+        "howTo": "Создайте бота через @BotFather, скопируйте токен"
+      },
+      "whatsapp": {
+        "desc": "Ваш ИИ отвечает через WhatsApp Business API",
+        "howTo": "Настройте WhatsApp Business API, скопируйте токен доступа"
+      },
+      "discord": {
+        "desc": "Ваш ИИ вступает и отвечает в каналах Discord",
+        "howTo": "Создайте бота на discord.com/developers, скопируйте Bot Token"
+      },
+      "slack": {
+        "desc": "Ваш ИИ работает внутри вашего Slack workspace",
+        "howTo": "Создайте приложение Slack с включённым Socket Mode"
+      }
     }
   },
   "dashboard": {
