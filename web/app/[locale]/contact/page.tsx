@@ -4,11 +4,13 @@ import { Zap, ArrowLeft, Mail, Clock, MessageSquare } from "lucide-react";
 import { ContactFormClient } from "./ContactFormClient";
 import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Contact Us | OpenHelix AI",
-  description:
-    "Get in touch with the OpenHelix AI team. We're here to help with questions, support, or enterprise inquiries.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("contact");
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
 
 export default async function ContactPage() {
   const t = await getTranslations();

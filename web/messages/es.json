@@ -579,6 +579,8 @@
     "upgradeRequestError": "Error al enviar la solicitud"
   },
   "contact": {
+    "metaTitle": "Contáctanos | OpenHelix AI",
+    "metaDescription": "Ponte en contacto con el equipo de OpenHelix AI. Estamos aquí para ayudarte con preguntas, soporte o consultas empresariales.",
     "title": "Contáctanos",
     "subtitle": "¿Tienes alguna pregunta? Te respondemos en 24 horas.",
     "nameLabel": "Nombre",

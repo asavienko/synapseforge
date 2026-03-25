@@ -576,6 +576,8 @@
     "upgradeRequestError": "Failed to send request"
   },
   "contact": {
+    "metaTitle": "Contact Us | OpenHelix AI",
+    "metaDescription": "Get in touch with the OpenHelix AI team. We're here to help with questions, support, or enterprise inquiries.",
     "title": "Contact us",
     "subtitle": "Have a question? We'll reply within 24 hours.",
     "nameLabel": "Name",
