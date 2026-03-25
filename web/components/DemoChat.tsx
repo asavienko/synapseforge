@@ -3,19 +3,15 @@
 import { useState, useRef, useEffect } from "react";
 import { Bot, Send, Loader2 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
 }
 
-const STARTER_PROMPTS = [
-  "What can you do?",
-  "How do I integrate you?",
-  "Tell me about OpenHelix AI",
-];
-
 export function DemoChat() {
+  const t = useTranslations("demo");
   const [sessionId, setSessionId] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -265,7 +261,7 @@ export function DemoChat() {
       {/* Starter prompts */}
       {showStarterPrompts && (
         <div className="px-5 pb-3 flex flex-wrap gap-2">
-          {STARTER_PROMPTS.map((prompt) => (
+          {([t("starterPrompt1"), t("starterPrompt2"), t("starterPrompt3")]).map((prompt) => (
             <button
               key={prompt}
               onClick={() => handleStarterPrompt(prompt)}
@@ -281,25 +277,25 @@ export function DemoChat() {
       {/* Rate limit CTA */}
       {rateLimited && (
         <div className="mx-5 mb-4 bg-violet-950/50 border border-violet-500/30 rounded-xl px-4 py-4 space-y-3">
-          <p className="text-sm font-semibold text-violet-200">You&apos;ve seen what it can do 👀</p>
+          <p className="text-sm font-semibold text-violet-200">{t("rateLimitTitle")}</p>
 
           {/* Primary CTA — sign up */}
           <Link
             href="/sign-up"
             className="flex items-center justify-center gap-2 text-sm bg-violet-600 hover:bg-violet-500 text-white px-4 py-2.5 rounded-lg font-semibold transition-colors w-full"
           >
-            Start free — deploy your own AI
+            {t("rateLimitCta")}
             <Send className="w-3.5 h-3.5" />
           </Link>
 
           {/* Secondary CTA — lead capture */}
           <div className="relative">
             <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200 dark:border-white/10" /></div>
-            <div className="relative flex justify-center"><span className="bg-gray-50 dark:bg-[#0a0a0f] px-2 text-xs text-gray-400 dark:text-zinc-500">or get a personalised setup</span></div>
+            <div className="relative flex justify-center"><span className="bg-gray-50 dark:bg-[#0a0a0f] px-2 text-xs text-gray-400 dark:text-zinc-500">{t("rateLimitOr")}</span></div>
           </div>
 
           {leadSubmitted ? (
-            <p className="text-center text-sm text-emerald-400 font-medium py-1">✓ Got it — we&apos;ll be in touch shortly!</p>
+            <p className="text-center text-sm text-emerald-400 font-medium py-1">{t("rateLimitSuccess")}</p>
           ) : (
             <form
               onSubmit={async (e) => {
@@ -334,7 +330,7 @@ export function DemoChat() {
                 disabled={leadSubmitting}
                 className="px-3 py-2 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 border border-gray-200 dark:border-white/10 text-white rounded-lg text-sm font-medium transition-colors whitespace-nowrap disabled:opacity-50"
               >
-                {leadSubmitting ? "..." : "Notify me"}
+                {leadSubmitting ? "..." : t("notifyMe")}
               </button>
             </form>
           )}
@@ -352,7 +348,7 @@ export function DemoChat() {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your message..."
+            placeholder={t("inputPlaceholder")}
             disabled={loading}
             className="flex-1 bg-black/[0.03] dark:bg-white/[0.05] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 disabled:opacity-50 transition-colors"
           />

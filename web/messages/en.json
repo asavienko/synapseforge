@@ -1712,7 +1712,16 @@
     "tryIt": "Try it free →",
     "placeholder": "Ask me anything...",
     "limitReached": "Trial complete! Deploy your own agent in 3 minutes.",
-    "signUpCta": "Sign up free →"
+    "signUpCta": "Sign up free →",
+    "starterPrompt1": "What can you do?",
+    "starterPrompt2": "How do I integrate you?",
+    "starterPrompt3": "Tell me about OpenHelix AI",
+    "rateLimitTitle": "You've seen what it can do 👀",
+    "rateLimitCta": "Start free — deploy your own AI",
+    "rateLimitOr": "or get a personalised setup",
+    "rateLimitSuccess": "✓ Got it — we'll be in touch shortly!",
+    "notifyMe": "Notify me",
+    "inputPlaceholder": "Type your message..."
   },
   "integrations": {
     "metaTitle": "Integrations | Dashboard",

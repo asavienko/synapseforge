@@ -1595,7 +1595,16 @@
     "tryIt": "Pruébalo gratis →",
     "placeholder": "Pregúntame lo que quieras...",
     "limitReached": "¡Prueba completada! Despliega tu propio agente en 3 minutos.",
-    "signUpCta": "Regístrate gratis →"
+    "signUpCta": "Regístrate gratis →",
+    "starterPrompt1": "¿Qué puedes hacer?",
+    "starterPrompt2": "¿Cómo te integro?",
+    "starterPrompt3": "Cuéntame sobre OpenHelix AI",
+    "rateLimitTitle": "Ya ves de lo que es capaz 👀",
+    "rateLimitCta": "Empieza gratis — despliega tu IA",
+    "rateLimitOr": "o recibe una configuración personalizada",
+    "rateLimitSuccess": "✓ ¡Recibido — te contactaremos pronto!",
+    "notifyMe": "Notificarme",
+    "inputPlaceholder": "Escribe tu mensaje..."
   },
   "referral": {
     "pageTitle": "Programa de referidos",
