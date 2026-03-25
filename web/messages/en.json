@@ -518,6 +518,7 @@
       "newMessage": "New message"
     },
     "settingsPage": {
+      "metaTitle": "Settings | Dashboard",
       "title": "Settings",
       "profileSection": "Profile",
       "planSection": "Plan",

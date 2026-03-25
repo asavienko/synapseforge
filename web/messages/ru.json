@@ -505,6 +505,7 @@
       "newMessage": "Новое сообщение"
     },
     "settingsPage": {
+      "metaTitle": "Настройки | Dashboard",
       "title": "Настройки",
       "profileSection": "Профиль",
       "planSection": "Тариф",

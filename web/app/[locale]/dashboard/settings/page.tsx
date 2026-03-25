@@ -11,9 +11,12 @@ import { getTranslations } from "next-intl/server";
 import { RestartTourButton } from "@/components/RestartTourButton";
 import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Settings | Dashboard",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("dashboard.settingsPage");
+  return {
+    title: t("metaTitle"),
+  };
+}
 
 export const dynamic = "force-dynamic";
 

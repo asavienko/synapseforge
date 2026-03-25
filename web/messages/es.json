@@ -521,6 +521,7 @@
       "newMessage": "Nuevo mensaje"
     },
     "settingsPage": {
+      "metaTitle": "Configuración | Dashboard",
       "title": "Configuración",
       "profileSection": "Perfil",
       "planSection": "Plan",
