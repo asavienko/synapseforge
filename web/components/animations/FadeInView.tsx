@@ -45,14 +45,6 @@ export function FadeInView({
     return () => observer.disconnect();
   }, [threshold, once]);
 
-  const directionStyles = {
-    up: "translate-y-8",
-    down: "-translate-y-8",
-    left: "translate-x-8",
-    right: "-translate-x-8",
-    none: "",
-  };
-
   return (
     <div
       ref={ref}

@@ -25,7 +25,6 @@ import {
   RocketLaunchIcon,
   SparklesIcon,
   CalendarIcon,
-  AIBrainIcon,
 } from "@/components/icons/BrandIcons";
 import { getTranslations } from "next-intl/server";
 
