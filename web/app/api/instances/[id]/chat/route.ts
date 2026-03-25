@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -229,7 +228,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   } else {
     const credResult = await resolveCredentials(id, instanceConfig);
     if (!credResult.ok) {
-      return NextResponse.json(credResult.error, { status: 400 });
+      const { error } = credResult as { ok: false; error: { error: string; missingCredential?: boolean; requiredKey?: string } };
+      return NextResponse.json(error, { status: 400 });
     }
     resolvedProvider = credResult.resolvedProvider;
     resolvedModelId = credResult.resolvedModelId;
