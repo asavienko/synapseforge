@@ -200,10 +200,10 @@
     "contactSupport": "Contact support"
   },
   "status": {
-    "metaTitle": "System Status | SynapseForge",
-    "metaDescription": "Real-time system status and uptime information for SynapseForge services.",
+    "metaTitle": "System Status | OpenHelix AI",
+    "metaDescription": "Real-time system status and uptime information for OpenHelix AI services.",
     "title": "System Status",
-    "subtitle": "Real-time status of SynapseForge services",
+    "subtitle": "Real-time status of OpenHelix AI services",
     "allSystemsOperational": "All Systems Operational",
     "questions": "Questions? Contact us at"
   },
@@ -415,7 +415,7 @@
       "mostPopular": "Most popular",
       "downgradeViaSupport": "Downgrade via support",
       "annualNote": "Annual plans available — 2 months free. Contact your manager or",
-      "annualNoteEmail": "hello@synapseforge.ai",
+      "annualNoteEmail": "hello@openhelixai.com",
       "annualNoteSetup": "to set up.",
       "success": "Payment successful! Your plan has been upgraded.",
       "cancelled": "Checkout was cancelled. No charges were made.",
@@ -680,11 +680,11 @@
       },
       "rights": {
         "title": "Your Rights",
-        "body": "You have the right to access, correct, or delete your personal data. Contact us at hello@synapseforge.ai to exercise these rights."
+        "body": "You have the right to access, correct, or delete your personal data. Contact us at hello@openhelixai.com to exercise these rights."
       },
       "contact": {
         "title": "Contact",
-        "body": "For privacy questions, contact us at hello@synapseforge.ai."
+        "body": "For privacy questions, contact us at hello@openhelixai.com."
       }
     }
   },
@@ -719,7 +719,7 @@
       },
       "contact": {
         "title": "Contact",
-        "body": "For questions about these Terms, contact us at hello@synapseforge.ai."
+        "body": "For questions about these Terms, contact us at hello@openhelixai.com."
       }
     }
   },
@@ -1735,7 +1735,7 @@
     "metaDescription": "Ready-to-deploy AI agent templates for customer support, sales, FAQ bots, and more. Deploy in minutes."
   },
   "homePage": {
-    "metaTitle": "SynapseForge — AI Agents for Business",
+    "metaTitle": "OpenHelix AI — AI Agents for Business",
     "metaDescription": "Deploy AI agents in minutes. Managed setup, human oversight, and seamless integrations. Start free with 2,000 messages."
   },
   "siteMetadata": {

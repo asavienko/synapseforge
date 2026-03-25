@@ -8,10 +8,10 @@
     "contactSupport": "Contactar soporte"
   },
   "status": {
-    "metaTitle": "Estado del Sistema | SynapseForge",
-    "metaDescription": "Estado del sistema en tiempo real e información de uptime para los servicios de SynapseForge.",
+    "metaTitle": "Estado del Sistema | OpenHelix AI",
+    "metaDescription": "Estado del sistema en tiempo real e información de uptime para los servicios de OpenHelix AI.",
     "title": "Estado del Sistema",
-    "subtitle": "Estado en tiempo real de los servicios de SynapseForge",
+    "subtitle": "Estado en tiempo real de los servicios de OpenHelix AI",
     "allSystemsOperational": "Todos los Sistemas Operativos",
     "questions": "¿Preguntas? Contáctanos en"
   },
@@ -418,7 +418,7 @@
       "mostPopular": "Más popular",
       "downgradeViaSupport": "Cambiar a plan inferior via soporte",
       "annualNote": "Planes anuales disponibles — 2 meses gratis. Contacta a tu gestor o",
-      "annualNoteEmail": "hello@synapseforge.ai",
+      "annualNoteEmail": "hello@openhelixai.com",
       "annualNoteSetup": "para configurarlo.",
       "success": "¡Pago exitoso! Tu plan ha sido actualizado.",
       "cancelled": "El pago fue cancelado. No se realizaron cargos.",
@@ -683,11 +683,11 @@
       },
       "rights": {
         "title": "Tus derechos",
-        "body": "Tienes derecho a acceder, corregir o eliminar tus datos personales. Contáctanos en hello@synapseforge.ai."
+        "body": "Tienes derecho a acceder, corregir o eliminar tus datos personales. Contáctanos en hello@openhelixai.com."
       },
       "contact": {
         "title": "Contacto",
-        "body": "Para preguntas sobre privacidad, contáctanos en hello@synapseforge.ai."
+        "body": "Para preguntas sobre privacidad, contáctanos en hello@openhelixai.com."
       }
     }
   },
@@ -722,7 +722,7 @@
       },
       "contact": {
         "title": "Contacto",
-        "body": "Para preguntas sobre estos Términos, contáctanos en hello@synapseforge.ai."
+        "body": "Para preguntas sobre estos Términos, contáctanos en hello@openhelixai.com."
       }
     }
   },
@@ -1728,7 +1728,7 @@
     "metaDescription": "Plantillas de agentes IA listas para desplegar: soporte al cliente, ventas, bots de FAQ y más. Despliega en minutos."
   },
   "homePage": {
-    "metaTitle": "SynapseForge — Agentes IA para Empresas",
+    "metaTitle": "OpenHelix AI — Agentes IA para Empresas",
     "metaDescription": "Despliega agentes IA en minutos. Configuración gestionada, supervisión humana e integraciones fluidas. Empieza gratis con 2.000 mensajes."
   },
   "siteMetadata": {
