@@ -87,7 +87,7 @@ export default async function LandingPage() {
   const orgSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "SynapseForge",
+    "name": "OpenHelix AI",
     "url": "https://openhelixai.com",
     "contactPoint": { "@type": "ContactPoint", "contactType": "customer support", "url": "https://openhelixai.com/contact" },
   };

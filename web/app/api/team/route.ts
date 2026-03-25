@@ -68,7 +68,7 @@ export async function POST(req: Request) {
 
   await sendEmail({
     to: email,
-    subject: "You've been invited to join a team on SynapseForge",
+    subject: "You've been invited to join a team on OpenHelix AI",
     html: `<!DOCTYPE html>
 <html>
 <head>
@@ -79,7 +79,7 @@ export async function POST(req: Request) {
   <div style="background: #12121a; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 32px; text-align: center;">
     <h1 style="color: #a78bfa; font-size: 24px; margin: 0 0 16px;">Team Invitation</h1>
     <p style="color: #94a3b8; margin: 0 0 24px;">
-      You've been invited to join a team on SynapseForge with ${role} access.
+      You've been invited to join a team on OpenHelix AI with ${role} access.
     </p>
     <a href="${inviteUrl}" 
        style="display: inline-block; background: #7c3aed; color: white; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 600; margin: 16px 0;">

@@ -220,7 +220,7 @@ function buildUsageAlertEmail(
     </div>
 
     <p style="color: #475569; font-size: 12px; margin-top: 32px;">
-      You're receiving this because you're a SynapseForge user on the ${plan} plan.
+      You're receiving this because you're an OpenHelix AI user on the ${plan} plan.
       <a href="${process.env.NEXTAUTH_URL ?? "https://openhelixai.com"}/dashboard/settings" style="color: #7c3aed;">Manage email preferences</a>
     </p>
   </div>

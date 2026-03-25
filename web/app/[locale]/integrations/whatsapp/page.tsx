@@ -178,7 +178,7 @@ export default function WhatsAppIntegrationPage() {
 
       <footer className="border-t border-white/5 py-8 mt-16">
         <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-zinc-500">
-          <span>© 2026 SynapseForge. All rights reserved.</span>
+          <span>© 2026 OpenHelix AI. All rights reserved.</span>
           <div className="flex gap-6">
             <Link href="/integrations/telegram" className="hover:text-zinc-300 transition-colors">Telegram</Link>
             <Link href="/pricing" className="hover:text-zinc-300 transition-colors">Pricing</Link>

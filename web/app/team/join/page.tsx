@@ -122,7 +122,7 @@ export default function JoinTeamPage() {
             </div>
             <h1 className="text-2xl font-bold text-white mb-2">Join Team</h1>
             <p className="text-zinc-400">
-              You&apos;ve been invited to collaborate on SynapseForge
+              You&apos;ve been invited to collaborate on OpenHelix AI
             </p>
           </div>
 

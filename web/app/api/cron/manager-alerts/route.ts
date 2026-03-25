@@ -259,7 +259,7 @@ function buildManagerAlertEmail(
     </div>
     
     <p style="color: #475569; font-size: 12px; margin-top: 32px;">
-      You're receiving this because you're a manager on SynapseForge. 
+      You're receiving this because you're a manager on OpenHelix AI. 
       <a href="${process.env.NEXTAUTH_URL ?? "https://openhelixai.com"}/dashboard/settings" style="color: #7c3aed;">Manage email preferences</a>
     </p>
   </div>

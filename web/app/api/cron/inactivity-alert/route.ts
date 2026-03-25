@@ -149,7 +149,7 @@ function buildInactivityEmail(
     </div>
     
     <p style="color: #475569; font-size: 12px; margin-top: 32px;">
-      You're receiving this because you're a manager on SynapseForge.
+      You're receiving this because you're a manager on OpenHelix AI.
     </p>
   </div>
 </body>
