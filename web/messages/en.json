@@ -1847,5 +1847,11 @@
   "changelog": {
     "metaTitle": "Changelog | OpenHelix AI",
     "metaDescription": "See what's new in OpenHelix AI. Latest features, improvements, and bug fixes."
+  },
+  "blog": {
+    "metaTitle": "Blog — AI Customer Support Guides & Tutorials",
+    "metaDescription": "Tutorials, guides, and insights on AI customer support, chatbot deployment, and business automation. Practical content from the OpenHelix team.",
+    "ogTitle": "Blog — OpenHelix AI",
+    "ogDescription": "Tutorials, guides, and insights on AI customer support."
   }
 }

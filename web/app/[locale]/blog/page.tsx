@@ -1,18 +1,23 @@
 import { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import NextLink from "next/link";
 import { ArrowRight, Zap, Clock, Calendar } from "lucide-react";
 
-export const metadata: Metadata = {
-  title: "Blog — AI Customer Support Guides & Tutorials",
-  description:
-    "Tutorials, guides, and insights on AI customer support, chatbot deployment, and business automation. Practical content from the OpenHelix team.",
-  openGraph: {
-    title: "Blog — OpenHelix AI",
-    description: "Tutorials, guides, and insights on AI customer support.",
-    type: "website",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("blog");
+  const title = t("metaTitle");
+  const description = t("metaDescription");
+  return {
+    title,
+    description,
+    openGraph: {
+      title: t("ogTitle"),
+      description: t("ogDescription"),
+      type: "website",
+    },
+  };
+}
 
 const posts = [
   {
