@@ -1377,14 +1377,22 @@
   },
   "referral": {
     "pageTitle": "Referral Program",
+    "pageSubtitle": "Invite friends and earn rewards",
     "yourReferralLink": "Your Referral Link",
+    "shareDescription": "Share this link with friends",
     "copyCode": "Copy code",
     "copyLink": "Copy link",
     "copyLinkBtn": "Copy Link",
+    "linkCopied": "Referral link copied to clipboard!",
+    "copied": "Copied!",
+    "loading": "Loading...",
     "shareOnX": "Share on X",
-    "signUps": "Sign-ups",
+    "totalReferrals": "Total Referrals",
     "conversions": "Conversions",
-    "pendingEarnings": "Pending earnings",
+    "pendingEarnings": "Pending",
+    "totalEarnings": "Total Earnings",
+    "recentConversions": "Recent Conversions",
+    "signUps": "Sign-ups",
     "paidOut": "Paid out",
     "noReferralsYet": "No referrals yet",
     "noReferralsDesc": "Share your link to start earning.",
@@ -1403,7 +1411,12 @@
     "tableCommission": "Commission",
     "tableDate": "Date",
     "earnDesc": "Earn {percent} of every subscription you refer for {months} months.",
-    "friendsGet": "Your referred friends get {period} when they upgrade."
+    "friendsGet": "Your referred friends get {period} when they upgrade.",
+    "status": {
+      "pending": "Pending",
+      "converted": "Converted",
+      "paid": "Paid"
+    }
   },
   "share": {
     "somethingWentWrong": "Something went wrong",

@@ -1479,14 +1479,22 @@
   },
   "referral": {
     "pageTitle": "Programa de referidos",
+    "pageSubtitle": "Invita amigos y gana recompensas",
     "yourReferralLink": "Tu enlace de referido",
+    "shareDescription": "Comparte este enlace con amigos",
     "copyCode": "Copiar código",
     "copyLink": "Copiar enlace",
     "copyLinkBtn": "Copiar enlace",
+    "linkCopied": "¡Enlace de referido copiado al portapapeles!",
+    "copied": "¡Copiado!",
+    "loading": "Cargando...",
     "shareOnX": "Compartir en X",
-    "signUps": "Registros",
+    "totalReferrals": "Total de referidos",
     "conversions": "Conversiones",
-    "pendingEarnings": "Ganancias pendientes",
+    "pendingEarnings": "Pendiente",
+    "totalEarnings": "Ganancias totales",
+    "recentConversions": "Conversiones recientes",
+    "signUps": "Registros",
     "paidOut": "Pagado",
     "noReferralsYet": "Sin referidos aún",
     "noReferralsDesc": "Comparte tu enlace para empezar a ganar.",
@@ -1505,7 +1513,12 @@
     "tableCommission": "Comisión",
     "tableDate": "Fecha",
     "earnDesc": "Gana {percent} de cada suscripción que refieras durante {months} meses.",
-    "friendsGet": "Tus amigos referidos obtienen {period} al actualizar."
+    "friendsGet": "Tus amigos referidos obtienen {period} al actualizar.",
+    "status": {
+      "pending": "Pendiente",
+      "converted": "Convertido",
+      "paid": "Pagado"
+    }
   },
   "share": {
     "somethingWentWrong": "Algo salió mal",

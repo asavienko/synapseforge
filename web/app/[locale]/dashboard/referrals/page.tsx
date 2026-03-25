@@ -1,31 +1,44 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Gift, Copy, Check, Share2, Users, DollarSign } from "lucide-react";
+import { Gift, Copy, Check, Share2, Users, DollarSign, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { useAnalytics } from "@/components/AnalyticsProvider";
+import { useTranslations } from "next-intl";
 
-interface ReferralStats {
+interface Conversion {
+  id: string;
+  email: string;
+  date: string;
+  status: "converted" | "paid" | "pending";
+  amount: number;
+  plan: string;
+}
+
+interface ReferralData {
   code: string;
+  referralUrl: string;
   totalReferrals: number;
-  pendingReferrals: number;
-  completedReferrals: number;
-  totalRewards: number;
+  conversions: number;
+  pendingEarnings: number;
+  paidEarnings: number;
+  conversionsList: Conversion[];
 }
 
 export default function ReferralsPage() {
-  const [stats, setStats] = useState<ReferralStats | null>(null);
+  const t = useTranslations("referral");
+  const [data, setData] = useState<ReferralData | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const { track } = useAnalytics();
 
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchData = async () => {
       try {
         const res = await fetch("/api/referrals");
         if (res.ok) {
-          const data = await res.json();
-          setStats(data);
+          const json = await res.json();
+          setData(json);
         }
       } catch {
         // Silent fail
@@ -34,17 +47,16 @@ export default function ReferralsPage() {
       }
     };
 
-    fetchStats();
+    fetchData();
   }, []);
 
   const copyReferralLink = () => {
-    if (!stats?.code) return;
+    if (!data?.referralUrl) return;
     
-    const link = `${window.location.origin}/?ref=${stats.code}`;
-    navigator.clipboard.writeText(link);
+    navigator.clipboard.writeText(data.referralUrl);
     setCopied(true);
-    toast.success("Referral link copied to clipboard!");
-    track("referral_link_copied", { code: stats.code });
+    toast.success(t("linkCopied"));
+    track("referral_link_copied", { code: data.code });
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -59,11 +71,13 @@ export default function ReferralsPage() {
     );
   }
 
+  const totalEarnings = (data?.paidEarnings || 0) + (data?.pendingEarnings || 0);
+
   return (
     <div className="max-w-4xl mx-auto px-6 py-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold mb-2">Referrals</h1>
-        <p className="text-zinc-400">Invite friends and earn rewards</p>
+        <h1 className="text-2xl font-bold mb-2">{t("pageTitle")}</h1>
+        <p className="text-zinc-400">{t("pageSubtitle")}</p>
       </div>
 
       {/* Referral Code Card */}
@@ -73,65 +87,94 @@ export default function ReferralsPage() {
             <Gift className="w-5 h-5 text-violet-400" />
           </div>
           <div>
-            <h2 className="font-semibold">Your Referral Code</h2>
-            <p className="text-sm text-zinc-500">Share this link with friends</p>
+            <h2 className="font-semibold">{t("yourReferralLink")}</h2>
+            <p className="text-sm text-zinc-500">{t("shareDescription")}</p>
           </div>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="flex-1 px-4 py-3 bg-black/50 rounded-lg font-mono text-sm text-zinc-300 break-all">
-            {stats?.code 
-              ? `${typeof window !== 'undefined' ? window.location.origin : ''}/?ref=${stats.code}`
-              : "Loading..."}
+            {data?.referralUrl || t("loading")}
           </div>
           <button
             onClick={copyReferralLink}
-            disabled={!stats?.code}
+            disabled={!data?.referralUrl}
             className="flex items-center justify-center gap-2 px-4 py-3 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors rounded-lg font-medium"
           >
             {copied ? (
-              <><Check className="w-4 h-4" /> Copied!</>
+              <><Check className="w-4 h-4" /> {t("copied")}</>
             ) : (
-              <><Copy className="w-4 h-4" /> Copy Link</>
+              <><Copy className="w-4 h-4" /> {t("copyLink")}</>
             )}
           </button>
         </div>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div className="p-4 bg-white/[0.02] border border-white/5 rounded-xl">
           <div className="flex items-center gap-2 mb-2">
             <Users className="w-4 h-4 text-zinc-500" />
-            <span className="text-sm text-zinc-500">Total Referrals</span>
+            <span className="text-sm text-zinc-500">{t("totalReferrals")}</span>
           </div>
-          <p className="text-2xl font-bold">{stats?.totalReferrals || 0}</p>
+          <p className="text-2xl font-bold">{data?.totalReferrals || 0}</p>
         </div>
 
         <div className="p-4 bg-white/[0.02] border border-white/5 rounded-xl">
           <div className="flex items-center gap-2 mb-2">
             <Share2 className="w-4 h-4 text-amber-500" />
-            <span className="text-sm text-zinc-500">Pending</span>
+            <span className="text-sm text-zinc-500">{t("conversions")}</span>
           </div>
-          <p className="text-2xl font-bold">{stats?.pendingReferrals || 0}</p>
+          <p className="text-2xl font-bold">{data?.conversions || 0}</p>
         </div>
 
         <div className="p-4 bg-white/[0.02] border border-white/5 rounded-xl">
           <div className="flex items-center gap-2 mb-2">
-            <Check className="w-4 h-4 text-emerald-500" />
-            <span className="text-sm text-zinc-500">Completed</span>
+            <Clock className="w-4 h-4 text-emerald-500" />
+            <span className="text-sm text-zinc-500">{t("pendingEarnings")}</span>
           </div>
-          <p className="text-2xl font-bold">{stats?.completedReferrals || 0}</p>
+          <p className="text-2xl font-bold">${data?.pendingEarnings?.toFixed(2) || "0.00"}</p>
         </div>
 
         <div className="p-4 bg-white/[0.02] border border-white/5 rounded-xl">
           <div className="flex items-center gap-2 mb-2">
             <DollarSign className="w-4 h-4 text-violet-400" />
-            <span className="text-sm text-zinc-500">Total Rewards</span>
+            <span className="text-sm text-zinc-500">{t("totalEarnings")}</span>
           </div>
-          <p className="text-2xl font-bold">${stats?.totalRewards || 0}</p>
+          <p className="text-2xl font-bold">${totalEarnings.toFixed(2)}</p>
         </div>
       </div>
+
+      {/* Conversions List */}
+      {data?.conversionsList && data.conversionsList.length > 0 && (
+        <div className="bg-white/[0.02] border border-white/5 rounded-xl overflow-hidden">
+          <div className="px-6 py-4 border-b border-white/5">
+            <h3 className="font-semibold">{t("recentConversions")}</h3>
+          </div>
+          <div className="divide-y divide-white/5">
+            {data.conversionsList.map((conv) => (
+              <div key={conv.id} className="px-6 py-4 flex items-center justify-between">
+                <div>
+                  <p className="font-medium">{conv.email}</p>
+                  <p className="text-sm text-zinc-500">{conv.plan}</p>
+                </div>
+                <div className="text-right">
+                  <p className="font-semibold">${conv.amount.toFixed(2)}</p>
+                  <span className={`text-xs px-2 py-1 rounded-full ${
+                    conv.status === "paid" 
+                      ? "bg-emerald-500/10 text-emerald-400" 
+                      : conv.status === "converted"
+                      ? "bg-amber-500/10 text-amber-400"
+                      : "bg-zinc-500/10 text-zinc-400"
+                  }`}>
+                    {t(`status.${conv.status}`)}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
