@@ -198,6 +198,8 @@
     "contactSupport": "Contact support"
   },
   "status": {
+    "metaTitle": "System Status | SynapseForge",
+    "metaDescription": "Real-time system status and uptime information for SynapseForge services.",
     "title": "System Status",
     "subtitle": "Real-time status of SynapseForge services",
     "allSystemsOperational": "All Systems Operational",

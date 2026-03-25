@@ -2,10 +2,13 @@ import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { StatusClient } from "./StatusClient";
 
-export const metadata: Metadata = {
-  title: "System Status | SynapseForge",
-  description: "Real-time system status and uptime information for SynapseForge services.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("status");
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
 
 export default async function StatusPage() {
   const t = await getTranslations("status");

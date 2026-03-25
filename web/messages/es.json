@@ -8,6 +8,8 @@
     "contactSupport": "Contactar soporte"
   },
   "status": {
+    "metaTitle": "Estado del Sistema | SynapseForge",
+    "metaDescription": "Estado del sistema en tiempo real e información de uptime para los servicios de SynapseForge.",
     "title": "Estado del Sistema",
     "subtitle": "Estado en tiempo real de los servicios de SynapseForge",
     "allSystemsOperational": "Todos los Sistemas Operativos",

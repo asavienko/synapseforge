@@ -1816,6 +1816,8 @@
     "contactSupport": "Зв'язатися з підтримкою"
   },
   "status": {
+    "metaTitle": "Статус Системи | SynapseForge",
+    "metaDescription": "Статус системи в реальному часі та інформація про роботу сервісів SynapseForge.",
     "title": "Статус Системи",
     "subtitle": "Статус сервісів SynapseForge в реальному часі",
     "allSystemsOperational": "Всі системи працюють",
