@@ -840,7 +840,40 @@
       "previewUnsaved": "Unsaved changes — save config to test the latest version",
       "importExportTitle": "Import / Export",
       "importExportDesc": "Backup or share your configuration as JSON",
-      "importSuccess": "Configuration imported. Review and save your changes."
+      "importSuccess": "Configuration imported. Review and save your changes.",
+      "traits": {
+        "Friendly": "Friendly",
+        "Professional": "Professional",
+        "Concise": "Concise",
+        "Formal": "Formal",
+        "Casual": "Casual",
+        "Empathetic": "Empathetic"
+      },
+      "industries": {
+        "E-commerce": "E-commerce",
+        "Healthcare": "Healthcare",
+        "Finance": "Finance",
+        "Education": "Education",
+        "Technology": "Technology",
+        "Real Estate": "Real Estate",
+        "Hospitality": "Hospitality",
+        "Legal": "Legal",
+        "Marketing": "Marketing",
+        "Other": "Other"
+      },
+      "languages": {
+        "English": "English",
+        "Spanish": "Spanish",
+        "French": "French",
+        "German": "German",
+        "Portuguese": "Portuguese",
+        "Italian": "Italian",
+        "Dutch": "Dutch",
+        "Russian": "Russian",
+        "Chinese": "Chinese",
+        "Japanese": "Japanese",
+        "Arabic": "Arabic"
+      }
     },
     "apiKeys": {
       "generateTitle": "Generate new API key",

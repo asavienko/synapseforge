@@ -160,7 +160,7 @@ export function ConfigurationTab({
               {t("config.traitsLabel")} <span className="text-zinc-600 normal-case">{t("config.traitsHint")}</span>
             </label>
             <div className="flex flex-wrap gap-2">
-              {["Friendly", "Professional", "Concise", "Formal", "Casual", "Empathetic"].map((trait) => {
+              {(["Friendly", "Professional", "Concise", "Formal", "Casual", "Empathetic"] as const).map((trait) => {
                 const active = config.traits.includes(trait);
                 return (
                   <button
@@ -180,7 +180,7 @@ export function ConfigurationTab({
                         : "bg-white/5 border-white/10 text-zinc-500 hover:text-zinc-300 hover:border-white/20"
                     }`}
                   >
-                    {active && "✓ "}{trait}
+                    {active && "✓ "}{t(`config.traits.${trait}` as Parameters<typeof t>[0])}
                   </button>
                 );
               })}
@@ -235,8 +235,8 @@ export function ConfigurationTab({
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-zinc-200 focus:outline-none focus:border-violet-500 transition-colors"
               >
                 <option value="">{t("config.selectIndustry")}</option>
-                {["E-commerce", "Healthcare", "Finance", "Education", "Technology", "Real Estate", "Hospitality", "Legal", "Marketing", "Other"].map((i) => (
-                  <option key={i} value={i}>{i}</option>
+                {(["E-commerce", "Healthcare", "Finance", "Education", "Technology", "Real Estate", "Hospitality", "Legal", "Marketing", "Other"] as const).map((i) => (
+                  <option key={i} value={i}>{t(`config.industries.${i}` as Parameters<typeof t>[0])}</option>
                 ))}
               </select>
             </div>
@@ -340,8 +340,8 @@ export function ConfigurationTab({
               onChange={(e) => { setConfig((p) => ({ ...p, language: e.target.value })); setConfigDirty(true); }}
               className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-zinc-200 focus:outline-none focus:border-violet-500 transition-colors"
             >
-              {["English", "Spanish", "French", "German", "Portuguese", "Italian", "Dutch", "Russian", "Chinese", "Japanese", "Arabic"].map((lang) => (
-                <option key={lang} value={lang}>{lang}</option>
+              {(["English", "Spanish", "French", "German", "Portuguese", "Italian", "Dutch", "Russian", "Chinese", "Japanese", "Arabic"] as const).map((lang) => (
+                <option key={lang} value={lang}>{t(`config.languages.${lang}` as Parameters<typeof t>[0])}</option>
               ))}
             </select>
           </div>

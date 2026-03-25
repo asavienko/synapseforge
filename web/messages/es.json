@@ -843,7 +843,40 @@
       "previewUnsaved": "Cambios sin guardar — guarda la configuración para probar la última versión",
       "importExportTitle": "Importar / Exportar",
       "importExportDesc": "Haz una copia de seguridad o comparte tu configuración como JSON",
-      "importSuccess": "Configuración importada. Revisa y guarda los cambios."
+      "importSuccess": "Configuración importada. Revisa y guarda los cambios.",
+      "traits": {
+        "Friendly": "Amigable",
+        "Professional": "Profesional",
+        "Concise": "Conciso",
+        "Formal": "Formal",
+        "Casual": "Informal",
+        "Empathetic": "Empático"
+      },
+      "industries": {
+        "E-commerce": "E-commerce",
+        "Healthcare": "Salud",
+        "Finance": "Finanzas",
+        "Education": "Educación",
+        "Technology": "Tecnología",
+        "Real Estate": "Inmobiliaria",
+        "Hospitality": "Hostelería",
+        "Legal": "Legal",
+        "Marketing": "Marketing",
+        "Other": "Otro"
+      },
+      "languages": {
+        "English": "Inglés",
+        "Spanish": "Español",
+        "French": "Francés",
+        "German": "Alemán",
+        "Portuguese": "Portugués",
+        "Italian": "Italiano",
+        "Dutch": "Neerlandés",
+        "Russian": "Ruso",
+        "Chinese": "Chino",
+        "Japanese": "Japonés",
+        "Arabic": "Árabe"
+      }
     },
     "apiKeys": {
       "generateTitle": "Generar nueva clave API",
