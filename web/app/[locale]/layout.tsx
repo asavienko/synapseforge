@@ -24,8 +24,22 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export async function generateMetadata(): Promise<Metadata> {
+const BASE_URL = "https://openhelixai.com";
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
   const t = await getTranslations("siteMetadata");
+
+  // Build hreflang alternates for all locale variants
+  const localeUrlMap: Record<string, string> = {
+    "x-default": BASE_URL,
+    en: BASE_URL,
+    es: `${BASE_URL}/es`,
+    ru: `${BASE_URL}/ru`,
+    uk: `${BASE_URL}/uk`,
+  };
+  const canonicalUrl = locale === "en" ? BASE_URL : `${BASE_URL}/${locale}`;
+
   return {
     title: {
       default: t("defaultTitle"),
@@ -34,6 +48,11 @@ export async function generateMetadata(): Promise<Metadata> {
     description: t("description"),
     keywords: ["AI agent", "Telegram bot", "WhatsApp bot", "customer support AI", "AI chatbot for business", "managed AI agent"],
     manifest: "/manifest.json",
+    metadataBase: new URL(BASE_URL),
+    alternates: {
+      canonical: canonicalUrl,
+      languages: localeUrlMap,
+    },
     appleWebApp: {
       capable: true,
       statusBarStyle: "black-translucent",
@@ -44,7 +63,7 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: "OpenHelix AI",
       title: t("ogTitle"),
       description: t("ogDescription"),
-      url: "https://openhelixai.com",
+      url: canonicalUrl,
       images: [{ url: "/api/og", width: 1200, height: 630, alt: "OpenHelix AI — AI Agent for Telegram & WhatsApp" }],
     },
     twitter: {
