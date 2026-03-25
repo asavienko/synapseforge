@@ -1847,6 +1847,12 @@
     "managerErrorDesc": "Щось пішло не так під час завантаження порталу менеджера.",
     "adminPanelError": "Помилка панелі адміністратора",
     "adminErrorDesc": "Щось пішло не так під час завантаження панелі адміністратора.",
+    "dashboardError": "Щось пішло не так",
+    "dashboardErrorDesc": "Виникла помилка під час завантаження dashboard. Будь ласка, спробуйте ще раз.",
+    "rootError": "Щось пішло не так",
+    "rootErrorDesc": "Виникла непередбачена помилка. Будь ласка, спробуйте ще раз.",
+    "goHome": "На головну",
+    "goToDashboard": "Перейти до dashboard",
     "tryAgain": "Спробувати знову",
     "backToInstances": "Назад до екземплярів",
     "backToDashboard": "Назад до dashboard"

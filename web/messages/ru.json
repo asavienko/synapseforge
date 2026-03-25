@@ -1847,6 +1847,12 @@
     "managerErrorDesc": "Что-то пошло не так при загрузке портала менеджера.",
     "adminPanelError": "Ошибка панели администратора",
     "adminErrorDesc": "Что-то пошло не так при загрузке панели администратора.",
+    "dashboardError": "Что-то пошло не так",
+    "dashboardErrorDesc": "Произошла ошибка при загрузке dashboard. Пожалуйста, попробуйте снова.",
+    "rootError": "Что-то пошло не так",
+    "rootErrorDesc": "Произошла непредвиденная ошибка. Пожалуйста, попробуйте снова.",
+    "goHome": "На главную",
+    "goToDashboard": "Перейти в dashboard",
     "tryAgain": "Попробовать снова",
     "backToInstances": "Назад к экземплярам",
     "backToDashboard": "Назад в dashboard"

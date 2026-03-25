@@ -1847,6 +1847,12 @@
     "managerErrorDesc": "Algo salió mal al cargar el portal de manager.",
     "adminPanelError": "Error del Panel de Admin",
     "adminErrorDesc": "Algo salió mal al cargar el panel de administración.",
+    "dashboardError": "Algo salió mal",
+    "dashboardErrorDesc": "Encontramos un error al cargar el dashboard. Por favor, inténtalo de nuevo.",
+    "rootError": "Algo salió mal",
+    "rootErrorDesc": "Encontramos un error inesperado. Por favor, inténtalo de nuevo.",
+    "goHome": "Ir al inicio",
+    "goToDashboard": "Ir al dashboard",
     "tryAgain": "Intentar de nuevo",
     "backToInstances": "Volver a instancias",
     "backToDashboard": "Volver al dashboard"
