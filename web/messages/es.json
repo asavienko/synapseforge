@@ -1816,6 +1816,12 @@
     "save": "Guardar Cambios",
     "saved": "Cambios guardados"
   },
+  "errors": {
+    "instanceLoadError": "Error al cargar la instancia",
+    "instanceErrorDesc": "No pudimos cargar esta instancia de IA. Puede haber sido eliminada o no tienes acceso.",
+    "tryAgain": "Intentar de nuevo",
+    "backToInstances": "Volver a instancias"
+  },
   "newInstance": "Nueva Instancia",
   "trustedBy": "Con la confianza de empresas de todo el mundo"
 }

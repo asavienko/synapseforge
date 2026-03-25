@@ -1797,6 +1797,12 @@
     "name6": "Michael Torres",
     "role6": "Operations Director, Ecommerce"
   },
+  "errors": {
+    "instanceLoadError": "Failed to load instance",
+    "instanceErrorDesc": "We couldn't load this AI instance. It may have been deleted or you don't have access.",
+    "tryAgain": "Try again",
+    "backToInstances": "Back to instances"
+  },
   "newInstance": "New Instance",
   "trustedBy": "Trusted by businesses worldwide"
 }
