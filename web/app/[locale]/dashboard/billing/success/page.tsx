@@ -1,5 +1,14 @@
 import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
+import { Metadata } from "next";
 import { SuccessContent } from "./SuccessContent";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("dashboard.billing.successPage");
+  return {
+    title: t("welcomePro"),
+  };
+}
 
 export default function UpgradeSuccessPage() {
   return (
