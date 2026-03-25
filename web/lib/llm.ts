@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Shared LLM routing logic.
  * Used by both the internal /api/instances/[id]/chat route
@@ -253,7 +252,10 @@ export async function callLLM(
   if (configOverride) config = { ...config, ...configOverride };
 
   const credResult = await resolveCredentials(instanceId, config);
-  if (!credResult.ok) return credResult.error;
+  if (!credResult.ok) {
+    const { error } = credResult as { ok: false; error: LLMError };
+    return error;
+  }
 
   const { resolvedProvider, resolvedModelId, resolvedApiKey } = credResult;
 
