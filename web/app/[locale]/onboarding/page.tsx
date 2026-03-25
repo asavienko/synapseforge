@@ -385,7 +385,7 @@ export default function OnboardingPage() {
               disabled={!business.trim() || !industry}
               className="mt-6 w-full flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 transition-colors py-3 rounded-xl text-sm font-semibold text-white"
             >
-              Continue <ArrowRight className="w-4 h-4" />
+              {t("continue")} <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         )}
@@ -398,8 +398,8 @@ export default function OnboardingPage() {
                 <Sparkles className="w-5 h-5 text-violet-400" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-white">What do you need AI for?</h2>
-                <p className="text-zinc-500 text-sm">Pick your primary use case and describe your needs</p>
+                <h2 className="text-lg font-bold text-white">{t("step2Title")}</h2>
+                <p className="text-zinc-500 text-sm">{t("step2Subtitle")}</p>
               </div>
             </div>
             
@@ -440,13 +440,13 @@ export default function OnboardingPage() {
             </div>
 
             <div className="flex gap-3 mt-6">
-              <button onClick={() => setStep(1)} className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors py-3 rounded-xl text-sm font-semibold text-zinc-300">Back</button>
+              <button onClick={() => setStep(1)} className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors py-3 rounded-xl text-sm font-semibold text-zinc-300">{t("back")}</button>
               <button
                 onClick={() => { analytics.onboardingStep(2); setStep(3); }}
                 disabled={!useCase}
                 className="flex-1 flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 transition-colors py-3 rounded-xl text-sm font-semibold text-white"
               >
-                Continue <ArrowRight className="w-4 h-4" />
+                {t("continue")} <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -460,8 +460,8 @@ export default function OnboardingPage() {
                 <MessageSquare className="w-5 h-5 text-violet-400" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-white">Connect channels</h2>
-                <p className="text-zinc-500 text-sm">Where should your AI live? Select all that apply</p>
+                <h2 className="text-lg font-bold text-white">{t("step3Title")}</h2>
+                <p className="text-zinc-500 text-sm">{t("step3Subtitle")}</p>
               </div>
             </div>
 
@@ -526,12 +526,12 @@ export default function OnboardingPage() {
             </div>
 
             <div className="flex gap-3 mt-6">
-              <button onClick={() => setStep(2)} className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors py-3 rounded-xl text-sm font-semibold text-zinc-300">Back</button>
+              <button onClick={() => setStep(2)} className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors py-3 rounded-xl text-sm font-semibold text-zinc-300">{t("back")}</button>
               <button
                 onClick={() => { analytics.onboardingStep(3); setStep(4); }}
                 className="flex-1 flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors py-3 rounded-xl text-sm font-semibold text-white"
               >
-                Continue <ArrowRight className="w-4 h-4" />
+                {t("continue")} <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -545,8 +545,8 @@ export default function OnboardingPage() {
                 <Key className="w-5 h-5 text-violet-400" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-white">Add your AI provider key</h2>
-                <p className="text-zinc-500 text-sm">Powers your deployed agent</p>
+                <h2 className="text-lg font-bold text-white">{t("step4Title")}</h2>
+                <p className="text-zinc-500 text-sm">{t("step4Subtitle")}</p>
               </div>
             </div>
 
@@ -634,14 +634,14 @@ export default function OnboardingPage() {
             )}
 
             <div className="flex gap-3 mt-6">
-              <button onClick={() => setStep(3)} className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors py-3 rounded-xl text-sm font-semibold text-zinc-300">Back</button>
+              <button onClick={() => setStep(3)} className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors py-3 rounded-xl text-sm font-semibold text-zinc-300">{t("back")}</button>
               <button
                 onClick={validateAndFinish}
                 disabled={llmValidating || (llmProvider ? !llmKey.trim() : false)}
                 className="flex-1 flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 transition-colors py-3 rounded-xl text-sm font-semibold text-white"
               >
                 {llmValidating ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                {llmValidating ? "Validating…" : loading ? "Saving…" : "Finish setup"}
+                {llmValidating ? t("validating") : loading ? t("saving") : t("finishSetup")}
               </button>
             </div>
             <button
@@ -649,7 +649,7 @@ export default function OnboardingPage() {
               disabled={loading || llmValidating}
               className="w-full mt-3 text-sm text-violet-400 hover:text-violet-300 transition-colors py-2.5 rounded-xl border border-violet-500/20 hover:border-violet-500/40 bg-violet-500/5 hover:bg-violet-500/10 disabled:opacity-40"
             >
-              Try 20 free sandbox messages first →
+              {t("trySandbox")} →
             </button>
           </div>
         )}
