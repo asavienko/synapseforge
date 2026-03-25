@@ -28,6 +28,13 @@ export function FadeInView({
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
+    // In Cypress / test environment — show immediately, no animations
+    if (typeof window !== "undefined" && "Cypress" in window) {
+      setPrefersReducedMotion(true);
+      setIsVisible(true);
+      return;
+    }
+
     // Respect prefers-reduced-motion — show immediately
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (mq.matches) {

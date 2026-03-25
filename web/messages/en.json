@@ -1602,7 +1602,7 @@
     }
   },
   "how": {
-    "title": "Everything AI, handled.",
+    "title": "Live in three steps.",
     "subtitle": "Three steps from signup to live agent.",
     "step1title": "Add your AI provider key",
     "step1desc": "Paste your OpenAI, Anthropic, or OpenRouter API key. Stored encrypted, used only for your agent.",

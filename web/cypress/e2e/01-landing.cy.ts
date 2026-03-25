@@ -58,6 +58,8 @@ describe("01 · Landing Page", () => {
   });
 
   it("about section shows content", () => {
+    // Section is below fold — scroll to it first to trigger FadeInView
+    cy.get("#about").scrollIntoView();
     cy.contains("Who we are.").should("be.visible");
     cy.contains("Time to first live agent").should("be.visible");
     cy.snap("01-landing-07-about");

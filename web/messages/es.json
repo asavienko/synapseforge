@@ -1485,7 +1485,7 @@
     }
   },
   "how": {
-    "title": "En funcionamiento en minutos",
+    "title": "En marcha en tres pasos.",
     "subtitle": "Tres pasos desde el registro hasta el agente activo.",
     "step1title": "Añade tu clave de IA",
     "step1desc": "Pega tu clave de OpenAI, Anthropic o OpenRouter. Almacenada cifrada, usada solo para tu agente.",
