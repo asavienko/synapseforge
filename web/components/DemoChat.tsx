@@ -173,17 +173,17 @@ export function DemoChat() {
   const showStarterPrompts = messages.length === 0 && !loading;
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#0f0f14] overflow-hidden shadow-2xl">
+    <div className="rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#0f0f14] overflow-hidden shadow-2xl">
       {/* Header */}
-      <div className="flex items-center gap-3 px-5 py-4 border-b border-white/10 bg-white/[0.02]">
+      <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-200 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.02]">
         <div className="w-10 h-10 rounded-full bg-violet-600 flex items-center justify-center shrink-0">
           <Bot className="w-5 h-5 text-white" />
         </div>
         <div>
-          <div className="font-semibold text-white">OpenHelix AI Demo Agent</div>
+          <div className="font-semibold text-gray-900 dark:text-white">OpenHelix AI Demo Agent</div>
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs text-zinc-400">Online and ready to chat</span>
+            <span className="text-xs text-gray-500 dark:text-zinc-400">Online and ready to chat</span>
           </div>
         </div>
       </div>
@@ -270,7 +270,7 @@ export function DemoChat() {
               key={prompt}
               onClick={() => handleStarterPrompt(prompt)}
               disabled={loading}
-              className="text-xs text-zinc-300 bg-white/[0.05] hover:bg-white/[0.08] border border-white/10 hover:border-violet-500/30 px-3 py-1.5 rounded-full transition-colors disabled:opacity-50"
+              className="text-xs text-gray-600 dark:text-zinc-300 bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/[0.05] dark:hover:bg-white/[0.08] border border-gray-200 dark:border-white/10 hover:border-violet-500/30 px-3 py-1.5 rounded-full transition-colors disabled:opacity-50"
             >
               {prompt}
             </button>
@@ -294,8 +294,8 @@ export function DemoChat() {
 
           {/* Secondary CTA — lead capture */}
           <div className="relative">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10" /></div>
-            <div className="relative flex justify-center"><span className="bg-[#0a0a0f] px-2 text-xs text-zinc-500">or get a personalised setup</span></div>
+            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200 dark:border-white/10" /></div>
+            <div className="relative flex justify-center"><span className="bg-gray-50 dark:bg-[#0a0a0f] px-2 text-xs text-gray-400 dark:text-zinc-500">or get a personalised setup</span></div>
           </div>
 
           {leadSubmitted ? (
@@ -327,12 +327,12 @@ export function DemoChat() {
                 value={leadEmail}
                 onChange={(e) => setLeadEmail(e.target.value)}
                 placeholder="your@email.com"
-                className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500/50 min-w-0"
+                className="flex-1 bg-black/5 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500/50 min-w-0"
               />
               <button
                 type="submit"
                 disabled={leadSubmitting}
-                className="px-3 py-2 bg-white/10 hover:bg-white/20 border border-white/10 text-white rounded-lg text-sm font-medium transition-colors whitespace-nowrap disabled:opacity-50"
+                className="px-3 py-2 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 border border-gray-200 dark:border-white/10 text-white rounded-lg text-sm font-medium transition-colors whitespace-nowrap disabled:opacity-50"
               >
                 {leadSubmitting ? "..." : "Notify me"}
               </button>
@@ -345,7 +345,7 @@ export function DemoChat() {
       {!rateLimited && (
         <form
           onSubmit={handleSubmit}
-          className="flex items-center gap-3 px-5 py-4 border-t border-white/10"
+          className="flex items-center gap-3 px-5 py-4 border-t border-gray-200 dark:border-white/10"
         >
           <input
             ref={inputRef}
@@ -354,7 +354,7 @@ export function DemoChat() {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
             disabled={loading}
-            className="flex-1 bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 disabled:opacity-50 transition-colors"
+            className="flex-1 bg-black/[0.03] dark:bg-white/[0.05] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 disabled:opacity-50 transition-colors"
           />
           <button
             type="submit"

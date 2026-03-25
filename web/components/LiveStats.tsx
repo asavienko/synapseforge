@@ -63,12 +63,12 @@ export function LiveStats() {
     <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
       {items.map((item) => (
         <div key={item.label} className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center">
-            <item.icon className="w-5 h-5 text-violet-400" />
+          <div className="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+            <item.icon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
           </div>
           <div>
-            <div className="text-2xl font-bold text-white">{item.value}</div>
-            <div className="text-sm text-zinc-500">{item.label}</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-white">{item.value}</div>
+            <div className="text-sm text-gray-500 dark:text-zinc-500">{item.label}</div>
           </div>
         </div>
       ))}

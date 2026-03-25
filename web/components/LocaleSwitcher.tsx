@@ -36,7 +36,7 @@ export function LocaleSwitcher() {
     <div className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 text-sm text-zinc-400 hover:text-white transition-colors px-2 py-1 rounded-lg hover:bg-white/5"
+        className="flex items-center gap-1.5 text-sm text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 rounded-lg hover:bg-black/5 dark:hover:bg-white/5"
       >
         <Globe className="w-4 h-4" />
         <span className="font-medium">{LOCALE_FLAGS[locale]} {LOCALE_LABELS[locale]}</span>
@@ -45,7 +45,7 @@ export function LocaleSwitcher() {
       {open && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-full mt-1 bg-[#111118] border border-white/10 rounded-xl shadow-xl z-20 overflow-hidden min-w-[120px]">
+          <div className="absolute right-0 top-full mt-1 bg-white dark:bg-[#111118] border border-gray-200 dark:border-white/10 rounded-xl shadow-xl z-20 overflow-hidden min-w-[120px]">
             {routing.locales.map((l) => (
               <button
                 key={l}
@@ -54,7 +54,7 @@ export function LocaleSwitcher() {
                   "flex items-center gap-2 w-full px-4 py-2.5 text-sm transition-colors text-left",
                   l === locale
                     ? "bg-violet-600/20 text-violet-300"
-                    : "text-zinc-400 hover:bg-white/5 hover:text-white"
+                    : "text-gray-600 dark:text-zinc-400 hover:bg-black/5 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white"
                 )}
               >
                 <span>{LOCALE_FLAGS[l]}</span>

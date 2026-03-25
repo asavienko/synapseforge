@@ -122,30 +122,30 @@ export function LandingDemoChat() {
       {/* ── Expanded: chat window ────────────────────────────────────────── */}
       {open && (
         <div
-          className="fixed bottom-6 right-6 z-50 flex flex-col bg-zinc-900 border border-white/10 rounded-2xl shadow-2xl shadow-black/60 overflow-hidden w-[90vw] sm:w-80 max-w-[calc(100vw-32px)]"
+          className="fixed bottom-6 right-6 z-50 flex flex-col bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl shadow-black/60 overflow-hidden w-[90vw] sm:w-80 max-w-[calc(100vw-32px)]"
           style={{
             maxHeight: "min(24rem, calc(100vh - 6rem))",
           }}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-zinc-900/80 shrink-0">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-white/10 bg-white/80 dark:bg-zinc-900/80 shrink-0">
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-full bg-violet-600 flex items-center justify-center">
                 <Bot className="w-4 h-4 text-white" />
               </div>
               <div>
-                <span className="text-sm font-semibold text-white">
+                <span className="text-sm font-semibold text-gray-900 dark:text-white">
                   {t("title")}
                 </span>
                 <div className="flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-xs text-zinc-400">Online</span>
+                  <span className="text-xs text-gray-500 dark:text-zinc-400">Online</span>
                 </div>
               </div>
             </div>
             <button
               onClick={() => setOpen(false)}
-              className="p-1.5 rounded-lg hover:bg-white/10 text-zinc-400 hover:text-white transition-colors"
+              className="p-1.5 rounded-lg hover:bg-black/5 hover:dark:bg-white/10 text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white transition-colors"
               aria-label="Close chat"
             >
               <X className="w-4 h-4" />
@@ -160,7 +160,7 @@ export function LandingDemoChat() {
                 <div className="w-6 h-6 rounded-full bg-violet-600 flex items-center justify-center shrink-0 mt-0.5">
                   <Bot className="w-3.5 h-3.5 text-white" />
                 </div>
-                <div className="bg-zinc-800 text-zinc-100 text-sm rounded-2xl rounded-tl-sm px-3 py-2 max-w-[85%]">
+                <div className="bg-gray-100 dark:bg-zinc-800 text-gray-800 dark:text-zinc-100 text-sm rounded-2xl rounded-tl-sm px-3 py-2 max-w-[85%]">
                   Hi! I&apos;m OpenHelix AI&apos;s demo agent. Ask me anything!
                 </div>
               </div>
@@ -181,7 +181,7 @@ export function LandingDemoChat() {
                   className={`text-sm rounded-2xl px-3 py-2 max-w-[85%] break-words ${
                     msg.role === "user"
                       ? "bg-violet-600 text-white rounded-tr-sm"
-                      : "bg-zinc-800 text-zinc-100 rounded-tl-sm"
+                      : "bg-gray-100 dark:bg-zinc-800 text-gray-800 dark:text-zinc-100 rounded-tl-sm"
                   }`}
                 >
                   {msg.content}
@@ -195,7 +195,7 @@ export function LandingDemoChat() {
                 <div className="w-6 h-6 rounded-full bg-violet-600 flex items-center justify-center shrink-0 mt-0.5">
                   <Bot className="w-3.5 h-3.5 text-white" />
                 </div>
-                <div className="bg-zinc-800 rounded-2xl rounded-tl-sm px-3 py-2.5 flex items-center gap-1">
+                <div className="bg-gray-100 dark:bg-zinc-800 rounded-2xl rounded-tl-sm px-3 py-2.5 flex items-center gap-1">
                   <span
                     className="w-1.5 h-1.5 rounded-full bg-zinc-400 animate-bounce"
                     style={{ animationDelay: "0ms" }}
@@ -238,7 +238,7 @@ export function LandingDemoChat() {
                 <button
                   key={prompt}
                   onClick={() => handleQuickPrompt(prompt)}
-                  className="text-left text-xs text-zinc-300 bg-zinc-800 hover:bg-zinc-700 border border-white/5 hover:border-white/10 px-3 py-2 rounded-lg transition-colors"
+                  className="text-left text-xs text-gray-600 dark:text-zinc-300 bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 hover:dark:bg-zinc-700 border border-gray-100 dark:border-white/5 hover:border-gray-200 hover:dark:border-white/10 px-3 py-2 rounded-lg transition-colors"
                 >
                   {prompt}
                 </button>
@@ -250,7 +250,7 @@ export function LandingDemoChat() {
           {!limitReached && (
             <form
               onSubmit={handleSubmit}
-              className="flex items-center gap-2 px-3 py-3 border-t border-white/10 shrink-0"
+              className="flex items-center gap-2 px-3 py-3 border-t border-gray-200 dark:border-white/10 shrink-0"
             >
               <input
                 ref={inputRef}
@@ -259,12 +259,12 @@ export function LandingDemoChat() {
                 onChange={(e) => setInput(e.target.value)}
                 placeholder={t("placeholder")}
                 disabled={loading}
-                className="flex-1 bg-zinc-800 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 disabled:opacity-50 transition-colors min-w-0"
+                className="flex-1 bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-500 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 disabled:opacity-50 transition-colors min-w-0"
               />
               <button
                 type="submit"
                 disabled={loading || !input.trim()}
-                className="w-8 h-8 flex items-center justify-center bg-violet-600 hover:bg-violet-500 disabled:bg-zinc-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors shrink-0"
+                className="w-8 h-8 flex items-center justify-center bg-violet-600 hover:bg-violet-500 disabled:bg-gray-200 disabled:dark:bg-zinc-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors shrink-0"
                 aria-label="Send"
               >
                 <Send className="w-3.5 h-3.5" />
