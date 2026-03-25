@@ -30,9 +30,10 @@ import { OnboardingToast } from "@/components/OnboardingToast";
 import { OnboardingChecklist } from "@/components/OnboardingChecklist";
 import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Dashboard",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("dashboard.overview");
+  return { title: t("metaTitle") };
+}
 
 export default async function DashboardPage() {
   const session = await auth();

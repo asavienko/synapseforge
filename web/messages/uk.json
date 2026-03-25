@@ -327,6 +327,7 @@
     "greetingSubtitle": "Ось що відбувається з вашими екземплярами ШІ.",
     "instances": {
       "metaTitle": "Мої екземпляри | Dashboard",
+      "instanceDetailMetaTitle": "Деталі екземпляра | Dashboard",
       "title": "AI-інстанції",
       "subtitle": "Керуйте своїми розгорнутими AI-агентами.",
       "newInstance": "Нова інстанція",
@@ -448,6 +449,7 @@
       "passwordUpdated": "Пароль оновлено!"
     },
     "overview": {
+      "metaTitle": "Dashboard",
       "greeting": "Радий бачити вас, {name} 👋",
       "subtitle": "Ось що відбувається з вашими AI-інстанціями.",
       "instancesLabel": "Інстанції",

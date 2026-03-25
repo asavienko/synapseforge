@@ -354,6 +354,7 @@
     "greetingSubtitle": "Here's what's happening with your AI instances.",
     "instances": {
       "metaTitle": "My Instances | Dashboard",
+      "instanceDetailMetaTitle": "Instance Details | Dashboard",
       "title": "AI Instances",
       "subtitle": "Manage your deployed AI agents.",
       "newInstance": "New Instance",
@@ -475,6 +476,7 @@
       "passwordUpdated": "Password updated!"
     },
     "overview": {
+      "metaTitle": "Dashboard",
       "greeting": "Good to see you, {name} 👋",
       "subtitle": "Here's what's happening with your AI instances.",
       "instancesLabel": "Instances",

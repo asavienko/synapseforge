@@ -1,8 +1,10 @@
 import { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
-export const metadata: Metadata = {
-  title: "Instance Details | Dashboard",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("dashboard.instances");
+  return { title: t("instanceDetailMetaTitle") };
+}
 
 export default function InstanceLayout({
   children,

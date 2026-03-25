@@ -357,6 +357,7 @@
     "greetingSubtitle": "Aquí está lo que está pasando con tus instancias de IA.",
     "instances": {
       "metaTitle": "Mis Instancias | Dashboard",
+      "instanceDetailMetaTitle": "Detalles de Instancia | Dashboard",
       "title": "Instancias de IA",
       "subtitle": "Gestiona tus agentes de IA desplegados.",
       "newInstance": "Nueva instancia",
@@ -478,6 +479,7 @@
       "passwordUpdated": "¡Contraseña actualizada!"
     },
     "overview": {
+      "metaTitle": "Dashboard",
       "greeting": "Qué bueno verte, {name} 👋",
       "subtitle": "Esto es lo que está pasando con tus instancias de IA.",
       "instancesLabel": "Instancias",
