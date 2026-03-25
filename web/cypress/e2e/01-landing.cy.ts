@@ -13,11 +13,12 @@ describe("01 · Landing Page", () => {
 
   it("shows CTA buttons in hero", () => {
     cy.contains("Start for free").should("be.visible");
-    cy.contains("Try Demo").should("be.visible");
+    cy.contains("See what we build").should("be.visible");
     cy.snap("01-landing-01b-hero-cta");
   });
 
   it("shows trust signals bar", () => {
+    cy.contains("12+").should("be.visible");
     cy.contains("24/7").should("be.visible");
     cy.snap("01-landing-01c-trust");
   });
@@ -36,7 +37,7 @@ describe("01 · Landing Page", () => {
   });
 
   it("How it works section shows steps", () => {
-    cy.contains("Everything AI, handled.").should("be.visible");
+    cy.contains("Live in three steps.").should("be.visible");
     cy.contains("Add your AI provider key").should("be.visible");
     cy.contains("Deploy to the cloud").should("be.visible");
     cy.contains("Go live on your channels").should("be.visible");
