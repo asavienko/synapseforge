@@ -17,8 +17,8 @@ export function ROICalculator() {
   const monthlyCostSaved = monthlyHoursSaved * hourlyRate;
   const yearlySavings = monthlyCostSaved * 12;
 
-  // SynapseForge cost (Pro plan)
-  const synapseforgeCost = 89;
+  // OpenHelix AI cost (Pro plan)
+  const synapseforgeCost = 49;
   const netMonthlySavings = monthlyCostSaved - synapseforgeCost;
   const roi = (netMonthlySavings / synapseforgeCost) * 100;
 
@@ -145,7 +145,7 @@ export function ROICalculator() {
         <div className="bg-violet-500/10 border border-violet-500/20 rounded-xl p-4 mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-sm text-violet-300 mb-1">Net savings with SynapseForge</div>
+              <div className="text-sm text-violet-300 mb-1">Net savings with OpenHelix AI</div>
               <div className="text-3xl font-bold text-gray-900 dark:text-white">
                 ${Math.round(netMonthlySavings).toLocaleString()}/mo
               </div>
@@ -158,7 +158,7 @@ export function ROICalculator() {
             </div>
           </div>
           <div className="text-xs text-gray-400 dark:text-zinc-500 mt-2">
-            Based on Pro plan ($89/mo) vs. handling messages manually
+            Based on Pro plan ($49/mo) vs. handling messages manually
           </div>
         </div>
 
