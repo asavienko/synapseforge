@@ -1,11 +1,14 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import createIntlMiddleware from 'next-intl/middleware';
+import { routing } from './i18n/routing';
 
-// Minimal middleware - just pass through everything
-export default function middleware(req: NextRequest) {
-  return NextResponse.next();
+const intlMiddleware = createIntlMiddleware(routing);
+
+export default function middleware(req: any) {
+  return intlMiddleware(req);
 }
 
 export const config = {
-  matcher: [],
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)',
+  ],
 };

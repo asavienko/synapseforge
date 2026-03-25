@@ -97,6 +97,7 @@
     "cypress-multi-reporters": "^2.0.5",
     "eslint": "^10.1.0",
     "eslint-config-next": "^16.2.1",
+    "eslint-plugin-cypress": "^6.2.1",
     "mocha-junit-reporter": "^2.2.1",
     "postcss": "^8.5",
     "tailwindcss": "^4.2.0",
