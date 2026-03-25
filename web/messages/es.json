@@ -1775,6 +1775,7 @@
     }
   },
   "setupKey": {
+    "metaTitle": "Configurar Clave | Dashboard",
     "title": "Obtén tu clave de IA en 3 pasos",
     "subtitle": "Tarda unos 2 minutos. Solo lo harás una vez.",
     "step1": {

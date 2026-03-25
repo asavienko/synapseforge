@@ -12,9 +12,12 @@ import { SetupKeyForm } from "@/components/SetupKeyForm";
 import { Suspense } from "react";
 import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Setup Key | Dashboard",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("setupKey");
+  return {
+    title: t("metaTitle"),
+  };
+}
 
 export default async function SetupKeyPage() {
   const t = await getTranslations("setupKey");

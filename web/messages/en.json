@@ -1782,6 +1782,7 @@
     }
   },
   "setupKey": {
+    "metaTitle": "Setup Key | Dashboard",
     "title": "Get your AI key in 3 steps",
     "subtitle": "Takes about 2 minutes. You'll only do this once.",
     "step1": {
