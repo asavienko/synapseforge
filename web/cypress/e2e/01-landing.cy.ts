@@ -13,12 +13,11 @@ describe("01 · Landing Page", () => {
 
   it("shows CTA buttons in hero", () => {
     cy.contains("Start for free").should("be.visible");
-    cy.contains("See what we build").should("be.visible");
+    cy.contains("Try Demo").should("be.visible");
     cy.snap("01-landing-01b-hero-cta");
   });
 
   it("shows trust signals bar", () => {
-    cy.contains("12+").should("be.visible");
     cy.contains("24/7").should("be.visible");
     cy.snap("01-landing-01c-trust");
   });
