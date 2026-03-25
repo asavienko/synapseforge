@@ -1,12 +1,16 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { BillingClient } from "./BillingClient";
 import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Billing | Dashboard",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("dashboard.billing");
+  return {
+    title: t("title"),
+  };
+}
 
 export default async function BillingPage() {
   const session = await auth();
