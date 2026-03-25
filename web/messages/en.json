@@ -53,6 +53,8 @@
     "subtitle": "Join teams that use OpenHelix AI to run AI agents 24/7 — without managing infrastructure."
   },
   "pricing": {
+    "metaTitle": "Pricing | OpenHelix AI",
+    "metaDescription": "Start free with 2,000 messages. Upgrade to Starter ($29/mo) or Growth ($79/mo) for more messages and instances. Enterprise plans with dedicated managers available.",
     "title": "Simple, transparent pricing",
     "subtitle": "Start free. Upgrade when you need more.",
     "popular": "Most popular",
