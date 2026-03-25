@@ -238,7 +238,7 @@ export default async function LandingPage() {
           {[
             { num: tl("howItWorks.step1.num"), Icon: MessagesIcon, title: tl("howItWorks.step1.title"), desc: tl("howItWorks.step1.desc") },
             { num: tl("howItWorks.step2.num"), Icon: SettingsIcon, title: tl("howItWorks.step2.title"), desc: tl("howItWorks.step2.desc") },
-            { num: tl("howItWorks.step3.num"), Icon: RocketLaunchIcon, title: tl("howItWorks.step3.title"), desc: tl("howItWorks.step3.title") },
+            { num: tl("howItWorks.step3.num"), Icon: RocketLaunchIcon, title: tl("howItWorks.step3.title"), desc: tl("howItWorks.step3.desc") },
           ].map((step, i) => (
             <FadeInView key={i} direction="up" delay={i * 100}>
               <div className="relative p-6 rounded-xl border border-gray-100 dark:border-white/[0.06] h-full">
