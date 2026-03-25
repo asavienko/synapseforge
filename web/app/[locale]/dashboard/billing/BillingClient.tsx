@@ -104,10 +104,10 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
     }
   }, [success, cancelled, plan, track]);
 
-  // Check if current plan is managed
+  // Check if current plan is managed (old managed_ prefix plans)
   const isManagedPlan = plan.startsWith("managed_");
-  // Check if current plan is legacy
-  const isLegacyPlan = ["pro", "enterprise"].includes(plan);
+  // Check if on an old self-service plan that's no longer offered
+  const isLegacyPlan = ["starter_10k", "growth_30k", "scale_100k", "business_200k"].includes(plan);
 
   async function handleUpgrade(planKey: string) {
     setBillingError(null);
