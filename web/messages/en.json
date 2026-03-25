@@ -503,6 +503,7 @@
       "referralDesc": "Share your referral link and earn commission on every signup that converts."
     },
     "messages": {
+      "metaTitle": "Messages | Dashboard",
       "title": "Messages",
       "subtitle": "Chat with your dedicated manager.",
       "noManagerTitle": "Manager not assigned yet",

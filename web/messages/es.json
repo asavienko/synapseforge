@@ -506,6 +506,7 @@
       "referralDesc": "Comparte tu enlace de referido y gana comisión por cada registro que se convierte."
     },
     "messages": {
+      "metaTitle": "Mensajes | Dashboard",
       "title": "Mensajes",
       "subtitle": "Chatea con tu manager dedicado.",
       "noManagerTitle": "Manager aún no asignado",
