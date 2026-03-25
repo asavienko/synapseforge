@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { User, Shield, Zap, Key } from "lucide-react";
+import Link from "next/link";
 import { PLANS } from "@/lib/utils";
 import { ProfileForm } from "@/components/ProfileForm";
 import { DashboardUpgrade } from "@/components/DashboardUpgrade";
@@ -15,9 +16,9 @@ export default async function SettingsPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h1 className="text-2xl font-semibold mb-4">Please sign in</h1>
-          <a href="/sign-in" className="text-blue-600 hover:underline">
+          <Link href="/sign-in" className="text-blue-600 hover:underline">
             Go to sign in →
-          </a>
+          </Link>
         </div>
       </div>
     );
