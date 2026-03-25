@@ -22,24 +22,18 @@ import {
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
 
-export const metadata: Metadata = {
-  title: "AI Agent Templates | OpenHelix AI",
-  description:
-    "Browse 10+ pre-built AI agent templates. Deploy customer support bots, sales assistants, content creators, and more in minutes. No coding required.",
-  keywords: [
-    "AI agent templates",
-    "chatbot templates",
-    "customer support bot",
-    "sales assistant AI",
-    "AI automation",
-  ],
-  openGraph: {
-    title: "AI Agent Templates | OpenHelix AI",
-    description:
-      "Deploy pre-built AI agents in minutes. Browse our template gallery.",
-    type: "website",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("templatesPage");
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+    openGraph: {
+      title: t("metaTitle"),
+      description: t("metaDescription"),
+      type: "website",
+    },
+  };
+}
 
 export default async function TemplatesPage({
   searchParams,

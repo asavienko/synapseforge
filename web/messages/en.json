@@ -1726,6 +1726,14 @@
     "save": "Save Changes",
     "saved": "Changes saved"
   },
+  "apiDocs": {
+    "metaTitle": "API Documentation | OpenHelix AI",
+    "metaDescription": "Learn how to integrate with the OpenHelix AI API. Send messages, manage instances, and build custom integrations."
+  },
+  "templatesPage": {
+    "metaTitle": "AI Agent Templates | OpenHelix AI",
+    "metaDescription": "Ready-to-deploy AI agent templates for customer support, sales, FAQ bots, and more. Deploy in minutes."
+  },
   "sandbox": {
     "usedFreeMessages": "You've used your 20 free messages",
     "upgradeDesc": "Add your own OpenAI, Anthropic, or OpenRouter key to unlock unlimited conversations instantly — no call needed. Or book a setup call if you want us to handle everything.",

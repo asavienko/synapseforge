@@ -3,10 +3,10 @@ import { getTranslations } from "next-intl/server";
 import { Metadata } from "next";
 import { Zap, ArrowLeft, Code, Terminal, Copy, Check } from "lucide-react";
 
-export const metadata: Metadata = {
-  title: "API Documentation | OpenHelix AI",
-  description: "Learn how to integrate with the OpenHelix AI API. Send messages, manage instances, and build custom integrations.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("apiDocs");
+  return { title: t("metaTitle"), description: t("metaDescription") };
+}
 
 const endpoints = [
   {

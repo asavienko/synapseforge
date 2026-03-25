@@ -1719,6 +1719,14 @@
     "save": "Guardar",
     "testConnection": "Probar conexión"
   },
+  "apiDocs": {
+    "metaTitle": "Documentación API | OpenHelix AI",
+    "metaDescription": "Aprende cómo integrar la API de OpenHelix AI. Envía mensajes, gestiona instancias y crea integraciones personalizadas."
+  },
+  "templatesPage": {
+    "metaTitle": "Plantillas de Agentes IA | OpenHelix AI",
+    "metaDescription": "Plantillas de agentes IA listas para desplegar: soporte al cliente, ventas, bots de FAQ y más. Despliega en minutos."
+  },
   "sandbox": {
     "usedFreeMessages": "Has usado tus 20 mensajes gratuitos",
     "upgradeDesc": "Añade tu propia clave de OpenAI, Anthropic u OpenRouter para desbloquear conversaciones ilimitadas al instante, sin necesidad de llamada. O reserva una llamada si quieres que lo gestionemos todo.",
