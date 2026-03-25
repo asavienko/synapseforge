@@ -617,7 +617,17 @@
     "successDesc": "We'll get back to you within 24 hours.",
     "successReset": "Send another message",
     "fallback": "Prefer email?",
-    "backHome": "Back to home"
+    "backHome": "Back to home",
+    "formTitle": "Send us a message",
+    "subjectSelect": "Select a subject...",
+    "subjectGeneral": "General Inquiry",
+    "subjectSales": "Sales / Enterprise",
+    "subjectSupport": "Technical Support",
+    "subjectPartnership": "Partnership",
+    "errorGeneric": "Something went wrong. Please try again.",
+    "privacyNote": "By submitting, you agree to our {privacy} and {terms}.",
+    "privacyLink": "Privacy Policy",
+    "termsLink": "Terms of Service"
   },
   "verifyEmail": {
     "loading": "Loading…",

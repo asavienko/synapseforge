@@ -662,7 +662,7 @@ export default async function LandingPage() {
               return (
                 <FadeInView key={plan} direction="up" delay={i * 100}>
                   <div className={`rounded-xl p-6 flex flex-col relative h-full bg-white dark:bg-white/[0.02] ${highlighted ? "border-2 border-gray-900 dark:border-white/30 shadow-lg order-first sm:order-none" : "border border-gray-200/60 dark:border-white/[0.06]"}`}>
-                    {highlighted && <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-[11px] font-semibold rounded-full">Most Popular</div>}
+                    {highlighted && <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-[11px] font-semibold rounded-full">{t("pricing.popular")}</div>}
                     <div className="font-semibold text-lg mb-1">{t(`pricing.${plan}.name` as Parameters<typeof t>[0])}</div>
                     <div className="flex items-baseline gap-1 mb-1">
                       <span className="text-3xl font-bold">{t(`pricing.${plan}.price` as Parameters<typeof t>[0])}</span>
