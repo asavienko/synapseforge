@@ -25,14 +25,26 @@ export function FadeInView({
 }: FadeInViewProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
+    // Respect prefers-reduced-motion — show immediately
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (mq.matches) {
+      setPrefersReducedMotion(true);
+      setIsVisible(true);
+      return;
+    }
+
+    const el = ref.current;
+    if (!el) return;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          if (once && ref.current) {
-            observer.unobserve(ref.current);
+          if (once) {
+            observer.unobserve(el);
           }
         } else if (!once) {
           setIsVisible(false);
@@ -41,9 +53,14 @@ export function FadeInView({
       { threshold }
     );
 
-    if (ref.current) observer.observe(ref.current);
+    observer.observe(el);
     return () => observer.disconnect();
   }, [threshold, once]);
+
+  // When reduced motion is preferred, render without animation wrapper styles
+  if (prefersReducedMotion) {
+    return <div className={className}>{children}</div>;
+  }
 
   return (
     <div
@@ -51,7 +68,6 @@ export function FadeInView({
       className={`transition-all ${className}`}
       style={{
         opacity: isVisible ? 1 : 0,
-        transform: isVisible ? "translate(0, 0)" : undefined,
         filter: blur && !isVisible ? "blur(10px)" : "blur(0px)",
         transitionDuration: `${duration}ms`,
         transitionDelay: `${delay}ms`,
