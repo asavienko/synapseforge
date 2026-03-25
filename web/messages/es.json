@@ -1843,8 +1843,11 @@
   "errors": {
     "instanceLoadError": "Error al cargar la instancia",
     "instanceErrorDesc": "No pudimos cargar esta instancia de IA. Puede haber sido eliminada o no tienes acceso.",
+    "managerPortalError": "Error del Portal de Manager",
+    "managerErrorDesc": "Algo salió mal al cargar el portal de manager.",
     "tryAgain": "Intentar de nuevo",
-    "backToInstances": "Volver a instancias"
+    "backToInstances": "Volver a instancias",
+    "backToDashboard": "Volver al dashboard"
   },
   "newInstance": "Nueva Instancia",
   "trustedBy": "Con la confianza de empresas de todo el mundo"

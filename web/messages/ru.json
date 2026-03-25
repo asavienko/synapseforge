@@ -1843,8 +1843,11 @@
   "errors": {
     "instanceLoadError": "Не удалось загрузить экземпляр",
     "instanceErrorDesc": "Мы не смогли загрузить этот экземпляр ИИ. Возможно, он был удален или у вас нет доступа.",
+    "managerPortalError": "Ошибка портала менеджера",
+    "managerErrorDesc": "Что-то пошло не так при загрузке портала менеджера.",
     "tryAgain": "Попробовать снова",
-    "backToInstances": "Назад к экземплярам"
+    "backToInstances": "Назад к экземплярам",
+    "backToDashboard": "Назад в dashboard"
   },
   "newInstance": "Новый экземпляр",
   "trustedBy": "Нам доверяют компании по всему миру"

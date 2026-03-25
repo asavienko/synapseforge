@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { AlertCircle, RefreshCw, Home } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 interface ManagerErrorProps {
   error: Error & { digest?: string };
@@ -10,6 +11,8 @@ interface ManagerErrorProps {
 }
 
 export default function ManagerError({ error, reset }: ManagerErrorProps) {
+  const t = useTranslations("errors");
+
   useEffect(() => {
     console.error("[Manager Error]", error);
   }, [error]);
@@ -21,9 +24,9 @@ export default function ManagerError({ error, reset }: ManagerErrorProps) {
           <AlertCircle className="w-8 h-8 text-red-400" />
         </div>
 
-        <h1 className="text-xl font-bold text-white mb-2">Manager Portal Error</h1>
+        <h1 className="text-xl font-bold text-white mb-2">{t("managerPortalError", { defaultValue: "Manager Portal Error" })}</h1>
         <p className="text-zinc-400 text-sm mb-6">
-          Something went wrong loading the manager portal.
+          {t("managerErrorDesc", { defaultValue: "Something went wrong loading the manager portal." })}
         </p>
 
         {process.env.NODE_ENV === "development" && (
@@ -38,14 +41,14 @@ export default function ManagerError({ error, reset }: ManagerErrorProps) {
             className="inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-6 py-3 rounded-lg font-semibold text-white"
           >
             <RefreshCw className="w-4 h-4" />
-            Try again
+            {t("tryAgain", { defaultValue: "Try again" })}
           </button>
           <Link
             href="/dashboard"
             className="inline-flex items-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] transition-colors px-6 py-3 rounded-lg font-semibold text-zinc-300"
           >
             <Home className="w-4 h-4" />
-            Back to dashboard
+            {t("backToDashboard", { defaultValue: "Back to dashboard" })}
           </Link>
         </div>
       </div>

@@ -1824,8 +1824,11 @@
   "errors": {
     "instanceLoadError": "Failed to load instance",
     "instanceErrorDesc": "We couldn't load this AI instance. It may have been deleted or you don't have access.",
+    "managerPortalError": "Manager Portal Error",
+    "managerErrorDesc": "Something went wrong loading the manager portal.",
     "tryAgain": "Try again",
-    "backToInstances": "Back to instances"
+    "backToInstances": "Back to instances",
+    "backToDashboard": "Back to dashboard"
   },
   "newInstance": "New Instance",
   "trustedBy": "Trusted by businesses worldwide"
