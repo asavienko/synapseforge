@@ -10,8 +10,6 @@ import {
   Mail,
   AlertTriangle,
   Sparkles,
-  Bot,
-  Users,
 } from "lucide-react";
 import {
   RocketLaunchIcon,
@@ -27,95 +25,24 @@ import { cn } from "@/lib/utils";
 
 import { useAnalytics } from "@/components/AnalyticsProvider";
 
-// Self-service plans
-const SELF_SERVICE_PLANS = [
+// Plans — matches landing page and pricing page
+const PLANS = [
   {
     key: "free",
-    messages: 2000,
-    instances: 1,
-    supportHours: 0,
-    features: ["1 AI instance", "2,000 messages/mo", "Community support"],
+    price: "$0",
+    features: ["1 AI agent instance", "Community support", "Telegram & WhatsApp integration"],
     highlight: false,
   },
-  {
-    key: "starter_10k",
-    messages: 10000,
-    instances: 3,
-    supportHours: 0,
-    price: "$50",
-    features: ["Up to 3 AI instances", "10,000 messages/mo", "AI Manager only", "Telegram & WhatsApp"],
-    highlight: false,
-  },
-  {
-    key: "growth_30k",
-    messages: 30000,
-    instances: 3,
-    supportHours: 0,
-    price: "$100",
-    features: ["Up to 3 AI instances", "30,000 messages/mo", "AI Manager only", "Telegram & WhatsApp"],
-    highlight: true,
-  },
-  {
-    key: "scale_100k",
-    messages: 100000,
-    instances: 5,
-    supportHours: 0,
-    price: "$200",
-    features: ["Up to 5 AI instances", "100,000 messages/mo", "AI Manager only", "Priority API"],
-    highlight: false,
-  },
-  {
-    key: "business_200k",
-    messages: 200000,
-    instances: 10,
-    supportHours: 0,
-    price: "$300",
-    features: ["Up to 10 AI instances", "200,000 messages/mo", "AI Manager only", "Priority API"],
-    highlight: false,
-  },
-];
-
-// Managed plans
-const MANAGED_PLANS = [
-  {
-    key: "managed_starter",
-    messages: 10000,
-    instances: 3,
-    supportHours: 4,
-    price: "$300",
-    features: ["Up to 3 AI instances", "10,000 messages/mo", "4h support/mo", "Dedicated manager"],
-    highlight: false,
-  },
-  {
-    key: "managed_growth",
-    messages: 30000,
-    instances: 3,
-    supportHours: 8,
-    price: "$500",
-    features: ["Up to 3 AI instances", "30,000 messages/mo", "8h support/mo", "Weekly check-ins"],
-    highlight: true,
-  },
-  {
-    key: "managed_scale",
-    messages: 100000,
-    instances: 5,
-    supportHours: 18,
-    price: "$1,000",
-    features: ["Up to 5 AI instances", "100,000 messages/mo", "18h support/mo", "Team training"],
-    highlight: false,
-  },
-];
-
-// Legacy plans for backward compatibility
-const LEGACY_PLANS = [
   {
     key: "pro",
-    features: ["Up to 3 AI instances", "Dedicated human manager", "24h response time", "Weekly check-ins"],
+    price: "$49",
+    features: ["Up to 3 AI instances", "Dedicated human manager", "24h response time", "Custom model config", "Telegram & WhatsApp integration", "99% uptime SLA"],
     highlight: true,
   },
   {
     key: "enterprise",
-    features: ["Unlimited AI instances", "Dedicated manager team", "4h response SLA", "Team training"],
+    price: "$299",
+    features: ["Unlimited AI instances", "Dedicated manager team", "4h response SLA", "Custom integrations & webhooks", "White-label option", "Team onboarding & training"],
     highlight: false,
   },
 ];
@@ -149,8 +76,6 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
   const [billingError, setBillingError] = useState<string | null>(null);
   const [showContactUpgrade, setShowContactUpgrade] = useState(false);
   const [contactUpgradeReason, setContactUpgradeReason] = useState<"stripe" | "managed" | null>(null);
-  const [activeTab, setActiveTab] = useState<"self-service" | "managed">("self-service");
-
   // Cancellation survey state
   const [showCancelSurvey, setShowCancelSurvey] = useState(false);
   const [cancelReason, setCancelReason] = useState<CancelReasonKey | "">("");
@@ -262,7 +187,7 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
     return name;
   };
 
-  const formatNumber = (num: number) => num.toLocaleString("en-US");
+
 
   return (
     <div className="pt-14 md:pt-0 p-4 md:p-8 max-w-6xl">
@@ -376,185 +301,77 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
         </div>
       </div>
 
-      {/* Plan tabs */}
-      <div className="flex gap-4 mb-6">
-        <button
-          onClick={() => setActiveTab("self-service")}
-          className={cn(
-            "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors",
-            activeTab === "self-service"
-              ? "bg-violet-600 text-white"
-              : "bg-white/5 text-zinc-400 hover:text-white"
-          )}
-        >
-          <Bot className="w-4 h-4" />
-          Self-Service
-        </button>
-        <button
-          onClick={() => setActiveTab("managed")}
-          className={cn(
-            "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors",
-            activeTab === "managed"
-              ? "bg-emerald-600 text-white"
-              : "bg-white/5 text-zinc-400 hover:text-white"
-          )}
-        >
-          <Users className="w-4 h-4" />
-          Managed Plans
-        </button>
+      {/* Plan cards — matches landing page and pricing page */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {PLANS.map((p) => {
+          const isCurrent = p.key === plan;
+          const planName = getPlanName(p.key);
+
+          return (
+            <div
+              key={p.key}
+              className={cn(
+                "relative rounded-2xl p-5 border transition-all flex flex-col",
+                p.highlight
+                  ? "border-violet-500/50 bg-violet-600/5"
+                  : "border-white/10 bg-white/[0.02]"
+              )}
+            >
+              {p.highlight && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                  <span className="bg-violet-600 text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
+                    <Sparkles className="w-3 h-3" /> {tb("mostPopular")}
+                  </span>
+                </div>
+              )}
+
+              <div className="mb-4">
+                <div className="text-sm font-semibold text-zinc-300 mb-1">{planName}</div>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-2xl font-bold text-white">{p.price}</span>
+                  <span className="text-zinc-500 text-sm">/mo</span>
+                </div>
+              </div>
+
+              <ul className="space-y-2 mb-6 flex-1">
+                {p.features.map((f) => (
+                  <li key={f} className="flex items-start gap-2 text-xs text-zinc-400">
+                    <CheckIcon className="w-3.5 h-3.5 text-violet-400 shrink-0 mt-0.5" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+
+              {isCurrent ? (
+                <div className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-white/10 text-sm text-zinc-500 font-medium">
+                  <ShieldCheckIcon className="w-4 h-4" /> {tb("currentPlan")}
+                </div>
+              ) : p.key === "free" ? (
+                <button
+                  onClick={() => setShowCancelSurvey(true)}
+                  className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-white/10 text-sm text-zinc-600 font-medium hover:text-zinc-400 hover:border-white/20 transition-colors"
+                >
+                  {tb("downgradeViaSupport")}
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleUpgrade(p.key)}
+                  disabled={!!loading}
+                  className={cn(
+                    "w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-colors disabled:opacity-50",
+                    p.highlight
+                      ? "bg-violet-600 hover:bg-violet-500 text-white"
+                      : "bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-200"
+                  )}
+                >
+                  {loading === p.key ? <LoadingIcon className="w-4 h-4" /> : null}
+                  {p.key === "enterprise" ? <><Mail className="w-4 h-4" /> Contact Sales</> : "Upgrade"}
+                </button>
+              )}
+            </div>
+          );
+        })}
       </div>
-
-      {/* Plan cards */}
-      {activeTab === "self-service" ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-          {SELF_SERVICE_PLANS.map((p) => {
-            const isCurrent = p.key === plan;
-            const planName = getPlanName(p.key);
-            const planPrice = p.price || "$0";
-
-            return (
-              <div
-                key={p.key}
-                className={cn(
-                  "relative rounded-2xl p-5 border transition-all",
-                  p.highlight
-                    ? "border-violet-500/50 bg-violet-600/5"
-                    : "border-white/10 bg-white/[0.02]"
-                )}
-              >
-                {p.highlight && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="bg-violet-600 text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
-                      <Sparkles className="w-3 h-3" /> {tb("mostPopular")}
-                    </span>
-                  </div>
-                )}
-
-                <div className="mb-4">
-                  <div className="text-sm font-semibold text-zinc-300 mb-1">{planName}</div>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-2xl font-bold text-white">{planPrice}</span>
-                    <span className="text-zinc-500 text-sm">/mo</span>
-                  </div>
-                </div>
-
-                {/* Key metrics */}
-                <div className="space-y-1 mb-4 text-xs text-zinc-400">
-                  <div>{formatNumber(p.messages)} messages/mo</div>
-                  <div>{p.instances} {p.instances === 1 ? "instance" : "instances"}</div>
-                </div>
-
-                <ul className="space-y-2 mb-6">
-                  {p.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2 text-xs text-zinc-400">
-                      <CheckIcon className="w-3.5 h-3.5 text-violet-400 shrink-0 mt-0.5" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-
-                {isCurrent ? (
-                  <div className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-white/10 text-sm text-zinc-500 font-medium">
-                    <ShieldCheckIcon className="w-4 h-4" /> {tb("currentPlan")}
-                  </div>
-                ) : p.key === "free" ? (
-                  <button
-                    onClick={() => setShowCancelSurvey(true)}
-                    className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-white/10 text-sm text-zinc-600 font-medium hover:text-zinc-400 hover:border-white/20 transition-colors"
-                  >
-                    {tb("downgradeViaSupport")}
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => handleUpgrade(p.key)}
-                    disabled={!!loading}
-                    className={cn(
-                      "w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-colors disabled:opacity-50",
-                      p.highlight
-                        ? "bg-violet-600 hover:bg-violet-500 text-white"
-                        : "bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-200"
-                    )}
-                  >
-                    {loading === p.key ? <LoadingIcon className="w-4 h-4" /> : null}
-                    Upgrade
-                  </button>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-3xl">
-          {MANAGED_PLANS.map((p) => {
-            const isCurrent = p.key === plan;
-            const planName = getPlanName(p.key);
-
-            return (
-              <div
-                key={p.key}
-                className={cn(
-                  "relative rounded-2xl p-5 border transition-all",
-                  p.highlight
-                    ? "border-emerald-500/50 bg-emerald-600/5"
-                    : "border-white/10 bg-white/[0.02]"
-                )}
-              >
-                {p.highlight && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="bg-emerald-600 text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
-                      <Sparkles className="w-3 h-3" /> {tb("mostPopular")}
-                    </span>
-                  </div>
-                )}
-
-                <div className="mb-4">
-                  <div className="text-sm font-semibold text-zinc-300 mb-1">{planName}</div>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-2xl font-bold text-white">{p.price}</span>
-                    <span className="text-zinc-500 text-sm">/mo</span>
-                  </div>
-                </div>
-
-                {/* Key metrics */}
-                <div className="space-y-1 mb-4 text-xs">
-                  <div className="text-zinc-400">{formatNumber(p.messages)} messages/mo</div>
-                  <div className="text-zinc-400">{p.instances} {p.instances === 1 ? "instance" : "instances"}</div>
-                  <div className="text-emerald-400 font-medium">{p.supportHours} hours support/mo</div>
-                </div>
-
-                <ul className="space-y-2 mb-6">
-                  {p.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2 text-xs text-zinc-400">
-                      <CheckIcon className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-
-                {isCurrent ? (
-                  <div className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-white/10 text-sm text-zinc-500 font-medium">
-                    <ShieldCheckIcon className="w-4 h-4" /> {tb("currentPlan")}
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => handleUpgrade(p.key)}
-                    disabled={!!loading}
-                    className={cn(
-                      "w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-colors disabled:opacity-50",
-                      p.highlight
-                        ? "bg-emerald-600 hover:bg-emerald-500 text-white"
-                        : "bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-200"
-                    )}
-                  >
-                    {loading === p.key ? <LoadingIcon className="w-4 h-4" /> : <Mail className="w-4 h-4" />}
-                    Contact Sales
-                  </button>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
 
       {/* Support Add-on info */}
       <div className="mt-8 p-4 rounded-xl bg-white/[0.02] border border-white/10">
