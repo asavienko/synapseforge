@@ -173,8 +173,7 @@ export function DeployTab({
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function QRCard({ instanceId, t }: { instanceId: string; t: any }) {
+function QRCard({ instanceId, t }: { instanceId: string; t: ReturnType<typeof useTranslations> }) {
   const [copied, setCopied] = useState(false);
   const origin = typeof window !== "undefined" ? window.location.origin : "https://openhelixai.com";
   const chatUrl = `${origin}/chat/${instanceId}`;
@@ -235,8 +234,7 @@ function QRCard({ instanceId, t }: { instanceId: string; t: any }) {
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function EmbedCard({ instanceId, t }: { instanceId: string; t: any }) {
+function EmbedCard({ instanceId, t }: { instanceId: string; t: ReturnType<typeof useTranslations> }) {
   const [copied, setCopied] = useState<"link" | "iframe" | "script" | "api" | null>(null);
   const [tab, setTab] = useState<"link" | "embed" | "api">("link");
   const [apiKey, setApiKey] = useState<string | null>(null);

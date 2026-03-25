@@ -8,7 +8,7 @@ import { prisma } from "@/lib/prisma";
 import { decrypt } from "@/lib/crypto";
 import { createOpenAI } from "@ai-sdk/openai";
 import { createAnthropic } from "@ai-sdk/anthropic";
-import { streamText, StreamTextResult, ToolSet } from "ai";
+import { streamText, StreamTextResult, ToolSet, LanguageModel } from "ai";
 
 export interface ChatMessage {
   role: "user" | "assistant" | "system";
@@ -315,8 +315,7 @@ export function streamLLM({
     .filter((m) => m.role !== "system")
     .map((m) => ({ role: m.role as "user" | "assistant", content: m.content }));
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let model: any;
+  let model: LanguageModel;
 
   if (provider === "openai") {
     const openaiProvider = createOpenAI({ apiKey });
