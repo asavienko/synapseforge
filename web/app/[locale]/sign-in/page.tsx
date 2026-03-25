@@ -68,7 +68,7 @@ export default function SignInPage() {
           {registered && (
             <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3 mb-6">
               <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-              <p className="text-sm text-emerald-300">Account created! Sign in below.</p>
+              <p className="text-sm text-emerald-300">{t("accountCreated")}</p>
             </div>
           )}
 
@@ -83,7 +83,7 @@ export default function SignInPage() {
               <div className="w-full border-t border-white/10" />
             </div>
             <div className="relative flex justify-center">
-              <span className="bg-[#050507] px-3 text-white/25 text-xs">or continue with email</span>
+              <span className="bg-[#050507] px-3 text-white/25 text-xs">{t("orEmail")}</span>
             </div>
           </div>
 
@@ -147,13 +147,13 @@ export default function SignInPage() {
         {/* Footer links */}
         <div className="flex justify-center gap-4 mt-6">
           <Link href="/" className="text-xs text-white/30 hover:text-white/50 transition-colors">
-            Home
+            {t("footerHome")}
           </Link>
           <Link href="/privacy" className="text-xs text-white/30 hover:text-white/50 transition-colors">
-            Privacy
+            {t("footerPrivacy")}
           </Link>
           <Link href="/terms" className="text-xs text-white/30 hover:text-white/50 transition-colors">
-            Terms
+            {t("footerTerms")}
           </Link>
         </div>
       </div>

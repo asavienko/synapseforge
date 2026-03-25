@@ -197,7 +197,12 @@
       "submit": "Увійти",
       "noAccount": "Немає акаунту?",
       "signUpLink": "Зареєструватись",
-      "error": "Невірний email або пароль."
+      "error": "Невірний email або пароль.",
+      "accountCreated": "Акаунт створено! Увійдіть нижче.",
+      "orEmail": "або продовжити через email",
+      "footerHome": "Головна",
+      "footerPrivacy": "Конфіденційність",
+      "footerTerms": "Умови"
     },
     "signUp": {
       "title": "Створіть акаунт",
@@ -225,7 +230,8 @@
       "signInInstead": "Увійти?",
       "creatingAccount": "Створення акаунта...",
       "successTitle": "Акаунт створено!",
-      "successMessage": "Перенаправлення до налаштування..."
+      "successMessage": "Перенаправлення до налаштування...",
+      "orEmail": "або зареєструйтесь через email"
     },
     "forgotPassword": {
       "title": "Забули пароль?",

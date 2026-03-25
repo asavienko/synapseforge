@@ -217,7 +217,12 @@
       "submit": "Sign in",
       "noAccount": "Don't have an account?",
       "signUpLink": "Sign up",
-      "error": "Invalid email or password."
+      "error": "Invalid email or password.",
+      "accountCreated": "Account created! Sign in below.",
+      "orEmail": "or continue with email",
+      "footerHome": "Home",
+      "footerPrivacy": "Privacy",
+      "footerTerms": "Terms"
     },
     "signUp": {
       "title": "Create your account",
@@ -245,7 +250,8 @@
       },
       "invalidEmail": "Please enter a valid email address",
       "alreadyRegistered": "That email is already registered",
-      "signInInstead": "Sign in instead?"
+      "signInInstead": "Sign in instead?",
+      "orEmail": "or sign up with email"
     },
     "forgotPassword": {
       "title": "Forgot your password?",

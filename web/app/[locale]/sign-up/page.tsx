@@ -177,7 +177,7 @@ export default function SignUpPage() {
               <div className="w-full border-t border-white/10" />
             </div>
             <div className="relative flex justify-center">
-              <span className="bg-[#050507] px-3 text-white/25 text-xs">or sign up with email</span>
+              <span className="bg-[#050507] px-3 text-white/25 text-xs">{t("orEmail")}</span>
             </div>
           </div>
 

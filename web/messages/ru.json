@@ -197,7 +197,12 @@
       "submit": "Войти",
       "noAccount": "Нет аккаунта?",
       "signUpLink": "Зарегистрироваться",
-      "error": "Неверный email или пароль."
+      "error": "Неверный email или пароль.",
+      "accountCreated": "Аккаунт создан! Войдите ниже.",
+      "orEmail": "или продолжить через email",
+      "footerHome": "Главная",
+      "footerPrivacy": "Политика",
+      "footerTerms": "Условия"
     },
     "signUp": {
       "title": "Создайте аккаунт",
@@ -225,7 +230,8 @@
       "signInInstead": "Войти?",
       "creatingAccount": "Создание аккаунта...",
       "successTitle": "Аккаунт создан!",
-      "successMessage": "Перенаправление в настройку..."
+      "successMessage": "Перенаправление в настройку...",
+      "orEmail": "или зарегистрируйтесь через email"
     },
     "forgotPassword": {
       "title": "Забыли пароль?",

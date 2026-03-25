@@ -213,7 +213,12 @@
       "submit": "Iniciar sesión",
       "noAccount": "¿No tienes cuenta?",
       "signUpLink": "Regístrate",
-      "error": "Email o contraseña incorrectos."
+      "error": "Email o contraseña incorrectos.",
+      "accountCreated": "¡Cuenta creada! Inicia sesión a continuación.",
+      "orEmail": "o continúa con email",
+      "footerHome": "Inicio",
+      "footerPrivacy": "Privacidad",
+      "footerTerms": "Términos"
     },
     "signUp": {
       "title": "Crea tu cuenta",
@@ -241,7 +246,8 @@
       "signInInstead": "¿Iniciar sesión?",
       "creatingAccount": "Creando cuenta...",
       "successTitle": "¡Cuenta creada!",
-      "successMessage": "Redirigiendo a la configuración inicial..."
+      "successMessage": "Redirigiendo a la configuración inicial...",
+      "orEmail": "o regístrate con email"
     },
     "forgotPassword": {
       "title": "¿Olvidaste tu contraseña?",
