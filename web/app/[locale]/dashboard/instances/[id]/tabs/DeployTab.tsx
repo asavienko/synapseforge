@@ -72,7 +72,7 @@ export function DeployTab({
               </div>
               <div>
                 <h2 className="text-lg font-semibold text-white mb-1">Go live in 3 steps</h2>
-                <p className="text-sm text-zinc-400">Connect your agent to Telegram — the fastest way to start handling real conversations.</p>
+                <p className="text-sm text-zinc-400">{t("deploy.tgConnectDesc")}</p>
               </div>
             </div>
 
@@ -80,27 +80,27 @@ export function DeployTab({
               <div className="flex items-start gap-4 p-4 rounded-xl bg-zinc-800/30 border border-white/5">
                 <div className="w-8 h-8 rounded-full bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-sm font-bold text-violet-400 shrink-0">1</div>
                 <div className="flex-1">
-                  <h3 className="text-sm font-semibold text-white mb-2">Create your Telegram bot</h3>
+                  <h3 className="text-sm font-semibold text-white mb-2">{t("deploy.tgSetupTitle")}</h3>
                   <ul className="space-y-1.5 text-sm text-zinc-400">
-                    <li>Open Telegram, search for <span className="text-sky-400">@BotFather</span></li>
+                    <li>{t("deploy.tgStep1a")} <span className="text-sky-400">@BotFather</span></li>
                     <li>Send: <code className="text-zinc-300 bg-zinc-800 px-1.5 py-0.5 rounded">/newbot</code></li>
-                    <li>Choose a name and username</li>
-                    <li>BotFather gives you a token</li>
+                    <li>{t("deploy.tgStep1b")}</li>
+                    <li>{t("deploy.tgStep1c")}</li>
                   </ul>
-                  <p className="text-xs text-zinc-500 mt-2">Copy that token.</p>
+                  <p className="text-xs text-zinc-500 mt-2">{t("deploy.tgStep1hint")}</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-4 p-4 rounded-xl bg-zinc-800/30 border border-white/5">
                 <div className="w-8 h-8 rounded-full bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-sm font-bold text-violet-400 shrink-0">2</div>
                 <div className="flex-1">
-                  <h3 className="text-sm font-semibold text-white mb-2">Paste the token</h3>
+                  <h3 className="text-sm font-semibold text-white mb-2">{t("deploy.tgStep2Title")}</h3>
                   <button
                     onClick={onGoToCredentials}
                     disabled={credsLoading}
                     className="flex items-center gap-2 text-xs font-semibold px-4 py-2.5 bg-sky-600 hover:bg-sky-500 disabled:opacity-50 transition-colors text-white rounded-lg"
                   >
-                    Add Telegram Bot →
+                    {t("deploy.tgAddBtn")}
                   </button>
                 </div>
               </div>
@@ -108,8 +108,8 @@ export function DeployTab({
               <div className="flex items-start gap-4 p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
                 <div className="w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-sm font-bold text-emerald-400 shrink-0">✓</div>
                 <div className="flex-1">
-                  <h3 className="text-sm font-semibold text-emerald-300 mb-1">Done</h3>
-                  <p className="text-sm text-zinc-400">Your agent goes live instantly.</p>
+                  <h3 className="text-sm font-semibold text-emerald-300 mb-1">{t("deploy.tgDoneTitle")}</h3>
+                  <p className="text-sm text-zinc-400">{t("deploy.tgDoneDesc")}</p>
                 </div>
               </div>
             </div>
@@ -127,8 +127,8 @@ export function DeployTab({
               <span className="text-xl">🎉</span>
             </div>
             <div className="flex-1">
-              <h2 className="text-sm font-semibold text-emerald-300">Agent is live</h2>
-              <p className="text-xs text-zinc-400">Connected to: {activeChannels.filter(ch => ch !== t("deploy.channelWidget")).join(", ")}</p>
+              <h2 className="text-sm font-semibold text-emerald-300">{t("deploy.agentLive")}</h2>
+              <p className="text-xs text-zinc-400">{t("deploy.connectedTo")} {activeChannels.filter(ch => ch !== t("deploy.channelWidget")).join(", ")}</p>
             </div>
             <span className="text-xs px-3 py-1.5 rounded-full font-medium bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
               {t("deploy.liveStatus")}
@@ -148,7 +148,7 @@ export function DeployTab({
               </div>
               {hasTelegram ? (
                 <div>
-                  <p className="text-sm text-zinc-400">Bot connected</p>
+                  <p className="text-sm text-zinc-400">{t("deploy.botConnected")}</p>
                   {instance.telegramBotUsername && (
                     <p className="text-xs text-zinc-500 mt-1">@{instance.telegramBotUsername}</p>
                   )}
@@ -157,7 +157,7 @@ export function DeployTab({
                 <button
                   onClick={onGoToCredentials}
                   className="w-full text-xs text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 px-3 py-2 rounded-lg transition-colors"
-                >Connect →</button>
+                >{t("deploy.connectBtn")}</button>
               )}
             </div>
 
@@ -275,9 +275,9 @@ function EmbedCard({ instanceId, t }: { instanceId: string; t: ReturnType<typeof
       <div className="p-5 space-y-4">
         <div className="flex gap-2">
           {([
-            { key: "link", label: "Direct Link" },
-            { key: "embed", label: "Embed Code" },
-            { key: "api", label: "API" },
+            { key: "link", label: t("deploy.embedTabLink") },
+            { key: "embed", label: t("deploy.embedTabEmbed") },
+            { key: "api", label: t("deploy.embedTabApi") },
           ] as const).map(({ key, label }) => (
             <button
               key={key}
@@ -295,7 +295,7 @@ function EmbedCard({ instanceId, t }: { instanceId: string; t: ReturnType<typeof
 
         {tab === "link" && (
           <div className="space-y-3">
-            <p className="text-xs text-zinc-400">Share this link with anyone to let them chat directly:</p>
+            <p className="text-xs text-zinc-400">{t("deploy.embedLinkDesc")}</p>
             <div className="relative">
               <div className="bg-black/40 border border-white/10 rounded-xl p-4 text-xs text-zinc-300 font-mono overflow-x-auto">{directLink}</div>
               <button
@@ -303,7 +303,7 @@ function EmbedCard({ instanceId, t }: { instanceId: string; t: ReturnType<typeof
                 className="absolute top-3 right-3 flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-2.5 py-1.5 rounded-lg transition-colors"
               >
                 {copied === "link" ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                {copied === "link" ? "Copied!" : "Copy"}
+                {copied === "link" ? t("deploy.copied") : t("deploy.copy")}
               </button>
             </div>
           </div>
@@ -317,21 +317,21 @@ function EmbedCard({ instanceId, t }: { instanceId: string; t: ReturnType<typeof
               className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-2.5 py-1.5 rounded-lg transition-colors"
             >
               {copied === "script" ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-              {copied === "script" ? "Copied!" : "Copy Code"}
+              {copied === "script" ? t("deploy.copied") : t("deploy.copyCode")}
             </button>
           </div>
         )}
 
         {tab === "api" && (
           <div className="space-y-3">
-            <p className="text-xs text-zinc-400">Use the API to integrate with your backend:</p>
+            <p className="text-xs text-zinc-400">{t("deploy.embedApiDesc")}</p>
             <pre className="bg-black/40 border border-white/10 rounded-xl p-4 text-xs text-zinc-300 font-mono overflow-x-auto whitespace-pre leading-relaxed">{apiSnippet}</pre>
             <button
               onClick={() => handleCopy(apiSnippet, "api")}
               className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-2.5 py-1.5 rounded-lg transition-colors"
             >
               {copied === "api" ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-              {copied === "api" ? "Copied!" : "Copy"}
+              {copied === "api" ? t("deploy.copied") : t("deploy.copy")}
             </button>
           </div>
         )}
@@ -434,7 +434,7 @@ function WidgetCustomizer({ instanceId, t }: { instanceId: string; t: (key: stri
             className="mt-3 flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-2.5 py-1.5 rounded-lg transition-colors"
           >
             {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-            {copied ? "Copied!" : "Copy Code"}
+            {copied ? t("deploy.copied") : t("deploy.copyCode")}
           </button>
         </div>
 
