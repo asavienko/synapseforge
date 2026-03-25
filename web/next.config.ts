@@ -1,11 +1,5 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  outputFileTracingIncludes: {
-    "/api/**/*": [
-      "./node_modules/.prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node",
-    ],
-  },
-};
+const nextConfig: NextConfig = {};
 
 export default nextConfig;
