@@ -2016,5 +2016,27 @@
     "users": "Пользователи",
     "instances": "ИИ-агенты",
     "messages": "Сообщения"
+  },
+  "embedTab": {
+    "embedCodeTitle": "Код встраивания",
+    "embedCodeDesc": "Добавьте ИИ-чат на любой сайт одной строкой кода",
+    "copy": "Копировать",
+    "copied": "Скопировано!",
+    "customizeTitle": "Настройка",
+    "customizeDesc": "Подстройте под ваш бренд",
+    "positionLabel": "Положение",
+    "positionRight": "Снизу справа",
+    "positionLeft": "Снизу слева",
+    "colorLabel": "Цвет бренда",
+    "greetingLabel": "Приветственное сообщение",
+    "greetingPlaceholder": "Чем могу помочь сегодня?",
+    "brandingLabel": "«Создано на OpenHelix AI»",
+    "installTitle": "Как установить",
+    "installDesc": "Добавьте в HTML вашего сайта",
+    "step1": "Скопируйте код встраивания выше",
+    "step2": "Вставьте его перед закрывающим тегом </body> в HTML",
+    "step3": "Виджет чата появится на вашем сайте",
+    "step4": "Настройте цвета и приветствие под ваш бренд",
+    "proTip": "Совет: виджет работает на любом сайте — WordPress, Shopify, React, Vue или обычный HTML. Без программирования!"
   }
 }

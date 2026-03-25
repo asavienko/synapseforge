@@ -2016,5 +2016,27 @@
     "users": "Usuarios",
     "instances": "Agentes IA",
     "messages": "Mensajes"
+  },
+  "embedTab": {
+    "embedCodeTitle": "Código de inserción",
+    "embedCodeDesc": "Añade un chat de IA a cualquier web con una línea de código",
+    "copy": "Copiar",
+    "copied": "¡Copiado!",
+    "customizeTitle": "Personalizar",
+    "customizeDesc": "Adapta tu marca",
+    "positionLabel": "Posición",
+    "positionRight": "Abajo a la derecha",
+    "positionLeft": "Abajo a la izquierda",
+    "colorLabel": "Color de marca",
+    "greetingLabel": "Mensaje de bienvenida",
+    "greetingPlaceholder": "¿En qué puedo ayudarte hoy?",
+    "brandingLabel": "\"Desarrollado por OpenHelix AI\"",
+    "installTitle": "Cómo instalar",
+    "installDesc": "Añade al HTML de tu web",
+    "step1": "Copia el código de inserción de arriba",
+    "step2": "Pégalo antes del cierre </body> en tu HTML",
+    "step3": "El widget de chat aparecerá en tu web",
+    "step4": "Personaliza los colores y el saludo para tu marca",
+    "proTip": "Consejo: el widget funciona en cualquier web — WordPress, Shopify, React, Vue o HTML simple. ¡Sin programar!"
   }
 }

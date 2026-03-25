@@ -1997,5 +1997,27 @@
     "users": "Users",
     "instances": "AI Instances",
     "messages": "Messages"
+  },
+  "embedTab": {
+    "embedCodeTitle": "Embed Code",
+    "embedCodeDesc": "Add AI chat to any website with one line of code",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "customizeTitle": "Customize",
+    "customizeDesc": "Match your brand",
+    "positionLabel": "Position",
+    "positionRight": "Bottom Right",
+    "positionLeft": "Bottom Left",
+    "colorLabel": "Brand Color",
+    "greetingLabel": "Greeting Message",
+    "greetingPlaceholder": "How can I help you today?",
+    "brandingLabel": "\"Powered by OpenHelix AI\"",
+    "installTitle": "How to Install",
+    "installDesc": "Add to your website HTML",
+    "step1": "Copy the embed code above",
+    "step2": "Paste it before the closing </body> tag in your HTML",
+    "step3": "The chat widget will appear on your site",
+    "step4": "Customize colors and greeting to match your brand",
+    "proTip": "Pro tip: The widget works on any website — WordPress, Shopify, React, Vue, or plain HTML. No coding required!"
   }
 }

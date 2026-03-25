@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Copy, Check, Code, Palette, MessageSquare } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface EmbedTabProps {
   instanceId: string;
@@ -10,13 +11,14 @@ interface EmbedTabProps {
 }
 
 export function EmbedTab({ instanceId, instanceName, referralCode }: EmbedTabProps) {
+  const t = useTranslations("embedTab");
   const [copied, setCopied] = useState(false);
   const [position, setPosition] = useState<"bottom-right" | "bottom-left">("bottom-right");
   const [color, setColor] = useState("#8b5cf6");
   const [greeting, setGreeting] = useState(`Hi! I'm ${instanceName}. How can I help you today?`);
   const [showBranding, setShowBranding] = useState(true);
 
-  const embedCode = `<!-- OpenHelix AI AI Chat Widget -->
+  const embedCode = `<!-- OpenHelix AI Chat Widget -->
 <script 
   src="${typeof window !== 'undefined' ? window.location.origin : ''}/widget.js"
   data-instance-id="${instanceId}"
@@ -24,7 +26,7 @@ export function EmbedTab({ instanceId, instanceName, referralCode }: EmbedTabPro
   data-color="${color}"
   data-greeting="${greeting}"
   data-branding="${showBranding}"${referralCode ? `\n  data-ref="${referralCode}"` : ''}></script>
-<!-- End OpenHelix AI AI Chat Widget -->`.trim();
+<!-- End OpenHelix AI Chat Widget -->`.trim();
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(embedCode);
@@ -42,14 +44,13 @@ export function EmbedTab({ instanceId, instanceName, referralCode }: EmbedTabPro
               <Code className="w-4 h-4 text-violet-400" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-white">Embed Code</h3>
-              <p className="text-xs text-zinc-500">Add AI chat to any website with one line of code</p>
+              <h3 className="text-sm font-semibold text-white">{t("embedCodeTitle")}</h3>
+              <p className="text-xs text-zinc-500">{t("embedCodeDesc")}</p>
             </div>
           </div>
         </div>
 
         <div className="p-5 space-y-4">
-          {/* Embed Code Block */}
           <div className="relative">
             <pre className="bg-zinc-900/50 border border-white/10 rounded-xl p-4 text-xs text-zinc-300 font-mono overflow-x-auto">
               {embedCode}
@@ -61,12 +62,12 @@ export function EmbedTab({ instanceId, instanceName, referralCode }: EmbedTabPro
               {copied ? (
                 <>
                   <Check className="w-3.5 h-3.5" />
-                  <span>Copied!</span>
+                  <span>{t("copied")}</span>
                 </>
               ) : (
                 <>
                   <Copy className="w-3.5 h-3.5" />
-                  <span>Copy</span>
+                  <span>{t("copy")}</span>
                 </>
               )}
             </button>
@@ -82,8 +83,8 @@ export function EmbedTab({ instanceId, instanceName, referralCode }: EmbedTabPro
               <Palette className="w-4 h-4 text-violet-400" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-white">Customize</h3>
-              <p className="text-xs text-zinc-500">Match your brand</p>
+              <h3 className="text-sm font-semibold text-white">{t("customizeTitle")}</h3>
+              <p className="text-xs text-zinc-500">{t("customizeDesc")}</p>
             </div>
           </div>
         </div>
@@ -91,7 +92,7 @@ export function EmbedTab({ instanceId, instanceName, referralCode }: EmbedTabPro
         <div className="p-5 space-y-4">
           {/* Position */}
           <div>
-            <label className="text-xs text-zinc-400 mb-2 block">Position</label>
+            <label className="text-xs text-zinc-400 mb-2 block">{t("positionLabel")}</label>
             <div className="flex gap-2">
               <button
                 onClick={() => setPosition("bottom-right")}
@@ -101,7 +102,7 @@ export function EmbedTab({ instanceId, instanceName, referralCode }: EmbedTabPro
                     : "bg-white/5 text-zinc-400 hover:bg-white/10"
                 }`}
               >
-                Bottom Right
+                {t("positionRight")}
               </button>
               <button
                 onClick={() => setPosition("bottom-left")}
@@ -111,14 +112,14 @@ export function EmbedTab({ instanceId, instanceName, referralCode }: EmbedTabPro
                     : "bg-white/5 text-zinc-400 hover:bg-white/10"
                 }`}
               >
-                Bottom Left
+                {t("positionLeft")}
               </button>
             </div>
           </div>
 
           {/* Color */}
           <div>
-            <label className="text-xs text-zinc-400 mb-2 block">Brand Color</label>
+            <label className="text-xs text-zinc-400 mb-2 block">{t("colorLabel")}</label>
             <div className="flex gap-2">
               {["#8b5cf6", "#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#ec4899", "#000000"].map((c) => (
                 <button
@@ -135,19 +136,19 @@ export function EmbedTab({ instanceId, instanceName, referralCode }: EmbedTabPro
 
           {/* Greeting */}
           <div>
-            <label className="text-xs text-zinc-400 mb-2 block">Greeting Message</label>
+            <label className="text-xs text-zinc-400 mb-2 block">{t("greetingLabel")}</label>
             <input
               type="text"
               value={greeting}
               onChange={(e) => setGreeting(e.target.value)}
               className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors"
-              placeholder="How can I help you today?"
+              placeholder={t("greetingPlaceholder")}
             />
           </div>
 
           {/* Branding */}
           <div className="flex items-center justify-between">
-            <span className="text-sm text-zinc-400">Show &quot;Powered by OpenHelix AI&quot;</span>
+            <span className="text-sm text-zinc-400">{t("brandingLabel")}</span>
             <button
               onClick={() => setShowBranding(!showBranding)}
               className={`w-11 h-6 rounded-full transition-colors relative ${
@@ -172,25 +173,22 @@ export function EmbedTab({ instanceId, instanceName, referralCode }: EmbedTabPro
               <MessageSquare className="w-4 h-4 text-violet-400" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-white">How to Install</h3>
-              <p className="text-xs text-zinc-500">Add to your website HTML</p>
+              <h3 className="text-sm font-semibold text-white">{t("installTitle")}</h3>
+              <p className="text-xs text-zinc-500">{t("installDesc")}</p>
             </div>
           </div>
         </div>
 
         <div className="p-5 space-y-3">
           <ol className="text-sm text-zinc-400 space-y-2 list-decimal list-inside">
-            <li>Copy the embed code above</li>
-            <li>Paste it before the closing <code>&lt;/body&gt;</code> tag in your HTML</li>
-            <li>The chat widget will appear on your site</li>
-            <li>Customize colors and greeting to match your brand</li>
+            <li>{t("step1")}</li>
+            <li>{t("step2")} <code className="text-zinc-300 bg-zinc-800/50 px-1 rounded">&lt;/body&gt;</code></li>
+            <li>{t("step3")}</li>
+            <li>{t("step4")}</li>
           </ol>
 
           <div className="mt-4 p-3 bg-violet-600/10 border border-violet-500/20 rounded-lg">
-            <p className="text-xs text-violet-300">
-              <strong>Pro tip:</strong> The widget works on any website - WordPress, Shopify, 
-              React, Vue, or plain HTML. No coding required!
-            </p>
+            <p className="text-xs text-violet-300">{t("proTip")}</p>
           </div>
         </div>
       </div>
