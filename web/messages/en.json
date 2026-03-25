@@ -1734,6 +1734,19 @@
     "metaTitle": "AI Agent Templates | OpenHelix AI",
     "metaDescription": "Ready-to-deploy AI agent templates for customer support, sales, FAQ bots, and more. Deploy in minutes."
   },
+  "homePage": {
+    "metaTitle": "SynapseForge — AI Agents for Business",
+    "metaDescription": "Deploy AI agents in minutes. Managed setup, human oversight, and seamless integrations. Start free with 2,000 messages."
+  },
+  "siteMetadata": {
+    "defaultTitle": "OpenHelix AI — AI Agent for Your Business on Telegram & WhatsApp",
+    "titleTemplate": "%s | OpenHelix AI",
+    "description": "Deploy a 24/7 AI agent that answers customer questions on Telegram and WhatsApp. Set up in under 10 minutes. No developers needed. Start free.",
+    "ogTitle": "AI Agent for Your Business — Live on Telegram & WhatsApp in 10 Minutes",
+    "ogDescription": "Stop missing customer messages. Deploy a 24/7 AI agent that handles FAQs, bookings, and support on Telegram and WhatsApp. Start free, no card required.",
+    "twitterTitle": "AI Agent for Your Business — Live in 10 Minutes",
+    "twitterDescription": "Stop missing customer messages. Deploy a 24/7 AI agent on Telegram and WhatsApp. Start free."
+  },
   "sandbox": {
     "usedFreeMessages": "You've used your 20 free messages",
     "upgradeDesc": "Add your own OpenAI, Anthropic, or OpenRouter key to unlock unlimited conversations instantly — no call needed. Or book a setup call if you want us to handle everything.",

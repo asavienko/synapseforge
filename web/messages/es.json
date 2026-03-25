@@ -1727,6 +1727,19 @@
     "metaTitle": "Plantillas de Agentes IA | OpenHelix AI",
     "metaDescription": "Plantillas de agentes IA listas para desplegar: soporte al cliente, ventas, bots de FAQ y más. Despliega en minutos."
   },
+  "homePage": {
+    "metaTitle": "SynapseForge — Agentes IA para Empresas",
+    "metaDescription": "Despliega agentes IA en minutos. Configuración gestionada, supervisión humana e integraciones fluidas. Empieza gratis con 2.000 mensajes."
+  },
+  "siteMetadata": {
+    "defaultTitle": "OpenHelix AI — Agente IA para Tu Negocio en Telegram y WhatsApp",
+    "titleTemplate": "%s | OpenHelix AI",
+    "description": "Despliega un agente IA 24/7 que responde preguntas de clientes en Telegram y WhatsApp. Configura en menos de 10 minutos. Sin developers.",
+    "ogTitle": "Agente IA para Tu Negocio — En Vivo en Telegram y WhatsApp en 10 Minutos",
+    "ogDescription": "No pierdas más mensajes de clientes. Despliega un agente IA 24/7 para FAQs, reservas y soporte. Gratis, sin tarjeta.",
+    "twitterTitle": "Agente IA para Tu Negocio — En Vivo en 10 Minutos",
+    "twitterDescription": "No pierdas más mensajes. Despliega un agente IA 24/7 en Telegram y WhatsApp. Gratis."
+  },
   "sandbox": {
     "usedFreeMessages": "Has usado tus 20 mensajes gratuitos",
     "upgradeDesc": "Añade tu propia clave de OpenAI, Anthropic u OpenRouter para desbloquear conversaciones ilimitadas al instante, sin necesidad de llamada. O reserva una llamada si quieres que lo gestionemos todo.",

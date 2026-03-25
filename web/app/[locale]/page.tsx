@@ -28,16 +28,19 @@ import {
 } from "@/components/icons/BrandIcons";
 import { getTranslations } from "next-intl/server";
 
-export const metadata: Metadata = {
-  title: "SynapseForge — AI Agents for Business",
-  description: "Deploy AI agents in minutes. Managed setup, human oversight, and seamless integrations. Start free with 2,000 messages.",
-  keywords: ["AI", "chatbot", "customer support", "automation", "business AI", "virtual assistant"],
-  openGraph: {
-    title: "SynapseForge — AI Agents for Business",
-    description: "Deploy AI agents in minutes. Managed setup, human oversight, and seamless integrations.",
-    type: "website",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("homePage");
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+    keywords: ["AI", "chatbot", "customer support", "automation", "business AI", "virtual assistant"],
+    openGraph: {
+      title: t("metaTitle"),
+      description: t("metaDescription"),
+      type: "website",
+    },
+  };
+}
 
 export default async function LandingPage() {
   const t = await getTranslations();
