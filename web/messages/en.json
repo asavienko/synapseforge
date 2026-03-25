@@ -1826,6 +1826,8 @@
     "instanceErrorDesc": "We couldn't load this AI instance. It may have been deleted or you don't have access.",
     "managerPortalError": "Manager Portal Error",
     "managerErrorDesc": "Something went wrong loading the manager portal.",
+    "adminPanelError": "Admin Panel Error",
+    "adminErrorDesc": "Something went wrong loading the admin panel.",
     "tryAgain": "Try again",
     "backToInstances": "Back to instances",
     "backToDashboard": "Back to dashboard"

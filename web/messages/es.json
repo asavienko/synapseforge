@@ -1845,6 +1845,8 @@
     "instanceErrorDesc": "No pudimos cargar esta instancia de IA. Puede haber sido eliminada o no tienes acceso.",
     "managerPortalError": "Error del Portal de Manager",
     "managerErrorDesc": "Algo salió mal al cargar el portal de manager.",
+    "adminPanelError": "Error del Panel de Admin",
+    "adminErrorDesc": "Algo salió mal al cargar el panel de administración.",
     "tryAgain": "Intentar de nuevo",
     "backToInstances": "Volver a instancias",
     "backToDashboard": "Volver al dashboard"
