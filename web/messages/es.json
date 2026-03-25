@@ -1858,5 +1858,31 @@
     "backToDashboard": "Volver al dashboard"
   },
   "newInstance": "Nueva Instancia",
-  "trustedBy": "Con la confianza de empresas de todo el mundo"
+  "trustedBy": "Con la confianza de empresas de todo el mundo",
+  "onboarding": {
+    "title": "Configura tu IA",
+    "step1Title": "Cuéntanos sobre tu negocio",
+    "step1Subtitle": "Ayuda a tu manager a preparar la configuración adecuada",
+    "businessName": "Nombre de la empresa",
+    "industry": "Industria",
+    "selectIndustry": "Selecciona tu industria",
+    "step2Title": "¿Cuál es tu caso de uso principal?",
+    "step2Subtitle": "Elige la opción que mejor describa tus necesidades",
+    "useCaseDescription": "Cuéntanos más sobre tus necesidades específicas (opcional)",
+    "step3Title": "Conecta tus canales",
+    "step3Subtitle": "Elige dónde responderá tu IA",
+    "step4Title": "Añade tu proveedor de IA",
+    "step4Subtitle": "Usamos tu API key — siempre controlarás tus datos",
+    "validateKey": "Validar key",
+    "keyValid": "Key válida ✓",
+    "keyInvalid": "Key inválida",
+    "step5Title": "Listo para lanzar",
+    "step5Subtitle": "Revisa tu configuración antes de crear tu IA",
+    "launch": "Lanzar mi IA",
+    "startingFrom": "Comenzando desde: {name}",
+    "continue": "Continuar",
+    "back": "Atrás",
+    "skipForNow": "Saltar por ahora",
+    "optional": "opcional"
+  }
 }

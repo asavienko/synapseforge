@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { toast, Toaster } from "sonner";
 import {
   Zap, Loader2, Building2, Sparkles, CheckCircle2, ArrowRight,
@@ -129,6 +130,7 @@ function ProgressBar({ step, total }: { step: number; total: number }) {
 export default function OnboardingPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations("onboarding");
 
   // Step state
   const [step, setStep] = useState(1);
@@ -351,13 +353,13 @@ export default function OnboardingPage() {
                 <Building2 className="w-5 h-5 text-violet-400" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-white">Tell us about your business</h2>
-                <p className="text-zinc-500 text-sm">Helps your manager prepare the right setup</p>
+                <h2 className="text-lg font-bold text-white">{t("step1Title")}</h2>
+                <p className="text-zinc-500 text-sm">{t("step1Subtitle")}</p>
               </div>
             </div>
             <div className="space-y-4">
               <div>
-                <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-2">Business / company name</label>
+                <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-2">{t("businessName")}</label>
                 <input
                   type="text"
                   value={business}
@@ -367,13 +369,13 @@ export default function OnboardingPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-2">Industry</label>
+                <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-2">{t("industry")}</label>
                 <select
                   value={industry}
                   onChange={(e) => setIndustry(e.target.value)}
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-zinc-200 focus:outline-none focus:border-violet-500 transition-colors"
                 >
-                  <option value="">Select your industry</option>
+                  <option value="">{t("selectIndustry")}</option>
                   {INDUSTRIES.map((i) => <option key={i} value={i}>{i}</option>)}
                 </select>
               </div>

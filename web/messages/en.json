@@ -1839,5 +1839,31 @@
     "backToDashboard": "Back to dashboard"
   },
   "newInstance": "New Instance",
-  "trustedBy": "Trusted by businesses worldwide"
+  "trustedBy": "Trusted by businesses worldwide",
+  "onboarding": {
+    "title": "Set Up Your AI",
+    "step1Title": "Tell us about your business",
+    "step1Subtitle": "Helps your manager prepare the right setup",
+    "businessName": "Business / company name",
+    "industry": "Industry",
+    "selectIndustry": "Select your industry",
+    "step2Title": "What's your main use case?",
+    "step2Subtitle": "Choose the option that best describes your needs",
+    "useCaseDescription": "Tell us more about your specific needs (optional)",
+    "step3Title": "Connect your channels",
+    "step3Subtitle": "Choose where your AI will respond",
+    "step4Title": "Add your AI provider",
+    "step4Subtitle": "We use your API key — you'll always control your data",
+    "validateKey": "Validate key",
+    "keyValid": "Key valid ✓",
+    "keyInvalid": "Invalid key",
+    "step5Title": "Ready to launch",
+    "step5Subtitle": "Review your setup before we create your AI",
+    "launch": "Launch My AI",
+    "startingFrom": "Starting from: {name}",
+    "continue": "Continue",
+    "back": "Back",
+    "skipForNow": "Skip for now",
+    "optional": "optional"
+  }
 }
