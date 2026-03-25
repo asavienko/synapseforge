@@ -2095,5 +2095,17 @@
     "ofLast7": "de los últimos 7 días",
     "msgs": "msgs",
     "swipeMore": "Desliza para ver más"
+  },
+  "product": {
+    "mockupTitle": "Tu centro de mando de IA",
+    "mockupDesc": "Todo lo que necesitas para desplegar, monitorizar y chatear con tu agente IA — en un panel limpio.",
+    "feat1label": "En vivo en 3 minutos",
+    "feat1desc": "Un clic para desplegar",
+    "feat2label": "Cualquier modelo LLM",
+    "feat2desc": "OpenAI, Claude, personalizado",
+    "feat3label": "Manager humano",
+    "feat3desc": "Experto real en tu cuenta",
+    "feat4label": "Analíticas completas",
+    "feat4desc": "Uso, tokens, disponibilidad"
   }
 }

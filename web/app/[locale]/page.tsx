@@ -382,8 +382,8 @@ export default async function LandingPage() {
       <section className="max-w-5xl mx-auto px-4 sm:px-6 py-20">
         <FadeInView direction="up">
           <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-3">Your AI command center</h2>
-            <p className="text-gray-500 dark:text-white/50 max-w-xl mx-auto text-[15px]">Everything you need to deploy, monitor, and chat with your AI agent — in one clean dashboard.</p>
+            <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-3">{t("product.mockupTitle")}</h2>
+            <p className="text-gray-500 dark:text-white/50 max-w-xl mx-auto text-[15px]">{t("product.mockupDesc")}</p>
           </div>
         </FadeInView>
 
@@ -452,10 +452,10 @@ export default async function LandingPage() {
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5 max-w-4xl mx-auto">
           {[
-            { emoji: "\u26A1", label: "Live in 3 minutes", desc: "One click to deploy" },
-            { emoji: "\uD83E\uDD16", label: "Any LLM model", desc: "OpenAI, Claude, custom" },
-            { emoji: "\uD83D\uDC64", label: "Human manager", desc: "Real expert on your account" },
-            { emoji: "\uD83D\uDCCA", label: "Full analytics", desc: "Usage, tokens, uptime" },
+            { emoji: "\u26A1", label: t("product.feat1label"), desc: t("product.feat1desc") },
+            { emoji: "\uD83E\uDD16", label: t("product.feat2label"), desc: t("product.feat2desc") },
+            { emoji: "\uD83D\uDC64", label: t("product.feat3label"), desc: t("product.feat3desc") },
+            { emoji: "\uD83D\uDCCA", label: t("product.feat4label"), desc: t("product.feat4desc") },
           ].map((item) => (
             <div key={item.label} className="rounded-lg border border-gray-100 dark:border-white/[0.06] p-4 text-center">
               <div className="text-lg mb-1">{item.emoji}</div>

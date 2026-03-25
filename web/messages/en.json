@@ -2076,5 +2076,17 @@
     "ofLast7": "of last 7 days",
     "msgs": "msgs",
     "swipeMore": "Swipe to see more"
+  },
+  "product": {
+    "mockupTitle": "Your AI command center",
+    "mockupDesc": "Everything you need to deploy, monitor, and chat with your AI agent — in one clean dashboard.",
+    "feat1label": "Live in 3 minutes",
+    "feat1desc": "One click to deploy",
+    "feat2label": "Any LLM model",
+    "feat2desc": "OpenAI, Claude, custom",
+    "feat3label": "Human manager",
+    "feat3desc": "Real expert on your account",
+    "feat4label": "Full analytics",
+    "feat4desc": "Usage, tokens, uptime"
   }
 }
