@@ -1837,6 +1837,7 @@
     "empty": "Aún no hay datos de conversación. Empieza a chatear para ver análisis."
   },
   "whiteLabelPage": {
+    "metaTitle": "Marca Blanca | Dashboard",
     "title": "Marca Blanca",
     "subtitle": "Personaliza la marca para tus clientes",
     "brandName": "Nombre de Marca",

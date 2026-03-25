@@ -5,15 +5,18 @@ import { prisma } from "@/lib/prisma";
 import { WhiteLabelForm } from "@/components/WhiteLabelForm";
 import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "White Label | Dashboard",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("whiteLabelPage");
+  return {
+    title: t("metaTitle"),
+  };
+}
 
 export default async function WhiteLabelPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
 
-  const t = await getTranslations("whiteLabel");
+  const t = await getTranslations("whiteLabelPage");
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },

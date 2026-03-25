@@ -1696,6 +1696,7 @@
     "empty": "No conversation data yet. Start chatting to see insights."
   },
   "whiteLabelPage": {
+    "metaTitle": "White Label | Dashboard",
     "title": "White Label",
     "subtitle": "Customize the branding for your clients",
     "brandName": "Brand Name",
