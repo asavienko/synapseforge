@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { resolveCredentials, ChatMessage, parseInstanceConfig, streamLLM } from "@/lib/llm";
@@ -206,7 +205,8 @@ export async function POST(
   } else {
     const credResult = await resolveCredentials(instanceId, instanceConfig);
     if (!credResult.ok) {
-      return NextResponse.json(credResult.error, { status: 400, headers: CORS_HEADERS });
+      const { error } = credResult as { ok: false; error: { error: string; missingCredential?: boolean; requiredKey?: string } };
+      return NextResponse.json(error, { status: 400, headers: CORS_HEADERS });
     }
     resolvedProvider = credResult.resolvedProvider;
     resolvedModelId = credResult.resolvedModelId;

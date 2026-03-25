@@ -1828,6 +1828,9 @@
     "managerErrorDesc": "Something went wrong loading the manager portal.",
     "adminPanelError": "Admin Panel Error",
     "adminErrorDesc": "Something went wrong loading the admin panel.",
+    "dashboardError": "Something went wrong",
+    "dashboardErrorDesc": "We encountered an error loading the dashboard. Please try again.",
+    "goToDashboard": "Go to dashboard",
     "tryAgain": "Try again",
     "backToInstances": "Back to instances",
     "backToDashboard": "Back to dashboard"

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { rateLimit } from "@/lib/ratelimit";
@@ -129,8 +128,9 @@ export async function POST(req: NextRequest) {
     });
 
     if (!credResult.ok) {
+      const { error } = credResult as { ok: false; error: { error: string; missingCredential?: boolean } };
       return NextResponse.json(
-        { error: credResult.error.error, missingCredential: credResult.error.missingCredential },
+        { error: error.error, missingCredential: error.missingCredential },
         { status: 400 }
       );
     }
