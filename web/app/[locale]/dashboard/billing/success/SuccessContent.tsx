@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import {
   CheckCircle2,
   Zap,
@@ -20,6 +21,7 @@ export function SuccessContent() {
   const searchParams = useSearchParams();
   const [countdown, setCountdown] = useState(10);
   const plan = searchParams.get("plan") ?? "pro";
+  const t = useTranslations("dashboard.billing.successPage");
 
   useEffect(() => {
     // Track upgrade success
@@ -40,32 +42,49 @@ export function SuccessContent() {
     return () => clearInterval(timer);
   }, [plan, router]);
 
-  const planName = plan === "enterprise" ? "Enterprise" : "Pro";
-  const planColor = plan === "enterprise" ? "amber" : "violet";
+  const isEnterprise = plan === "enterprise";
+  const planName = isEnterprise ? t("welcomeEnterprise") : t("welcomePro");
+  const planColor = isEnterprise ? "amber" : "violet";
 
   const nextSteps = [
     {
       icon: Settings,
-      title: "Configure your instances",
-      desc: "Set up unlimited instances with custom configurations",
+      title: t("configureInstances"),
+      desc: t("configureInstancesDesc"),
       href: "/dashboard/instances",
       color: "violet",
     },
     {
       icon: MessageSquare,
-      title: "Connect more channels",
-      desc: "Add WhatsApp, Discord, Slack, and more",
+      title: t("connectChannels"),
+      desc: t("connectChannelsDesc"),
       href: "/dashboard/instances",
       color: "emerald",
     },
     {
       icon: Users,
-      title: "Invite your team",
-      desc: "Share access with your team members",
+      title: t("inviteTeam"),
+      desc: t("inviteTeamDesc"),
       href: "/dashboard/settings",
       color: "blue",
     },
   ];
+
+  const enterpriseFeatures = [
+    t("unlimitedInstances"),
+    t("slaSupport"),
+    t("customIntegrations"),
+    t("teamTraining"),
+  ];
+
+  const proFeatures = [
+    t("threeInstances"),
+    t("prioritySupport"),
+    t("advancedIntegrations"),
+    t("uptimeSla"),
+  ];
+
+  const features = isEnterprise ? enterpriseFeatures : proFeatures;
 
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white">
@@ -81,9 +100,9 @@ export function SuccessContent() {
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-emerald-500/20 border border-emerald-500/30 mb-6">
             <CheckCircle2 className="w-10 h-10 text-emerald-400" />
           </div>
-          <h1 className="text-3xl font-bold mb-3">Welcome to {planName}!</h1>
+          <h1 className="text-3xl font-bold mb-3">{planName}</h1>
           <p className="text-zinc-400">
-            Your upgrade is complete. You now have access to all {planName} features.
+            {t("upgradeComplete", { plan: isEnterprise ? "Enterprise" : "Pro" })}
           </p>
         </div>
 
@@ -91,56 +110,23 @@ export function SuccessContent() {
         <div className={`glow-border rounded-2xl bg-${planColor}-500/5 border-${planColor}-500/20 p-6 mb-8`}>
           <div className="flex items-center gap-3 mb-4">
             <Sparkles className={`w-5 h-5 text-${planColor}-400`} />
-            <h2 className="font-semibold">What&apos;s new in {planName}</h2>
+            <h2 className="font-semibold">{t("whatsNew", { plan: isEnterprise ? "Enterprise" : "Pro" })}</h2>
           </div>
 
           <ul className="space-y-3">
-            {plan === "enterprise" ? (
-              <>
-                <li className="flex items-start gap-3">
-                  <Zap className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-                  <span className="text-sm text-zinc-300">Unlimited AI instances</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Zap className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-                  <span className="text-sm text-zinc-300">4-hour SLA support response</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Zap className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-                  <span className="text-sm text-zinc-300">Custom integrations & white-label options</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Zap className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-                  <span className="text-sm text-zinc-300">Team training & dedicated manager team</span>
-                </li>
-              </>
-            ) : (
-              <>
-                <li className="flex items-start gap-3">
-                  <Zap className="w-4 h-4 text-violet-400 mt-0.5 shrink-0" />
-                  <span className="text-sm text-zinc-300">Up to 3 AI instances (was 1)</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Zap className="w-4 h-4 text-violet-400 mt-0.5 shrink-0" />
-                  <span className="text-sm text-zinc-300">Priority 24-hour support</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Zap className="w-4 h-4 text-violet-400 mt-0.5 shrink-0" />
-                  <span className="text-sm text-zinc-300">Advanced integrations (CRM, webhooks)</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Zap className="w-4 h-4 text-violet-400 mt-0.5 shrink-0" />
-                  <span className="text-sm text-zinc-300">99.9% uptime SLA</span>
-                </li>
-              </>
-            )}
+            {features.map((feature, index) => (
+              <li key={index} className="flex items-start gap-3">
+                <Zap className={`w-4 h-4 text-${planColor}-400 mt-0.5 shrink-0`} />
+                <span className="text-sm text-zinc-300">{feature}</span>
+              </li>
+            ))}
           </ul>
         </div>
 
         {/* Next Steps */}
         <div className="mb-8">
           <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-4">
-            Recommended next steps
+            {t("nextSteps")}
           </h2>
           <div className="space-y-3">
             {nextSteps.map((step) => (
@@ -170,21 +156,21 @@ export function SuccessContent() {
             href="/dashboard/instances"
             className="flex-1 flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors py-3 rounded-xl font-semibold"
           >
-            Go to Dashboard
+            {t("goToDashboard")}
             <ArrowRight className="w-4 h-4" />
           </Link>
           <Link
             href="/contact"
             className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors py-3 rounded-xl font-medium text-zinc-300"
           >
-            Book onboarding call
+            {t("bookOnboarding")}
             <ExternalLink className="w-4 h-4" />
           </Link>
         </div>
 
         {/* Auto-redirect notice */}
         <p className="text-center text-sm text-zinc-600 mt-6">
-          Redirecting to dashboard in {countdown} seconds...
+          {t("redirecting", { count: countdown })}
         </p>
       </div>
     </div>

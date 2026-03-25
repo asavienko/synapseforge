@@ -420,7 +420,31 @@
       "cancelSubmit": "Continuar con la cancelación",
       "cancelKeepPlan": "Conservar mi plan",
       "subscriptionExpired": "Suscripción expirada",
-      "subscriptionExpiredDesc": "Tu suscripción de {plan} expiró el {date}. Las instancias que superan el límite del plan gratuito han sido pausadas. Renueva para restaurar el acceso."
+      "subscriptionExpiredDesc": "Tu suscripción de {plan} expiró el {date}. Las instancias que superan el límite del plan gratuito han sido pausadas. Renueva para restaurar el acceso.",
+      "successPage": {
+        "welcomePro": "¡Bienvenido a Pro!",
+        "welcomeEnterprise": "¡Bienvenido a Enterprise!",
+        "upgradeComplete": "Tu actualización está completa. Ahora tienes acceso a todas las funciones de {plan}.",
+        "whatsNew": "Novedades en {plan}",
+        "unlimitedInstances": "Instancias de IA ilimitadas",
+        "slaSupport": "Respuesta de soporte SLA de 4 horas",
+        "customIntegrations": "Integraciones personalizadas y opciones de marca blanca",
+        "teamTraining": "Capacitación para el equipo y equipo de managers dedicado",
+        "threeInstances": "Hasta 3 instancias de IA (era 1)",
+        "prioritySupport": "Soporte prioritario 24 horas",
+        "advancedIntegrations": "Integraciones avanzadas (CRM, webhooks)",
+        "uptimeSla": "SLA de tiempo de actividad del 99.9%",
+        "nextSteps": "Próximos pasos recomendados",
+        "configureInstances": "Configura tus instancias",
+        "configureInstancesDesc": "Configura instancias ilimitadas con configuraciones personalizadas",
+        "connectChannels": "Conecta más canales",
+        "connectChannelsDesc": "Añade WhatsApp, Discord, Slack y más",
+        "inviteTeam": "Invita a tu equipo",
+        "inviteTeamDesc": "Comparte acceso con los miembros de tu equipo",
+        "goToDashboard": "Ir al Dashboard",
+        "bookOnboarding": "Reservar llamada de onboarding",
+        "redirecting": "Redirigiendo al dashboard en {count} segundos..."
+      }
     },
     "settings": {
       "title": "Configuración",

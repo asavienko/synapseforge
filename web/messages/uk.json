@@ -406,7 +406,31 @@
       "cancelSubmit": "Продовжити скасування",
       "cancelKeepPlan": "Зберегти план",
       "subscriptionExpired": "Підписка закінчилася",
-      "subscriptionExpiredDesc": "Ваша підписка {plan} закінчилася {date}. Екземпляри, що перевищують ліміт безкоштовного плану, призупинено. Поновіть підписку для відновлення доступу."
+      "subscriptionExpiredDesc": "Ваша підписка {plan} закінчилася {date}. Екземпляри, що перевищують ліміт безкоштовного плану, призупинено. Поновіть підписку для відновлення доступу.",
+      "successPage": {
+        "welcomePro": "Ласкаво просимо до Pro!",
+        "welcomeEnterprise": "Ласкаво просимо до Enterprise!",
+        "upgradeComplete": "Ваше оновлення завершено. Тепер у вас є доступ до всіх функцій {plan}.",
+        "whatsNew": "Нове в {plan}",
+        "unlimitedInstances": "Необмежена кількість ШІ-екземплярів",
+        "slaSupport": "Підтримка з SLA 4 години",
+        "customIntegrations": "Користувацькі інтеграції та white-label опції",
+        "teamTraining": "Навчання команди та виділена команда менеджерів",
+        "threeInstances": "До 3 ШІ-екземплярів (був 1)",
+        "prioritySupport": "Пріоритетна підтримка 24/7",
+        "advancedIntegrations": "Розширені інтеграції (CRM, webhooks)",
+        "uptimeSla": "SLA доступності 99.9%",
+        "nextSteps": "Рекомендовані наступні кроки",
+        "configureInstances": "Налаштуйте ваші екземпляри",
+        "configureInstancesDesc": "Налаштуйте необмежену кількість екземплярів з користувацькими конфігураціями",
+        "connectChannels": "Підключіть більше каналів",
+        "connectChannelsDesc": "Додайте WhatsApp, Discord, Slack та інші",
+        "inviteTeam": "Запросіть свою команду",
+        "inviteTeamDesc": "Поділіться доступом з членами команди",
+        "goToDashboard": "Перейти до Dashboard",
+        "bookOnboarding": "Забронювати onboarding-дзвінок",
+        "redirecting": "Перенаправлення до dashboard через {count} секунд..."
+      }
     },
     "settings": {
       "title": "Налаштування",

@@ -406,7 +406,31 @@
       "cancelSubmit": "Продолжить отмену",
       "cancelKeepPlan": "Сохранить план",
       "subscriptionExpired": "Подписка истекла",
-      "subscriptionExpiredDesc": "Ваша подписка {plan} истекла {date}. Экземпляры, превышающие лимит бесплатного плана, приостановлены. Обновите подписку для восстановления доступа."
+      "subscriptionExpiredDesc": "Ваша подписка {plan} истекла {date}. Экземпляры, превышающие лимит бесплатного плана, приостановлены. Обновите подписку для восстановления доступа.",
+      "successPage": {
+        "welcomePro": "Добро пожаловать в Pro!",
+        "welcomeEnterprise": "Добро пожаловать в Enterprise!",
+        "upgradeComplete": "Ваше обновление завершено. Теперь у вас есть доступ ко всем функциям {plan}.",
+        "whatsNew": "Новое в {plan}",
+        "unlimitedInstances": "Неограниченное количество ИИ-экземпляров",
+        "slaSupport": "Поддержка с SLA 4 часа",
+        "customIntegrations": "Пользовательские интеграции и white-label опции",
+        "teamTraining": "Обучение команды и выделенная команда менеджеров",
+        "threeInstances": "До 3 ИИ-экземпляров (был 1)",
+        "prioritySupport": "Приоритетная поддержка 24/7",
+        "advancedIntegrations": "Расширенные интеграции (CRM, webhooks)",
+        "uptimeSla": "SLA доступности 99.9%",
+        "nextSteps": "Рекомендуемые следующие шаги",
+        "configureInstances": "Настройте ваши экземпляры",
+        "configureInstancesDesc": "Настройте неограниченное количество экземпляров с пользовательскими конфигурациями",
+        "connectChannels": "Подключите больше каналов",
+        "connectChannelsDesc": "Добавьте WhatsApp, Discord, Slack и другие",
+        "inviteTeam": "Пригласите свою команду",
+        "inviteTeamDesc": "Поделитесь доступом с членами команды",
+        "goToDashboard": "Перейти в Dashboard",
+        "bookOnboarding": "Забронировать onboarding-звонок",
+        "redirecting": "Перенаправление в dashboard через {count} секунд..."
+      }
     },
     "settings": {
       "title": "Настройки",

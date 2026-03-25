@@ -417,7 +417,31 @@
       "cancelSubmit": "Continue cancelling",
       "cancelKeepPlan": "Keep my plan",
       "subscriptionExpired": "Subscription expired",
-      "subscriptionExpiredDesc": "Your {plan} subscription expired on {date}. Instances exceeding the free plan limit have been paused. Renew to restore access."
+      "subscriptionExpiredDesc": "Your {plan} subscription expired on {date}. Instances exceeding the free plan limit have been paused. Renew to restore access.",
+      "successPage": {
+        "welcomePro": "Welcome to Pro!",
+        "welcomeEnterprise": "Welcome to Enterprise!",
+        "upgradeComplete": "Your upgrade is complete. You now have access to all {plan} features.",
+        "whatsNew": "What's new in {plan}",
+        "unlimitedInstances": "Unlimited AI instances",
+        "slaSupport": "4-hour SLA support response",
+        "customIntegrations": "Custom integrations & white-label options",
+        "teamTraining": "Team training & dedicated manager team",
+        "threeInstances": "Up to 3 AI instances (was 1)",
+        "prioritySupport": "Priority 24-hour support",
+        "advancedIntegrations": "Advanced integrations (CRM, webhooks)",
+        "uptimeSla": "99.9% uptime SLA",
+        "nextSteps": "Recommended next steps",
+        "configureInstances": "Configure your instances",
+        "configureInstancesDesc": "Set up unlimited instances with custom configurations",
+        "connectChannels": "Connect more channels",
+        "connectChannelsDesc": "Add WhatsApp, Discord, Slack, and more",
+        "inviteTeam": "Invite your team",
+        "inviteTeamDesc": "Share access with your team members",
+        "goToDashboard": "Go to Dashboard",
+        "bookOnboarding": "Book onboarding call",
+        "redirecting": "Redirecting to dashboard in {count} seconds..."
+      }
     },
     "settings": {
       "title": "Settings",
