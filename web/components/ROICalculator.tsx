@@ -4,8 +4,10 @@ import { useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { Calculator, Clock, Users, DollarSign, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 export function ROICalculator() {
+  const t = useTranslations("roiCalculator");
   const [messagesPerDay, setMessagesPerDay] = useState(20);
   const [timePerMessage, setTimePerMessage] = useState(5);
   const [hourlyRate, setHourlyRate] = useState(25);
@@ -15,7 +17,6 @@ export function ROICalculator() {
   const dailyHoursSaved = (messagesPerDay * timePerMessage) / 60;
   const monthlyHoursSaved = dailyHoursSaved * 22;
   const monthlyCostSaved = monthlyHoursSaved * hourlyRate;
-  const yearlySavings = monthlyCostSaved * 12;
 
   // OpenHelix AI cost (Pro plan)
   const synapseforgeCost = 49;
@@ -29,8 +30,8 @@ export function ROICalculator() {
           <Calculator className="w-5 h-5 text-violet-400" />
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Calculate Your Savings</h3>
-          <p className="text-sm text-gray-400 dark:text-zinc-500">See how much time and money you could save</p>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t("title")}</h3>
+          <p className="text-sm text-gray-400 dark:text-zinc-500">{t("subtitle")}</p>
         </div>
       </div>
 
@@ -40,7 +41,7 @@ export function ROICalculator() {
           <div className="flex items-center justify-between mb-2">
             <label className="text-sm text-gray-600 dark:text-zinc-300 flex items-center gap-2">
               <Users className="w-4 h-4 text-gray-400 dark:text-zinc-500" />
-              Customer messages per day
+              {t("messagesLabel")}
             </label>
             <span className="text-sm font-medium text-gray-900 dark:text-white">{messagesPerDay}</span>
           </div>
@@ -68,9 +69,9 @@ export function ROICalculator() {
           <div className="flex items-center justify-between mb-2">
             <label className="text-sm text-gray-600 dark:text-zinc-300 flex items-center gap-2">
               <Clock className="w-4 h-4 text-gray-400 dark:text-zinc-500" />
-              Minutes to respond per message
+              {t("timeLabel")}
             </label>
-            <span className="text-sm font-medium text-gray-900 dark:text-white">{timePerMessage} min</span>
+            <span className="text-sm font-medium text-gray-900 dark:text-white">{timePerMessage} {t("timeUnit")}</span>
           </div>
           <input
             type="range"
@@ -85,9 +86,9 @@ export function ROICalculator() {
             className="w-full h-2 bg-black/5 dark:bg-white/10 rounded-lg appearance-none cursor-pointer accent-violet-500"
           />
           <div className="flex justify-between text-xs text-gray-400 dark:text-zinc-600 mt-1">
-            <span>1 min</span>
-            <span>8 min</span>
-            <span>15 min</span>
+            <span>1 {t("timeUnit")}</span>
+            <span>8 {t("timeUnit")}</span>
+            <span>15 {t("timeUnit")}</span>
           </div>
         </div>
 
@@ -96,7 +97,7 @@ export function ROICalculator() {
           <div className="flex items-center justify-between mb-2">
             <label className="text-sm text-gray-600 dark:text-zinc-300 flex items-center gap-2">
               <DollarSign className="w-4 h-4 text-gray-400 dark:text-zinc-500" />
-              Staff hourly rate (€/$)
+              {t("rateLabel")}
             </label>
             <span className="text-sm font-medium text-gray-900 dark:text-white">${hourlyRate}/hr</span>
           </div>
@@ -132,33 +133,33 @@ export function ROICalculator() {
             <div className="text-2xl font-bold text-emerald-400">
               {Math.round(monthlyHoursSaved)}h
             </div>
-            <div className="text-xs text-gray-400 dark:text-zinc-500">Hours saved per month</div>
+            <div className="text-xs text-gray-400 dark:text-zinc-500">{t("hoursSaved")}</div>
           </div>
           <div className="bg-black/[0.03] dark:bg-white/5 rounded-xl p-4">
             <div className="text-2xl font-bold text-emerald-400">
               ${Math.round(monthlyCostSaved).toLocaleString()}
             </div>
-            <div className="text-xs text-gray-400 dark:text-zinc-500">Monthly cost savings</div>
+            <div className="text-xs text-gray-400 dark:text-zinc-500">{t("monthlySavings")}</div>
           </div>
         </div>
 
         <div className="bg-violet-500/10 border border-violet-500/20 rounded-xl p-4 mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-sm text-violet-300 mb-1">Net savings with OpenHelix AI</div>
+              <div className="text-sm text-violet-300 mb-1">{t("netSavingsLabel")}</div>
               <div className="text-3xl font-bold text-gray-900 dark:text-white">
                 ${Math.round(netMonthlySavings).toLocaleString()}/mo
               </div>
             </div>
             <div className="text-right">
-              <div className="text-sm text-violet-300 mb-1">ROI</div>
+              <div className="text-sm text-violet-300 mb-1">{t("roiLabel")}</div>
               <div className="text-3xl font-bold text-emerald-400">
                 {Math.round(roi)}%
               </div>
             </div>
           </div>
           <div className="text-xs text-gray-400 dark:text-zinc-500 mt-2">
-            Based on Pro plan ($49/mo) vs. handling messages manually
+            {t("footnote")}
           </div>
         </div>
 
@@ -166,7 +167,7 @@ export function ROICalculator() {
           href="/sign-up"
           className="flex items-center justify-center gap-2 w-full bg-violet-600 hover:bg-violet-500 transition-colors py-3 rounded-xl font-semibold text-white"
         >
-          Start Saving Time
+          {t("cta")}
           <ArrowRight className="w-4 h-4" />
         </Link>
       </div>

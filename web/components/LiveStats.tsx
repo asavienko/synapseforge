@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Users, Server, MessageSquare } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface Stats {
   users: { total: number };
@@ -16,6 +17,7 @@ function formatNumber(num: number): string {
 }
 
 export function LiveStats() {
+  const t = useTranslations("liveStats");
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -45,17 +47,17 @@ export function LiveStats() {
     {
       icon: Users,
       value: formatNumber(stats.users.total),
-      label: "Users",
+      label: t("users"),
     },
     {
       icon: Server,
       value: formatNumber(stats.instances.total),
-      label: "AI Instances",
+      label: t("instances"),
     },
     {
       icon: MessageSquare,
       value: formatNumber(stats.messages.total),
-      label: "Messages",
+      label: t("messages"),
     },
   ];
 

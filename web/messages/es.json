@@ -1917,5 +1917,24 @@
     "metaDescription": "Tutoriales, guías e ideas sobre IA para soporte al cliente, despliegue de chatbots y automatización empresarial. Contenido práctico del equipo de OpenHelix.",
     "ogTitle": "Blog — OpenHelix AI",
     "ogDescription": "Tutoriales, guías e ideas sobre IA para soporte al cliente."
+  },
+  "roiCalculator": {
+    "title": "Calcula tu ahorro",
+    "subtitle": "Descubre cuánto tiempo y dinero podrías ahorrar",
+    "messagesLabel": "Mensajes de clientes por día",
+    "timeLabel": "Minutos para responder por mensaje",
+    "timeUnit": "min",
+    "rateLabel": "Coste por hora del personal (€/$)",
+    "hoursSaved": "Horas ahorradas al mes",
+    "monthlySavings": "Ahorro mensual en costes",
+    "netSavingsLabel": "Ahorro neto con OpenHelix AI",
+    "roiLabel": "ROI",
+    "footnote": "Basado en el plan Pro ($49/mes) frente a gestión manual",
+    "cta": "Empieza a ahorrar tiempo"
+  },
+  "liveStats": {
+    "users": "Usuarios",
+    "instances": "Agentes IA",
+    "messages": "Mensajes"
   }
 }
