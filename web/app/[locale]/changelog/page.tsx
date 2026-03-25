@@ -4,10 +4,13 @@ import { Zap, ArrowLeft, Calendar, Sparkles, Bug, Shield, ZapIcon } from "lucide
 import { Metadata } from "next";
 import { SubscribeSection } from "./SubscribeSection";
 
-export const metadata: Metadata = {
-  title: "Changelog | OpenHelix AI",
-  description: "See what's new in OpenHelix AI. Latest features, improvements, and bug fixes.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("changelog");
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
 
 interface ChangelogEntry {
   date: string;

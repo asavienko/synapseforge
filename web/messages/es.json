@@ -1860,5 +1860,9 @@
     "backToDashboard": "Volver al dashboard"
   },
   "newInstance": "Nueva Instancia",
-  "trustedBy": "Con la confianza de empresas de todo el mundo"
+  "trustedBy": "Con la confianza de empresas de todo el mundo",
+  "changelog": {
+    "metaTitle": "Changelog | OpenHelix AI",
+    "metaDescription": "Descubre las novedades de OpenHelix AI. Últimas funciones, mejoras y correcciones de errores."
+  }
 }

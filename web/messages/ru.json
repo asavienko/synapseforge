@@ -1886,5 +1886,9 @@
     "back": "Назад",
     "skipForNow": "Пропустить пока",
     "optional": "необязательно"
+  },
+  "changelog": {
+    "metaTitle": "История изменений | OpenHelix AI",
+    "metaDescription": "Узнайте, что нового в OpenHelix AI. Последние функции, улучшения и исправления ошибок."
   }
 }
