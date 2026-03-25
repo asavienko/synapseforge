@@ -1641,7 +1641,9 @@
     "rateLimitOr": "o recibe una configuración personalizada",
     "rateLimitSuccess": "✓ ¡Recibido — te contactaremos pronto!",
     "notifyMe": "Notificarme",
-    "inputPlaceholder": "Escribe tu mensaje..."
+    "inputPlaceholder": "Escribe tu mensaje...",
+    "tryItYourself": "Pruébalo tú mismo",
+    "noCreditCard": "Habla con un agente IA real — sin registro."
   },
   "referral": {
     "pageTitle": "Programa de referidos",

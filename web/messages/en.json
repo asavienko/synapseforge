@@ -1758,7 +1758,9 @@
     "rateLimitOr": "or get a personalised setup",
     "rateLimitSuccess": "✓ Got it — we'll be in touch shortly!",
     "notifyMe": "Notify me",
-    "inputPlaceholder": "Type your message..."
+    "inputPlaceholder": "Type your message...",
+    "tryItYourself": "Try it yourself",
+    "noCreditCard": "Chat with a real AI agent — no sign-up required."
   },
   "integrations": {
     "metaTitle": "Integrations | Dashboard",

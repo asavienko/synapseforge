@@ -364,34 +364,13 @@ export default async function LandingPage() {
             </div>
           </FadeInView>
 
-          <div className="max-w-3xl mx-auto rounded-xl border border-gray-200/60 dark:border-white/[0.06] overflow-hidden aspect-video group cursor-pointer relative bg-white dark:bg-white/[0.02]">
-            <div className="absolute inset-0 opacity-30">
-              <div className="h-full flex">
-                <div className="w-16 border-r border-gray-200 dark:border-white/[0.04] h-full" />
-                <div className="flex-1 p-6">
-                  <div className="h-8 w-48 bg-gray-200/50 dark:bg-white/[0.03] rounded-xl mb-6" />
-                  <div className="grid grid-cols-3 gap-4 mb-6">
-                    <div className="h-24 bg-gray-200/50 dark:bg-white/[0.03] rounded-xl" />
-                    <div className="h-24 bg-gray-200/50 dark:bg-white/[0.03] rounded-xl" />
-                    <div className="h-24 bg-gray-200/50 dark:bg-white/[0.03] rounded-xl" />
-                  </div>
-                  <div className="h-64 bg-gray-200/50 dark:bg-white/[0.03] rounded-xl" />
-                </div>
-              </div>
-            </div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-14 h-14 rounded-full bg-white dark:bg-white/[0.1] shadow-lg border border-gray-200 dark:border-white/[0.1] flex items-center justify-center group-hover:scale-110 transition-transform">
-                <svg className="w-5 h-5 text-gray-700 dark:text-white/70 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
-              </div>
-            </div>
-            <div className="absolute bottom-4 left-4">
-              <span className="text-[11px] bg-white/90 dark:bg-black/50 text-gray-500 dark:text-white/50 px-3 py-1.5 rounded-full border border-gray-200 dark:border-white/[0.06]">Video coming soon — Book a live demo below</span>
-            </div>
+          <div className="max-w-2xl mx-auto">
+            <DemoChat />
           </div>
 
           <div className="text-center mt-8">
-            <Link href="/contact?subject=Demo+Request" className="inline-flex items-center gap-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-lg font-semibold text-sm hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors shadow-sm">
-              Book Live Demo <ArrowRightIcon className="w-4 h-4" />
+            <Link href="/sign-up" className="inline-flex items-center gap-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-lg font-semibold text-sm hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors shadow-sm">
+              {t("hero.ctaPrimary")} <ArrowRightIcon className="w-4 h-4" />
             </Link>
           </div>
         </div>
@@ -547,9 +526,9 @@ export default async function LandingPage() {
       ═══════════════════════════════════════════════════════════════════ */}
       <section id="demo" className="py-20 bg-gray-50/60 dark:bg-white/[0.015]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center mb-10">
-          <div className="text-[11px] font-medium tracking-[0.15em] text-blue-600 dark:text-blue-400 uppercase mb-3">Live Demo</div>
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-3">Try it yourself</h2>
-          <p className="text-gray-500 dark:text-white/50 text-[15px]">Chat with a real AI agent — no sign-up required.</p>
+          <div className="text-[11px] font-medium tracking-[0.15em] text-blue-600 dark:text-blue-400 uppercase mb-3">{t("demo.badge")}</div>
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-3">{t("demo.tryItYourself")}</h2>
+          <p className="text-gray-500 dark:text-white/50 text-[15px]">{t("demo.noCreditCard")}</p>
         </div>
         <div className="max-w-2xl mx-auto px-4 sm:px-6">
           <DemoChat />
