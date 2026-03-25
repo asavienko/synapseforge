@@ -17,20 +17,12 @@ export default defineConfig({
          * Used by spec 29 to simulate amber / red / exhausted states
          * without sending real messages.
          */
-        async setSandboxState({
-          instanceId,
-          sandboxUsed,
-          sandboxMode,
-        }: {
-          instanceId: string;
-          sandboxUsed?: number;
-          sandboxMode?: boolean;
-        }) {
+        async setSandboxState({ instanceId, sandboxUsed, sandboxMode }) {
           // Dynamic import to avoid top-level require issues in ESM config
           const { PrismaClient } = await import("@prisma/client");
           const prisma = new PrismaClient();
           try {
-            const data: Record<string, unknown> = {};
+            const data = {};
             if (sandboxUsed !== undefined) data.sandboxUsed = sandboxUsed;
             if (sandboxMode !== undefined) data.sandboxMode = sandboxMode;
             await prisma.aIInstance.update({ where: { id: instanceId }, data });
@@ -44,13 +36,7 @@ export default defineConfig({
          * Directly set instance status via Prisma.
          * Used by spec 20 to reliably simulate a stopped instance.
          */
-        async setInstanceStatus({
-          instanceId,
-          status,
-        }: {
-          instanceId: string;
-          status: string;
-        }) {
+        async setInstanceStatus({ instanceId, status }) {
           const { PrismaClient } = await import("@prisma/client");
           const prisma = new PrismaClient();
           try {
@@ -85,28 +71,16 @@ export default defineConfig({
          * relying on intercepted HTTP responses (avoids race conditions).
          * Also wipes existing messages when clearFirst=true.
          */
-        async seedChatMessage({
-          instanceId,
-          role,
-          content,
-          clearFirst,
-        }: {
-          instanceId: string;
-          role: string;
-          content: string;
-          clearFirst?: boolean;
-        }) {
+        async seedChatMessage({ instanceId, role, content, clearFirst }) {
           const { PrismaClient } = await import("@prisma/client");
           const prisma = new PrismaClient();
           try {
             if (clearFirst) {
-              await (prisma as unknown as { chatMessage: { deleteMany: (a: unknown) => Promise<unknown> } })
-                .chatMessage.deleteMany({ where: { instanceId } });
+              await prisma.chatMessage.deleteMany({ where: { instanceId } });
             }
-            await (prisma as unknown as { chatMessage: { create: (a: unknown) => Promise<unknown> } })
-              .chatMessage.create({
-                data: { instanceId, role, content, isError: false, source: "web" },
-              });
+            await prisma.chatMessage.create({
+              data: { instanceId, role, content, isError: false, source: "web" },
+            });
             return { ok: true };
           } finally {
             await prisma.$disconnect();
