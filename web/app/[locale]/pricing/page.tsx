@@ -141,11 +141,11 @@ export default async function PricingPage() {
 
       {/* Annual note */}
       <p className="text-sm text-zinc-500 mt-10 text-center pb-20">
-        Annual plans available — 2 months free.{" "}
+        {t("pricingAnnual.note")}{" "}
         <a href="mailto:hello@openhelixai.com" className="text-violet-400 hover:text-violet-300 transition-colors">
-          Contact us
+          {t("pricingAnnual.contactUs")}
         </a>{" "}
-        for details.
+        {t("pricingAnnual.forDetails")}
       </p>
 
       {/* Footer */}

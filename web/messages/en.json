@@ -2088,5 +2088,18 @@
     "feat3desc": "Real expert on your account",
     "feat4label": "Full analytics",
     "feat4desc": "Usage, tokens, uptime"
+  },
+  "webhooks": {
+    "noWebhooks": "No webhooks configured for this instance.",
+    "noWebhooksHint": "Webhooks will appear here once you configure them.",
+    "active": "Active",
+    "inactive": "Inactive",
+    "noDeliveries": "No deliveries yet",
+    "failedLoad": "Failed to load deliveries"
+  },
+  "pricingAnnual": {
+    "note": "Annual plans available — 2 months free.",
+    "contactUs": "Contact us",
+    "forDetails": "for details."
   }
 }

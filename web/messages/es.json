@@ -2107,5 +2107,18 @@
     "feat3desc": "Experto real en tu cuenta",
     "feat4label": "Analíticas completas",
     "feat4desc": "Uso, tokens, disponibilidad"
+  },
+  "webhooks": {
+    "noWebhooks": "No hay webhooks configurados para esta instancia.",
+    "noWebhooksHint": "Los webhooks aparecerán aquí una vez que los configures.",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "noDeliveries": "Sin entregas aún",
+    "failedLoad": "Error al cargar las entregas"
+  },
+  "pricingAnnual": {
+    "note": "Planes anuales disponibles — 2 meses gratis.",
+    "contactUs": "Contáctanos",
+    "forDetails": "para más detalles."
   }
 }

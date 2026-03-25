@@ -71,7 +71,7 @@ export function WebhookDeliveriesTab({ instanceId }: WebhookDeliveriesTabProps) 
     return (
       <div className="flex items-center gap-2 text-red-400 py-8">
         <AlertCircle className="w-5 h-5" />
-        <span>{error}</span>
+        <span>{t("failedLoad")}</span>
       </div>
     );
   }
@@ -80,8 +80,8 @@ export function WebhookDeliveriesTab({ instanceId }: WebhookDeliveriesTabProps) 
     return (
       <div className="text-center py-12 text-zinc-500">
         <Webhook className="w-12 h-12 mx-auto mb-4 opacity-50" />
-        <p>No webhooks configured for this instance.</p>
-        <p className="text-sm mt-2">Webhooks will appear here once you configure them.</p>
+        <p>{t("noWebhooks")}</p>
+        <p className="text-sm mt-2">{t("noWebhooksHint")}</p>
       </div>
     );
   }
@@ -118,7 +118,7 @@ export function WebhookDeliveriesTab({ instanceId }: WebhookDeliveriesTabProps) 
                     : "bg-zinc-500/10 text-zinc-400"
                 )}
               >
-                {webhook.active ? "Active" : "Inactive"}
+                {webhook.active ? t("active") : t("inactive")}
               </span>
             </div>
           </div>
@@ -141,7 +141,7 @@ export function WebhookDeliveriesTab({ instanceId }: WebhookDeliveriesTabProps) 
           <div className="divide-y divide-white/5">
             {webhook.deliveries.length === 0 ? (
               <div className="px-4 py-6 text-center text-zinc-500 text-sm">
-                No deliveries yet
+                {t("noDeliveries")}
               </div>
             ) : (
               webhook.deliveries.map((delivery) => (
