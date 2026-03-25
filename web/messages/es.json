@@ -1629,6 +1629,7 @@
     "configPushFailed": "Error al enviar la configuración"
   },
   "integrations": {
+    "metaTitle": "Integraciones | Dashboard",
     "title": "Integraciones",
     "subtitle": "Conecta tus agentes de IA con cualquier herramienta",
     "comingSoon": "Próximamente",

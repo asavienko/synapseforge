@@ -1613,6 +1613,7 @@
     "configPushFailed": "Не удалось отправить конфигурацию"
   },
   "integrations": {
+    "metaTitle": "Интеграции | Dashboard",
     "title": "Интеграции",
     "subtitle": "Подключите ваших ИИ-агентов к любому инструменту",
     "comingSoon": "Скоро",

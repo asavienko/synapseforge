@@ -4,9 +4,12 @@ import { redirect } from "next/navigation";
 import { ZapierIntegrationClient } from "@/components/ZapierIntegrationClient";
 import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Integrations | Dashboard",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("integrations");
+  return {
+    title: t("metaTitle"),
+  };
+}
 
 export default async function IntegrationsPage() {
   const session = await auth();

@@ -1626,6 +1626,7 @@
     "signUpCta": "Sign up free →"
   },
   "integrations": {
+    "metaTitle": "Integrations | Dashboard",
     "title": "Integrations",
     "subtitle": "Connect your AI agents to any tool",
     "comingSoon": "Coming soon",
