@@ -2,21 +2,21 @@
 
 import { useEffect } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 export function OnboardingToast() {
+  const t = useTranslations("onboarding");
+
   useEffect(() => {
-    // Check if user just completed onboarding
     const onboardingComplete = sessionStorage.getItem("onboardingComplete");
     if (onboardingComplete === "true") {
-      // Show the toast notification
-      toast.success("Welcome! Your manager will contact you soon.", {
+      toast.success(t("welcomeToast"), {
         duration: 6000,
         icon: "👋",
       });
-      // Clear the flag so it doesn't show again on refresh
       sessionStorage.removeItem("onboardingComplete");
     }
-  }, []);
+  }, [t]);
 
-  return null; // This component doesn't render anything
+  return null;
 }

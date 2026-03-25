@@ -394,7 +394,8 @@
         "desc": "Tu IA trabaja dentro de tu workspace de Slack",
         "howTo": "Crea una app de Slack con Socket Mode activado"
       }
-    }
+    },
+    "welcomeToast": "¡Bienvenido! Tu manager se pondrá en contacto contigo pronto."
   },
   "dashboard": {
     "greeting": "Qué bueno verte, {name} 👋",
@@ -2074,5 +2075,23 @@
     "step3": "El widget de chat aparecerá en tu web",
     "step4": "Personaliza los colores y el saludo para tu marca",
     "proTip": "Consejo: el widget funciona en cualquier web — WordPress, Shopify, React, Vue o HTML simple. ¡Sin programar!"
+  },
+  "analyticsSummary": {
+    "title": "Analíticas (7 días)",
+    "analytics": "Analíticas",
+    "failedLoad": "Error al cargar analíticas",
+    "refresh": "Actualizar",
+    "messages": "Mensajes",
+    "perDayAvg": "/día promedio",
+    "avgResponse": "Resp. media",
+    "fast": "Rápido ⚡",
+    "good": "Bueno",
+    "slow": "Lento",
+    "topChannel": "Canal principal",
+    "noData": "Sin datos",
+    "activeDays": "Días activos",
+    "ofLast7": "de los últimos 7 días",
+    "msgs": "msgs",
+    "swipeMore": "Desliza para ver más"
   }
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { BarChart3, MessageSquare, Clock, TrendingUp, AlertCircle } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface AnalyticsData {
   period: number;
@@ -17,12 +18,14 @@ interface AnalyticsSummaryProps {
 }
 
 export function AnalyticsSummary({ instanceId }: AnalyticsSummaryProps) {
+  const t = useTranslations("analyticsSummary");
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadAnalytics();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [instanceId]);
 
   async function loadAnalytics() {
@@ -44,7 +47,7 @@ export function AnalyticsSummary({ instanceId }: AnalyticsSummaryProps) {
       <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
         <div className="flex items-center gap-2 mb-4">
           <BarChart3 className="w-4 h-4 text-violet-400" />
-          <span className="text-sm font-semibold text-white">Analytics (7 days)</span>
+          <span className="text-sm font-semibold text-white">{t("title")}</span>
         </div>
         <div className="grid grid-cols-2 gap-3">
           {[1, 2, 3, 4].map((i) => (
@@ -60,30 +63,31 @@ export function AnalyticsSummary({ instanceId }: AnalyticsSummaryProps) {
       <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
         <div className="flex items-center gap-2 mb-4">
           <BarChart3 className="w-4 h-4 text-violet-400" />
-          <span className="text-sm font-semibold text-white">Analytics</span>
+          <span className="text-sm font-semibold text-white">{t("analytics")}</span>
         </div>
         <div className="flex items-center gap-2 text-zinc-500 text-sm">
           <AlertCircle className="w-4 h-4" />
-          <span>Failed to load analytics</span>
+          <span>{t("failedLoad")}</span>
         </div>
       </div>
     );
   }
 
   const topChannel = data.channelStats[0];
+  const responseSpeed = data.avgResponseTime < 5 ? t("fast") : data.avgResponseTime < 15 ? t("good") : t("slow");
 
   return (
     <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <BarChart3 className="w-4 h-4 text-violet-400" />
-          <span className="text-sm font-semibold text-white">Analytics (7 days)</span>
+          <span className="text-sm font-semibold text-white">{t("title")}</span>
         </div>
         <button
           onClick={loadAnalytics}
           className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
         >
-          Refresh
+          {t("refresh")}
         </button>
       </div>
 
@@ -91,45 +95,45 @@ export function AnalyticsSummary({ instanceId }: AnalyticsSummaryProps) {
         <div className="rounded-lg bg-white/[0.03] p-3">
           <div className="flex items-center gap-1.5 text-zinc-500 text-xs mb-1">
             <MessageSquare className="w-3 h-3" />
-            <span>Messages</span>
+            <span>{t("messages")}</span>
           </div>
           <div className="text-xl font-bold text-white">{data.totalMessages.toLocaleString()}</div>
-          <div className="text-xs text-zinc-600">{data.avgMessagesPerDay}/day avg</div>
+          <div className="text-xs text-zinc-600">{data.avgMessagesPerDay}{t("perDayAvg")}</div>
         </div>
 
         <div className="rounded-lg bg-white/[0.03] p-3">
           <div className="flex items-center gap-1.5 text-zinc-500 text-xs mb-1">
             <Clock className="w-3 h-3" />
-            <span>Avg Response</span>
+            <span>{t("avgResponse")}</span>
           </div>
           <div className="text-xl font-bold text-white">
             {data.avgResponseTime > 0 ? `${data.avgResponseTime}s` : "—"}
           </div>
           <div className="text-xs text-zinc-600">
-            {data.avgResponseTime < 5 ? "Fast ⚡" : data.avgResponseTime < 15 ? "Good" : "Slow"}
+            {data.avgResponseTime > 0 ? responseSpeed : "—"}
           </div>
         </div>
 
         <div className="rounded-lg bg-white/[0.03] p-3">
           <div className="flex items-center gap-1.5 text-zinc-500 text-xs mb-1">
             <TrendingUp className="w-3 h-3" />
-            <span>Top Channel</span>
+            <span>{t("topChannel")}</span>
           </div>
           <div className="text-xl font-bold text-white truncate">
             {topChannel ? topChannel.source : "—"}
           </div>
           <div className="text-xs text-zinc-600">
-            {topChannel ? `${topChannel.count} msgs` : "No data"}
+            {topChannel ? `${topChannel.count} ${t("msgs")}` : t("noData")}
           </div>
         </div>
 
         <div className="rounded-lg bg-white/[0.03] p-3">
           <div className="flex items-center gap-1.5 text-zinc-500 text-xs mb-1">
             <BarChart3 className="w-3 h-3" />
-            <span>Active Days</span>
+            <span>{t("activeDays")}</span>
           </div>
           <div className="text-xl font-bold text-white">{data.dailyStats.length}</div>
-          <div className="text-xs text-zinc-600">of last 7 days</div>
+          <div className="text-xs text-zinc-600">{t("ofLast7")}</div>
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect, ReactNode } from "react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 interface MobileTableWrapperProps {
@@ -25,6 +26,7 @@ export function MobileTableWrapper({
   cardView = false,
   cardViewBreakpoint = 640,
 }: MobileTableWrapperProps) {
+  const t = useTranslations("analyticsSummary");
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -112,7 +114,7 @@ export function MobileTableWrapper({
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 9l4-4 4 4m0 6l-4 4-4-4" transform="rotate(90 12 12)" />
           </svg>
-          <span>Swipe to see more</span>
+          <span>{t("swipeMore")}</span>
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 9l4-4 4 4m0 6l-4 4-4-4" transform="rotate(-90 12 12)" />
           </svg>
