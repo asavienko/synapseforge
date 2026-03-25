@@ -326,6 +326,7 @@
     "greeting": "Радий бачити вас, {name} 👋",
     "greetingSubtitle": "Ось що відбувається з вашими екземплярами ШІ.",
     "instances": {
+      "metaTitle": "Мої екземпляри | Dashboard",
       "title": "AI-інстанції",
       "subtitle": "Керуйте своїми розгорнутими AI-агентами.",
       "newInstance": "Нова інстанція",

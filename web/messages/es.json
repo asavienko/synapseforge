@@ -342,6 +342,7 @@
     "greeting": "Qué bueno verte, {name} 👋",
     "greetingSubtitle": "Aquí está lo que está pasando con tus instancias de IA.",
     "instances": {
+      "metaTitle": "Mis Instancias | Dashboard",
       "title": "Instancias de IA",
       "subtitle": "Gestiona tus agentes de IA desplegados.",
       "newInstance": "Nueva instancia",

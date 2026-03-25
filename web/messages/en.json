@@ -339,6 +339,7 @@
     "greeting": "Good to see you, {name} 👋",
     "greetingSubtitle": "Here's what's happening with your AI instances.",
     "instances": {
+      "metaTitle": "My Instances | Dashboard",
       "title": "AI Instances",
       "subtitle": "Manage your deployed AI agents.",
       "newInstance": "New Instance",

@@ -326,6 +326,7 @@
     "greeting": "Рад видеть вас, {name} 👋",
     "greetingSubtitle": "Вот что происходит с вашими экземплярами ИИ.",
     "instances": {
+      "metaTitle": "Мои экземпляры | Dashboard",
       "title": "AI-инстанции",
       "subtitle": "Управляйте своими развёрнутыми AI-агентами.",
       "newInstance": "Новая инстанция",
