@@ -2,7 +2,7 @@ import { Link } from "@/i18n/navigation";
 import { Metadata } from "next";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
 import { MobileNav } from "@/components/MobileNav";
-import { LandingDemoChat } from "@/components/LandingDemoChat";
+
 import { DemoChat } from "@/components/DemoChat";
 import { LiveStats } from "@/components/LiveStats";
 import { getFeaturedTemplates, categoryColors } from "@/lib/templates";
@@ -352,15 +352,15 @@ export default async function LandingPage() {
       {/* ═══════════════════════════════════════════════════════════════════
           VIDEO DEMO — alternating bg
       ═══════════════════════════════════════════════════════════════════ */}
-      <section className="bg-gray-50/60 dark:bg-white/[0.015] py-20">
+      <section id="demo" className="bg-gray-50/60 dark:bg-white/[0.015] py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <FadeInView direction="up">
             <div className="text-center mb-10">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-blue-200 dark:border-blue-500/20 text-[12px] text-blue-600 dark:text-blue-400 mb-3">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" /> Watch Demo
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" /> {t("demo.badge")}
               </div>
-              <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-3">See it in action</h2>
-              <p className="text-gray-500 dark:text-white/50 max-w-xl mx-auto text-[15px]">Deploy your AI agent in under 3 minutes. No DevOps required.</p>
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-3">{t("demo.tryItYourself")}</h2>
+              <p className="text-gray-500 dark:text-white/50 max-w-xl mx-auto text-[15px]">{t("demo.noCreditCard")}</p>
             </div>
           </FadeInView>
 
@@ -518,20 +518,6 @@ export default async function LandingPage() {
               </div>
             </FadeInView>
           ))}
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════════════════════
-          LIVE DEMO — full-width alt bg, high visual weight
-      ═══════════════════════════════════════════════════════════════════ */}
-      <section id="demo" className="py-20 bg-gray-50/60 dark:bg-white/[0.015]">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center mb-10">
-          <div className="text-[11px] font-medium tracking-[0.15em] text-blue-600 dark:text-blue-400 uppercase mb-3">{t("demo.badge")}</div>
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-3">{t("demo.tryItYourself")}</h2>
-          <p className="text-gray-500 dark:text-white/50 text-[15px]">{t("demo.noCreditCard")}</p>
-        </div>
-        <div className="max-w-2xl mx-auto px-4 sm:px-6">
-          <DemoChat />
         </div>
       </section>
 
@@ -827,7 +813,6 @@ export default async function LandingPage() {
         </div>
       </footer>
 
-      <LandingDemoChat />
     </div>
   );
 }
