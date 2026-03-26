@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Search, Command, Bot, Settings, CreditCard, Gift, MessageSquare, FileText, Sparkles, Zap } from "lucide-react";
 import { useAnalytics } from "@/components/AnalyticsProvider";
+import { useTranslations } from "next-intl";
 
 interface CommandItem {
   id: string;
@@ -20,11 +21,12 @@ export function CommandPalette() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const router = useRouter();
   const { track } = useAnalytics();
+  const t = useTranslations("commandPalette");
 
   const commands: CommandItem[] = [
     {
       id: "instances",
-      label: "Go to Instances",
+      label: t("goToInstances"),
       shortcut: "G I",
       icon: <Bot className="w-4 h-4" />,
       action: () => { router.push("/dashboard/instances"); setIsOpen(false); },
@@ -32,7 +34,7 @@ export function CommandPalette() {
     },
     {
       id: "new-instance",
-      label: "Create New Instance",
+      label: t("createInstance"),
       shortcut: "N I",
       icon: <Sparkles className="w-4 h-4" />,
       action: () => { router.push("/dashboard/instances"); setIsOpen(false); },
@@ -40,14 +42,14 @@ export function CommandPalette() {
     },
     {
       id: "templates",
-      label: "Browse Templates",
+      label: t("browseTemplates"),
       icon: <FileText className="w-4 h-4" />,
       action: () => { router.push("/templates"); setIsOpen(false); },
       keywords: ["templates", "examples", "starters"],
     },
     {
       id: "settings",
-      label: "Settings",
+      label: t("settings"),
       shortcut: "G S",
       icon: <Settings className="w-4 h-4" />,
       action: () => { router.push("/dashboard/settings"); setIsOpen(false); },
@@ -55,7 +57,7 @@ export function CommandPalette() {
     },
     {
       id: "billing",
-      label: "Billing & Plans",
+      label: t("billing"),
       shortcut: "G B",
       icon: <CreditCard className="w-4 h-4" />,
       action: () => { router.push("/dashboard/billing"); setIsOpen(false); },
@@ -63,28 +65,28 @@ export function CommandPalette() {
     },
     {
       id: "referrals",
-      label: "Referrals",
+      label: t("referrals"),
       icon: <Gift className="w-4 h-4" />,
       action: () => { router.push("/dashboard/referrals"); setIsOpen(false); },
       keywords: ["referrals", "invite", "credits", "rewards"],
     },
     {
       id: "messages",
-      label: "Messages",
+      label: t("messages"),
       icon: <MessageSquare className="w-4 h-4" />,
       action: () => { router.push("/dashboard/messages"); setIsOpen(false); },
       keywords: ["messages", "chat", "support", "manager"],
     },
     {
       id: "api-docs",
-      label: "API Documentation",
+      label: t("apiDocs"),
       icon: <Zap className="w-4 h-4" />,
       action: () => { router.push("/api-docs"); setIsOpen(false); },
       keywords: ["api", "docs", "documentation", "developers"],
     },
     {
       id: "home",
-      label: "Go to Home",
+      label: t("goHome"),
       icon: <Command className="w-4 h-4" />,
       action: () => { router.push("/"); setIsOpen(false); },
       keywords: ["home", "landing", "website"],
@@ -176,7 +178,7 @@ export function CommandPalette() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search commands..."
+              placeholder={t("placeholder")}
               className="flex-1 bg-transparent text-white placeholder-zinc-500 outline-none text-sm"
               autoFocus
             />
@@ -189,7 +191,7 @@ export function CommandPalette() {
           <div className="max-h-[400px] overflow-y-auto py-2">
             {filteredCommands.length === 0 ? (
               <div className="px-4 py-8 text-center text-zinc-500 text-sm">
-                No commands found
+                {t("noResults")}
               </div>
             ) : (
               <div className="px-2">
@@ -236,13 +238,13 @@ export function CommandPalette() {
           <div className="px-4 py-3 border-t border-white/5 flex items-center justify-between text-xs text-zinc-500">
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-1">
-                <kbd className="px-1.5 py-0.5 bg-white/5 rounded">↑↓</kbd> to navigate
+                <kbd className="px-1.5 py-0.5 bg-white/5 rounded">↑↓</kbd> {t("navigate")}
               </span>
               <span className="flex items-center gap-1">
-                <kbd className="px-1.5 py-0.5 bg-white/5 rounded">↵</kbd> to select
+                <kbd className="px-1.5 py-0.5 bg-white/5 rounded">↵</kbd> {t("select")}
               </span>
             </div>
-            <span>{filteredCommands.length} commands</span>
+            <span>{filteredCommands.length} {t("commands")}</span>
           </div>
         </div>
       </div>

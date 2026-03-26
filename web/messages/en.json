@@ -2199,5 +2199,21 @@
     "step2": "Add your OpenAI API key",
     "step3": "Connect a channel (Telegram, Discord)",
     "step4": "Test your AI agent"
+  },
+  "commandPalette": {
+    "placeholder": "Search commands...",
+    "noResults": "No commands found",
+    "navigate": "to navigate",
+    "select": "to select",
+    "commands": "commands",
+    "goToInstances": "Go to Instances",
+    "createInstance": "Create New Instance",
+    "browseTemplates": "Browse Templates",
+    "settings": "Settings",
+    "billing": "Billing & Plans",
+    "referrals": "Referrals",
+    "messages": "Messages",
+    "apiDocs": "API Documentation",
+    "goHome": "Go to Home"
   }
 }

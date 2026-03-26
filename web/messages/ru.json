@@ -2218,5 +2218,21 @@
     "step2": "Добавьте API-ключ OpenAI",
     "step3": "Подключите канал (Telegram, Discord)",
     "step4": "Протестируйте ИИ-агента"
+  },
+  "commandPalette": {
+    "placeholder": "Поиск команд...",
+    "noResults": "Команды не найдены",
+    "navigate": "для навигации",
+    "select": "для выбора",
+    "commands": "команд",
+    "goToInstances": "Перейти к инстансам",
+    "createInstance": "Создать инстанс",
+    "browseTemplates": "Шаблоны",
+    "settings": "Настройки",
+    "billing": "Оплата и тарифы",
+    "referrals": "Рефералы",
+    "messages": "Сообщения",
+    "apiDocs": "Документация API",
+    "goHome": "На главную"
   }
 }

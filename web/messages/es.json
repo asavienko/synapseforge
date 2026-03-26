@@ -2218,5 +2218,21 @@
     "step2": "Añade tu clave API de OpenAI",
     "step3": "Conecta un canal (Telegram, Discord)",
     "step4": "Prueba tu agente IA"
+  },
+  "commandPalette": {
+    "placeholder": "Buscar comandos...",
+    "noResults": "No se encontraron comandos",
+    "navigate": "para navegar",
+    "select": "para seleccionar",
+    "commands": "comandos",
+    "goToInstances": "Ir a Instancias",
+    "createInstance": "Crear Nueva Instancia",
+    "browseTemplates": "Ver Plantillas",
+    "settings": "Configuración",
+    "billing": "Facturación y Planes",
+    "referrals": "Referidos",
+    "messages": "Mensajes",
+    "apiDocs": "Documentación API",
+    "goHome": "Ir al Inicio"
   }
 }
