@@ -1,13 +1,24 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useTheme } from "./ThemeProvider";
 
 export function ThemeToggle({ className = "" }: { className?: string }) {
   const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const toggleTheme = () => {
     setTheme(resolvedTheme === "dark" ? "light" : "dark");
   };
+
+  // Render a placeholder with the same dimensions to prevent layout shift
+  if (!mounted) {
+    return <div className={`w-9 h-9 ${className}`} />;
+  }
 
   return (
     <button
@@ -20,7 +31,7 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
         className={`w-[18px] h-[18px] absolute transition-all duration-500 ${
           resolvedTheme === "dark"
             ? "opacity-0 rotate-90 scale-0"
-            : "opacity-100 rotate-0 scale-100 text-gray-600"
+            : "opacity-100 rotate-0 scale-100 text-gray-700"
         }`}
         fill="none"
         viewBox="0 0 24 24"
