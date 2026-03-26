@@ -14,27 +14,49 @@ const providers: NextAuthOptions["providers"] = [
       password: { label: "Password", type: "password" },
     },
     async authorize(credentials) {
-      if (!credentials?.email || !credentials?.password) return null;
+      console.log("[auth] Authorize called");
+      
+      const email = credentials?.email as string | undefined;
+      const password = credentials?.password as string | undefined;
+      
+      if (!email || !password) {
+        console.log("[auth] Missing credentials");
+        return null;
+      }
 
-      const email = String(credentials.email).toLowerCase().trim();
-      const password = String(credentials.password);
+      const normalizedEmail = email.toLowerCase().trim();
+      console.log("[auth] Looking up user:", normalizedEmail);
 
       // Rate limit: 10 login attempts per email per 15 minutes
-      const emailKey = `login:${email}`;
+      const emailKey = `login:${normalizedEmail}`;
       const rateLimitResult = rateLimit(emailKey, 10, 15 * 60 * 1000);
       if (!rateLimitResult.success) {
         throw new Error("Too many login attempts. Please try again later.");
       }
 
       const user = await prisma.user.findUnique({
-        where: { email },
+        where: { email: normalizedEmail },
       });
 
-      if (!user || !user.password) return null;
+      if (!user) {
+        console.log("[auth] User not found");
+        return null;
+      }
 
+      if (!user.password) {
+        console.log("[auth] User has no password");
+        return null;
+      }
+
+      console.log("[auth] Comparing passwords...");
       const isValid = await bcrypt.compare(password, user.password);
-      if (!isValid) return null;
+      console.log("[auth] Password valid:", isValid);
+      
+      if (!isValid) {
+        return null;
+      }
 
+      console.log("[auth] Login successful");
       return {
         id: user.id,
         email: user.email,
