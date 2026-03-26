@@ -24,6 +24,8 @@ export interface Instance {
   autoUpdate?: boolean;
   sandboxMode?: boolean;
   sandboxUsed?: number;
+  consecutiveFailures?: number;
+  uptimePercentage?: number | null;
 }
 
 export interface CredentialRow {
