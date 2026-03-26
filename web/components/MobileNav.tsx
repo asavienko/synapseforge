@@ -11,6 +11,10 @@ interface MobileNavProps {
     about: string;
     contact: string;
     signIn: string;
+    demo: string;
+    templates: string;
+    useCases: string;
+    blog: string;
   };
 }
 
@@ -28,20 +32,39 @@ export function MobileNav({ labels }: MobileNavProps) {
       </button>
 
       {open && (
-        <div className="md:hidden absolute top-16 left-0 right-0 bg-white/95 dark:bg-[#0a0a0f]/95 backdrop-blur-sm border-b border-gray-200 dark:border-white/5 z-50 px-6 py-4 flex flex-col gap-4 text-sm text-gray-600 dark:text-zinc-400">
-          <a href="#how" onClick={() => setOpen(false)} className="hover:text-gray-900 dark:hover:text-white transition-colors py-1">
+        <div className="md:hidden absolute top-16 left-0 right-0 bg-white/95 dark:bg-[#0a0a0f]/95 backdrop-blur-sm border-b border-gray-200 dark:border-white/5 z-50 px-6 py-4 flex flex-col gap-1 text-sm text-gray-600 dark:text-zinc-400">
+          {/* Primary nav */}
+          <a href="#how" onClick={() => setOpen(false)} className="hover:text-gray-900 dark:hover:text-white transition-colors py-2">
             {labels.services}
           </a>
-          <a href="#pricing" onClick={() => setOpen(false)} className="hover:text-gray-900 dark:hover:text-white transition-colors py-1">
+          <a href="#demo" onClick={() => setOpen(false)} className="hover:text-gray-900 dark:hover:text-white transition-colors py-2">
+            {labels.demo}
+          </a>
+          <a href="#pricing" onClick={() => setOpen(false)} className="hover:text-gray-900 dark:hover:text-white transition-colors py-2">
             {labels.pricing}
           </a>
-          <a href="#about" onClick={() => setOpen(false)} className="hover:text-gray-900 dark:hover:text-white transition-colors py-1">
-            {labels.about}
-          </a>
-          <Link href="/contact" onClick={() => setOpen(false)} className="hover:text-gray-900 dark:hover:text-white transition-colors py-1">
+
+          {/* Divider */}
+          <div className="border-t border-gray-100 dark:border-white/10 my-1" />
+
+          {/* Secondary links */}
+          <Link href="/templates" onClick={() => setOpen(false)} className="hover:text-gray-900 dark:hover:text-white transition-colors py-2">
+            {labels.templates}
+          </Link>
+          <Link href="/use-cases" onClick={() => setOpen(false)} className="hover:text-gray-900 dark:hover:text-white transition-colors py-2">
+            {labels.useCases}
+          </Link>
+          <Link href="/blog" onClick={() => setOpen(false)} className="hover:text-gray-900 dark:hover:text-white transition-colors py-2">
+            {labels.blog}
+          </Link>
+          <Link href="/contact" onClick={() => setOpen(false)} className="hover:text-gray-900 dark:hover:text-white transition-colors py-2">
             {labels.contact}
           </Link>
-          <Link href="/sign-in" onClick={() => setOpen(false)} className="hover:text-gray-900 dark:hover:text-white transition-colors py-1">
+
+          {/* Divider */}
+          <div className="border-t border-gray-100 dark:border-white/10 my-1" />
+
+          <Link href="/sign-in" onClick={() => setOpen(false)} className="hover:text-gray-900 dark:hover:text-white transition-colors py-2">
             {labels.signIn}
           </Link>
         </div>

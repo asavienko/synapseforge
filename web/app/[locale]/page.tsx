@@ -137,7 +137,7 @@ export default async function LandingPage() {
                 </Link>
               </>
             )}
-            <MobileNav labels={{ services: t("nav.services"), pricing: t("nav.pricing"), about: t("nav.about"), contact: t("nav.contact"), signIn: t("nav.signIn") }} />
+            <MobileNav labels={{ services: t("nav.services"), pricing: t("nav.pricing"), about: t("nav.about"), contact: t("nav.contact"), signIn: t("nav.signIn"), demo: t("nav.demo"), templates: t("nav.templates"), useCases: t("nav.useCases"), blog: t("nav.blog") }} />
           </div>
         </div>
       </nav>
