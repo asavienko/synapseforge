@@ -17,7 +17,12 @@
     "contact": "Contact",
     "signIn": "Sign in",
     "getStarted": "Get started",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "demo": "Demo",
+    "templates": "Templates",
+    "useCases": "Use Cases",
+    "blog": "Blog",
+    "start": "Start"
   },
   "hero": {
     "badge": "Now in early access",
@@ -189,7 +194,20 @@
     "status": "Status",
     "api": "API",
     "copyright": "© {year}",
-    "systemStatus": "All systems operational"
+    "systemStatus": "All systems operational",
+    "tagline": "Deploy AI customer support agents for Telegram, WhatsApp, and web. Powered by GPT-4 and Claude.",
+    "colProduct": "Product",
+    "colIntegrations": "Integrations",
+    "colUseCases": "Use Cases",
+    "colResources": "Resources",
+    "pricing": "Pricing",
+    "templates": "Templates",
+    "allIntegrations": "All integrations →",
+    "ecommerce": "Ecommerce",
+    "saas": "SaaS",
+    "healthcare": "Healthcare",
+    "allUseCases": "All use cases →",
+    "comparisons": "Comparisons"
   },
   "notFound": {
     "title": "Page not found",

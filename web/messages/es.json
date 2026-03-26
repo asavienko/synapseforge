@@ -33,7 +33,12 @@
     "signIn": "Iniciar sesión",
     "getStarted": "Empezar",
     "contact": "Contacto",
-    "dashboard": "Panel"
+    "dashboard": "Panel",
+    "demo": "Demo",
+    "templates": "Plantillas",
+    "useCases": "Casos de uso",
+    "blog": "Blog",
+    "start": "Empezar"
   },
   "hero": {
     "badge": "Ahora en acceso anticipado",
@@ -201,7 +206,20 @@
     "status": "Estado",
     "api": "API",
     "copyright": "© {year}",
-    "systemStatus": "Todos los sistemas operativos"
+    "systemStatus": "Todos los sistemas operativos",
+    "tagline": "Despliega agentes IA de atención al cliente para Telegram, WhatsApp y web. Impulsado por GPT-4 y Claude.",
+    "colProduct": "Producto",
+    "colIntegrations": "Integraciones",
+    "colUseCases": "Casos de uso",
+    "colResources": "Recursos",
+    "pricing": "Precios",
+    "templates": "Plantillas",
+    "allIntegrations": "Todas las integraciones →",
+    "ecommerce": "E-commerce",
+    "saas": "SaaS",
+    "healthcare": "Salud",
+    "allUseCases": "Todos los casos →",
+    "comparisons": "Comparativas"
   },
   "auth": {
     "signIn": {

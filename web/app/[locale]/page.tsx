@@ -110,12 +110,12 @@ export default async function LandingPage() {
 
           <div className="hidden lg:flex items-center gap-1 text-[13px] font-medium">
             <a href="#features" className="px-3 py-1.5 rounded-md text-gray-600 dark:text-white/60 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-white/[0.06] transition-all">{t("nav.services")}</a>
-            <a href="#demo" className="px-3 py-1.5 rounded-md text-gray-600 dark:text-white/60 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-white/[0.06] transition-all">Demo</a>
+            <a href="#demo" className="px-3 py-1.5 rounded-md text-gray-600 dark:text-white/60 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-white/[0.06] transition-all">{t("nav.demo")}</a>
             <a href="#pricing" className="px-3 py-1.5 rounded-md text-gray-600 dark:text-white/60 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-white/[0.06] transition-all">{t("nav.pricing")}</a>
             <div className="w-px h-4 bg-gray-200 dark:bg-white/10 mx-1" />
-            <Link href="/templates" className="px-3 py-1.5 rounded-md text-gray-500 dark:text-white/45 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-white/[0.06] transition-all">Templates</Link>
-            <Link href="/use-cases" className="px-3 py-1.5 rounded-md text-gray-500 dark:text-white/45 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-white/[0.06] transition-all">Use Cases</Link>
-            <Link href="/blog" className="px-3 py-1.5 rounded-md text-gray-500 dark:text-white/45 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-white/[0.06] transition-all">Blog</Link>
+            <Link href="/templates" className="px-3 py-1.5 rounded-md text-gray-500 dark:text-white/45 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-white/[0.06] transition-all">{t("nav.templates")}</Link>
+            <Link href="/use-cases" className="px-3 py-1.5 rounded-md text-gray-500 dark:text-white/45 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-white/[0.06] transition-all">{t("nav.useCases")}</Link>
+            <Link href="/blog" className="px-3 py-1.5 rounded-md text-gray-500 dark:text-white/45 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/70 dark:hover:bg-white/[0.06] transition-all">{t("nav.blog")}</Link>
           </div>
 
           <div className="flex items-center gap-1.5">
@@ -133,7 +133,7 @@ export default async function LandingPage() {
                 </Link>
                 <Link href="/sign-up" className="text-[13px] bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-4 py-2 rounded-lg font-semibold hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors shadow-sm">
                   <span className="hidden sm:inline">{t("nav.getStarted")}</span>
-                  <span className="sm:hidden">Start</span>
+                  <span className="sm:hidden">{t("nav.start")}</span>
                 </Link>
               </>
             )}
@@ -785,13 +785,13 @@ export default async function LandingPage() {
                 <HelixLogo className="w-5 h-5 text-blue-600 dark:text-blue-400" size={20} />
                 <span className="font-bold text-[13px]">OpenHelix<span className="text-blue-600 dark:text-blue-400">.</span></span>
               </div>
-              <p className="text-[12px] text-gray-400 dark:text-white/30 leading-relaxed max-w-xs">Deploy AI customer support agents for Telegram, WhatsApp, and web. Powered by GPT-4 and Claude.</p>
+              <p className="text-[12px] text-gray-400 dark:text-white/30 leading-relaxed max-w-xs">{t("footer.tagline")}</p>
             </div>
             {[
-              { title: "Product", links: [{ href: "/pricing", label: "Pricing" }, { href: "/templates", label: "Templates" }, { href: "/changelog", label: t("footer.changelog") }, { href: "/status", label: t("footer.status") }, { href: "/api-docs", label: t("footer.api") }] },
-              { title: "Integrations", links: [{ href: "/integrations/telegram", label: "Telegram" }, { href: "/integrations/whatsapp", label: "WhatsApp" }, { href: "/integrations/discord", label: "Discord" }, { href: "/integrations", label: "All integrations \u2192" }] },
-              { title: "Use Cases", links: [{ href: "/use-cases/ecommerce", label: "Ecommerce" }, { href: "/use-cases/saas", label: "SaaS" }, { href: "/use-cases/healthcare", label: "Healthcare" }, { href: "/use-cases", label: "All use cases \u2192" }] },
-              { title: "Resources", links: [{ href: "/blog", label: "Blog" }, { href: "/compare", label: "Comparisons" }, { href: "/contact", label: t("nav.contact") }, { href: "/privacy", label: t("footer.privacy") }, { href: "/terms", label: t("footer.terms") }] },
+              { title: t("footer.colProduct"), links: [{ href: "/pricing", label: t("footer.pricing") }, { href: "/templates", label: t("footer.templates") }, { href: "/changelog", label: t("footer.changelog") }, { href: "/status", label: t("footer.status") }, { href: "/api-docs", label: t("footer.api") }] },
+              { title: t("footer.colIntegrations"), links: [{ href: "/integrations/telegram", label: "Telegram" }, { href: "/integrations/whatsapp", label: "WhatsApp" }, { href: "/integrations/discord", label: "Discord" }, { href: "/integrations", label: t("footer.allIntegrations") }] },
+              { title: t("footer.colUseCases"), links: [{ href: "/use-cases/ecommerce", label: t("footer.ecommerce") }, { href: "/use-cases/saas", label: t("footer.saas") }, { href: "/use-cases/healthcare", label: t("footer.healthcare") }, { href: "/use-cases", label: t("footer.allUseCases") }] },
+              { title: t("footer.colResources"), links: [{ href: "/blog", label: t("nav.blog") }, { href: "/compare", label: t("footer.comparisons") }, { href: "/contact", label: t("nav.contact") }, { href: "/privacy", label: t("footer.privacy") }, { href: "/terms", label: t("footer.terms") }] },
             ].map((col) => (
               <div key={col.title}>
                 <div className="text-[11px] font-medium text-gray-400 dark:text-white/30 uppercase tracking-[0.1em] mb-4">{col.title}</div>

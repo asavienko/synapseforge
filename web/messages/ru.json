@@ -17,7 +17,12 @@
     "signIn": "Войти",
     "getStarted": "Начать",
     "contact": "Контакты",
-    "dashboard": "Панель"
+    "dashboard": "Панель",
+    "demo": "Демо",
+    "templates": "Шаблоны",
+    "useCases": "Применения",
+    "blog": "Блог",
+    "start": "Начать"
   },
   "hero": {
     "badge": "Ранний доступ",
@@ -185,7 +190,20 @@
     "status": "Статус",
     "api": "API",
     "copyright": "© {year}",
-    "systemStatus": "Все системы работают"
+    "systemStatus": "Все системы работают",
+    "tagline": "Запускайте ИИ-агентов поддержки в Telegram, WhatsApp и на сайте. На базе GPT-4 и Claude.",
+    "colProduct": "Продукт",
+    "colIntegrations": "Интеграции",
+    "colUseCases": "Применения",
+    "colResources": "Ресурсы",
+    "pricing": "Цены",
+    "templates": "Шаблоны",
+    "allIntegrations": "Все интеграции →",
+    "ecommerce": "E-commerce",
+    "saas": "SaaS",
+    "healthcare": "Медицина",
+    "allUseCases": "Все случаи →",
+    "comparisons": "Сравнения"
   },
   "auth": {
     "signIn": {

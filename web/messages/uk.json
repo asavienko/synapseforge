@@ -17,7 +17,12 @@
     "signIn": "Увійти",
     "getStarted": "Почати",
     "contact": "Контакти",
-    "dashboard": "Панель"
+    "dashboard": "Панель",
+    "demo": "Демо",
+    "templates": "Шаблони",
+    "useCases": "Застосування",
+    "blog": "Блог",
+    "start": "Почати"
   },
   "hero": {
     "badge": "Зараз у ранньому доступі",
@@ -185,7 +190,20 @@
     "status": "Статус",
     "api": "API",
     "copyright": "© {year}",
-    "systemStatus": "Всі системи працюють"
+    "systemStatus": "Всі системи працюють",
+    "tagline": "Запускайте ІІ-агентів підтримки в Telegram, WhatsApp та на сайті. На базі GPT-4 і Claude.",
+    "colProduct": "Продукт",
+    "colIntegrations": "Інтеграції",
+    "colUseCases": "Застосування",
+    "colResources": "Ресурси",
+    "pricing": "Ціни",
+    "templates": "Шаблони",
+    "allIntegrations": "Всі інтеграції →",
+    "ecommerce": "E-commerce",
+    "saas": "SaaS",
+    "healthcare": "Медицина",
+    "allUseCases": "Всі випадки →",
+    "comparisons": "Порівняння"
   },
   "auth": {
     "signIn": {
