@@ -40,7 +40,7 @@ const faqSchema = {
     {
       "@type": "Question",
       name: "How much does it cost for a restaurant?",
-      acceptedAnswer: { "@type": "Answer", text: "The free plan includes 2,000 messages/month — enough for a small restaurant. The Pro plan at $79/month handles unlimited messages. Most restaurants find the free plan sufficient to start, then upgrade based on volume." },
+      acceptedAnswer: { "@type": "Answer", text: "The free plan includes 2,000 messages/month — enough for a small restaurant. The Pro plan at $49/month handles unlimited messages. Most restaurants find the free plan sufficient to start, then upgrade based on volume." },
     },
   ],
 };

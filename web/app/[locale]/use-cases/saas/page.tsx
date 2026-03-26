@@ -35,7 +35,7 @@ const faqSchema = {
     {
       "@type": "Question",
       name: "What's the difference between OpenHelix AI and Intercom?",
-      acceptedAnswer: { "@type": "Answer", text: "Intercom costs $74–$395/month and focuses on marketing + sales. OpenHelix AI focuses purely on AI-powered support automation at $0–79/month — with support for Telegram, WhatsApp, and Discord out of the box. See our full comparison at /compare/intercom." },
+      acceptedAnswer: { "@type": "Answer", text: "Intercom costs $74–$395/month and focuses on marketing + sales. OpenHelix AI focuses purely on AI-powered support automation at $0–49/month — with support for Telegram, WhatsApp, and Discord out of the box. See our full comparison at /compare/intercom." },
     },
   ],
 };

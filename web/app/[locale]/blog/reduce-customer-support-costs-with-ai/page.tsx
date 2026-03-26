@@ -35,7 +35,7 @@ const costs = [
 ];
 
 const aiCosts = [
-  { item: "OpenHelix AI (Pro plan)", cost: "$79/month", note: "Unlimited instances" },
+  { item: "OpenHelix AI (Pro plan)", cost: "$49/month", note: "Unlimited instances" },
   { item: "GPT-4o mini API (10K msgs/mo)", cost: "~$2/month", note: "At $0.0002/1K tokens" },
   { item: "GPT-4o API (10K msgs/mo)", cost: "~$50/month", note: "At $0.005/1K tokens" },
   { item: "Twilio WhatsApp (10K msgs)", cost: "~$50/month", note: "At $0.005/msg" },
@@ -286,7 +286,7 @@ export default function ReduceSupportCostsPost() {
                 <div className="p-5">
                   <div className="text-xs text-zinc-500 uppercase tracking-wider mb-4">With AI (75% automated)</div>
                   {[
-                    { label: "OpenHelix AI (Pro)", value: "$948/yr" },
+                    { label: "OpenHelix AI (Pro)", value: "$588/yr" },
                     { label: "AI API costs", value: "~$600/yr" },
                     { label: "0.25 FTE human (complex)", value: "$12,275/yr" },
                     { label: "Total", value: "$13,823/yr", highlight: true },

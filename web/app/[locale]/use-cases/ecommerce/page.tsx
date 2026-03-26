@@ -263,7 +263,7 @@ export default function EcommercePage() {
               <div className="p-6">
                 <div className="text-xs text-zinc-500 uppercase tracking-wider mb-4">With OpenHelix AI</div>
                 {[
-                  { label: "Annual cost (Pro plan)", value: "$948", highlight: true },
+                  { label: "Annual cost (Pro plan)", value: "$588", highlight: true },
                   { label: "Avg. conversations handled/day", value: "1,000+" },
                   { label: "After-hours coverage", value: "24/7" },
                   { label: "Response time", value: "< 3 seconds" },
