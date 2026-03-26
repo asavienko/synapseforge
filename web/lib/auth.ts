@@ -22,8 +22,7 @@ const providers: NextAuthOptions["providers"] = [
       // Rate limit: 10 login attempts per email per 15 minutes
       const emailKey = `login:${email}`;
       const rateLimitResult = rateLimit(emailKey, 10, 15 * 60 * 1000);
-      const isAllowed = typeof rateLimitResult === 'boolean' ? rateLimitResult : rateLimitResult.success;
-      if (!isAllowed) {
+      if (!rateLimitResult.success) {
         throw new Error("Too many login attempts. Please try again later.");
       }
 
