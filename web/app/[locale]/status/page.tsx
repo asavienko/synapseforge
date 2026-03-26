@@ -14,7 +14,7 @@ export default async function StatusPage() {
   const t = await getTranslations("status");
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f]">
+    <div className="min-h-screen bg-white dark:bg-[#0a0a0f]">
       <div className="max-w-4xl mx-auto px-4 py-16">
         {/* Header */}
         <div className="text-center mb-12">
@@ -22,21 +22,21 @@ export default async function StatusPage() {
             <div className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></div>
             <span className="text-emerald-400 font-medium">{t("allSystemsOperational")}</span>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
             {t("title")}
           </h1>
-          <p className="text-zinc-400">{t("subtitle")}</p>
+          <p className="text-gray-500 dark:text-white/50">{t("subtitle")}</p>
         </div>
 
         <StatusClient />
 
         {/* Footer */}
         <div className="mt-16 text-center">
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-gray-500 dark:text-white/50">
             {t("questions")}{" "}
             <a
               href="mailto:hello@openhelixai.com"
-              className="text-violet-400 hover:text-violet-300 transition-colors"
+              className="text-blue-400 hover:text-blue-300 transition-colors"
             >
               hello@openhelixai.com
             </a>

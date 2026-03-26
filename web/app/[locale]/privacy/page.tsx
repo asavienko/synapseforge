@@ -1,22 +1,23 @@
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
-import { Zap, ArrowLeft, Shield, Database, Users, Lock } from "lucide-react";
+import { ArrowLeft, Shield, Database, Users, Lock } from "lucide-react";
+import { HelixLogo } from "@/components/icons/BrandIcons";
 
 export default async function PrivacyPage() {
   const t = await getTranslations();
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white grid-bg">
+    <div className="min-h-screen bg-white dark:bg-[#0a0a0f] text-gray-900 dark:text-[#f5f5f7]">
       {/* ── Nav ──────────────────────────────────────────────────────────── */}
-      <nav className="border-b border-white/5 backdrop-blur-sm sticky top-0 z-50 bg-[#0a0a0f]/80">
+      <nav className="border-b border-gray-200/50 dark:border-white/[0.06] backdrop-blur-sm sticky top-0 z-50 bg-white/80 dark:bg-[#0a0a0f]/80">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <Zap className="w-6 h-6 text-violet-400" />
-            <span className="font-bold text-lg tracking-tight">OpenHelix AI</span>
+            <HelixLogo className="w-7 h-7 text-blue-600 dark:text-blue-400" size={28} />
+            <span className="font-bold text-lg tracking-tight text-gray-900 dark:text-white">OpenHelix<span className="text-blue-600 dark:text-blue-400">.</span></span>
           </Link>
           <Link
             href="/"
-            className="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors"
+            className="flex items-center gap-2 text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to home
@@ -27,21 +28,21 @@ export default async function PrivacyPage() {
       {/* ── Content ───────────────────────────────────────────────────────── */}
       <main className="max-w-3xl mx-auto px-6 py-16">
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 text-xs font-medium mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-300 text-xs font-medium mb-6">
             <Shield className="w-3.5 h-3.5" />
             Your Data, Your Control
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">{t("privacy.title")}</h1>
-          <p className="text-zinc-500">Effective Date: March 2026</p>
+          <p className="text-gray-500 dark:text-white/40">Effective Date: March 2026</p>
         </div>
 
-        <div className="glow-border rounded-2xl bg-white/[0.02] p-8 md:p-10 space-y-10">
+        <div className="glow-border rounded-2xl bg-white dark:bg-white/[0.02] p-8 md:p-10 space-y-10">
           <section>
-            <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-              <Database className="w-5 h-5 text-violet-400" />
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+              <Database className="w-5 h-5 text-blue-400" />
               What Data We Collect
             </h2>
-            <div className="space-y-3 text-zinc-400 leading-relaxed">
+            <div className="space-y-3 text-gray-500 dark:text-white/50 leading-relaxed">
               <p>We collect the following types of information:</p>
               <ul className="list-disc list-inside space-y-2 ml-2">
                 <li><strong className="text-zinc-300">Account Information:</strong> Your name, email address, and company details when you register.</li>
@@ -54,11 +55,11 @@ export default async function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-              <Users className="w-5 h-5 text-violet-400" />
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+              <Users className="w-5 h-5 text-blue-400" />
               How We Use Your Data
             </h2>
-            <div className="space-y-3 text-zinc-400 leading-relaxed">
+            <div className="space-y-3 text-gray-500 dark:text-white/50 leading-relaxed">
               <p>We use your data to:</p>
               <ul className="list-disc list-inside space-y-2 ml-2">
                 <li>Provide and maintain the OpenHelix AI service</li>
@@ -72,29 +73,29 @@ export default async function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-              <Lock className="w-5 h-5 text-violet-400" />
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+              <Lock className="w-5 h-5 text-blue-400" />
               Data Storage & Security
             </h2>
-            <div className="space-y-3 text-zinc-400 leading-relaxed">
+            <div className="space-y-3 text-gray-500 dark:text-white/50 leading-relaxed">
               <p>
-                Your data is stored in <strong className="text-zinc-300">PostgreSQL databases</strong> hosted on 
-                <strong className="text-zinc-300"> US-based servers</strong> (Hetzner Cloud, Virginia region). 
+                Your data is stored in <strong className="text-zinc-300">PostgreSQL databases</strong> hosted on
+                <strong className="text-zinc-300"> US-based servers</strong> (Hetzner Cloud, Virginia region).
                 All data is encrypted at rest using AES-256 and in transit via TLS 1.3.
               </p>
               <p>
-                API keys for AI providers (OpenAI, Anthropic, etc.) are encrypted with AES-256-GCM 
+                API keys for AI providers (OpenAI, Anthropic, etc.) are encrypted with AES-256-GCM
                 and only decrypted when needed to process requests. We never store raw API keys in plaintext.
               </p>
             </div>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-              <Users className="w-5 h-5 text-violet-400" />
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+              <Users className="w-5 h-5 text-blue-400" />
               Third-Party Services
             </h2>
-            <div className="space-y-3 text-zinc-400 leading-relaxed">
+            <div className="space-y-3 text-gray-500 dark:text-white/50 leading-relaxed">
               <p>We share limited data with trusted third parties solely to operate our service:</p>
               <ul className="list-disc list-inside space-y-2 ml-2">
                 <li><strong className="text-zinc-300">OpenAI / Anthropic:</strong> AI chat messages are sent to your configured AI provider to generate responses.</li>
@@ -102,15 +103,15 @@ export default async function PrivacyPage() {
                 <li><strong className="text-zinc-300">Resend:</strong> Handles transactional and notification emails.</li>
                 <li><strong className="text-zinc-300">Hetzner:</strong> Cloud infrastructure and server hosting.</li>
               </ul>
-              <p className="text-sm text-zinc-500 mt-3">
+              <p className="text-sm text-gray-500 dark:text-white/40 mt-3">
                 We never sell your data to third parties for marketing purposes.
               </p>
             </div>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-white mb-4">Your Rights (GDPR & CCPA)</h2>
-            <div className="space-y-3 text-zinc-400 leading-relaxed">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Your Rights (GDPR & CCPA)</h2>
+            <div className="space-y-3 text-gray-500 dark:text-white/50 leading-relaxed">
               <p>You have the right to:</p>
               <ul className="list-disc list-inside space-y-2 ml-2">
                 <li><strong className="text-zinc-300">Access:</strong> Request a copy of all data we hold about you</li>
@@ -122,7 +123,7 @@ export default async function PrivacyPage() {
               </ul>
               <p className="mt-3">
                 To exercise these rights, contact us at{" "}
-                <a href="mailto:privacy@openhelixai.com" className="text-violet-400 hover:text-violet-300 transition-colors">
+                <a href="mailto:privacy@openhelixai.com" className="text-blue-400 hover:text-blue-300 transition-colors">
                   privacy@openhelixai.com
                 </a>
                 . We respond to all requests within 30 days.
@@ -131,36 +132,36 @@ export default async function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-white mb-4">Data Retention</h2>
-            <div className="space-y-3 text-zinc-400 leading-relaxed">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Data Retention</h2>
+            <div className="space-y-3 text-gray-500 dark:text-white/50 leading-relaxed">
               <p>
-                We retain your data for as long as your account is active. Upon account deletion, 
-                all personal data is permanently removed within 30 days, except where we are legally 
+                We retain your data for as long as your account is active. Upon account deletion,
+                all personal data is permanently removed within 30 days, except where we are legally
                 obligated to retain records (e.g., billing information for tax purposes, retained for 7 years).
               </p>
             </div>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-white mb-4">Cookies</h2>
-            <div className="space-y-3 text-zinc-400 leading-relaxed">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Cookies</h2>
+            <div className="space-y-3 text-gray-500 dark:text-white/50 leading-relaxed">
               <p>
-                We use essential cookies for authentication and session management. 
+                We use essential cookies for authentication and session management.
                 Analytics cookies are optional and can be disabled. See our Cookie Policy for details.
               </p>
             </div>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-white mb-4">Contact Us</h2>
-            <div className="space-y-3 text-zinc-400 leading-relaxed">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Contact Us</h2>
+            <div className="space-y-3 text-gray-500 dark:text-white/50 leading-relaxed">
               <p>
                 For privacy-related questions or to exercise your rights, contact our Data Protection Officer:
               </p>
               <p className="text-zinc-300">
-                Email: <a href="mailto:privacy@openhelixai.com" className="text-violet-400 hover:text-violet-300 transition-colors">privacy@openhelixai.com</a>
+                Email: <a href="mailto:privacy@openhelixai.com" className="text-blue-400 hover:text-blue-300 transition-colors">privacy@openhelixai.com</a>
               </p>
-              <p className="text-sm text-zinc-500">
+              <p className="text-sm text-gray-500 dark:text-white/40">
                 OpenHelix AI — Alicante, Spain
               </p>
             </div>
@@ -169,18 +170,18 @@ export default async function PrivacyPage() {
       </main>
 
       {/* ── Footer ───────────────────────────────────────────────────────── */}
-      <footer className="border-t border-white/5 py-10 mt-16">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-zinc-500">
+      <footer className="border-t border-gray-100 dark:border-white/[0.06] py-10 mt-16">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500 dark:text-white/40">
           <div className="flex items-center gap-2">
-            <Zap className="w-4 h-4 text-violet-400" />
-            <span className="font-semibold text-zinc-400">OpenHelix AI</span>
+            <HelixLogo className="w-4 h-4 text-blue-600 dark:text-blue-400" size={16} />
+            <span className="font-semibold text-gray-500 dark:text-white/50">OpenHelix AI</span>
             <span>{t("footer.copyright", { year: 2026 })}</span>
           </div>
           <div className="flex gap-6">
-            <Link href="/status" className="hover:text-white transition-colors">{t("footer.status")}</Link>
-            <Link href="/privacy" className="text-white transition-colors">{t("footer.privacy")}</Link>
-            <Link href="/terms" className="hover:text-white transition-colors">{t("footer.terms")}</Link>
-            <Link href="/contact" className="hover:text-white transition-colors">{t("footer.contact")}</Link>
+            <Link href="/status" className="hover:text-gray-900 dark:hover:text-white transition-colors">{t("footer.status")}</Link>
+            <Link href="/privacy" className="text-gray-900 dark:text-white transition-colors">{t("footer.privacy")}</Link>
+            <Link href="/terms" className="hover:text-gray-900 dark:hover:text-white transition-colors">{t("footer.terms")}</Link>
+            <Link href="/contact" className="hover:text-gray-900 dark:hover:text-white transition-colors">{t("footer.contact")}</Link>
           </div>
         </div>
       </footer>

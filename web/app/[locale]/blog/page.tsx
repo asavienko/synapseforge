@@ -2,7 +2,8 @@ import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import NextLink from "next/link";
-import { ArrowRight, Zap, Clock, Calendar } from "lucide-react";
+import { ArrowRight, Clock, Calendar } from "lucide-react";
+import { HelixLogo } from "@/components/icons/BrandIcons";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("blog");
@@ -54,7 +55,7 @@ const posts = [
     date: "March 23, 2026",
     readTime: "10 min read",
     category: "Comparison",
-    categoryColor: "text-violet-400 bg-violet-400/10",
+    categoryColor: "text-blue-400 bg-blue-400/10",
   },
   {
     slug: "reduce-customer-support-costs-with-ai",
@@ -78,13 +79,13 @@ const posts = [
 
 export default function BlogPage() {
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white">
-      <nav className="border-b border-white/5 bg-[#0a0a0f]/90 backdrop-blur-md sticky top-0 z-50">
+    <div className="min-h-screen bg-white dark:bg-[#0a0a0f] text-gray-900 dark:text-[#f5f5f7]">
+      <nav className="border-b border-gray-200/50 dark:border-white/[0.06] bg-white/80 dark:bg-[#0a0a0f]/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 font-bold text-white">
-            <Zap className="w-5 h-5 text-violet-400" />OpenHelix AI
+          <Link href="/" className="flex items-center gap-2 font-bold text-gray-900 dark:text-white">
+            <HelixLogo className="w-7 h-7 text-blue-600 dark:text-blue-400" size={28} />OpenHelix<span className="text-blue-600 dark:text-blue-400">.</span>
           </Link>
-          <Link href="/sign-up" className="flex items-center gap-1.5 bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2 rounded-lg text-sm font-semibold">
+          <Link href="/sign-up" className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 transition-colors px-4 py-2 rounded-lg text-sm font-semibold text-white">
             Try Free <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
@@ -93,7 +94,7 @@ export default function BlogPage() {
       <main className="max-w-5xl mx-auto px-4 py-16">
         <div className="mb-12">
           <h1 className="text-3xl sm:text-4xl font-bold mb-3">Blog</h1>
-          <p className="text-zinc-400 max-w-xl">
+          <p className="text-gray-500 dark:text-white/50 max-w-xl">
             Guides, tutorials, and insights on AI customer support, chatbot deployment, and business automation.
           </p>
         </div>
@@ -103,11 +104,11 @@ export default function BlogPage() {
             <NextLink
               key={post.slug}
               href={`/blog/${post.slug}`}
-              className="group bg-white/[0.02] border border-white/10 hover:border-violet-500/30 hover:bg-white/[0.04] transition-all rounded-xl overflow-hidden"
+              className="group bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 hover:border-blue-200 dark:hover:border-blue-500/30 hover:bg-gray-50 dark:hover:bg-white/[0.04] transition-all rounded-xl overflow-hidden"
             >
               {/* Thumbnail placeholder */}
-              <div className="h-40 bg-gradient-to-br from-violet-500/20 to-violet-900/10 border-b border-white/5 flex items-center justify-center">
-                <Zap className="w-10 h-10 text-violet-400/40" />
+              <div className="h-40 bg-gradient-to-br from-blue-500/20 to-blue-900/10 border-b border-gray-100 dark:border-white/[0.06] flex items-center justify-center">
+                <HelixLogo className="w-10 h-10 text-blue-400/40" size={40} />
               </div>
               <div className="p-5">
                 <div className="flex items-center gap-2 mb-3">
@@ -115,11 +116,11 @@ export default function BlogPage() {
                     {post.category}
                   </span>
                 </div>
-                <h2 className="font-semibold text-white group-hover:text-violet-300 transition-colors mb-2 leading-snug">
+                <h2 className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-300 transition-colors mb-2 leading-snug">
                   {post.title}
                 </h2>
-                <p className="text-sm text-zinc-400 mb-4 leading-relaxed line-clamp-2">{post.excerpt}</p>
-                <div className="flex items-center gap-3 text-xs text-zinc-500">
+                <p className="text-sm text-gray-500 dark:text-white/50 mb-4 leading-relaxed line-clamp-2">{post.excerpt}</p>
+                <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-white/40">
                   <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{post.date}</span>
                   <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{post.readTime}</span>
                 </div>

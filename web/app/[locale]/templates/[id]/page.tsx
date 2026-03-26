@@ -13,9 +13,9 @@ import {
   ArrowRight,
   Check,
   Sparkles,
-  Zap,
   ExternalLink,
 } from "lucide-react";
+import { HelixLogo } from "@/components/icons/BrandIcons";
 import { CopyButton } from "@/components/CopyButton";
 import { auth } from "@/lib/auth";
 import { getTranslations } from "next-intl/server";
@@ -85,34 +85,34 @@ export default async function TemplateDetailPage({ params }: Props) {
     (template.systemPrompt.length > 500 ? "..." : "");
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white">
+    <div className="min-h-screen bg-white dark:bg-[#0a0a0f] text-gray-900 dark:text-[#f5f5f7]">
       {/* ── Navigation ────────────────────────────────────────────────── */}
-      <nav className="border-b border-white/5 backdrop-blur-sm sticky top-0 z-50 bg-[#0a0a0f]/80">
+      <nav className="border-b border-gray-200/50 dark:border-white/[0.06] backdrop-blur-sm sticky top-0 z-50 bg-white/80 dark:bg-[#0a0a0f]/80">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link
             href="/templates"
-            className="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors"
+            className="flex items-center gap-2 text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Templates
           </Link>
 
           <div className="flex items-center gap-2">
-            <Zap className="w-5 h-5 text-violet-400" />
-            <span className="font-bold">OpenHelix AI</span>
+            <HelixLogo className="w-7 h-7 text-blue-600 dark:text-blue-400" size={28} />
+            <span className="font-bold text-gray-900 dark:text-white">OpenHelix<span className="text-blue-600 dark:text-blue-400">.</span></span>
           </div>
 
           {isLoggedIn ? (
             <Link
               href="/dashboard"
-              className="text-sm bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2 rounded-lg font-medium"
+              className="text-sm bg-blue-600 hover:bg-blue-700 transition-colors px-4 py-2 rounded-lg font-medium text-white"
             >
               Dashboard
             </Link>
           ) : (
             <Link
               href="/sign-up"
-              className="text-sm bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2 rounded-lg font-medium"
+              className="text-sm bg-blue-600 hover:bg-blue-700 transition-colors px-4 py-2 rounded-lg font-medium text-white"
             >
               Get Started
             </Link>
@@ -122,24 +122,24 @@ export default async function TemplateDetailPage({ params }: Props) {
 
       {/* ── Hero ───────────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-violet-600/10 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-600/5 dark:from-blue-600/10 via-transparent to-transparent pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-6 pt-16 pb-12">
           <div className="max-w-4xl">
             {/* Breadcrumbs */}
-            <div className="flex items-center gap-2 text-sm text-zinc-500 mb-6">
-              <Link href="/templates" className="hover:text-white transition-colors">
+            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-white/40 mb-6">
+              <Link href="/templates" className="hover:text-gray-900 dark:hover:text-white transition-colors">
                 Templates
               </Link>
               <span>/</span>
               <Link
                 href={`/templates?category=${template.category}`}
-                className="hover:text-white transition-colors"
+                className="hover:text-gray-900 dark:hover:text-white transition-colors"
               >
                 {template.category}
               </Link>
               <span>/</span>
-              <span className="text-white">{template.name}</span>
+              <span className="text-gray-900 dark:text-white">{template.name}</span>
             </div>
 
             {/* Badges */}
@@ -168,14 +168,14 @@ export default async function TemplateDetailPage({ params }: Props) {
 
             {/* Title & Icon */}
             <div className="flex items-start gap-4 mb-6">
-              <div className="w-16 h-16 rounded-2xl bg-violet-600/10 border border-violet-500/20 flex items-center justify-center shrink-0">
+              <div className="w-16 h-16 rounded-2xl bg-blue-600/10 border border-blue-500/20 flex items-center justify-center shrink-0">
                 <span className="text-4xl">{template.icon}</span>
               </div>
               <div>
                 <h1 className="text-3xl md:text-4xl font-bold mb-2">
                   {template.name}
                 </h1>
-                <p className="text-lg text-zinc-400">{template.shortDescription}</p>
+                <p className="text-lg text-gray-500 dark:text-white/50">{template.shortDescription}</p>
               </div>
             </div>
 
@@ -184,7 +184,7 @@ export default async function TemplateDetailPage({ params }: Props) {
               {template.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="text-xs px-3 py-1 rounded-full bg-white/5 text-zinc-400 border border-white/10"
+                  className="text-xs px-3 py-1 rounded-full bg-white/5 text-gray-500 dark:text-white/50 border border-gray-200 dark:border-white/10"
                 >
                   #{tag}
                 </span>
@@ -199,16 +199,16 @@ export default async function TemplateDetailPage({ params }: Props) {
                     ? `/dashboard/instances?template=${template.id}`
                     : `/sign-up?template=${template.id}`
                 }
-                className="inline-flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 transition-all px-8 py-4 rounded-xl font-semibold text-lg shadow-lg shadow-violet-500/20"
+                className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 transition-all px-8 py-4 rounded-xl font-semibold text-lg text-white shadow-lg shadow-blue-500/20"
               >
-                <Zap className="w-5 h-5" />
+                <HelixLogo className="w-5 h-5" size={20} />
                 Deploy This Template
                 <ArrowRight className="w-5 h-5" />
               </Link>
               {!isLoggedIn && (
                 <Link
                   href="/contact"
-                  className="inline-flex items-center justify-center gap-2 border border-white/10 hover:border-white/20 transition-colors px-8 py-4 rounded-xl font-semibold text-lg text-zinc-300"
+                  className="inline-flex items-center justify-center gap-2 border border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/20 transition-colors px-8 py-4 rounded-xl font-semibold text-lg text-zinc-300"
                 >
                   Talk to Sales
                   <ExternalLink className="w-4 h-4" />
@@ -225,7 +225,7 @@ export default async function TemplateDetailPage({ params }: Props) {
           {/* Left Column - Description & Details */}
           <div className="lg:col-span-2 space-y-8">
             {/* Description */}
-            <div className="glow-border rounded-2xl p-8 bg-white/[0.02]">
+            <div className="glow-border rounded-2xl p-8 bg-white dark:bg-white/[0.02]">
               <h2 className="text-xl font-semibold mb-4">About This Template</h2>
               <p className="text-zinc-300 leading-relaxed whitespace-pre-line">
                 {template.description}
@@ -233,16 +233,16 @@ export default async function TemplateDetailPage({ params }: Props) {
             </div>
 
             {/* Use Cases */}
-            <div className="glow-border rounded-2xl p-8 bg-white/[0.02]">
+            <div className="glow-border rounded-2xl p-8 bg-white dark:bg-white/[0.02]">
               <h2 className="text-xl font-semibold mb-6">Common Use Cases</h2>
               <div className="grid sm:grid-cols-2 gap-4">
                 {template.useCases.map((useCase, i) => (
                   <div
                     key={i}
-                    className="flex items-start gap-3 p-4 rounded-xl bg-white/[0.03] border border-white/5"
+                    className="flex items-start gap-3 p-4 rounded-xl bg-white/[0.03] border border-gray-100 dark:border-white/[0.06]"
                   >
-                    <div className="w-6 h-6 rounded-full bg-violet-600/20 flex items-center justify-center shrink-0">
-                      <Check className="w-3.5 h-3.5 text-violet-400" />
+                    <div className="w-6 h-6 rounded-full bg-blue-600/10 dark:bg-blue-600/20 flex items-center justify-center shrink-0">
+                      <Check className="w-3.5 h-3.5 text-blue-400" />
                     </div>
                     <span className="text-zinc-300 text-sm">{useCase}</span>
                   </div>
@@ -251,19 +251,19 @@ export default async function TemplateDetailPage({ params }: Props) {
             </div>
 
             {/* System Prompt Preview */}
-            <div className="glow-border rounded-2xl p-8 bg-white/[0.02]">
+            <div className="glow-border rounded-2xl p-8 bg-white dark:bg-white/[0.02]">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold">System Prompt Preview</h2>
-                <span className="text-xs text-zinc-500">
+                <span className="text-xs text-gray-500 dark:text-white/40">
                   {template.systemPrompt.length} characters
                 </span>
               </div>
-              <p className="text-sm text-zinc-500 mb-4">
+              <p className="text-sm text-gray-500 dark:text-white/40 mb-4">
                 This is the instruction that defines how your AI agent behaves.
                 You can customize it after deployment.
               </p>
               <div className="relative">
-                <pre className="bg-black/40 border border-white/10 rounded-xl p-4 text-sm text-zinc-300 overflow-x-auto max-h-64 font-mono">
+                <pre className="bg-black/40 border border-gray-200 dark:border-white/10 rounded-xl p-4 text-sm text-zinc-300 overflow-x-auto max-h-64 font-mono">
                   {promptPreview}
                 </pre>
                 <CopyButton text={template.systemPrompt} />
@@ -271,16 +271,16 @@ export default async function TemplateDetailPage({ params }: Props) {
             </div>
 
             {/* Suggested Channels */}
-            <div className="glow-border rounded-2xl p-8 bg-white/[0.02]">
+            <div className="glow-border rounded-2xl p-8 bg-white dark:bg-white/[0.02]">
               <h2 className="text-xl font-semibold mb-4">Suggested Channels</h2>
-              <p className="text-sm text-zinc-500 mb-4">
+              <p className="text-sm text-gray-500 dark:text-white/40 mb-4">
                 This agent works great on these platforms:
               </p>
               <div className="flex flex-wrap gap-3">
                 {template.suggestedChannels.map((channel) => (
                   <span
                     key={channel}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-violet-600/10 text-violet-300 border border-violet-500/20 text-sm"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600/10 text-blue-300 border border-blue-500/20 text-sm"
                   >
                     <span>{getChannelEmoji(channel)}</span>
                     {channel}
@@ -290,15 +290,15 @@ export default async function TemplateDetailPage({ params }: Props) {
             </div>
 
             {/* Model Recommendation */}
-            <div className="glow-border rounded-2xl p-8 bg-white/[0.02]">
+            <div className="glow-border rounded-2xl p-8 bg-white dark:bg-white/[0.02]">
               <h2 className="text-xl font-semibold mb-4">Recommended Model</h2>
-              <div className="flex items-center gap-4 p-4 rounded-xl bg-white/[0.03] border border-white/5">
+              <div className="flex items-center gap-4 p-4 rounded-xl bg-white/[0.03] border border-gray-100 dark:border-white/[0.06]">
                 <div className="w-12 h-12 rounded-xl bg-emerald-600/10 border border-emerald-500/20 flex items-center justify-center">
                   <Sparkles className="w-6 h-6 text-emerald-400" />
                 </div>
                 <div>
-                  <div className="font-semibold text-white">{template.suggestedModel}</div>
-                  <p className="text-sm text-zinc-500">
+                  <div className="font-semibold text-gray-900 dark:text-white">{template.suggestedModel}</div>
+                  <p className="text-sm text-gray-500 dark:text-white/40">
                     Optimized for {template.difficulty} complexity
                   </p>
                 </div>
@@ -309,9 +309,9 @@ export default async function TemplateDetailPage({ params }: Props) {
           {/* Right Column - Sidebar */}
           <div className="space-y-6">
             {/* Deploy Card */}
-            <div className="glow-border rounded-2xl p-6 bg-gradient-to-b from-violet-600/10 to-transparent">
+            <div className="glow-border rounded-2xl p-6 bg-gradient-to-b from-blue-600/10 to-transparent">
               <h3 className="font-semibold mb-4">Ready to deploy?</h3>
-              <p className="text-sm text-zinc-400 mb-6">
+              <p className="text-sm text-gray-500 dark:text-white/50 mb-6">
                 Get this agent up and running in under 3 minutes.
               </p>
               <Link
@@ -320,57 +320,57 @@ export default async function TemplateDetailPage({ params }: Props) {
                     ? `/dashboard/instances?template=${template.id}`
                     : `/sign-up?template=${template.id}`
                 }
-                className="block w-full text-center bg-violet-600 hover:bg-violet-500 transition-colors px-6 py-3 rounded-xl font-semibold"
+                className="block w-full text-center bg-blue-600 hover:bg-blue-700 transition-colors px-6 py-3 rounded-xl font-semibold text-white"
               >
                 Deploy Now
               </Link>
               {!isLoggedIn && (
-                <p className="text-xs text-center text-zinc-500 mt-3">
+                <p className="text-xs text-center text-gray-500 dark:text-white/40 mt-3">
                   Free tier available
                 </p>
               )}
             </div>
 
             {/* Quick Stats */}
-            <div className="glow-border rounded-2xl p-6 bg-white/[0.02]">
+            <div className="glow-border rounded-2xl p-6 bg-white dark:bg-white/[0.02]">
               <h3 className="font-semibold mb-4">Template Stats</h3>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-zinc-500">Difficulty</span>
-                  <span className="text-white capitalize">{template.difficulty}</span>
+                  <span className="text-gray-500 dark:text-white/40">Difficulty</span>
+                  <span className="text-gray-900 dark:text-white capitalize">{template.difficulty}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-500">Category</span>
-                  <span className="text-white">{template.category}</span>
+                  <span className="text-gray-500 dark:text-white/40">Category</span>
+                  <span className="text-gray-900 dark:text-white">{template.category}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-500">Model</span>
-                  <span className="text-white">{template.suggestedModel}</span>
+                  <span className="text-gray-500 dark:text-white/40">Model</span>
+                  <span className="text-gray-900 dark:text-white">{template.suggestedModel}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-500">Tags</span>
-                  <span className="text-white">{template.tags.length}</span>
+                  <span className="text-gray-500 dark:text-white/40">Tags</span>
+                  <span className="text-gray-900 dark:text-white">{template.tags.length}</span>
                 </div>
               </div>
             </div>
 
             {/* Related Templates */}
             {relatedTemplates.length > 0 && (
-              <div className="glow-border rounded-2xl p-6 bg-white/[0.02]">
+              <div className="glow-border rounded-2xl p-6 bg-white dark:bg-white/[0.02]">
                 <h3 className="font-semibold mb-4">Related Templates</h3>
                 <div className="space-y-3">
                   {relatedTemplates.map((related) => (
                     <Link
                       key={related.id}
                       href={`/templates/${related.id}`}
-                      className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.06] transition-colors"
+                      className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-gray-100 dark:border-white/[0.06] hover:bg-white/[0.06] transition-colors"
                     >
                       <span className="text-2xl">{related.icon}</span>
                       <div className="flex-1 min-w-0">
-                        <div className="font-medium text-sm text-white truncate">
+                        <div className="font-medium text-sm text-gray-900 dark:text-white truncate">
                           {related.name}
                         </div>
-                        <div className="text-xs text-zinc-500">
+                        <div className="text-xs text-gray-500 dark:text-white/40">
                           {related.shortDescription.slice(0, 40)}...
                         </div>
                       </div>
@@ -384,7 +384,7 @@ export default async function TemplateDetailPage({ params }: Props) {
             {/* Help Card */}
             <div className="rounded-2xl p-6 bg-gradient-to-b from-blue-600/10 to-transparent border border-blue-500/20">
               <h3 className="font-semibold mb-2">Need Help?</h3>
-              <p className="text-sm text-zinc-400 mb-4">
+              <p className="text-sm text-gray-500 dark:text-white/50 mb-4">
                 Our team can help you customize this template for your specific
                 needs.
               </p>
@@ -406,7 +406,7 @@ export default async function TemplateDetailPage({ params }: Props) {
           <h2 className="text-2xl font-bold">Explore More Templates</h2>
           <Link
             href="/templates"
-            className="text-sm text-violet-400 hover:text-violet-300 flex items-center gap-1"
+            className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1"
           >
             View All
             <ArrowRight className="w-4 h-4" />
@@ -419,7 +419,7 @@ export default async function TemplateDetailPage({ params }: Props) {
             .slice(0, 4)
             .map((t) => (
               <Link key={t.id} href={`/templates/${t.id}`} className="group">
-                <div className="glow-border rounded-2xl p-5 bg-white/[0.02] hover:bg-white/[0.04] transition-all h-full">
+                <div className="glow-border rounded-2xl p-5 bg-white dark:bg-white/[0.02] hover:bg-gray-50 dark:hover:bg-white/[0.04] transition-all h-full">
                   <div className="flex items-start justify-between mb-4">
                     <span className="text-2xl">{t.icon}</span>
                     <span
@@ -430,10 +430,10 @@ export default async function TemplateDetailPage({ params }: Props) {
                       {t.category}
                     </span>
                   </div>
-                  <h3 className="font-semibold text-white mb-2 group-hover:text-violet-300 transition-colors">
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-blue-300 transition-colors">
                     {t.name}
                   </h3>
-                  <p className="text-sm text-zinc-400 line-clamp-2">
+                  <p className="text-sm text-gray-500 dark:text-white/50 line-clamp-2">
                     {t.shortDescription}
                   </p>
                 </div>
@@ -443,26 +443,26 @@ export default async function TemplateDetailPage({ params }: Props) {
       </section>
 
       {/* ── Footer ────────────────────────────────────────────────────── */}
-      <footer className="border-t border-white/5 py-10">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-zinc-500">
+      <footer className="border-t border-gray-100 dark:border-white/[0.06] py-10">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500 dark:text-white/40">
           <div className="flex items-center gap-2">
-            <Zap className="w-4 h-4 text-violet-400" />
-            <span className="font-semibold text-zinc-400">OpenHelix AI</span>
+            <HelixLogo className="w-4 h-4 text-blue-600 dark:text-blue-400" size={16} />
+            <span className="font-semibold text-gray-500 dark:text-white/50">OpenHelix AI</span>
             <span>{t("footer.copyright", { year: 2026 })}</span>
           </div>
           <div className="flex gap-6">
             <Link
               href="/privacy"
-              className="hover:text-white transition-colors"
+              className="hover:text-gray-900 dark:hover:text-white transition-colors"
             >
               Privacy
             </Link>
-            <Link href="/terms" className="hover:text-white transition-colors">
+            <Link href="/terms" className="hover:text-gray-900 dark:hover:text-white transition-colors">
               Terms
             </Link>
             <Link
               href="/contact"
-              className="hover:text-white transition-colors"
+              className="hover:text-gray-900 dark:hover:text-white transition-colors"
             >
               Contact
             </Link>
@@ -475,17 +475,17 @@ export default async function TemplateDetailPage({ params }: Props) {
 
 function getChannelEmoji(channel: string): string {
   const emojis: Record<string, string> = {
-    "Website Chat": "💬",
-    WhatsApp: "📱",
-    Telegram: "✈️",
-    Email: "📧",
-    Slack: "💼",
-    Discord: "🎮",
-    "LinkedIn": "💼",
-    API: "⚡",
-    Teams: "👥",
-    Intranet: "🏢",
-    "Web Chat": "🌐",
+    "Website Chat": "\u{1F4AC}",
+    WhatsApp: "\u{1F4F1}",
+    Telegram: "\u2708\uFE0F",
+    Email: "\u{1F4E7}",
+    Slack: "\u{1F4BC}",
+    Discord: "\u{1F3AE}",
+    "LinkedIn": "\u{1F4BC}",
+    API: "\u26A1",
+    Teams: "\u{1F465}",
+    Intranet: "\u{1F3E2}",
+    "Web Chat": "\u{1F310}",
   };
-  return emojis[channel] || "💬";
+  return emojis[channel] || "\u{1F4AC}";
 }

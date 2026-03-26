@@ -3,10 +3,11 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
-import { Zap, Loader2, CheckCircle2 } from "lucide-react";
+import { Loader2, CheckCircle2 } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { GoogleButton } from "@/components/GoogleButton";
+import { HelixLogo } from "@/components/icons/BrandIcons";
 
 export default function SignInPage() {
   const t = useTranslations("auth.signIn");
@@ -41,27 +42,27 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050507] flex items-center justify-center px-4 relative overflow-hidden">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#050507] flex items-center justify-center px-4 relative overflow-hidden">
       {/* Ambient glow orbs */}
-      <div className="glow-orb w-[500px] h-[500px] bg-violet-500/20 -top-40 -left-40 fixed -z-10" />
-      <div className="glow-orb w-[400px] h-[400px] bg-indigo-500/15 bottom-20 right-10 fixed -z-10" />
-      <div className="glow-orb w-[300px] h-[300px] bg-purple-500/10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 fixed -z-10" />
+      <div className="glow-orb w-[500px] h-[500px] bg-blue-500/10 dark:bg-blue-500/20 -top-40 -left-40 fixed -z-10" />
+      <div className="glow-orb w-[400px] h-[400px] bg-indigo-500/10 dark:bg-indigo-500/15 bottom-20 right-10 fixed -z-10" />
+      <div className="glow-orb w-[300px] h-[300px] bg-purple-500/5 dark:bg-purple-500/10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 fixed -z-10" />
 
       <div className="w-full max-w-md">
         {/* Glass card container */}
-        <div className="bg-white/[0.04] border border-white/[0.08] backdrop-blur-xl rounded-2xl p-8">
+        <div className="bg-white dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.08] backdrop-blur-xl rounded-2xl p-8">
           {/* Logo area */}
           <div className="flex justify-center mb-6">
             <Link href="/" className="flex items-center gap-2">
-              <Zap className="w-6 h-6 text-violet-400" />
-              <span className="text-xl font-bold text-white/90 tracking-tight">OpenHelix AI</span>
+              <HelixLogo className="w-7 h-7 text-blue-600 dark:text-blue-400" size={28} />
+              <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white/90">OpenHelix<span className="text-blue-600 dark:text-blue-400">.</span></span>
             </Link>
           </div>
 
           {/* Heading */}
           <div className="text-center mb-6">
-            <h1 className="text-2xl font-semibold text-white/90 mb-2">{t("title")}</h1>
-            <p className="text-white/40 text-sm">{t("subtitle")}</p>
+            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white/90 mb-2">{t("title")}</h1>
+            <p className="text-gray-500 dark:text-white/40 text-sm">{t("subtitle")}</p>
           </div>
 
           {/* Success banner */}
@@ -80,30 +81,30 @@ export default function SignInPage() {
           {/* Divider */}
           <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-white/10" />
+              <div className="w-full border-t border-gray-200 dark:border-white/10" />
             </div>
             <div className="relative flex justify-center">
-              <span className="bg-[#050507] px-3 text-white/25 text-xs">{t("orEmail")}</span>
+              <span className="bg-white dark:bg-[#050507] px-3 text-gray-400 dark:text-white/25 text-xs">{t("orEmail")}</span>
             </div>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-white/50 text-sm mb-1.5">{t("email")}</label>
+              <label className="block text-gray-500 dark:text-white/50 text-sm mb-1.5">{t("email")}</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="you@example.com"
-                className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-white placeholder-white/25 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all"
+                className="w-full bg-gray-50 dark:bg-white/[0.05] border border-gray-200 dark:border-white/[0.08] rounded-xl px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/25 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30 transition-all"
               />
             </div>
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-white/50 text-sm">{t("password")}</label>
-                <Link href="/forgot-password" className="text-xs text-violet-400/80 hover:text-violet-300 transition-colors">
+                <label className="text-gray-500 dark:text-white/50 text-sm">{t("password")}</label>
+                <Link href="/forgot-password" className="text-xs text-blue-400/80 hover:text-blue-300 transition-colors">
                   {t("forgotPassword")}
                 </Link>
               </div>
@@ -113,7 +114,7 @@ export default function SignInPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="••••••••"
-                className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-white placeholder-white/25 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all"
+                className="w-full bg-gray-50 dark:bg-white/[0.05] border border-gray-200 dark:border-white/[0.08] rounded-xl px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/25 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30 transition-all"
               />
             </div>
 
@@ -136,9 +137,9 @@ export default function SignInPage() {
           </form>
 
           {/* Sign up link */}
-          <p className="text-center text-sm text-white/30 mt-6">
+          <p className="text-center text-sm text-gray-400 dark:text-white/30 mt-6">
             {t("noAccount")}{" "}
-            <Link href="/sign-up" className="text-violet-400/80 hover:text-violet-300 transition-colors font-medium">
+            <Link href="/sign-up" className="text-blue-400/80 hover:text-blue-300 transition-colors font-medium">
               {t("signUpLink")}
             </Link>
           </p>
@@ -146,13 +147,13 @@ export default function SignInPage() {
 
         {/* Footer links */}
         <div className="flex justify-center gap-4 mt-6">
-          <Link href="/" className="text-xs text-white/30 hover:text-white/50 transition-colors">
+          <Link href="/" className="text-xs text-gray-400 dark:text-white/30 hover:text-gray-600 dark:hover:text-white/50 transition-colors">
             {t("footerHome")}
           </Link>
-          <Link href="/privacy" className="text-xs text-white/30 hover:text-white/50 transition-colors">
+          <Link href="/privacy" className="text-xs text-gray-400 dark:text-white/30 hover:text-gray-600 dark:hover:text-white/50 transition-colors">
             {t("footerPrivacy")}
           </Link>
-          <Link href="/terms" className="text-xs text-white/30 hover:text-white/50 transition-colors">
+          <Link href="/terms" className="text-xs text-gray-400 dark:text-white/30 hover:text-gray-600 dark:hover:text-white/50 transition-colors">
             {t("footerTerms")}
           </Link>
         </div>

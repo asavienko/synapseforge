@@ -4,7 +4,8 @@ import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Link, useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { Zap, Loader2, CheckCircle2, Eye, EyeOff } from "lucide-react";
+import { Loader2, CheckCircle2, Eye, EyeOff } from "lucide-react";
+import { HelixLogo } from "@/components/icons/BrandIcons";
 
 function ResetPasswordForm() {
   const t = useTranslations("auth.resetPassword");
@@ -80,7 +81,7 @@ function ResetPasswordForm() {
         </p>
         <Link
           href="/forgot-password"
-          className="inline-block mt-4 text-violet-400 hover:text-violet-300 transition-colors"
+          className="inline-block mt-4 text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors"
         >
           {t("requestNewLink")}
         </Link>
@@ -95,13 +96,13 @@ function ResetPasswordForm() {
           <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-4">
             <CheckCircle2 className="w-8 h-8 text-emerald-400" />
           </div>
-          <h2 className="text-lg font-semibold text-white mb-2">{t("successTitle")}</h2>
-          <p className="text-zinc-400 text-sm">{t("successMessage")}</p>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{t("successTitle")}</h2>
+          <p className="text-gray-500 dark:text-zinc-400 text-sm">{t("successMessage")}</p>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm text-zinc-400 mb-1.5">{t("password")}</label>
+            <label className="block text-sm text-gray-500 dark:text-zinc-400 mb-1.5">{t("password")}</label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
@@ -109,28 +110,28 @@ function ResetPasswordForm() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="••••••••"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-zinc-600 text-sm focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
+                className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-600 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-500 hover:text-gray-600 dark:hover:text-zinc-300 transition-colors"
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
-            <p className="text-xs text-zinc-600 mt-1">{t("passwordHint")}</p>
+            <p className="text-xs text-gray-400 dark:text-zinc-600 mt-1">{t("passwordHint")}</p>
           </div>
 
           <div>
-            <label className="block text-sm text-zinc-400 mb-1.5">{t("confirmPassword")}</label>
+            <label className="block text-sm text-gray-500 dark:text-zinc-400 mb-1.5">{t("confirmPassword")}</label>
             <input
               type={showPassword ? "text" : "password"}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
               placeholder="••••••••"
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-zinc-600 text-sm focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
+              className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-600 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
             />
           </div>
 
@@ -143,7 +144,7 @@ function ResetPasswordForm() {
           <button
             type="submit"
             disabled={loading || !password || !confirmPassword}
-            className="w-full flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 transition-colors py-3 rounded-xl text-sm font-semibold text-white"
+            className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 transition-colors py-3 rounded-xl text-sm font-semibold text-white"
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
             {t("submit")}
@@ -158,24 +159,24 @@ export default function ResetPasswordPage() {
   const t = useTranslations("auth.resetPassword");
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="flex justify-center mb-8">
           <Link href="/" className="flex items-center gap-2">
-            <Zap className="w-6 h-6 text-violet-400" />
-            <span className="text-xl font-bold text-white tracking-tight">OpenHelix AI</span>
+            <HelixLogo className="w-7 h-7 text-blue-600 dark:text-blue-400" size={28} />
+            <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white/90">OpenHelix<span className="text-blue-600 dark:text-blue-400">.</span></span>
           </Link>
         </div>
 
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-white mb-2">{t("title")}</h1>
-          <p className="text-zinc-400 text-sm">{t("subtitle")}</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{t("title")}</h1>
+          <p className="text-gray-500 dark:text-zinc-400 text-sm">{t("subtitle")}</p>
         </div>
 
-        <div className="glow-border rounded-2xl p-8 bg-white/[0.02]">
+        <div className="glow-border rounded-2xl p-8 bg-white dark:bg-white/[0.02]">
           <Suspense fallback={
             <div className="flex justify-center py-8">
-              <Loader2 className="w-6 h-6 text-violet-400 animate-spin" />
+              <Loader2 className="w-6 h-6 text-blue-600 dark:text-blue-400 animate-spin" />
             </div>
           }>
             <ResetPasswordForm />

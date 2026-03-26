@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { Zap, ArrowLeft, Calendar, Sparkles, Bug, Shield, ZapIcon } from "lucide-react";
+import { HelixLogo } from "@/components/icons/BrandIcons";
+import { ArrowLeft, Calendar, Sparkles, Bug, Shield, ZapIcon } from "lucide-react";
 import { Metadata } from "next";
 import { SubscribeSection } from "./SubscribeSection";
 
@@ -64,7 +65,7 @@ const typeIcons = {
 
 const typeColors = {
   feature: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
-  improvement: "text-violet-400 bg-violet-500/10 border-violet-500/20",
+  improvement: "text-blue-400 bg-blue-500/10 border-blue-500/20",
   fix: "text-amber-400 bg-amber-500/10 border-amber-500/20",
   security: "text-red-400 bg-red-500/10 border-red-500/20",
 };
@@ -73,17 +74,17 @@ export default async function ChangelogPage() {
   const t = await getTranslations("footer");
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white">
+    <div className="min-h-screen bg-white dark:bg-[#0a0a0f] text-gray-900 dark:text-[#f5f5f7]">
       {/* Nav */}
-      <nav className="border-b border-white/5 backdrop-blur-sm sticky top-0 z-50 bg-[#0a0a0f]/80">
+      <nav className="border-b border-gray-200/50 dark:border-white/[0.06] backdrop-blur-sm sticky top-0 z-50 bg-white/80 dark:bg-[#0a0a0f]/80">
         <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <Zap className="w-6 h-6 text-violet-400" />
-            <span className="font-bold text-lg tracking-tight">OpenHelix AI</span>
+            <HelixLogo className="w-7 h-7 text-blue-600 dark:text-blue-400" size={28} />
+            <span className="font-bold text-lg tracking-tight text-gray-900 dark:text-white">OpenHelix<span className="text-blue-600 dark:text-blue-400">.</span></span>
           </Link>
           <Link
             href="/"
-            className="text-sm text-zinc-400 hover:text-white transition-colors flex items-center gap-1"
+            className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors flex items-center gap-1"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to home
@@ -95,7 +96,7 @@ export default async function ChangelogPage() {
       <main className="max-w-4xl mx-auto px-6 py-16">
         <div className="text-center mb-16">
           <h1 className="text-4xl font-bold mb-4">Changelog</h1>
-          <p className="text-zinc-400">See what&apos;s new in OpenHelix AI</p>
+          <p className="text-gray-500 dark:text-white/50">See what&apos;s new in OpenHelix AI</p>
         </div>
 
         <div className="space-y-12">
@@ -103,8 +104,8 @@ export default async function ChangelogPage() {
             <div key={entry.date} className="relative">
               {/* Date header */}
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
-                  <Calendar className="w-5 h-5 text-zinc-400" />
+                <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-white/5 flex items-center justify-center">
+                  <Calendar className="w-5 h-5 text-gray-500 dark:text-white/50" />
                 </div>
                 <div>
                   <h2 className="text-lg font-semibold">
@@ -115,7 +116,7 @@ export default async function ChangelogPage() {
                     })}
                   </h2>
                   {entry.version && (
-                    <span className="text-sm text-zinc-500">{entry.version}</span>
+                    <span className="text-sm text-gray-500 dark:text-white/50">{entry.version}</span>
                   )}
                 </div>
               </div>
@@ -143,7 +144,7 @@ export default async function ChangelogPage() {
 
               {/* Divider */}
               {index < changelog.length - 1 && (
-                <div className="absolute left-5 top-16 bottom-0 w-px bg-white/10" />
+                <div className="absolute left-5 top-16 bottom-0 w-px bg-gray-200 dark:bg-white/10" />
               )}
             </div>
           ))}
@@ -153,10 +154,10 @@ export default async function ChangelogPage() {
         <SubscribeSection />
 
         {/* Footer */}
-        <div className="mt-16 pt-8 border-t border-white/5 text-center">
-          <p className="text-sm text-zinc-500">
+        <div className="mt-16 pt-8 border-t border-gray-100 dark:border-white/[0.06] text-center">
+          <p className="text-sm text-gray-500 dark:text-white/50">
             Have feedback?{" "}
-            <Link href="/contact" className="text-violet-400 hover:underline">
+            <Link href="/contact" className="text-blue-400 hover:underline">
               Contact us
             </Link>
           </p>

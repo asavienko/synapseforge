@@ -3,10 +3,11 @@
 import { useState, useEffect } from "react";
 import { Link, useRouter } from "@/i18n/navigation";
 import { useSearchParams } from "next/navigation";
-import { Zap, Loader2, Check, Gift } from "lucide-react";
+import { Loader2, Check, Gift } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { GoogleButton } from "@/components/GoogleButton";
+import { HelixLogo } from "@/components/icons/BrandIcons";
 import zxcvbn from "zxcvbn";
 import { analytics } from "@/lib/analytics";
 
@@ -133,27 +134,27 @@ export default function SignUpPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#050507] flex items-center justify-center px-4 py-8 relative overflow-hidden">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#050507] flex items-center justify-center px-4 py-8 relative overflow-hidden">
       {/* Ambient glow orbs */}
-      <div className="glow-orb w-[500px] h-[500px] bg-violet-500/20 -top-40 -right-40 fixed -z-10" />
-      <div className="glow-orb w-[400px] h-[400px] bg-indigo-500/15 bottom-10 left-10 fixed -z-10" />
-      <div className="glow-orb w-[300px] h-[300px] bg-purple-500/10 top-1/3 left-1/2 -translate-x-1/2 fixed -z-10" />
+      <div className="glow-orb w-[500px] h-[500px] bg-blue-500/10 dark:bg-blue-500/20 -top-40 -right-40 fixed -z-10" />
+      <div className="glow-orb w-[400px] h-[400px] bg-indigo-500/10 dark:bg-indigo-500/15 bottom-10 left-10 fixed -z-10" />
+      <div className="glow-orb w-[300px] h-[300px] bg-purple-500/5 dark:bg-purple-500/10 top-1/3 left-1/2 -translate-x-1/2 fixed -z-10" />
 
       <div className="w-full max-w-md">
         {/* Glass card container */}
-        <div className="bg-white/[0.04] border border-white/[0.08] backdrop-blur-xl rounded-2xl p-8">
+        <div className="bg-white dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.08] backdrop-blur-xl rounded-2xl p-8">
           {/* Logo area */}
           <div className="flex justify-center mb-6">
             <Link href="/" className="flex items-center gap-2">
-              <Zap className="w-6 h-6 text-violet-400" />
-              <span className="text-xl font-bold text-white/90 tracking-tight">OpenHelix AI</span>
+              <HelixLogo className="w-7 h-7 text-blue-600 dark:text-blue-400" size={28} />
+              <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white/90">OpenHelix<span className="text-blue-600 dark:text-blue-400">.</span></span>
             </Link>
           </div>
 
           {/* Heading */}
           <div className="text-center mb-6">
-            <h1 className="text-2xl font-semibold text-white/90 mb-2">{t("title")}</h1>
-            <p className="text-white/40 text-sm">{t("subtitle")}</p>
+            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white/90 mb-2">{t("title")}</h1>
+            <p className="text-gray-500 dark:text-white/40 text-sm">{t("subtitle")}</p>
           </div>
 
           {/* Referral banner */}
@@ -174,19 +175,19 @@ export default function SignUpPage() {
           {/* Divider */}
           <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-white/10" />
+              <div className="w-full border-t border-gray-200 dark:border-white/10" />
             </div>
             <div className="relative flex justify-center">
-              <span className="bg-[#050507] px-3 text-white/25 text-xs">{t("orEmail")}</span>
+              <span className="bg-white dark:bg-[#050507] px-3 text-gray-400 dark:text-white/25 text-xs">{t("orEmail")}</span>
             </div>
           </div>
 
           {/* Features list */}
-          <div className="flex items-start gap-3 bg-violet-500/10 border border-violet-500/20 rounded-xl p-4 mb-6">
-            <Zap className="w-4 h-4 text-violet-400 mt-0.5 shrink-0" />
+          <div className="flex items-start gap-3 bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 mb-6">
+            <HelixLogo className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" size={16} />
             <div className="text-sm">
-              <div className="text-violet-300 font-medium mb-1">{t("freePlanTitle")}</div>
-              <div className="text-white/40 space-y-0.5">
+              <div className="text-blue-600 dark:text-blue-300 font-medium mb-1">{t("freePlanTitle")}</div>
+              <div className="text-gray-500 dark:text-white/40 space-y-0.5">
                 {[t("freePlan1"), t("freePlan2"), t("freePlan3")].map((f) => (
                   <div key={f} className="flex items-center gap-2">
                     <Check className="w-3 h-3 text-emerald-400" />
@@ -200,18 +201,18 @@ export default function SignUpPage() {
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-white/50 text-sm mb-1.5">{t("name")}</label>
+              <label className="block text-gray-500 dark:text-white/50 text-sm mb-1.5">{t("name")}</label>
               <input
                 type="text"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 required
                 placeholder={t("namePlaceholder")}
-                className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-white placeholder-white/25 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all"
+                className="w-full bg-gray-50 dark:bg-white/[0.05] border border-gray-200 dark:border-white/[0.08] rounded-xl px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/25 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30 transition-all"
               />
             </div>
             <div>
-              <label className="block text-white/50 text-sm mb-1.5">{t("email")}</label>
+              <label className="block text-gray-500 dark:text-white/50 text-sm mb-1.5">{t("email")}</label>
               <input
                 type="email"
                 value={form.email}
@@ -226,7 +227,7 @@ export default function SignUpPage() {
                 }}
                 required
                 placeholder="you@company.com"
-                className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-white placeholder-white/25 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all"
+                className="w-full bg-gray-50 dark:bg-white/[0.05] border border-gray-200 dark:border-white/[0.08] rounded-xl px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/25 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30 transition-all"
               />
               {emailError && (
                 <p className="text-xs text-red-400 mt-1">{emailError}</p>
@@ -235,11 +236,11 @@ export default function SignUpPage() {
                 <p className="text-xs text-emerald-400 mt-1">✓ Email available</p>
               )}
               {emailChecking && (
-                <p className="text-xs text-white/30 mt-1">Checking...</p>
+                <p className="text-xs text-gray-400 dark:text-white/30 mt-1">Checking...</p>
               )}
             </div>
             <div>
-              <label className="block text-white/50 text-sm mb-1.5">{t("password")}</label>
+              <label className="block text-gray-500 dark:text-white/50 text-sm mb-1.5">{t("password")}</label>
               <input
                 type="password"
                 value={form.password}
@@ -254,7 +255,7 @@ export default function SignUpPage() {
                 required
                 minLength={8}
                 placeholder={t("passwordHint")}
-                className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-white placeholder-white/25 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all"
+                className="w-full bg-gray-50 dark:bg-white/[0.05] border border-gray-200 dark:border-white/[0.08] rounded-xl px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/25 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30 transition-all"
               />
               {form.password && (
                 <div className="mt-2">
@@ -299,7 +300,7 @@ export default function SignUpPage() {
                 <div className="text-sm bg-amber-400/10 border border-amber-400/20 rounded-xl px-4 py-3">
                   <span className="text-amber-300">{t("alreadyRegistered")}</span>
                   {" → "}
-                  <Link href="/sign-in" className="text-violet-400/80 hover:text-violet-300 font-semibold transition-colors">
+                  <Link href="/sign-in" className="text-blue-400/80 hover:text-blue-300 font-semibold transition-colors">
                     {t("signInInstead")}
                   </Link>
                 </div>
@@ -334,22 +335,22 @@ export default function SignUpPage() {
         </div>
 
         {/* Sign in link */}
-        <p className="text-center text-sm text-white/30 mt-6">
+        <p className="text-center text-sm text-gray-400 dark:text-white/30 mt-6">
           {t("hasAccount")}{" "}
-          <Link href="/sign-in" className="text-violet-400/80 hover:text-violet-300 transition-colors font-medium">
+          <Link href="/sign-in" className="text-blue-400/80 hover:text-blue-300 transition-colors font-medium">
             {t("signInLink")}
           </Link>
         </p>
 
         {/* Footer links */}
         <div className="flex justify-center gap-4 mt-4">
-          <Link href="/" className="text-xs text-white/30 hover:text-white/50 transition-colors">
+          <Link href="/" className="text-xs text-gray-400 dark:text-white/30 hover:text-gray-600 dark:hover:text-white/50 transition-colors">
             Home
           </Link>
-          <Link href="/privacy" className="text-xs text-white/30 hover:text-white/50 transition-colors">
+          <Link href="/privacy" className="text-xs text-gray-400 dark:text-white/30 hover:text-gray-600 dark:hover:text-white/50 transition-colors">
             Privacy
           </Link>
-          <Link href="/terms" className="text-xs text-white/30 hover:text-white/50 transition-colors">
+          <Link href="/terms" className="text-xs text-gray-400 dark:text-white/30 hover:text-gray-600 dark:hover:text-white/50 transition-colors">
             Terms
           </Link>
         </div>
