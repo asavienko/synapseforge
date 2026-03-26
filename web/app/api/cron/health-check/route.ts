@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { email } from "@/lib/email";
 import { createNotification } from "@/lib/notifications";
+import { queueCommand } from "@/lib/command-queue";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300; // 5 minutes timeout
@@ -116,6 +117,7 @@ export async function GET(req: Request) {
       results.down++;
 
       // Persist failure
+      const newFailureCount = (instance.consecutiveFailures ?? 0) + 1;
       await prisma.$transaction([
         prisma.aIInstance.update({
           where: { id: instance.id },
@@ -136,9 +138,35 @@ export async function GET(req: Request) {
       ]);
 
       // Send alert only after 3 consecutive failures
-      if ((instance.consecutiveFailures + 1) >= 3) {
+      if (newFailureCount >= 3) {
         await sendHealthAlerts(instance, previousStatus ?? "unknown", "down", errorMsg);
         results.alerted++;
+      }
+
+      // Auto-rollback after 5 consecutive failures
+      if (newFailureCount === 5) {
+        try {
+          await queueCommand(
+            instance.id,
+            "rollback_restic",
+            { auto: true, reason: "health_check_failures" },
+            "system",
+            "Auto-rollback triggered after 5 consecutive health check failures"
+          );
+          // Notify about auto-rollback
+          await email.managerInstanceAlert(
+            instance.user.manager?.email ?? instance.user.email,
+            instance.user.manager?.name ?? "Manager",
+            instance.user.name ?? "User",
+            instance.user.email,
+            instance.name,
+            instance.id,
+            "degraded",
+            `Auto-rollback triggered after 5 consecutive health check failures. Restoring from last healthy snapshot.`
+          ).catch(console.error);
+        } catch (rollbackError) {
+          console.error(`[health-check] Auto-rollback failed for ${instance.id}:`, rollbackError);
+        }
       }
     }
   }
