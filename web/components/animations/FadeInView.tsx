@@ -25,6 +25,7 @@ export function FadeInView({
 }: FadeInViewProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [isReady, setIsReady] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
@@ -45,6 +46,23 @@ export function FadeInView({
 
     const el = ref.current;
     if (!el) return;
+
+    // Check if element is already in the viewport before hiding it.
+    // This prevents a flash where visible content disappears briefly.
+    const rect = el.getBoundingClientRect();
+    const inViewport =
+      rect.top < window.innerHeight && rect.bottom > 0 &&
+      rect.left < window.innerWidth && rect.right > 0;
+
+    if (inViewport) {
+      // Already visible — skip the animation entirely
+      setIsVisible(true);
+      setIsReady(true);
+      return;
+    }
+
+    // Element is off-screen — safe to hide it and animate on scroll
+    setIsReady(true);
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -69,21 +87,25 @@ export function FadeInView({
     return <div className={className}>{children}</div>;
   }
 
+  // Before JS mounts (isReady=false), elements are fully visible (good for SEO/SSR)
+  // After JS mounts, they get hidden until scrolled into view
+  const shouldAnimate = isReady && !isVisible;
+
   return (
     <div
       ref={ref}
       className={`transition-all ${className}`}
       style={{
-        opacity: isVisible ? 1 : 0,
-        filter: blur && !isVisible ? "blur(10px)" : "blur(0px)",
+        opacity: shouldAnimate ? 0 : 1,
+        filter: blur && shouldAnimate ? "blur(10px)" : "blur(0px)",
         transitionDuration: `${duration}ms`,
         transitionDelay: `${delay}ms`,
         transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
-        ...((!isVisible && direction === "up") && { transform: "translateY(30px)" }),
-        ...((!isVisible && direction === "down") && { transform: "translateY(-30px)" }),
-        ...((!isVisible && direction === "left") && { transform: "translateX(-40px)" }),
-        ...((!isVisible && direction === "right") && { transform: "translateX(40px)" }),
-        ...(isVisible && { transform: "translate(0, 0)" }),
+        ...((shouldAnimate && direction === "up") && { transform: "translateY(30px)" }),
+        ...((shouldAnimate && direction === "down") && { transform: "translateY(-30px)" }),
+        ...((shouldAnimate && direction === "left") && { transform: "translateX(-40px)" }),
+        ...((shouldAnimate && direction === "right") && { transform: "translateX(40px)" }),
+        ...(!shouldAnimate && { transform: "translate(0, 0)" }),
       }}
     >
       {children}

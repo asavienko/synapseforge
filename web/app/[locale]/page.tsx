@@ -109,19 +109,19 @@ export default async function LandingPage() {
             <span className="font-bold text-[16px] tracking-tight hidden sm:block">OpenHelix<span className="text-blue-600 dark:text-blue-400">.</span></span>
           </Link>
 
-          {/* Center — Nav links (absolutely centered in the bar) */}
-          <div className="hidden lg:flex items-center h-10 gap-0.5 text-[13px] font-medium bg-gray-100/60 dark:bg-white/[0.04] rounded-full px-1.5 border border-gray-200/40 dark:border-white/[0.04] absolute left-[calc(50%-16px)] top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap">
-            <a href="#features" className="flex items-center h-7 px-3.5 rounded-full text-gray-600 dark:text-white/60 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/[0.08] hover:shadow-sm transition-all duration-200">{t("nav.services")}</a>
-            <a href="#demo" className="flex items-center h-7 px-3.5 rounded-full text-gray-600 dark:text-white/60 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/[0.08] hover:shadow-sm transition-all duration-200">{t("nav.demo")}</a>
-            <a href="#pricing" className="flex items-center h-7 px-3.5 rounded-full text-gray-600 dark:text-white/60 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/[0.08] hover:shadow-sm transition-all duration-200">{t("nav.pricing")}</a>
+          {/* Center — Nav links */}
+          <div className="hidden lg:flex items-center h-10 gap-0.5 text-[13px] font-medium bg-gray-100/60 dark:bg-white/[0.04] rounded-full px-1.5 border border-gray-200/40 dark:border-white/[0.04] mx-auto whitespace-nowrap">
+            <a href="#features" className="flex items-center h-7 px-3 rounded-full text-gray-600 dark:text-white/60 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/[0.08] hover:shadow-sm transition-all duration-200">{t("nav.services")}</a>
+            <a href="#demo" className="flex items-center h-7 px-3 rounded-full text-gray-600 dark:text-white/60 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/[0.08] hover:shadow-sm transition-all duration-200">{t("nav.demo")}</a>
+            <a href="#pricing" className="flex items-center h-7 px-3 rounded-full text-gray-600 dark:text-white/60 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/[0.08] hover:shadow-sm transition-all duration-200">{t("nav.pricing")}</a>
             <div className="w-px h-3.5 bg-gray-300/60 dark:bg-white/10 mx-1" />
-            <Link href="/templates" className="flex items-center h-7 px-3.5 rounded-full text-gray-500 dark:text-white/45 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/[0.08] hover:shadow-sm transition-all duration-200">{t("nav.templates")}</Link>
-            <Link href="/use-cases" className="flex items-center h-7 px-3.5 rounded-full text-gray-500 dark:text-white/45 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/[0.08] hover:shadow-sm transition-all duration-200">{t("nav.useCases")}</Link>
-            <Link href="/blog" className="flex items-center h-7 px-3.5 rounded-full text-gray-500 dark:text-white/45 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/[0.08] hover:shadow-sm transition-all duration-200">{t("nav.blog")}</Link>
+            <Link href="/templates" className="flex items-center h-7 px-3 rounded-full text-gray-500 dark:text-white/45 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/[0.08] hover:shadow-sm transition-all duration-200">{t("nav.templates")}</Link>
+            <Link href="/use-cases" className="flex items-center h-7 px-3 rounded-full text-gray-500 dark:text-white/45 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/[0.08] hover:shadow-sm transition-all duration-200">{t("nav.useCases")}</Link>
+            <Link href="/blog" className="flex items-center h-7 px-3 rounded-full text-gray-500 dark:text-white/45 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/[0.08] hover:shadow-sm transition-all duration-200">{t("nav.blog")}</Link>
           </div>
 
           {/* Right — Actions */}
-          <div className="flex items-center gap-2 ml-auto">
+          <div className="flex items-center gap-2 shrink-0">
             <LocaleSwitcher />
             <ThemeToggle className="hover:bg-gray-100 dark:hover:bg-white/[0.08]" />
             <div className="hidden sm:block w-px h-4 bg-gray-200 dark:bg-white/10 mx-0.5" />
@@ -529,8 +529,8 @@ export default async function LandingPage() {
             { Icon: AnalyticsIcon, color: "bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400", title: t("features.f6title"), desc: t("features.f6desc") },
           ].map((f, i) => (
             <FadeInView key={i} direction="up" delay={i * 60}>
-              <div className="p-6 rounded-xl border border-gray-100 dark:border-white/[0.06] h-full hover:border-gray-200 dark:hover:border-white/[0.1] transition-colors">
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 ${f.color}`}>
+              <div className="group p-7 rounded-xl border border-gray-100 dark:border-white/[0.06] h-full hover:border-gray-200 dark:hover:border-white/[0.1] hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 group-hover:scale-105 transition-transform duration-300 ${f.color}`}>
                   <f.Icon className="w-5 h-5" />
                 </div>
                 <h3 className="font-semibold text-[15px] mb-2">{f.title}</h3>
@@ -557,17 +557,17 @@ export default async function LandingPage() {
 
         <div className="rounded-xl border border-gray-200/60 dark:border-white/[0.06] p-8 md:p-10 max-w-3xl mx-auto bg-white dark:bg-white/[0.02] shadow-sm">
           <div className="grid sm:grid-cols-3 gap-6 mb-8 pb-8 border-b border-gray-100 dark:border-white/[0.06]">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">{t("caseStudy.metric1value")}</div>
-              <div className="text-[12px] text-gray-500 dark:text-white/45">{t("caseStudy.metric1label")}</div>
+            <div className="text-center rounded-lg p-4 bg-blue-50/50 dark:bg-blue-500/[0.06] ring-1 ring-blue-100 dark:ring-blue-500/10 shadow-sm shadow-blue-500/5">
+              <div className="text-3xl font-extrabold text-blue-600 dark:text-blue-400 mb-1">{t("caseStudy.metric1value")}</div>
+              <div className="text-[12px] font-medium text-gray-500 dark:text-white/45">{t("caseStudy.metric1label")}</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mb-1">{t("caseStudy.metric2value")}</div>
-              <div className="text-[12px] text-gray-500 dark:text-white/45">{t("caseStudy.metric2label")}</div>
+            <div className="text-center rounded-lg p-4 bg-emerald-50/50 dark:bg-emerald-500/[0.06] ring-1 ring-emerald-100 dark:ring-emerald-500/10 shadow-sm shadow-emerald-500/5">
+              <div className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 mb-1">{t("caseStudy.metric2value")}</div>
+              <div className="text-[12px] font-medium text-gray-500 dark:text-white/45">{t("caseStudy.metric2label")}</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-amber-600 dark:text-amber-400 mb-1">{t("caseStudy.metric3value")}</div>
-              <div className="text-[12px] text-gray-500 dark:text-white/45">{t("caseStudy.metric3label")}</div>
+            <div className="text-center rounded-lg p-4 bg-amber-50/50 dark:bg-amber-500/[0.06] ring-1 ring-amber-100 dark:ring-amber-500/10 shadow-sm shadow-amber-500/5">
+              <div className="text-3xl font-extrabold text-amber-600 dark:text-amber-400 mb-1">{t("caseStudy.metric3value")}</div>
+              <div className="text-[12px] font-medium text-gray-500 dark:text-white/45">{t("caseStudy.metric3label")}</div>
             </div>
           </div>
           <blockquote className="text-lg text-gray-600 dark:text-white/55 italic mb-6 leading-relaxed">&ldquo;{t("caseStudy.quote")}&rdquo;</blockquote>
@@ -646,7 +646,7 @@ export default async function LandingPage() {
                 : ["unlimitedInstances", "managerTeam", "sla4h", "customIntegrations", "teamTraining", "whiteLabel"];
               return (
                 <FadeInView key={plan} direction="up" delay={i * 100}>
-                  <div className={`rounded-xl p-6 flex flex-col relative h-full bg-white dark:bg-white/[0.02] ${highlighted ? "border-2 border-gray-900 dark:border-white/30 shadow-lg order-first sm:order-none" : "border border-gray-200/60 dark:border-white/[0.06]"}`}>
+                  <div className={`rounded-xl p-6 flex flex-col relative h-full bg-white dark:bg-white/[0.02] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 ${highlighted ? "border-2 border-gray-900 dark:border-white/30 shadow-xl shadow-blue-500/10 dark:shadow-blue-500/5 order-first sm:order-none" : "border border-gray-200/60 dark:border-white/[0.06]"}`}>
                     {highlighted && <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-[11px] font-semibold rounded-full">{t("pricing.popular")}</div>}
                     <div className="font-semibold text-lg mb-1">{t(`pricing.${plan}.name` as Parameters<typeof t>[0])}</div>
                     <div className="flex items-baseline gap-1 mb-1">

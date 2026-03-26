@@ -37,18 +37,16 @@ export function DemoChat() {
     }
   }, []);
 
-  // Scroll to bottom whenever messages change
+  // Scroll to bottom whenever messages change (skip initial render)
+  const hasInteracted = useRef(false);
   useEffect(() => {
+    if (!hasInteracted.current) return;
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, streamingContent, loading]);
 
-  // Focus input on mount
-  useEffect(() => {
-    setTimeout(() => inputRef.current?.focus(), 100);
-  }, []);
-
   async function sendMessage(text: string) {
     if (!text.trim() || loading || rateLimited || !sessionId) return;
+    hasInteracted.current = true;
 
     const userMessage: Message = { role: "user", content: text.trim() };
     setMessages((prev) => [...prev, userMessage]);
