@@ -62,46 +62,98 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       }
     }
 
-    // If starting, optionally probe the gateway
-    if (newStatus === "running" && instance.vpsUrl && instance.gatewayToken) {
-      const startMs = Date.now();
-      try {
-        const res = await fetch(`${instance.vpsUrl}/hooks/wake`, {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${instance.gatewayToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ text: "ping", mode: "next-heartbeat" }),
-          signal: AbortSignal.timeout(8000),
-        });
+    // Create command for start/stop operations
+    if ((newStatus === "running" || newStatus === "stopped") && instance.vpsUrl && instance.gatewayToken) {
+      const commandType = newStatus === "running" ? "start" : "stop";
+      
+      // Check if there's already a pending start/stop command
+      const existingPending = await prisma.instanceCommand.findFirst({
+        where: { 
+          instanceId: id, 
+          type: { in: ["start", "stop"] },
+          status: "pending" 
+        },
+      });
+      
+      if (existingPending) {
+        return NextResponse.json(
+          { error: `A ${existingPending.type} command is already pending` },
+          { status: 409 }
+        );
+      }
 
-        if (res.status === 401) {
+      // Create the command
+      const command = await prisma.instanceCommand.create({
+        data: {
+          instanceId: id,
+          type: commandType,
+          status: "pending",
+          payload: JSON.stringify({ requestedBy: session.user.id }),
+          requestedBy: session.user.id,
+        },
+      });
+
+      // For start commands, try to wake the gateway with a short timeout
+      if (newStatus === "running") {
+        const startMs = Date.now();
+        try {
+          const res = await fetch(`${instance.vpsUrl}/hooks/wake`, {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${instance.gatewayToken}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ text: "ping", mode: "next-heartbeat" }),
+            signal: AbortSignal.timeout(8000),
+          });
+
+          if (res.status === 401) {
+            // Mark command as failed
+            await prisma.instanceCommand.update({
+              where: { id: command.id },
+              data: { status: "failed", errorMsg: "Invalid gateway token", completedAt: new Date() },
+            });
+            return NextResponse.json(
+              { error: "Invalid gateway token. Contact your manager.", gatewayError: true },
+              { status: 503 }
+            );
+          }
+
+          // Success — record health check and update command to running
+          const responseMs = Date.now() - startMs;
+          await prisma.healthCheck.create({
+            data: { instanceId: id, status: "healthy", responseMs, error: null },
+          });
+          await prisma.aIInstance.update({
+            where: { id },
+            data: { healthStatus: "healthy", lastCheckedAt: new Date() },
+          });
+          await prisma.instanceCommand.update({
+            where: { id: command.id },
+            data: { status: "running", startedAt: new Date() },
+          });
+        } catch {
+          // Gateway unreachable — mark command as failed
+          await prisma.instanceCommand.update({
+            where: { id: command.id },
+            data: { status: "failed", errorMsg: "Gateway unreachable", completedAt: new Date() },
+          });
           return NextResponse.json(
-            { error: "Invalid gateway token. Contact your manager.", gatewayError: true },
+            { error: "Gateway unreachable. Check VPS is running.", gatewayError: true },
             { status: 503 }
           );
         }
-
-        // Success — record health check
-        const responseMs = Date.now() - startMs;
-        await prisma.healthCheck.create({
-          data: { instanceId: id, status: "healthy", responseMs, error: null },
-        });
-        await prisma.aIInstance.update({
-          where: { id },
-          data: { healthStatus: "healthy", lastCheckedAt: new Date() },
-        });
-      } catch {
-        return NextResponse.json(
-          { error: "Gateway unreachable. Check VPS is running.", gatewayError: true },
-          { status: 503 }
-        );
       }
-    }
 
-    data.status = newStatus;
-    logEvents.push({ event: newStatus === "running" ? "started" : "stopped" });
+      // For stop commands, we just create the command - VPS will poll and execute
+      // Update status in DB
+      data.status = newStatus;
+      logEvents.push({ event: newStatus === "running" ? "started" : "stopped", details: `Command ${command.id} created` });
+    } else {
+      // No VPS configured — just update the status directly
+      data.status = newStatus;
+      logEvents.push({ event: newStatus === "running" ? "started" : "stopped" });
+    }
   }
 
   if (body.config !== undefined) {
