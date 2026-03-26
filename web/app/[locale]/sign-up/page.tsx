@@ -208,7 +208,7 @@ export default function SignUpPage() {
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 required
                 autoComplete="name"
-                placeholder={t("namePlaceholder")}
+                placeholder={t("name")}
                 className="w-full bg-gray-50 dark:bg-white/[0.05] border border-gray-200 dark:border-white/[0.08] rounded-xl px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/25 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30 transition-all"
               />
             </div>
@@ -257,7 +257,7 @@ export default function SignUpPage() {
                 required
                 minLength={8}
                 autoComplete="new-password"
-                placeholder={t("passwordHint")}
+                placeholder={t("password")}
                 className="w-full bg-gray-50 dark:bg-white/[0.05] border border-gray-200 dark:border-white/[0.08] rounded-xl px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/25 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30 transition-all"
               />
               {form.password && (
