@@ -27,17 +27,29 @@ export default function SignInPage() {
     setError("");
     setLoading(true);
 
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+        callbackUrl: "/dashboard",
+      });
 
-    setLoading(false);
-    if (result?.error) {
+      console.log("Sign in result:", result);
+
+      if (result?.error) {
+        setError(t("error"));
+      } else if (result?.ok) {
+        router.push("/dashboard");
+        router.refresh();
+      } else {
+        setError(t("error"));
+      }
+    } catch (err) {
+      console.error("Sign in error:", err);
       setError(t("error"));
-    } else {
-      router.push("/dashboard");
+    } finally {
+      setLoading(false);
     }
   }
 
