@@ -442,7 +442,10 @@
         "cancelBtn": "Cancel",
         "createBtn": "Create",
         "failedError": "Failed to create instance."
-      }
+      },
+      "searchNoMatch": "No instances match \"{query}\"",
+      "clearSearch": "Clear search",
+      "greetingDefault": "Hi! How can I help you today?"
     },
     "running": "Running",
     "plan": "Plan",
@@ -1497,7 +1500,9 @@
     },
     "common": {
       "cancel": "Cancel"
-    }
+    },
+    "greetingDefault": "Hi! How can I help you today?",
+    "greetingLabel": "Greeting:"
   },
   "admin": {
     "health": {

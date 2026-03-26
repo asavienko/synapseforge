@@ -347,7 +347,7 @@ function EmbedCard({ instanceId, t }: { instanceId: string; t: ReturnType<typeof
 function WidgetCustomizer({ instanceId, t }: { instanceId: string; t: (key: string) => string }) {
   const [primaryColor, setPrimaryColor] = useState("#7c3aed");
   const [position, setPosition] = useState<"bottom-right" | "bottom-left">("bottom-right");
-  const [greeting, setGreeting] = useState("Hi! How can I help you today?");
+  const [greeting, setGreeting] = useState(() => t("greetingDefault"));
   const [copied, setCopied] = useState(false);
 
   const origin = typeof window !== "undefined" ? window.location.origin : "https://openhelixai.com";
@@ -415,7 +415,7 @@ function WidgetCustomizer({ instanceId, t }: { instanceId: string; t: (key: stri
 
         {/* Greeting */}
         <div className="flex items-start gap-4">
-          <label className="text-sm text-zinc-400 w-24 pt-2">Greeting:</label>
+          <label className="text-sm text-zinc-400 w-24 pt-2">{t("greetingLabel")}</label>
           <input
             type="text"
             value={greeting}

@@ -412,12 +412,12 @@ export default function InstancesPage() {
           {filteredInstances.length === 0 && searchQuery ? (
             <div className="text-center py-12">
               <Search className="w-8 h-8 text-zinc-600 mx-auto mb-3" />
-              <p className="text-zinc-500">No instances match &ldquo;{searchQuery}&rdquo;</p>
+              <p className="text-zinc-500">{t("searchNoMatch", { query: searchQuery })}</p>
               <button
                 onClick={() => setSearchQuery("")}
                 className="text-violet-400 hover:text-violet-300 text-sm mt-2"
               >
-                Clear search
+                {t("clearSearch")}
               </button>
             </div>
           ) : (

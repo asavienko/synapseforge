@@ -1,7 +1,7 @@
 {
-  "name": "SynapseForge",
-  "short_name": "SynapseForge",
-  "description": "Managed AI agents for your business",
+  "name": "OpenHelix AI",
+  "short_name": "OpenHelix AI",
+  "description": "Deploy AI agents for your business — live in minutes",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0a0f",
@@ -21,7 +21,10 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["business", "productivity"],
+  "categories": [
+    "business",
+    "productivity"
+  ],
   "shortcuts": [
     {
       "name": "Dashboard",

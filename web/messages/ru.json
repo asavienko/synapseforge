@@ -429,7 +429,10 @@
         "createBtn": "Создать",
         "failedError": "Не удалось создать инстанцию."
       },
-      "noHealthData": "Данные о здоровье ещё отсутствуют"
+      "noHealthData": "Данные о здоровье ещё отсутствуют",
+      "searchNoMatch": "Нет инстансов, соответствующих \"{query}\"",
+      "clearSearch": "Очистить поиск",
+      "greetingDefault": "Привет! Чем могу помочь?"
     },
     "running": "Активные",
     "plan": "План",
@@ -1484,7 +1487,9 @@
     },
     "common": {
       "cancel": "Cancel"
-    }
+    },
+    "greetingDefault": "Привет! Чем могу помочь?",
+    "greetingLabel": "Приветствие:"
   },
   "admin": {
     "health": {

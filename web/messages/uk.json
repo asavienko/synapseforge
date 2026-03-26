@@ -429,7 +429,10 @@
         "createBtn": "Створити",
         "failedError": "Не вдалося створити інстанцію."
       },
-      "noHealthData": "Даних про стан ще немає"
+      "noHealthData": "Даних про стан ще немає",
+      "searchNoMatch": "Немає інстансів, що відповідають \"{query}\"",
+      "clearSearch": "Очистити пошук",
+      "greetingDefault": "Привіт! Чим можу допомогти?"
     },
     "running": "Активні",
     "plan": "План",
@@ -1484,7 +1487,9 @@
     },
     "common": {
       "cancel": "Cancel"
-    }
+    },
+    "greetingDefault": "Привіт! Чим можу допомогти?",
+    "greetingLabel": "Привітання:"
   },
   "admin": {
     "health": {

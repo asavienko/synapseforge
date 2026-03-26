@@ -445,7 +445,10 @@
         "createBtn": "Crear",
         "failedError": "Error al crear la instancia."
       },
-      "noHealthData": "Sin datos de salud aún"
+      "noHealthData": "Sin datos de salud aún",
+      "searchNoMatch": "No hay instancias que coincidan con \"{query}\"",
+      "clearSearch": "Limpiar búsqueda",
+      "greetingDefault": "¡Hola! ¿En qué puedo ayudarte hoy?"
     },
     "running": "En ejecución",
     "plan": "Plan",
@@ -1500,7 +1503,9 @@
     },
     "common": {
       "cancel": "Cancel"
-    }
+    },
+    "greetingDefault": "¡Hola! ¿En qué puedo ayudarte hoy?",
+    "greetingLabel": "Saludo:"
   },
   "admin": {
     "health": {
