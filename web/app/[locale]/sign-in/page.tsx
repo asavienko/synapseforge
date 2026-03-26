@@ -44,7 +44,9 @@ export default function SignInPage() {
       } else if (result?.ok === true) {
         console.log("Sign in successful, redirecting to dashboard");
         // Use window.location for a full page redirect to ensure session is set
-        window.location.href = "/dashboard";
+        setTimeout(() => {
+          window.location.href = "/dashboard";
+        }, 100);
       } else {
         console.log("Unexpected sign in result:", result);
         setError(t("error"));
