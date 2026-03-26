@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { validateApiKey, CORS_HEADERS } from "@/lib/api-auth";
 import { parseInstanceConfig } from "@/lib/llm";
+import { rateLimit } from "@/lib/ratelimit";
 
 export async function OPTIONS() {
   return new NextResponse(null, { status: 204, headers: CORS_HEADERS });
@@ -14,6 +15,20 @@ export async function OPTIONS() {
  * Useful for checking status, model, and capabilities before sending chat requests.
  */
 export async function GET(req: NextRequest) {
+  const auth = req.headers.get("authorization") ?? "";
+  const rawKey = auth.startsWith("Bearer ") ? auth.slice(7).trim() : "";
+
+  // Rate limiting by API key (120 requests per minute for metadata)
+  if (rawKey) {
+    const rateLimitAllowed = await rateLimit(`instance:${rawKey}`, 120, 60 * 1000);
+    if (!rateLimitAllowed) {
+      return NextResponse.json(
+        { error: "Rate limit exceeded", retryAfter: 60 },
+        { status: 429, headers: CORS_HEADERS }
+      );
+    }
+  }
+
   const ctx = await validateApiKey(req);
   if (!ctx) {
     return NextResponse.json(
