@@ -198,8 +198,8 @@ export default function InstanceDetailPage() {
         )}
 
         {/* Tabs */}
-        <div className="relative mb-6">
-          <div className="flex flex-wrap gap-1 border-b border-white/5 pb-px">
+        <div className="relative mb-6 -mx-4 px-4 sm:mx-0 sm:px-0">
+          <div className="flex gap-1 border-b border-white/5 pb-px overflow-x-auto scrollbar-none tab-scroll-snap">
             {TABS.map((tabKey) => {
               const tabLabels: Record<string, string> = {
                 "Overview": t("tabs.overview"),
@@ -225,8 +225,8 @@ export default function InstanceDetailPage() {
               );
             })}
           </div>
-          <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-8 sm:w-12 bg-gradient-to-r from-[#0a0a0f] to-transparent md:hidden" />
-          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 sm:w-12 bg-gradient-to-l from-[#0a0a0f] to-transparent md:hidden" />
+          <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-8 sm:w-12 bg-gradient-to-r from-[#0a0a0f] to-transparent sm:hidden" />
+          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 sm:w-12 bg-gradient-to-l from-[#0a0a0f] to-transparent sm:hidden" />
         </div>
 
         {/* Tab Content */}
