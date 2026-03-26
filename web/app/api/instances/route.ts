@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { PLANS } from "@/lib/utils";
 import { getTemplateById } from "@/lib/templates";
+import { provisionInstance } from "@/lib/provisioning";
 
 export async function GET() {
   const session = await auth();
@@ -104,18 +105,37 @@ export async function POST(req: NextRequest) {
     ...(templateId ? { templateId, templateName: template?.name } : {}),
   });
 
+  // Determine if this is a managed plan
+  const isManaged = user.plan?.startsWith("managed_");
+  const sandboxMode = !isManaged;
+
   const instance = await prisma.aIInstance.create({
     data: {
       name,
       type: type || "assistant",
       status: "running",
-      sandboxMode: true,
+      sandboxMode,
       tier: plan.tier,
       description: description || template?.shortDescription,
       config: initialConfig,
       userId: user.id,
+      // For managed plans, set initial provision status
+      ...(isManaged ? { provisionStatus: "provisioning" } : {}),
     },
   });
+
+  // Auto-trigger provisioning for managed plans
+  if (isManaged) {
+    // Fire-and-forget provisioning - don't block instance creation
+    provisionInstance(instance.id, "nbg1").catch((error) => {
+      console.error("Auto-provisioning failed for instance", instance.id, error);
+      // Update instance status to failed, but don't fail the request
+      prisma.aIInstance.update({
+        where: { id: instance.id },
+        data: { provisionStatus: "failed" },
+      }).catch(console.error);
+    });
+  }
 
   await prisma.activityLog.create({
     data: { event: "created", details: `Instance "${name}" created`, instanceId: instance.id },
