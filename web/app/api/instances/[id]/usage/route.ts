@@ -49,7 +49,23 @@ export async function GET(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  // Fetch all assistant chat messages (token data lives here now)
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  // Fetch usage events from instances (reported via usage-report endpoint)
+  const usageEvents = await prisma.usageEvent.findMany({
+    where: { instanceId: id },
+    select: {
+      createdAt: true,
+      type: true,
+      count: true,
+      metadata: true,
+    },
+    orderBy: { createdAt: "asc" },
+  });
+
+  // Also fetch chat messages as fallback/augmentation
   const chatMessages = await prisma.chatMessage.findMany({
     where: { instanceId: id, role: "assistant", isError: false },
     select: {
@@ -64,9 +80,6 @@ export async function GET(
     orderBy: { createdAt: "asc" },
   });
 
-  const now = new Date();
-  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const fourteenDaysAgo = new Date(startOfToday);
   fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 13);
 
@@ -94,6 +107,65 @@ export async function GET(
     dailyTokens[key] = 0;
   }
 
+  // Process usage events from instances
+  for (const event of usageEvents) {
+    const ts = new Date(event.createdAt);
+    const count = event.count ?? 1;
+    
+    totalMessages += count;
+    
+    if (ts >= startOfMonth) {
+      messagesThisMonth += count;
+    }
+    if (ts >= startOfToday) {
+      todayMessages += count;
+    }
+
+    // Extract metadata
+    let meta: { model?: string; inputTokens?: number; outputTokens?: number; latencyMs?: number; source?: string } | null = null;
+    if (event.metadata) {
+      try {
+        meta = JSON.parse(event.metadata);
+      } catch {}
+    }
+
+    if (meta?.latencyMs != null) {
+      totalLatency += meta.latencyMs;
+      latencyCount++;
+    }
+
+    const inputTokens = meta?.inputTokens ?? 0;
+    const outputTokens = meta?.outputTokens ?? 0;
+    totalInputTokens += inputTokens;
+    totalOutputTokens += outputTokens;
+    
+    if (ts >= startOfMonth) {
+      monthInputTokens += inputTokens;
+      monthOutputTokens += outputTokens;
+    }
+
+    // Per-model aggregation
+    if (meta?.model) {
+      const key = meta.model;
+      if (!modelStats[key]) modelStats[key] = { messages: 0, inputTokens: 0, outputTokens: 0 };
+      modelStats[key].messages += count;
+      modelStats[key].inputTokens += inputTokens;
+      modelStats[key].outputTokens += outputTokens;
+    }
+
+    // Daily counts + tokens (last 14 days)
+    if (ts >= fourteenDaysAgo) {
+      const dayKey = ts.toISOString().slice(0, 10);
+      dailyCounts[dayKey] = (dailyCounts[dayKey] ?? 0) + count;
+      dailyTokens[dayKey] = (dailyTokens[dayKey] ?? 0) + inputTokens + outputTokens;
+    }
+
+    // Source breakdown
+    const src = meta?.source ?? event.type ?? "api";
+    sourceCounts[src] = (sourceCounts[src] ?? 0) + count;
+  }
+
+  // Also process chat messages (fallback for sandbox mode)
   for (const msg of chatMessages) {
     const ts = new Date(msg.createdAt);
     totalMessages++;
