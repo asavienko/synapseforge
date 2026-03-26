@@ -20,6 +20,7 @@ import { DeployTab } from "./tabs/DeployTab";
 import { InfrastructureTab } from "./tabs/InfrastructureTab";
 import { ActivityLogTab } from "./tabs/ActivityLogTab";
 import { WebhookDeliveriesTab } from "./tabs/WebhookDeliveriesTab";
+import { LogsTab } from "./tabs/LogsTab";
 import { KnowledgeSuggestions } from "@/components/KnowledgeSuggestions";
 import { ConversationInsights } from "@/components/ConversationInsights";
 
@@ -220,6 +221,7 @@ export default function InstanceDetailPage() {
                 "API Keys": t("tabs.apiKeys"),
                 "Webhooks": t("tabs.webhooks"),
                 "Activity Log": t("tabs.activityLog"),
+                "Logs": "Logs",
                 "Insights": t("insights.tab"),
                 "Infrastructure": t("infrastructure.tab"),
                 "Credentials": t("credentials.tab"),
@@ -361,6 +363,13 @@ export default function InstanceDetailPage() {
             logFilter={logFilter}
             setLogFilter={setLogFilter}
             loadLogs={loadLogs}
+          />
+        )}
+
+        {tab === "Logs" && (
+          <LogsTab
+            instanceId={id}
+            hasVps={!!instance.hasGateway}
           />
         )}
 

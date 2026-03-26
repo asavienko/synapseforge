@@ -155,7 +155,7 @@ export interface UserCredential {
   createdAt: string;
 }
 
-export const TABS = ["Overview", "Credentials", "Deploy", "Chat", "Configuration", "Knowledge", "API Keys", "Webhooks", "Activity Log", "Insights", "Infrastructure", "Embed", "Analytics"] as const;
+export const TABS = ["Overview", "Credentials", "Deploy", "Chat", "Configuration", "Knowledge", "API Keys", "Webhooks", "Activity Log", "Logs", "Insights", "Infrastructure", "Embed", "Analytics"] as const;
 export type Tab = (typeof TABS)[number];
 
 export const DEFAULT_CONFIG: Config = {
