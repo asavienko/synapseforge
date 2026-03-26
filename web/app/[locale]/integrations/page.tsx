@@ -42,12 +42,12 @@ export default function IntegrationsPage() {
       </section>
 
       {/* Integrations Grid */}
-      <section className="py-16 sm:py-24">
+      <section className="py-16 sm:py-24 md:py-32">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {integrations.map((item, i) => (
               <FadeInView key={item.slug} direction="up" delay={i * 80}>
-                <NextLink href={`/integrations/${item.slug}`} className="glass-card glow-border rounded-xl p-5 group block h-full transition-all duration-300 hover:-translate-y-0.5">
+                <NextLink href={`/integrations/${item.slug}`} className={`glass-card glow-border rounded-xl p-5 group block h-full transition-all duration-300 hover:-translate-y-0.5 stagger-${(i % 6) + 1}`}>
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-2">
                       <item.icon className={`w-5 h-5 ${item.color}`} />

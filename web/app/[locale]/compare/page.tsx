@@ -46,12 +46,12 @@ export default function ComparePage() {
       </section>
 
       {/* Comparisons Grid */}
-      <section className="py-12 sm:py-24">
+      <section className="py-16 sm:py-24 md:py-32">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {comparisons.map((c, i) => (
               <FadeInView key={c.slug} direction="up" delay={i * 60}>
-                <NextLink href={`/compare/${c.slug}`} className="glass-card glow-border rounded-xl p-5 group block h-full transition-all duration-300 hover:-translate-y-0.5">
+                <NextLink href={`/compare/${c.slug}`} className={`glass-card glow-border rounded-xl p-5 group block h-full transition-all duration-300 hover:-translate-y-0.5 stagger-${(i % 6) + 1}`}>
                   <div className="flex items-start justify-between mb-3">
                     <h2 className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                       OpenHelix vs {c.name}

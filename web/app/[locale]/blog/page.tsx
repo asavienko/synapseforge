@@ -104,14 +104,14 @@ export default function BlogPage() {
       </section>
 
       {/* Posts Grid */}
-      <section className="py-12 sm:py-24">
+      <section className="py-16 sm:py-24 md:py-32">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {posts.map((post, i) => (
               <FadeInView key={post.slug} direction="up" delay={i * 60}>
                 <NextLink
                   href={`/blog/${post.slug}`}
-                  className="group glass-card rounded-xl overflow-hidden h-full flex flex-col hover:-translate-y-0.5 transition-all duration-300"
+                  className={`group glass-card rounded-xl overflow-hidden h-full flex flex-col hover:-translate-y-0.5 transition-all duration-300 stagger-${(i % 6) + 1}`}
                 >
                   {/* Blog post illustration */}
                   <div className="h-40 border-b border-gray-100 dark:border-white/[0.06] flex items-center justify-center overflow-hidden">

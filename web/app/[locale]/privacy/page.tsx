@@ -29,7 +29,7 @@ export default async function PrivacyPage() {
       </section>
 
       {/* Content */}
-      <section className="py-16 sm:py-24">
+      <section className="py-16 sm:py-24 md:py-32">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
           <FadeInView direction="up" delay={100}>
             <div className="glass-card glow-border rounded-2xl p-8 md:p-10 space-y-10">

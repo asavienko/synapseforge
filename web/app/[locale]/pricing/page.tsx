@@ -64,7 +64,7 @@ export default async function PricingPage() {
       </section>
 
       {/* Plans grid */}
-      <section className="py-16 sm:py-24">
+      <section className="py-16 sm:py-24 md:py-32">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
             {plans.map((plan, i) => {
@@ -72,7 +72,7 @@ export default async function PricingPage() {
               return (
                 <FadeInView key={plan.key} direction="up" delay={i * 100}>
                   <div
-                    className={`relative rounded-2xl p-7 flex flex-col h-full transition-all duration-300 hover:-translate-y-1 ${
+                    className={`relative rounded-2xl p-7 flex flex-col h-full transition-all duration-300 hover:-translate-y-1 stagger-${i + 1} ${
                       highlighted
                         ? "glass-card border-2 border-blue-500/50 shadow-xl shadow-blue-500/10"
                         : "glass-card"

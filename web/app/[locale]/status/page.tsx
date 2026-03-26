@@ -37,7 +37,7 @@ export default async function StatusPage() {
       </section>
 
       {/* Status Content */}
-      <section className="py-16 sm:py-24">
+      <section className="py-16 sm:py-24 md:py-32">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <FadeInView direction="up" delay={100}>
             <StatusClient />

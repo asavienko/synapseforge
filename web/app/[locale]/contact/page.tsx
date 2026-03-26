@@ -41,7 +41,7 @@ export default async function ContactPage() {
       </section>
 
       {/* Content */}
-      <section className="py-12 sm:py-24">
+      <section className="py-16 sm:py-24 md:py-32">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid lg:grid-cols-5 gap-8 lg:gap-12">
             {/* Left column - Info */}

@@ -98,7 +98,7 @@ export default async function ChangelogPage() {
       </section>
 
       {/* Timeline */}
-      <section className="py-16 sm:py-24">
+      <section className="py-16 sm:py-24 md:py-32">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="space-y-12">
             {changelog.map((entry, index) => (
@@ -130,7 +130,7 @@ export default async function ChangelogPage() {
                       return (
                         <div
                           key={changeIndex}
-                          className={`flex items-start gap-3 p-4 rounded-xl border ${typeColors[change.type]}`}
+                          className={`flex items-start gap-3 p-4 rounded-xl border stagger-${(changeIndex % 6) + 1} ${typeColors[change.type]}`}
                         >
                           <Icon className="w-5 h-5 shrink-0 mt-0.5" />
                           <div>

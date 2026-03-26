@@ -110,12 +110,12 @@ export default function UseCasesPage() {
       </section>
 
       {/* Industries Grid */}
-      <section className="py-12 sm:py-24">
+      <section className="py-16 sm:py-24 md:py-32">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
             {industries.map((ind, i) => {
               const Card = (
-                <div className={`relative glass-card rounded-xl p-6 h-full flex flex-col transition-all duration-300 hover:-translate-y-0.5 group ${ind.highlight ? "glow-border" : ""}`}>
+                <div className={`relative glass-card rounded-xl p-6 h-full flex flex-col transition-all duration-300 hover:-translate-y-0.5 group stagger-${(i % 6) + 1} ${ind.highlight ? "glow-border" : ""}`}>
                   {ind.comingSoon && (
                     <span className="absolute top-4 right-4 text-xs text-gray-400 dark:text-white/30 bg-gray-100 dark:bg-white/5 px-2 py-0.5 rounded-full">Coming soon</span>
                   )}

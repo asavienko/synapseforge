@@ -83,7 +83,7 @@ export default async function ApiDocsPage() {
       </section>
 
       {/* Content */}
-      <section className="py-16 sm:py-24">
+      <section className="py-16 sm:py-24 md:py-32">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
 
           {/* Base URL */}
@@ -128,7 +128,7 @@ export default async function ApiDocsPage() {
                 {endpoints.map((endpoint, index) => (
                   <div
                     key={index}
-                    className="glass-card glow-border rounded-xl overflow-hidden"
+                    className={`glass-card glow-border rounded-xl overflow-hidden stagger-${(index % 6) + 1}`}
                   >
                     <div className="p-4 sm:p-6">
                       <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-3">
