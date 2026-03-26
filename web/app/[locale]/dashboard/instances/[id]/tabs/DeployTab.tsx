@@ -19,6 +19,8 @@ interface ChannelStatus {
   botUsername?: string;
   botId?: string;
   phoneNumber?: string;
+  botName?: string;
+  teamName?: string;
   error?: string;
 }
 
@@ -36,14 +38,16 @@ export function DeployTab({
   const hasTelegram = credKeys.includes("telegram_bot_token");
   const hasWhatsApp = credKeys.some(k => ["twilio_account_sid", "whatsapp_business_token"].includes(k));
   const hasDiscord = credKeys.includes("discord_bot_token");
+  const hasSlack = credKeys.includes("slack_bot_token");
   const hasWidget = true;
-  const hasAnyRealChannel = hasTelegram || hasWhatsApp || hasDiscord;
+  const hasAnyRealChannel = hasTelegram || hasWhatsApp || hasDiscord || hasSlack;
   const isLive = hasAnyRealChannel;
 
   // Live channel statuses
   const [telegramStatus, setTelegramStatus] = useState<ChannelStatus | null>(null);
   const [whatsappStatus, setWhatsappStatus] = useState<ChannelStatus | null>(null);
   const [discordStatus, setDiscordStatus] = useState<ChannelStatus | null>(null);
+  const [slackStatus, setSlackStatus] = useState<ChannelStatus | null>(null);
   const [statusLoading, setStatusLoading] = useState(false);
 
   // Fetch channel statuses
@@ -78,6 +82,15 @@ export function DeployTab({
             .catch(() => {})
         );
       }
+
+      if (hasSlack) {
+        promises.push(
+          fetch(`/api/instances/${instanceId}/slack/status`)
+            .then(r => r.ok ? r.json() : null)
+            .then(data => data && setSlackStatus(data))
+            .catch(() => {})
+        );
+      }
       
       await Promise.all(promises);
       setStatusLoading(false);
@@ -89,12 +102,13 @@ export function DeployTab({
       const interval = setInterval(fetchStatuses, 30000);
       return () => clearInterval(interval);
     }
-  }, [instanceId, hasTelegram, hasWhatsApp, hasDiscord, hasAnyRealChannel]);
+  }, [instanceId, hasTelegram, hasWhatsApp, hasDiscord, hasSlack, hasAnyRealChannel]);
 
   const activeChannels = [
     hasTelegram && t("deploy.channelTelegram"),
     hasWhatsApp && t("deploy.channelWhatsApp"),
     hasDiscord && "Discord",
+    hasSlack && "Slack",
     hasWidget && t("deploy.channelWidget"),
   ].filter(Boolean) as string[];
 
@@ -324,6 +338,55 @@ export function DeployTab({
                       )}
                       {discordStatus.error && (
                         <p className="text-xs text-amber-400 mt-2">{discordStatus.error}</p>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-sm text-zinc-500">Checking status...</p>
+                  )}
+                </div>
+              ) : (
+                <button
+                  onClick={onGoToCredentials}
+                  className="w-full text-xs text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 px-3 py-2 rounded-lg transition-colors"
+                >{t("deploy.connectBtn")}</button>
+              )}
+            </div>
+
+            {/* Slack Card */}
+            <div className={`glow-border rounded-2xl bg-white/[0.02] p-5 border ${hasSlack ? (slackStatus?.health === "healthy" ? "border-emerald-500/30" : "border-amber-500/30") : "border-white/5"}`}>
+              <div className="flex items-center gap-3 mb-4">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg ${hasSlack ? "bg-purple-600/20 border border-purple-500/30" : "bg-zinc-800/50 border border-white/5"}`}>💼</div>
+                <div>
+                  <h3 className={`text-sm font-semibold ${hasSlack ? "text-white" : "text-zinc-500"}`}>Slack</h3>
+                </div>
+                {hasSlack && (
+                  <div className="ml-auto">
+                    {statusLoading && !slackStatus ? (
+                      <Loader2 className="w-4 h-4 animate-spin text-zinc-500" />
+                    ) : slackStatus?.health === "healthy" ? (
+                      <span className="text-xs px-2 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">{t("deploy.activeStatus")}</span>
+                    ) : (
+                      <span className="text-xs px-2 py-1 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/20">Issue</span>
+                    )}
+                  </div>
+                )}
+              </div>
+              {hasSlack ? (
+                <div>
+                  {slackStatus ? (
+                    <>
+                      <p className="text-sm text-zinc-400">
+                        {slackStatus.status === "connected" ? "Bot connected" : 
+                         "Connection issue"}
+                      </p>
+                      {slackStatus.botName && (
+                        <p className="text-xs text-zinc-500 mt-1">{slackStatus.botName}</p>
+                      )}
+                      {slackStatus.teamName && (
+                        <p className="text-xs text-zinc-600 mt-0.5">{slackStatus.teamName}</p>
+                      )}
+                      {slackStatus.error && (
+                        <p className="text-xs text-amber-400 mt-2">{slackStatus.error}</p>
                       )}
                     </>
                   ) : (
