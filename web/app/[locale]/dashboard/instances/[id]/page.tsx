@@ -141,6 +141,17 @@ export default function InstanceDetailPage() {
             <div className="flex flex-wrap items-center gap-3 mb-1">
               <h1 className="text-2xl font-bold text-white truncate">{instance.name}</h1>
               <span className={`text-xs px-2.5 py-1 rounded-full font-medium shrink-0 ${STATUS_COLORS[instance.status]}`}>{instance.status}</span>
+              {instance.healthStatus && (
+                <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${
+                  instance.healthStatus === "healthy" ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20" :
+                  instance.healthStatus === "degraded" ? "bg-amber-500/15 text-amber-400 border border-amber-500/20" :
+                  "bg-red-500/15 text-red-400 border border-red-500/20"
+                }`}>
+                  {instance.healthStatus === "healthy" ? "● Healthy" : 
+                   instance.healthStatus === "degraded" ? "● Degraded" : 
+                   "● Down"}
+                </span>
+              )}
             </div>
             <div className="flex items-center gap-2 text-sm">
               <p className="text-zinc-400">{typeLabel} · {instance.tier} {t("tierSuffix")}</p>
