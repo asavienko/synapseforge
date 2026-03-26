@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     email: string;
     referralCode?: string;
   };
-  const userEmail: string = body.email;
+  const userEmail: string = (body.email as string).toLowerCase().trim();
 
   if (!userEmail || !password || !name) {
     return NextResponse.json({ error: "All fields required." }, { status: 400 });

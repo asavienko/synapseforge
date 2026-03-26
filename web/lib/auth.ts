@@ -16,14 +16,17 @@ const providers: NextAuthOptions["providers"] = [
     async authorize(credentials) {
       if (!credentials?.email || !credentials?.password) return null;
 
+      // Normalize email
+      const normalizedEmail = (credentials.email as string).toLowerCase().trim();
+
       // Rate limit: 10 login attempts per email per 15 minutes
-      const emailKey = `login:${(credentials.email as string).toLowerCase()}`;
+      const emailKey = `login:${normalizedEmail}`;
       if (!rateLimit(emailKey, 10, 15 * 60 * 1000)) {
         throw new Error("Too many login attempts. Please try again later.");
       }
 
       const user = await prisma.user.findUnique({
-        where: { email: credentials.email as string },
+        where: { email: normalizedEmail },
       });
 
       if (!user || !user.password) return null;
