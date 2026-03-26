@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Copy, Check, Download, MessageSquare } from "lucide-react";
+import { Copy, Check, Download, MessageSquare, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Instance, CredentialRow } from "../types";
 
@@ -11,6 +11,15 @@ interface DeployTabProps {
   credentials: CredentialRow[];
   credsLoading: boolean;
   onGoToCredentials: () => void;
+}
+
+interface ChannelStatus {
+  status: "connected" | "degraded" | "disconnected" | "bot_ready";
+  health: "healthy" | "unhealthy";
+  botUsername?: string;
+  botId?: string;
+  phoneNumber?: string;
+  error?: string;
 }
 
 export function DeployTab({
@@ -26,13 +35,66 @@ export function DeployTab({
   const hasLLM = credKeys.some((k) => ["openai_api_key", "anthropic_api_key", "openrouter_api_key"].includes(k));
   const hasTelegram = credKeys.includes("telegram_bot_token");
   const hasWhatsApp = credKeys.some(k => ["twilio_account_sid", "whatsapp_business_token"].includes(k));
+  const hasDiscord = credKeys.includes("discord_bot_token");
   const hasWidget = true;
-  const hasAnyRealChannel = hasTelegram || hasWhatsApp;
+  const hasAnyRealChannel = hasTelegram || hasWhatsApp || hasDiscord;
   const isLive = hasAnyRealChannel;
+
+  // Live channel statuses
+  const [telegramStatus, setTelegramStatus] = useState<ChannelStatus | null>(null);
+  const [whatsappStatus, setWhatsappStatus] = useState<ChannelStatus | null>(null);
+  const [discordStatus, setDiscordStatus] = useState<ChannelStatus | null>(null);
+  const [statusLoading, setStatusLoading] = useState(false);
+
+  // Fetch channel statuses
+  useEffect(() => {
+    async function fetchStatuses() {
+      setStatusLoading(true);
+      const promises = [];
+      
+      if (hasTelegram) {
+        promises.push(
+          fetch(`/api/instances/${instanceId}/telegram/status`)
+            .then(r => r.ok ? r.json() : null)
+            .then(data => data && setTelegramStatus(data))
+            .catch(() => {})
+        );
+      }
+      
+      if (hasWhatsApp) {
+        promises.push(
+          fetch(`/api/instances/${instanceId}/whatsapp/status`)
+            .then(r => r.ok ? r.json() : null)
+            .then(data => data && setWhatsappStatus(data))
+            .catch(() => {})
+        );
+      }
+      
+      if (hasDiscord) {
+        promises.push(
+          fetch(`/api/instances/${instanceId}/discord/status`)
+            .then(r => r.ok ? r.json() : null)
+            .then(data => data && setDiscordStatus(data))
+            .catch(() => {})
+        );
+      }
+      
+      await Promise.all(promises);
+      setStatusLoading(false);
+    }
+    
+    if (hasAnyRealChannel) {
+      fetchStatuses();
+      // Poll every 30s
+      const interval = setInterval(fetchStatuses, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [instanceId, hasTelegram, hasWhatsApp, hasDiscord, hasAnyRealChannel]);
 
   const activeChannels = [
     hasTelegram && t("deploy.channelTelegram"),
     hasWhatsApp && t("deploy.channelWhatsApp"),
+    hasDiscord && "Discord",
     hasWidget && t("deploy.channelWidget"),
   ].filter(Boolean) as string[];
 
@@ -136,21 +198,43 @@ export function DeployTab({
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <div className={`glow-border rounded-2xl bg-white/[0.02] p-5 border ${hasTelegram ? "border-emerald-500/30" : "border-white/5"}`}>
+            {/* Telegram Card */}
+            <div className={`glow-border rounded-2xl bg-white/[0.02] p-5 border ${hasTelegram ? (telegramStatus?.health === "healthy" ? "border-emerald-500/30" : "border-amber-500/30") : "border-white/5"}`}>
               <div className="flex items-center gap-3 mb-4">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg ${hasTelegram ? "bg-sky-600/20 border border-sky-500/30" : "bg-zinc-800/50 border border-white/5"}`}>✈️</div>
                 <div>
                   <h3 className={`text-sm font-semibold ${hasTelegram ? "text-white" : "text-zinc-500"}`}>Telegram</h3>
                 </div>
                 {hasTelegram && (
-                  <span className="ml-auto text-xs px-2 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">{t("deploy.activeStatus")}</span>
+                  <div className="ml-auto">
+                    {statusLoading && !telegramStatus ? (
+                      <Loader2 className="w-4 h-4 animate-spin text-zinc-500" />
+                    ) : telegramStatus?.health === "healthy" ? (
+                      <span className="text-xs px-2 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">{t("deploy.activeStatus")}</span>
+                    ) : (
+                      <span className="text-xs px-2 py-1 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/20">Issue</span>
+                    )}
+                  </div>
                 )}
               </div>
               {hasTelegram ? (
                 <div>
-                  <p className="text-sm text-zinc-400">{t("deploy.botConnected")}</p>
-                  {instance.telegramBotUsername && (
-                    <p className="text-xs text-zinc-500 mt-1">@{instance.telegramBotUsername}</p>
+                  {telegramStatus ? (
+                    <>
+                      <p className="text-sm text-zinc-400">
+                        {telegramStatus.status === "connected" ? "Bot connected and webhook active" : 
+                         telegramStatus.status === "bot_ready" ? "Bot valid — webhook pending" : 
+                         "Connection issue"}
+                      </p>
+                      {telegramStatus.botUsername && (
+                        <p className="text-xs text-zinc-500 mt-1">@{telegramStatus.botUsername}</p>
+                      )}
+                      {telegramStatus.error && (
+                        <p className="text-xs text-amber-400 mt-2">{telegramStatus.error}</p>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-sm text-zinc-500">Checking status...</p>
                   )}
                 </div>
               ) : (
@@ -161,7 +245,101 @@ export function DeployTab({
               )}
             </div>
 
-            <div className="glow-border rounded-2xl bg-white/[0.02] p-5 border border-white/5 sm:col-span-2 lg:col-span-2">
+            {/* WhatsApp Card */}
+            <div className={`glow-border rounded-2xl bg-white/[0.02] p-5 border ${hasWhatsApp ? (whatsappStatus?.health === "healthy" ? "border-emerald-500/30" : "border-amber-500/30") : "border-white/5"}`}>
+              <div className="flex items-center gap-3 mb-4">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg ${hasWhatsApp ? "bg-emerald-600/20 border border-emerald-500/30" : "bg-zinc-800/50 border border-white/5"}`}>💬</div>
+                <div>
+                  <h3 className={`text-sm font-semibold ${hasWhatsApp ? "text-white" : "text-zinc-500"}`}>WhatsApp</h3>
+                </div>
+                {hasWhatsApp && (
+                  <div className="ml-auto">
+                    {statusLoading && !whatsappStatus ? (
+                      <Loader2 className="w-4 h-4 animate-spin text-zinc-500" />
+                    ) : whatsappStatus?.health === "healthy" ? (
+                      <span className="text-xs px-2 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">{t("deploy.activeStatus")}</span>
+                    ) : (
+                      <span className="text-xs px-2 py-1 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/20">Issue</span>
+                    )}
+                  </div>
+                )}
+              </div>
+              {hasWhatsApp ? (
+                <div>
+                  {whatsappStatus ? (
+                    <>
+                      <p className="text-sm text-zinc-400">
+                        {whatsappStatus.status === "connected" ? "Connected" : 
+                         whatsappStatus.status === "degraded" ? "Connection issue" : 
+                         "Disconnected"}
+                      </p>
+                      {whatsappStatus.phoneNumber && (
+                        <p className="text-xs text-zinc-500 mt-1">{whatsappStatus.phoneNumber}</p>
+                      )}
+                      {whatsappStatus.error && (
+                        <p className="text-xs text-amber-400 mt-2">{whatsappStatus.error}</p>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-sm text-zinc-500">Checking status...</p>
+                  )}
+                </div>
+              ) : (
+                <button
+                  onClick={onGoToCredentials}
+                  className="w-full text-xs text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 px-3 py-2 rounded-lg transition-colors"
+                >{t("deploy.connectBtn")}</button>
+              )}
+            </div>
+
+            {/* Discord Card */}
+            <div className={`glow-border rounded-2xl bg-white/[0.02] p-5 border ${hasDiscord ? (discordStatus?.health === "healthy" ? "border-emerald-500/30" : "border-amber-500/30") : "border-white/5"}`}>
+              <div className="flex items-center gap-3 mb-4">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg ${hasDiscord ? "bg-indigo-600/20 border border-indigo-500/30" : "bg-zinc-800/50 border border-white/5"}`}>🎮</div>
+                <div>
+                  <h3 className={`text-sm font-semibold ${hasDiscord ? "text-white" : "text-zinc-500"}`}>Discord</h3>
+                </div>
+                {hasDiscord && (
+                  <div className="ml-auto">
+                    {statusLoading && !discordStatus ? (
+                      <Loader2 className="w-4 h-4 animate-spin text-zinc-500" />
+                    ) : discordStatus?.health === "healthy" ? (
+                      <span className="text-xs px-2 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">{t("deploy.activeStatus")}</span>
+                    ) : (
+                      <span className="text-xs px-2 py-1 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/20">Issue</span>
+                    )}
+                  </div>
+                )}
+              </div>
+              {hasDiscord ? (
+                <div>
+                  {discordStatus ? (
+                    <>
+                      <p className="text-sm text-zinc-400">
+                        {discordStatus.status === "connected" ? "Bot connected" : 
+                         "Connection issue"}
+                      </p>
+                      {discordStatus.botUsername && (
+                        <p className="text-xs text-zinc-500 mt-1">@{discordStatus.botUsername}</p>
+                      )}
+                      {discordStatus.error && (
+                        <p className="text-xs text-amber-400 mt-2">{discordStatus.error}</p>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-sm text-zinc-500">Checking status...</p>
+                  )}
+                </div>
+              ) : (
+                <button
+                  onClick={onGoToCredentials}
+                  className="w-full text-xs text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 px-3 py-2 rounded-lg transition-colors"
+                >{t("deploy.connectBtn")}</button>
+              )}
+            </div>
+
+            {/* Widget Card - spans remaining columns */}
+            <div className="glow-border rounded-2xl bg-white/[0.02] p-5 border border-white/5 sm:col-span-2 lg:col-span-1">
               <EmbedCard instanceId={instanceId} t={t} />
             </div>
           </div>
