@@ -14,10 +14,61 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
 
   if (!instance) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
+  // Live health check for instances with VPS configured
+  let liveHealthStatus = instance.healthStatus;
+  let liveLastCheckedAt = instance.lastCheckedAt;
+  
+  if (instance.vpsUrl && instance.gatewayToken) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 3000);
+      
+      const res = await fetch(`${instance.vpsUrl}/hooks/wake`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${instance.gatewayToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text: "health-check", mode: "next-heartbeat" }),
+        signal: controller.signal,
+      });
+      
+      clearTimeout(timeout);
+      
+      const healthy = res.status !== 401 && res.status !== 503 && res.status !== 0;
+      liveHealthStatus = healthy ? "healthy" : "down";
+      liveLastCheckedAt = new Date();
+      
+      // Update DB if status changed (fire-and-forget)
+      if (instance.healthStatus !== liveHealthStatus) {
+        prisma.aIInstance.update({
+          where: { id: instance.id },
+          data: { healthStatus: liveHealthStatus, lastCheckedAt: liveLastCheckedAt },
+        }).catch(() => {});
+      }
+    } catch {
+      // Gateway unreachable - mark as down if not checked recently
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+      if (!instance.lastCheckedAt || instance.lastCheckedAt < fiveMinutesAgo) {
+        liveHealthStatus = "down";
+        liveLastCheckedAt = new Date();
+        prisma.aIInstance.update({
+          where: { id: instance.id },
+          data: { healthStatus: "down", lastCheckedAt: liveLastCheckedAt },
+        }).catch(() => {});
+      }
+    }
+  }
+
   // Return instance but never expose gatewayToken; expose hasGateway flag
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { gatewayToken: _token, vpsUrl: _vps, sshPrivateKey: _ssh, ...safeInstance } = instance;
-  return NextResponse.json({ ...safeInstance, hasGateway: !!instance.vpsUrl });
+  return NextResponse.json({ 
+    ...safeInstance, 
+    hasGateway: !!instance.vpsUrl,
+    healthStatus: liveHealthStatus,
+    lastCheckedAt: liveLastCheckedAt?.toISOString(),
+  });
 }
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
