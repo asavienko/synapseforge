@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Copy, Check, Download, MessageSquare, Loader2 } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Copy, Check, Download, MessageSquare, Loader2, Key } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Instance, CredentialRow } from "../types";
 
@@ -480,26 +480,46 @@ function EmbedCard({ instanceId, t }: { instanceId: string; t: ReturnType<typeof
   const [tab, setTab] = useState<"link" | "embed" | "api">("link");
   const [apiKey, setApiKey] = useState<string | null>(null);
   const [apiKeysLoading, setApiKeysLoading] = useState(false);
+  const [generatingKey, setGeneratingKey] = useState(false);
   const origin = typeof window !== "undefined" ? window.location.origin : "https://openhelixai.com";
+
+  const loadApiKeys = useCallback(async () => {
+    setApiKeysLoading(true);
+    try {
+      const res = await fetch(`/api/instances/${instanceId}/keys`);
+      const data = await res.json();
+      if (data.keys && data.keys.length > 0) {
+        setApiKey(data.keys[0].preview + "...");
+      }
+    } catch {}
+    setApiKeysLoading(false);
+  }, [instanceId]);
 
   useEffect(() => {
     if (tab === "api" && !apiKey && !apiKeysLoading) {
-      setApiKeysLoading(true);
-      fetch(`/api/instances/${instanceId}/keys`)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.keys && data.keys.length > 0) {
-            setApiKey(data.keys[0].preview + "...");
-          }
-        })
-        .catch(() => {})
-        .finally(() => setApiKeysLoading(false));
+      loadApiKeys();
     }
-  }, [tab, instanceId, apiKey, apiKeysLoading]);
+  }, [tab, apiKey, apiKeysLoading, loadApiKeys]);
+
+  async function generateApiKey() {
+    setGeneratingKey(true);
+    try {
+      const res = await fetch(`/api/instances/${instanceId}/keys`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: "Default API Key" }),
+      });
+      const data = await res.json();
+      if (data.key) {
+        setApiKey(data.key.preview + "...");
+      }
+    } catch {}
+    setGeneratingKey(false);
+  }
 
   const directLink = `${origin}/widget-chat/${instanceId}`;
   const scriptSnippet = `<script>\n  (function(){\n    var w=window,d=document;\n    var s=d.createElement('script');\n    s.src="${origin}/embed.js?id=${instanceId}";\n    s.async=true;\n    d.head.appendChild(s);\n  })();\n</script>`;
-  const apiSnippet = `curl -X POST "${origin}/api/v1/chat" \\\n  -H "Content-Type: application/json" \\\n  -H "X-API-Key: ${apiKey || "your_api_key_here"}" \\\n  -d '{\n    "instanceId": "${instanceId}",\n    "message": "Hello!"\n  }'`;
+  const apiSnippet = `curl -X POST "${origin}/api/v1/chat" \\\n  -H "Content-Type: application/json" \\\n  -H "Authorization: Bearer ${apiKey || "your_api_key_here"}" \\\n  -d '{\n    "message": "Hello!"\n  }'`;
 
   const handleCopy = (content: string, type: "link" | "iframe" | "script" | "api") => {
     navigator.clipboard.writeText(content);
@@ -565,15 +585,42 @@ function EmbedCard({ instanceId, t }: { instanceId: string; t: ReturnType<typeof
 
         {tab === "api" && (
           <div className="space-y-3">
-            <p className="text-xs text-zinc-400">{t("deploy.embedApiDesc")}</p>
-            <pre className="bg-black/40 border border-white/10 rounded-xl p-4 text-xs text-zinc-300 font-mono overflow-x-auto whitespace-pre leading-relaxed">{apiSnippet}</pre>
-            <button
-              onClick={() => handleCopy(apiSnippet, "api")}
-              className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-2.5 py-1.5 rounded-lg transition-colors"
-            >
-              {copied === "api" ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-              {copied === "api" ? t("deploy.copied") : t("deploy.copy")}
-            </button>
+            {!apiKey && !apiKeysLoading && (
+              <div className="p-4 bg-amber-500/5 border border-amber-500/20 rounded-xl">
+                <p className="text-xs text-amber-400 mb-3">No API key found. Generate one to start using the API.</p>
+                <button
+                  onClick={generateApiKey}
+                  disabled={generatingKey}
+                  className="flex items-center gap-1.5 text-xs text-white bg-violet-600 hover:bg-violet-500 disabled:opacity-50 px-3 py-2 rounded-lg transition-colors"
+                >
+                  {generatingKey ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Key className="w-3.5 h-3.5" />
+                  )}
+                  {generatingKey ? "Generating..." : "Generate API Key"}
+                </button>
+              </div>
+            )}
+            {apiKeysLoading && (
+              <div className="flex items-center gap-2 text-xs text-zinc-500">
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                Loading API keys...
+              </div>
+            )}
+            {apiKey && (
+              <>
+                <p className="text-xs text-zinc-400">{t("deploy.embedApiDesc")}</p>
+                <pre className="bg-black/40 border border-white/10 rounded-xl p-4 text-xs text-zinc-300 font-mono overflow-x-auto whitespace-pre leading-relaxed">{apiSnippet}</pre>
+                <button
+                  onClick={() => handleCopy(apiSnippet, "api")}
+                  className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-2.5 py-1.5 rounded-lg transition-colors"
+                >
+                  {copied === "api" ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                  {copied === "api" ? t("deploy.copied") : t("deploy.copy")}
+                </button>
+              </>
+            )}
           </div>
         )}
       </div>
