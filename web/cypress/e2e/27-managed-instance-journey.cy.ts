@@ -184,12 +184,31 @@ describe("27 · Managed Instance Journey — happy path", () => {
     cy.snap("27-journey-03-deploy-tab");
   });
 
-  // ── 04. Provisioning happens automatically (no deploy button needed) ───────
-  it.skip("04 provisioning is automatic", () => {
-    // SKIPPED: Provisioning now happens automatically on instance creation.
-    // The old manual "Deploy" button flow has been removed.
-    // Instances start with status "running" and sandboxMode = true.
-    cy.log("Provisioning is now automatic — no manual deploy step needed");
+  // ── 04. Provisioning is automatic for managed plans ──────────────────────
+  it("04 provisioning is automatic for managed plans", () => {
+    cy.login(EMAIL(), PASS());
+
+    // Upgrade to managed plan so provisioning auto-triggers
+    cy.request({
+      method: "PATCH",
+      url: "/api/user",
+      body: { plan: "managed_starter" },
+      headers: { "Content-Type": "application/json" },
+    });
+
+    // Create a new instance - should auto-trigger provisioning
+    cy.request({
+      method: "POST",
+      url: "/api/instances",
+      body: { name: "Auto-Provision Agent", type: "assistant" },
+      headers: { "Content-Type": "application/json" },
+    }).then((res) => {
+      expect(res.status).to.be.oneOf([200, 201]);
+      expect(res.body.provisionStatus).to.eq("provisioning");
+      expect(res.body.sandboxMode).to.eq(false);
+    });
+
+    cy.log("✓ Managed plan instances auto-trigger provisioning");
   });
 
   // ── 05. Provisioning banner is visible ────────────────────────────────────
