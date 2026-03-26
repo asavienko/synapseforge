@@ -36,7 +36,7 @@ export function LocaleSwitcher() {
     <div className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 text-sm text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2 py-1 rounded-lg hover:bg-black/5 dark:hover:bg-white/5"
+        className="flex items-center justify-center gap-1.5 h-9 text-[13px] text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white transition-colors px-2.5 rounded-full hover:bg-black/5 dark:hover:bg-white/5"
       >
         <Globe className="w-4 h-4" />
         <span className="font-medium">{LOCALE_FLAGS[locale]} {LOCALE_LABELS[locale]}</span>

@@ -101,42 +101,40 @@ export default async function LandingPage() {
       {/* ═══════════════════════════════════════════════════════════════════
           NAV — sticky, blurred, with visual hierarchy in links
       ═══════════════════════════════════════════════════════════════════ */}
-      <nav className="sticky top-0 z-50 bg-white/80 dark:bg-[#0a0a0f]/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/[0.06]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 grid grid-cols-[auto_1fr_auto] items-center gap-4">
+      <nav className="sticky top-0 z-50 bg-white/80 dark:bg-[#0a0a0f]/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/[0.06] shadow-sm shadow-black/[0.02] dark:shadow-none">
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between">
           {/* Left — Logo */}
-          <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
-            <HelixLogo className="w-8 h-8 text-blue-600 dark:text-blue-400 group-hover:scale-105 transition-transform" size={32} />
-            <span className="font-bold text-[17px] tracking-tight hidden sm:block">OpenHelix<span className="text-blue-600 dark:text-blue-400">.</span></span>
+          <Link href="/" className="flex items-center gap-2.5 h-9 shrink-0 group">
+            <HelixLogo className="w-7 h-7 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform duration-200" size={28} />
+            <span className="font-bold text-[16px] tracking-tight hidden sm:block">OpenHelix<span className="text-blue-600 dark:text-blue-400">.</span></span>
           </Link>
 
-          {/* Center — Nav links (true-centered) */}
-          <div className="hidden lg:flex items-center justify-center">
-            <div className="flex items-center gap-0.5 text-[13px] font-medium bg-gray-100/60 dark:bg-white/[0.04] rounded-full px-1.5 py-1">
-              <a href="#features" className="px-3.5 py-1.5 rounded-full text-gray-600 dark:text-white/60 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/[0.08] hover:shadow-sm transition-all">{t("nav.services")}</a>
-              <a href="#demo" className="px-3.5 py-1.5 rounded-full text-gray-600 dark:text-white/60 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/[0.08] hover:shadow-sm transition-all">{t("nav.demo")}</a>
-              <a href="#pricing" className="px-3.5 py-1.5 rounded-full text-gray-600 dark:text-white/60 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/[0.08] hover:shadow-sm transition-all">{t("nav.pricing")}</a>
-              <div className="w-px h-3.5 bg-gray-300/60 dark:bg-white/10 mx-1" />
-              <Link href="/templates" className="px-3.5 py-1.5 rounded-full text-gray-500 dark:text-white/45 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/[0.08] hover:shadow-sm transition-all">{t("nav.templates")}</Link>
-              <Link href="/use-cases" className="px-3.5 py-1.5 rounded-full text-gray-500 dark:text-white/45 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/[0.08] hover:shadow-sm transition-all">{t("nav.useCases")}</Link>
-              <Link href="/blog" className="px-3.5 py-1.5 rounded-full text-gray-500 dark:text-white/45 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/[0.08] hover:shadow-sm transition-all">{t("nav.blog")}</Link>
-            </div>
+          {/* Center — Nav links (absolutely centered in the bar) */}
+          <div className="hidden lg:flex items-center h-10 gap-0.5 text-[13px] font-medium bg-gray-100/60 dark:bg-white/[0.04] rounded-full px-1.5 border border-gray-200/40 dark:border-white/[0.04] absolute left-[calc(50%-16px)] top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap">
+            <a href="#features" className="flex items-center h-7 px-3.5 rounded-full text-gray-600 dark:text-white/60 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/[0.08] hover:shadow-sm transition-all duration-200">{t("nav.services")}</a>
+            <a href="#demo" className="flex items-center h-7 px-3.5 rounded-full text-gray-600 dark:text-white/60 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/[0.08] hover:shadow-sm transition-all duration-200">{t("nav.demo")}</a>
+            <a href="#pricing" className="flex items-center h-7 px-3.5 rounded-full text-gray-600 dark:text-white/60 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/[0.08] hover:shadow-sm transition-all duration-200">{t("nav.pricing")}</a>
+            <div className="w-px h-3.5 bg-gray-300/60 dark:bg-white/10 mx-1" />
+            <Link href="/templates" className="flex items-center h-7 px-3.5 rounded-full text-gray-500 dark:text-white/45 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/[0.08] hover:shadow-sm transition-all duration-200">{t("nav.templates")}</Link>
+            <Link href="/use-cases" className="flex items-center h-7 px-3.5 rounded-full text-gray-500 dark:text-white/45 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/[0.08] hover:shadow-sm transition-all duration-200">{t("nav.useCases")}</Link>
+            <Link href="/blog" className="flex items-center h-7 px-3.5 rounded-full text-gray-500 dark:text-white/45 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/[0.08] hover:shadow-sm transition-all duration-200">{t("nav.blog")}</Link>
           </div>
 
           {/* Right — Actions */}
-          <div className="flex items-center justify-end gap-1.5">
+          <div className="flex items-center gap-2 ml-auto">
             <LocaleSwitcher />
             <ThemeToggle className="hover:bg-gray-100 dark:hover:bg-white/[0.08]" />
-            <div className="hidden sm:block w-px h-4 bg-gray-200 dark:bg-white/10 mx-1" />
+            <div className="hidden sm:block w-px h-4 bg-gray-200 dark:bg-white/10 mx-0.5" />
             {isLoggedIn ? (
-              <Link href="/dashboard" className="text-[13px] bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full font-semibold transition-colors shadow-sm shadow-blue-600/25">
+              <Link href="/dashboard" className="flex items-center justify-center h-9 text-[13px] bg-blue-600 hover:bg-blue-700 text-white px-5 rounded-full font-semibold transition-colors shadow-sm shadow-blue-600/25">
                 {t("nav.dashboard")}
               </Link>
             ) : (
               <>
-                <Link href="/sign-in" className="hidden md:flex text-[13px] text-gray-600 dark:text-white/60 hover:text-gray-900 dark:hover:text-white px-3.5 py-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/[0.06] transition-all font-medium">
+                <Link href="/sign-in" className="hidden md:flex items-center justify-center h-9 text-[13px] text-gray-600 dark:text-white/60 hover:text-gray-900 dark:hover:text-white px-4 rounded-full hover:bg-gray-100 dark:hover:bg-white/[0.06] transition-all font-medium">
                   {t("nav.signIn")}
                 </Link>
-                <Link href="/sign-up" className="text-[13px] bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full font-semibold transition-colors shadow-sm shadow-blue-600/25">
+                <Link href="/sign-up" className="flex items-center justify-center h-9 text-[13px] bg-blue-600 hover:bg-blue-700 text-white px-5 rounded-full font-semibold transition-colors shadow-sm shadow-blue-600/25">
                   <span className="hidden sm:inline">{t("nav.getStarted")}</span>
                   <span className="sm:hidden">{t("nav.start")}</span>
                 </Link>
@@ -237,33 +235,37 @@ export default async function LandingPage() {
       ═══════════════════════════════════════════════════════════════════ */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 py-24">
         <FadeInView direction="up">
-          <div className="text-center mb-14">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gray-200 dark:border-white/[0.08] text-[12px] text-gray-500 dark:text-white/50 mb-4">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-200/60 dark:border-blue-500/20 text-[12px] text-blue-600 dark:text-blue-400 font-medium mb-5 bg-blue-50/50 dark:bg-blue-500/[0.06]">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
               {tl("howItWorks.title")}
             </div>
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{tl("howItWorks.title")}</h2>
+            <p className="text-gray-500 dark:text-white/45 mt-3 max-w-md mx-auto text-[15px]">Get your AI agent up and running in three simple steps</p>
           </div>
         </FadeInView>
-        <div className="relative grid md:grid-cols-3 gap-6">
+        <div className="relative grid md:grid-cols-3 gap-8">
           {/* Connector line between cards (desktop) */}
-          <div className="hidden md:block absolute top-[72px] left-[calc(16.67%+24px)] right-[calc(16.67%+24px)] h-px bg-gradient-to-r from-blue-200 via-blue-300 to-blue-200 dark:from-blue-500/20 dark:via-blue-500/30 dark:to-blue-500/20" />
+          <div className="hidden md:block absolute top-[56px] left-[calc(16.67%+32px)] right-[calc(16.67%+32px)] h-px">
+            <div className="h-full bg-gradient-to-r from-blue-300 via-blue-400 to-blue-300 dark:from-blue-500/30 dark:via-blue-500/40 dark:to-blue-500/30" />
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-300 via-blue-400 to-blue-300 dark:from-blue-500/30 dark:via-blue-500/40 dark:to-blue-500/30 blur-sm" />
+          </div>
           {[
-            { num: tl("howItWorks.step1.num"), Icon: MessagesIcon, title: tl("howItWorks.step1.title"), desc: tl("howItWorks.step1.desc") },
-            { num: tl("howItWorks.step2.num"), Icon: SettingsIcon, title: tl("howItWorks.step2.title"), desc: tl("howItWorks.step2.desc") },
-            { num: tl("howItWorks.step3.num"), Icon: RocketLaunchIcon, title: tl("howItWorks.step3.title"), desc: tl("howItWorks.step3.desc") },
+            { num: tl("howItWorks.step1.num"), Icon: MessagesIcon, title: tl("howItWorks.step1.title"), desc: tl("howItWorks.step1.desc"), accent: "from-blue-500 to-blue-600" },
+            { num: tl("howItWorks.step2.num"), Icon: SettingsIcon, title: tl("howItWorks.step2.title"), desc: tl("howItWorks.step2.desc"), accent: "from-violet-500 to-violet-600" },
+            { num: tl("howItWorks.step3.num"), Icon: RocketLaunchIcon, title: tl("howItWorks.step3.title"), desc: tl("howItWorks.step3.desc"), accent: "from-emerald-500 to-emerald-600" },
           ].map((step, i) => (
-            <FadeInView key={i} direction="up" delay={i * 120}>
-              <div className="relative p-7 rounded-2xl border border-gray-100 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] h-full group hover:border-blue-200 dark:hover:border-blue-500/20 hover:shadow-lg hover:shadow-blue-500/[0.04] dark:hover:shadow-blue-500/[0.06] transition-all duration-300">
+            <FadeInView key={i} direction="up" delay={i * 150}>
+              <div className="relative p-8 rounded-2xl border border-gray-200/60 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] h-full group hover:border-blue-200 dark:hover:border-blue-500/20 hover:shadow-xl hover:shadow-blue-500/[0.06] dark:hover:shadow-blue-500/[0.08] transition-all duration-300 hover:-translate-y-1">
                 {/* Step number badge */}
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-500/15 dark:to-blue-500/5 flex items-center justify-center mb-5 ring-4 ring-white dark:ring-[#0a0a0f] relative z-10">
-                  <span className="text-[14px] font-bold text-blue-600 dark:text-blue-400">{step.num}</span>
+                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${step.accent} flex items-center justify-center mb-6 shadow-lg shadow-blue-500/20 dark:shadow-blue-500/10 relative z-10 group-hover:scale-105 transition-transform duration-300`}>
+                  <span className="text-[15px] font-bold text-white">{step.num}</span>
                 </div>
                 {/* Icon */}
-                <div className="w-10 h-10 rounded-xl bg-gray-50 dark:bg-white/[0.04] flex items-center justify-center mb-4 group-hover:bg-blue-50 dark:group-hover:bg-blue-500/10 transition-colors duration-300">
+                <div className="w-11 h-11 rounded-xl bg-gray-50 dark:bg-white/[0.04] border border-gray-100 dark:border-white/[0.06] flex items-center justify-center mb-5 group-hover:bg-blue-50 dark:group-hover:bg-blue-500/10 group-hover:border-blue-200/60 dark:group-hover:border-blue-500/20 transition-all duration-300">
                   <step.Icon className="w-5 h-5 text-gray-400 dark:text-white/30 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300" />
                 </div>
-                <h3 className="font-semibold text-[16px] mb-2.5">{step.title}</h3>
+                <h3 className="font-semibold text-[17px] mb-3 tracking-tight">{step.title}</h3>
                 <p className="text-gray-500 dark:text-white/45 text-[14px] leading-relaxed">{step.desc}</p>
               </div>
             </FadeInView>
@@ -327,20 +329,20 @@ export default async function LandingPage() {
           </div>
         </FadeInView>
 
-        <div className="grid md:grid-cols-3 gap-5 mb-14">
+        <div className="grid md:grid-cols-3 gap-6 mb-14">
           {[
-            { step: "01", Icon: KeyIcon, color: "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400", title: t("how.step1title"), desc: t("how.step1desc") },
-            { step: "02", Icon: MessagesIcon, color: "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400", title: t("how.step2title"), desc: t("how.step2desc") },
-            { step: "03", Icon: MessagesIcon, color: "bg-violet-50 dark:bg-violet-500/10 text-violet-600 dark:text-violet-400", title: t("how.step3title"), desc: t("how.step3desc") },
+            { step: "01", Icon: KeyIcon, color: "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400", borderColor: "group-hover:border-blue-200 dark:group-hover:border-blue-500/20", title: t("how.step1title"), desc: t("how.step1desc") },
+            { step: "02", Icon: MessagesIcon, color: "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400", borderColor: "group-hover:border-emerald-200 dark:group-hover:border-emerald-500/20", title: t("how.step2title"), desc: t("how.step2desc") },
+            { step: "03", Icon: MessagesIcon, color: "bg-violet-50 dark:bg-violet-500/10 text-violet-600 dark:text-violet-400", borderColor: "group-hover:border-violet-200 dark:group-hover:border-violet-500/20", title: t("how.step3title"), desc: t("how.step3desc") },
           ].map((s, i) => (
             <FadeInView key={i} direction="up" delay={i * 100}>
-              <div className="relative p-6 rounded-xl border border-gray-100 dark:border-white/[0.06] h-full">
-                {i < 2 && <div className="hidden md:block absolute top-10 left-[calc(100%+8px)] w-[calc(100%-16px)] h-px bg-gradient-to-r from-gray-200 dark:from-white/[0.06] to-transparent z-10" />}
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 ${s.color}`}>
+              <div className={`group relative p-7 rounded-2xl border border-gray-100 dark:border-white/[0.06] h-full bg-white dark:bg-white/[0.02] hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-none transition-all duration-300 hover:-translate-y-0.5 ${s.borderColor}`}>
+                {i < 2 && <div className="hidden md:block absolute top-12 left-[calc(100%+10px)] w-[calc(100%-20px)] h-px bg-gradient-to-r from-gray-200 dark:from-white/[0.08] to-transparent z-10" />}
+                <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-5 ${s.color} transition-transform duration-300 group-hover:scale-105`}>
                   <s.Icon className="w-5 h-5" />
                 </div>
-                <div className="text-[11px] text-gray-300 dark:text-white/20 font-mono mb-2 tracking-wider">Step {s.step}</div>
-                <h3 className="font-semibold mb-2">{s.title}</h3>
+                <div className="text-[11px] text-gray-400 dark:text-white/25 font-mono mb-2 tracking-wider uppercase">Step {s.step}</div>
+                <h3 className="font-semibold text-[16px] mb-2.5 tracking-tight">{s.title}</h3>
                 <p className="text-gray-500 dark:text-white/45 text-[13px] leading-relaxed">{s.desc}</p>
               </div>
             </FadeInView>
@@ -387,7 +389,7 @@ export default async function LandingPage() {
 
           <div className="text-center mt-8">
             <Link href="/sign-up" className="inline-flex items-center gap-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-lg font-semibold text-sm hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors shadow-sm">
-              {t("hero.ctaPrimary")} <ArrowRightIcon className="w-4 h-4" />
+              {t("hero.cta")}
             </Link>
           </div>
         </div>

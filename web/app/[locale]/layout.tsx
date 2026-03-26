@@ -96,13 +96,19 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
       <head>
         <link rel="alternate" hrefLang="en" href={`https://openhelixai.com/en`} />
         <link rel="alternate" hrefLang="es" href={`https://openhelixai.com/es`} />
         <link rel="alternate" hrefLang="x-default" href={`https://openhelixai.com/en`} />
       </head>
       <body className={`${inter.className} antialiased`}>
+        {/* Inline script to set theme before paint — prevents flash of wrong theme */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem("theme");var d=document.documentElement;if(t==="light"){d.classList.remove("dark");d.style.colorScheme="light"}else if(t==="dark"){d.classList.add("dark");d.style.colorScheme="dark"}else{var m=window.matchMedia("(prefers-color-scheme:dark)").matches;if(m){d.classList.add("dark");d.style.colorScheme="dark"}else{d.classList.remove("dark");d.style.colorScheme="light"}}}catch(e){}})()`,
+          }}
+        />
         <PostHogProvider>
           <NextIntlClientProvider messages={messages}>
             <AnalyticsProvider>

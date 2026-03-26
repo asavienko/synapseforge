@@ -17,13 +17,13 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
 
   // Render a placeholder with the same dimensions to prevent layout shift
   if (!mounted) {
-    return <div className={`w-9 h-9 ${className}`} />;
+    return <div className={`w-9 h-9 shrink-0 ${className}`} />;
   }
 
   return (
     <button
       onClick={toggleTheme}
-      className={`relative w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-black/5 dark:hover:bg-white/10 ${className}`}
+      className={`relative w-9 h-9 shrink-0 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-black/5 dark:hover:bg-white/10 ${className}`}
       aria-label={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
     >
       {/* Sun icon */}

@@ -14,7 +14,12 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>("system");
-  const [resolvedTheme, setResolvedTheme] = useState<"dark" | "light">("dark");
+  const [resolvedTheme, setResolvedTheme] = useState<"dark" | "light">(() => {
+    if (typeof document !== "undefined") {
+      return document.documentElement.classList.contains("dark") ? "dark" : "light";
+    }
+    return "dark";
+  });
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -23,6 +28,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (saved) {
       setTheme(saved);
     }
+    // Sync resolvedTheme with what the inline script already applied
+    setResolvedTheme(
+      document.documentElement.classList.contains("dark") ? "dark" : "light"
+    );
   }, []);
 
   useEffect(() => {
