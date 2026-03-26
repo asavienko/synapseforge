@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Users, Bot, Activity, AlertCircle, Plus, X, Shield, ChevronDown, MessageCircle, Send, Loader2, Server, Link, Unlink, CheckCircle2, Rocket, RefreshCw, Copy, Check, Gift, DollarSign, BarChart2, TrendingUp, Tag, Camera, RotateCcw } from "lucide-react";
+import { Users, Bot, Activity, AlertCircle, Plus, X, Shield, ChevronDown, MessageCircle, Send, Loader2, Server, Link, Unlink, CheckCircle2, Rocket, RefreshCw, Copy, Check, Gift, DollarSign, BarChart2, TrendingUp, Tag, Camera, RotateCcw, Database } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { STATUS_COLORS, PLANS, formatDate, formatRelativeTime } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -187,6 +187,132 @@ function HetznerSnapshotPanel({ instanceId }: { instanceId: string }) {
     </div>
   );
 }
+// Restic Rollback Panel Component
+function ResticRollbackPanel({ instanceId }: { instanceId: string }) {
+  const t = useTranslations("admin");
+  const [snapshots, setSnapshots] = useState<Array<{
+    id: string;
+    snapshotId: string;
+    sizeBytes: number | null;
+    healthy: boolean;
+    label: string | null;
+    tag: string | null;
+    triggeredBy: string | null;
+    createdAt: string;
+  }>>([]);
+  const [loading, setLoading] = useState(false);
+  const [rollingBack, setRollingBack] = useState(false);
+  const [confirmId, setConfirmId] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/instances/${instanceId}/snapshots`);
+      const data = await res.json();
+      setSnapshots(data.snapshots ?? []);
+    } finally {
+      setLoading(false);
+    }
+  }, [instanceId]);
+
+  useEffect(() => { load(); }, [load]);
+
+  async function rollback(snapshotId?: string) {
+    setRollingBack(true);
+    setConfirmId(null);
+    setMessage(null);
+    try {
+      const res = await fetch(`/api/admin/instances/${instanceId}/restic-rollback`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ snapshotId }),
+      });
+      const data = await res.json();
+      setMessage(data.ok ? "Rollback queued. The instance will restore shortly." : `Error: ${data.error ?? "unknown"}`);
+    } finally {
+      setRollingBack(false);
+    }
+  }
+
+  return (
+    <div className="mt-2 px-3 py-3 bg-amber-950/20 rounded-xl border border-amber-500/20 text-xs">
+      <div className="flex items-center justify-between mb-2">
+        <span className="font-medium text-amber-300">Restic Data Rollback</span>
+        <button
+          onClick={load}
+          disabled={loading}
+          className="text-zinc-500 hover:text-amber-300 transition-colors"
+          title="Refresh"
+        >
+          <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />
+        </button>
+      </div>
+
+      {message && (
+        <div className={`mb-2 px-2 py-1.5 rounded border ${message.includes("Error") ? "bg-red-500/10 border-red-500/30 text-red-400" : "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"}`}>
+          {message}
+        </div>
+      )}
+
+      {loading ? (
+        <div className="text-zinc-500 flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" /> Loading...</div>
+      ) : snapshots.length === 0 ? (
+        <div className="text-zinc-500">No Restic snapshots found.</div>
+      ) : (
+        <div className="space-y-1.5 max-h-48 overflow-y-auto">
+          <div className="flex items-center justify-between px-2 py-1.5 bg-amber-500/10 rounded border border-amber-500/20">
+            <span className="text-zinc-400">Restore to latest snapshot</span>
+            <button
+              onClick={() => rollback()}
+              disabled={rollingBack}
+              className="flex items-center gap-1 text-amber-400 hover:text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 px-2 py-0.5 rounded transition-colors"
+            >
+              {rollingBack ? <Loader2 className="w-3 h-3 animate-spin" /> : <RotateCcw className="w-3 h-3" />}
+              Rollback Latest
+            </button>
+          </div>
+          {snapshots.map((snap) => (
+            <div key={snap.id} className="flex items-center justify-between px-2 py-1.5 bg-black/20 rounded">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-zinc-300 font-mono text-[10px]">{snap.snapshotId.slice(0, 8)}...</span>
+                  {snap.healthy && <span className="text-[10px] px-1 rounded bg-emerald-500/20 text-emerald-400">healthy</span>}
+                  {snap.tag && <span className="text-[10px] px-1 rounded bg-blue-500/20 text-blue-400">{snap.tag}</span>}
+                </div>
+                <p className="text-zinc-500 text-[10px]">
+                  {new Date(snap.createdAt).toLocaleString()}
+                  {snap.sizeBytes ? ` · ${(snap.sizeBytes / 1024 / 1024).toFixed(1)} MB` : ""}
+                </p>
+              </div>
+              {confirmId === snap.id ? (
+                <div className="flex items-center gap-1 shrink-0">
+                  <span className="text-amber-400 text-[11px]">Sure?</span>
+                  <button
+                    onClick={() => rollback(snap.snapshotId)}
+                    disabled={rollingBack}
+                    className="text-red-400 hover:text-red-300 bg-red-500/10 px-2 py-0.5 rounded border border-red-500/20 transition-colors"
+                  >
+                    {rollingBack ? <Loader2 className="w-3 h-3 animate-spin" /> : "Yes"}
+                  </button>
+                  <button onClick={() => setConfirmId(null)} className="text-zinc-500 hover:text-zinc-300 transition-colors px-1">✕</button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setConfirmId(snap.id)}
+                  className="flex items-center gap-1 text-amber-400 hover:text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 px-2 py-0.5 rounded transition-colors shrink-0"
+                >
+                  <RotateCcw className="w-3 h-3" /> Rollback
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 
 function HealthDot({ healthStatus }: { healthStatus?: string | null }) {
   if (healthStatus === "healthy") return <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" title="Healthy" />;
@@ -312,6 +438,7 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
 
   // Hetzner snapshots panel visibility
   const [snapshotPanelId, setSnapshotPanelId] = useState<string | null>(null);
+  const [resticPanelId, setResticPanelId] = useState<string | null>(null);
 
   // Tab navigation
   const [activeTab, setActiveTab] = useState<"overview" | "referrals" | "analytics" | "leads">("overview");
@@ -1076,10 +1203,25 @@ export function AdminClient({ users: initialUsers, managers: initialManagers, st
                               >
                                 <Camera className="w-3 h-3" />
                               </button>
+                              {/* Restic Rollback toggle */}
+                              <button
+                                onClick={() => setResticPanelId(resticPanelId === inst.id ? null : inst.id)}
+                                className={`flex items-center gap-1 text-xs px-2 py-0.5 rounded-lg border transition-colors ${
+                                  resticPanelId === inst.id
+                                    ? "text-amber-300 bg-amber-500/20 border-amber-500/30"
+                                    : "text-zinc-500 hover:text-amber-300 bg-white/5 hover:bg-amber-500/10 border-white/10 hover:border-amber-500/20"
+                                }`}
+                                title="Restic Snapshots & Rollback"
+                              >
+                                <Database className="w-3 h-3" />
+                              </button>
                             </div>
                           </div>
                           {snapshotPanelId === inst.id && (
                             <HetznerSnapshotPanel instanceId={inst.id} />
+                          )}
+                          {resticPanelId === inst.id && (
+                            <ResticRollbackPanel instanceId={inst.id} />
                           )}
                         </div>
                       ))}
