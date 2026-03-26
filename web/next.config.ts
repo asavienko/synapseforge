@@ -1,9 +1,8 @@
 import type { NextConfig } from "next";
-import createNextIntlPlugin from 'next-intl/plugin';
 
 const serverApiUrl = process.env.NEXT_PUBLIC_SERVER_API_URL;
 
-const nextConfig: NextConfig = {
+let nextConfig: NextConfig = {
   // Security headers
   async headers() {
     return [
@@ -110,5 +109,12 @@ const nextConfig: NextConfig = {
     : {}),
 };
 
-const withNextIntl = createNextIntlPlugin();
-export default withNextIntl(nextConfig);
+// Bundle analyzer - enabled when ANALYZE=true
+if (process.env.ANALYZE === "true") {
+  const withBundleAnalyzer = require("@next/bundle-analyzer")({
+    enabled: true,
+  });
+  nextConfig = withBundleAnalyzer(nextConfig);
+}
+
+export default nextConfig;
