@@ -2234,5 +2234,32 @@
     "messages": "Повідомлення",
     "apiDocs": "Документація API",
     "goHome": "На головну"
+  },
+  "apiKeysManager": {
+    "title": "API-ключі",
+    "subtitle": "Керування доступом до API інстансу",
+    "createKey": "Створити ключ",
+    "warningTitle": "⚠️ Скопіюйте ключ прямо зараз!",
+    "warningDesc": "Ви більше не зможете його побачити.",
+    "copiedIt": "Я скопіював",
+    "keyNameLabel": "Назва ключа",
+    "keyNamePlaceholder": "наприклад, Production API, Мобільний додаток",
+    "cancel": "Скасувати",
+    "creating": "Створення...",
+    "create": "Створити",
+    "emptyState": "API-ключів немає. Створіть перший.",
+    "created": "Створено",
+    "lastUsed": "Останнє використання",
+    "hide": "Приховати",
+    "show": "Показати",
+    "copy": "Копіювати",
+    "deleteKey": "Видалити ключ",
+    "usageExamples": "Приклади використання",
+    "openhelixFormat": "Формат OpenHelix",
+    "openaiCompatible": "Сумісно з OpenAI",
+    "sdkExample": "Приклад SDK",
+    "failedCreate": "Не вдалося створити API-ключ",
+    "failedDelete": "Не вдалося видалити API-ключ",
+    "confirmDelete": "Видалити цей API-ключ? Цю дію не можна скасувати."
   }
 }

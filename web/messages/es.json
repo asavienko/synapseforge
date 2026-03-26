@@ -2234,5 +2234,32 @@
     "messages": "Mensajes",
     "apiDocs": "Documentación API",
     "goHome": "Ir al Inicio"
+  },
+  "apiKeysManager": {
+    "title": "Claves API",
+    "subtitle": "Gestiona el acceso a la API de tu instancia",
+    "createKey": "Crear Clave",
+    "warningTitle": "⚠️ ¡Copia tu clave API ahora!",
+    "warningDesc": "No podrás verla de nuevo.",
+    "copiedIt": "Ya la copié",
+    "keyNameLabel": "Nombre de la Clave",
+    "keyNamePlaceholder": "ej. API de Producción, App Móvil",
+    "cancel": "Cancelar",
+    "creating": "Creando...",
+    "create": "Crear",
+    "emptyState": "Sin claves API. Crea una para empezar.",
+    "created": "Creado",
+    "lastUsed": "Último uso",
+    "hide": "Ocultar",
+    "show": "Mostrar",
+    "copy": "Copiar",
+    "deleteKey": "Eliminar clave",
+    "usageExamples": "Ejemplos de uso",
+    "openhelixFormat": "Formato OpenHelix",
+    "openaiCompatible": "Compatible con OpenAI",
+    "sdkExample": "Ejemplo SDK",
+    "failedCreate": "No se pudo crear la clave API",
+    "failedDelete": "No se pudo eliminar la clave API",
+    "confirmDelete": "¿Seguro que quieres eliminar esta clave API? Esta acción no se puede deshacer."
   }
 }

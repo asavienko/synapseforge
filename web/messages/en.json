@@ -2215,5 +2215,32 @@
     "messages": "Messages",
     "apiDocs": "API Documentation",
     "goHome": "Go to Home"
+  },
+  "apiKeysManager": {
+    "title": "API Keys",
+    "subtitle": "Manage access to your instance API",
+    "createKey": "Create Key",
+    "warningTitle": "⚠️ Copy your API key now!",
+    "warningDesc": "You won't be able to see it again.",
+    "copiedIt": "I've copied it",
+    "keyNameLabel": "Key Name",
+    "keyNamePlaceholder": "e.g., Production API, Mobile App",
+    "cancel": "Cancel",
+    "creating": "Creating...",
+    "create": "Create",
+    "emptyState": "No API keys yet. Create one to get started.",
+    "created": "Created",
+    "lastUsed": "Last used",
+    "hide": "Hide",
+    "show": "Show",
+    "copy": "Copy",
+    "deleteKey": "Delete key",
+    "usageExamples": "Usage Examples",
+    "openhelixFormat": "OpenHelix format",
+    "openaiCompatible": "OpenAI-compatible",
+    "sdkExample": "SDK example",
+    "failedCreate": "Failed to create API key",
+    "failedDelete": "Failed to delete API key",
+    "confirmDelete": "Are you sure you want to delete this API key? This action cannot be undone."
   }
 }

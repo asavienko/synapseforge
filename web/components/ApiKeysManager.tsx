@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Key, Plus, Trash2, Copy, Check, Eye, EyeOff } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
 
 interface ApiKey {
   id: string;
@@ -24,6 +25,8 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [visibleKeys, setVisibleKeys] = useState<Set<string>>(new Set());
   const [newlyCreatedKey, setNewlyCreatedKey] = useState<string | null>(null);
+  const t = useTranslations("apiKeysManager");
+  const locale = useLocale();
 
   useEffect(() => {
     fetchKeys();
@@ -60,21 +63,20 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
         setNewlyCreatedKey(data.key.key);
         setNewKeyName("");
         setShowCreateForm(false);
-        // Show the new key
         setVisibleKeys((prev) => new Set(prev).add(data.key.id));
       } else {
         const err = await res.json();
-        alert(err.error || "Failed to create API key");
+        alert(err.error || t("failedCreate"));
       }
     } catch {
-      alert("Failed to create API key");
+      alert(t("failedCreate"));
     } finally {
       setCreating(false);
     }
   };
 
   const deleteKey = async (keyId: string) => {
-    if (!confirm("Are you sure you want to delete this API key? This action cannot be undone.")) {
+    if (!confirm(t("confirmDelete"))) {
       return;
     }
 
@@ -86,10 +88,10 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
       if (res.ok) {
         setKeys((prev) => prev.filter((k) => k.id !== keyId));
       } else {
-        alert("Failed to delete API key");
+        alert(t("failedDelete"));
       }
     } catch {
-      alert("Failed to delete API key");
+      alert(t("failedDelete"));
     }
   };
 
@@ -112,7 +114,7 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
   };
 
   const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString("en-US", {
+    return new Date(dateStr).toLocaleDateString(locale, {
       month: "short",
       day: "numeric",
       year: "numeric",
@@ -136,8 +138,8 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
             <Key className="w-5 h-5 text-violet-400" />
           </div>
           <div>
-            <h3 className="font-semibold">API Keys</h3>
-            <p className="text-xs text-zinc-500">Manage access to your instance API</p>
+            <h3 className="font-semibold">{t("title")}</h3>
+            <p className="text-xs text-zinc-500">{t("subtitle")}</p>
           </div>
         </div>
         {!showCreateForm && (
@@ -146,7 +148,7 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
             className="flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-500 rounded-lg text-sm font-medium transition-colors"
           >
             <Plus className="w-4 h-4" />
-            Create Key
+            {t("createKey")}
           </button>
         )}
       </div>
@@ -155,10 +157,10 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
       {newlyCreatedKey && (
         <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
           <p className="text-sm text-amber-300 font-medium mb-2">
-            ⚠️ Copy your API key now!
+            {t("warningTitle")}
           </p>
           <p className="text-sm text-amber-300/80 mb-3">
-            You won&apos;t be able to see it again.
+            {t("warningDesc")}
           </p>
           <div className="flex items-center gap-2">
             <code className="flex-1 bg-black/30 rounded px-3 py-2 text-sm font-mono break-all">
@@ -175,7 +177,7 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
             onClick={() => setNewlyCreatedKey(null)}
             className="mt-3 text-sm text-amber-400 hover:text-amber-300"
           >
-            I&apos;ve copied it
+            {t("copiedIt")}
           </button>
         </div>
       )}
@@ -184,12 +186,12 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
       {showCreateForm && (
         <div className="glow-border rounded-xl bg-white/[0.02] p-4 space-y-4">
           <div>
-            <label className="text-sm text-zinc-400 mb-2 block">Key Name</label>
+            <label className="text-sm text-zinc-400 mb-2 block">{t("keyNameLabel")}</label>
             <input
               type="text"
               value={newKeyName}
               onChange={(e) => setNewKeyName(e.target.value)}
-              placeholder="e.g., Production API, Mobile App"
+              placeholder={t("keyNamePlaceholder")}
               className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500"
             />
           </div>
@@ -198,14 +200,14 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
               onClick={() => setShowCreateForm(false)}
               className="px-4 py-2 text-sm text-zinc-400 hover:text-white transition-colors"
             >
-              Cancel
+              {t("cancel")}
             </button>
             <button
               onClick={createKey}
               disabled={creating || !newKeyName.trim()}
               className="px-4 py-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 rounded-lg text-sm font-medium transition-colors"
             >
-              {creating ? "Creating..." : "Create"}
+              {creating ? t("creating") : t("create")}
             </button>
           </div>
         </div>
@@ -215,7 +217,7 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
       <div className="space-y-3">
         {keys.length === 0 ? (
           <div className="text-center py-8 text-zinc-500">
-            No API keys yet. Create one to get started.
+            {t("emptyState")}
           </div>
         ) : (
           keys.map((key) => (
@@ -225,7 +227,7 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
                   <div className="flex items-center gap-2">
                     <span className="font-medium">{key.name}</span>
                     <span className="text-xs text-zinc-500">
-                      Created {formatDate(key.createdAt)}
+                      {t("created")} {formatDate(key.createdAt)}
                     </span>
                   </div>
                   
@@ -236,7 +238,7 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
                     <button
                       onClick={() => toggleKeyVisibility(key.id)}
                       className="p-1.5 text-zinc-500 hover:text-white hover:bg-white/10 rounded transition-colors"
-                      title={visibleKeys.has(key.id) ? "Hide" : "Show"}
+                      title={visibleKeys.has(key.id) ? t("hide") : t("show")}
                     >
                       {visibleKeys.has(key.id) ? (
                         <EyeOff className="w-4 h-4" />
@@ -247,7 +249,7 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
                     <button
                       onClick={() => copyToClipboard(key.key, key.id)}
                       className="p-1.5 text-zinc-500 hover:text-white hover:bg-white/10 rounded transition-colors"
-                      title="Copy"
+                      title={t("copy")}
                     >
                       {copiedId === key.id ? (
                         <Check className="w-4 h-4 text-emerald-400" />
@@ -259,7 +261,7 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
                   
                   {key.lastUsedAt && (
                     <p className="text-xs text-zinc-600 mt-1">
-                      Last used {formatDate(key.lastUsedAt)}
+                      {t("lastUsed")} {formatDate(key.lastUsedAt)}
                     </p>
                   )}
                 </div>
@@ -267,7 +269,7 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
                 <button
                   onClick={() => deleteKey(key.id)}
                   className="p-2 text-zinc-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors ml-4"
-                  title="Delete key"
+                  title={t("deleteKey")}
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -279,13 +281,13 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
 
       {/* Usage Examples */}
       <div className="space-y-4">
-        <h4 className="text-sm font-semibold text-zinc-300">Usage Examples</h4>
+        <h4 className="text-sm font-semibold text-zinc-300">{t("usageExamples")}</h4>
 
         {/* OpenHelix format */}
         <div className="rounded-xl bg-white/[0.03] border border-white/5 overflow-hidden">
           <div className="flex items-center justify-between px-4 py-2 border-b border-white/5 bg-white/[0.02]">
             <span className="text-xs font-mono text-violet-400">/api/v1/chat</span>
-            <span className="text-xs text-zinc-500">OpenHelix format</span>
+            <span className="text-xs text-zinc-500">{t("openhelixFormat")}</span>
           </div>
           <pre className="p-4 text-xs font-mono text-zinc-300 overflow-x-auto whitespace-pre-wrap break-all">{`curl -X POST https://openhelixai.com/api/v1/chat \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
@@ -297,7 +299,7 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
         <div className="rounded-xl bg-white/[0.03] border border-white/5 overflow-hidden">
           <div className="flex items-center justify-between px-4 py-2 border-b border-white/5 bg-white/[0.02]">
             <span className="text-xs font-mono text-violet-400">/api/v1/chat/completions</span>
-            <span className="text-xs text-zinc-500">OpenAI-compatible</span>
+            <span className="text-xs text-zinc-500">{t("openaiCompatible")}</span>
           </div>
           <pre className="p-4 text-xs font-mono text-zinc-300 overflow-x-auto whitespace-pre-wrap break-all">{`curl -X POST https://openhelixai.com/api/v1/chat/completions \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
@@ -309,7 +311,7 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
         <div className="rounded-xl bg-white/[0.03] border border-white/5 overflow-hidden">
           <div className="flex items-center justify-between px-4 py-2 border-b border-white/5 bg-white/[0.02]">
             <span className="text-xs font-mono text-zinc-400">Python</span>
-            <span className="text-xs text-zinc-500">SDK example</span>
+            <span className="text-xs text-zinc-500">{t("sdkExample")}</span>
           </div>
           <pre className="p-4 text-xs font-mono text-zinc-300 overflow-x-auto whitespace-pre-wrap break-all">{`from openai import OpenAI
 

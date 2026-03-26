@@ -2234,5 +2234,32 @@
     "messages": "Сообщения",
     "apiDocs": "Документация API",
     "goHome": "На главную"
+  },
+  "apiKeysManager": {
+    "title": "API-ключи",
+    "subtitle": "Управление доступом к API инстанса",
+    "createKey": "Создать ключ",
+    "warningTitle": "⚠️ Скопируйте ключ прямо сейчас!",
+    "warningDesc": "Вы больше не сможете его увидеть.",
+    "copiedIt": "Я скопировал",
+    "keyNameLabel": "Название ключа",
+    "keyNamePlaceholder": "например, Production API, Мобильное приложение",
+    "cancel": "Отмена",
+    "creating": "Создание...",
+    "create": "Создать",
+    "emptyState": "API-ключей нет. Создайте первый.",
+    "created": "Создан",
+    "lastUsed": "Последнее использование",
+    "hide": "Скрыть",
+    "show": "Показать",
+    "copy": "Копировать",
+    "deleteKey": "Удалить ключ",
+    "usageExamples": "Примеры использования",
+    "openhelixFormat": "Формат OpenHelix",
+    "openaiCompatible": "Совместимо с OpenAI",
+    "sdkExample": "Пример SDK",
+    "failedCreate": "Не удалось создать API-ключ",
+    "failedDelete": "Не удалось удалить API-ключ",
+    "confirmDelete": "Удалить этот API-ключ? Это действие нельзя отменить."
   }
 }
