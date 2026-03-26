@@ -30,7 +30,7 @@ export default function IntegrationsPage() {
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <MessageCircle className={`w-5 h-5 ${item.color}`} />
-                  <h2 className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-300 transition-colors">{item.name}</h2>
+                  <h2 className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors">{item.name}</h2>
                 </div>
                 {item.badge && <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full">{item.badge}</span>}
               </div>

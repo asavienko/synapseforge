@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { 
-  CheckCircle2, 
-  AlertTriangle, 
-  XCircle, 
+import {
+  CheckCircle2,
+  AlertTriangle,
+  XCircle,
   Loader2,
   Server,
   LayoutDashboard,
@@ -55,7 +55,7 @@ const STATUS_COLORS = {
   operational: "text-emerald-400 bg-emerald-400/10 border-emerald-400/20",
   degraded: "text-amber-400 bg-amber-400/10 border-amber-400/20",
   major_outage: "text-red-400 bg-red-400/10 border-red-400/20",
-  unknown: "text-zinc-400 bg-zinc-400/10 border-zinc-400/20",
+  unknown: "text-gray-500 dark:text-zinc-400 bg-gray-100 dark:bg-zinc-400/10 border-gray-200 dark:border-zinc-400/20",
 };
 
 const STATUS_LABELS = {
@@ -93,7 +93,7 @@ export function StatusClient() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 text-violet-400 animate-spin" />
+        <Loader2 className="w-8 h-8 text-blue-600 dark:text-blue-400 animate-spin" />
       </div>
     );
   }
@@ -102,10 +102,10 @@ export function StatusClient() {
     return (
       <div className="text-center py-12">
         <XCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-        <p className="text-zinc-400">{error || "Failed to load status"}</p>
+        <p className="text-gray-500 dark:text-zinc-400">{error || "Failed to load status"}</p>
         <button
           onClick={loadStatus}
-          className="mt-4 text-violet-400 hover:text-violet-300 transition-colors"
+          className="mt-4 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
         >
           Try again
         </button>
@@ -146,12 +146,12 @@ export function StatusClient() {
           return (
             <div
               key={key}
-              className="bg-white/[0.02] border border-white/10 rounded-xl p-4"
+              className="bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 rounded-xl p-4"
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <Icon className="w-4 h-4 text-zinc-400" />
-                  <span className="text-sm font-medium text-white capitalize">
+                  <Icon className="w-4 h-4 text-gray-500 dark:text-zinc-400" />
+                  <span className="text-sm font-medium text-gray-900 dark:text-white capitalize">
                     {key}
                   </span>
                 </div>
@@ -164,7 +164,7 @@ export function StatusClient() {
                   {STATUS_LABELS[component.status]}
                 </span>
               </div>
-              <div className="text-xs text-zinc-500">
+              <div className="text-xs text-gray-500 dark:text-zinc-500">
                 {component.uptime}% uptime
               </div>
             </div>
@@ -173,42 +173,42 @@ export function StatusClient() {
       </div>
 
       {/* Instance Stats */}
-      <div className="bg-white/[0.02] border border-white/10 rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-white mb-4">AI Agent Instances</h2>
+      <div className="bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 rounded-xl p-6">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">AI Agent Instances</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="text-center">
-            <div className="text-2xl font-bold text-white">{status.instances.total}</div>
-            <div className="text-xs text-zinc-500">Total</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-white">{status.instances.total}</div>
+            <div className="text-xs text-gray-500 dark:text-zinc-500">Total</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-emerald-400">{status.instances.healthy}</div>
-            <div className="text-xs text-zinc-500">Healthy</div>
+            <div className="text-xs text-gray-500 dark:text-zinc-500">Healthy</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-amber-400">{status.instances.degraded}</div>
-            <div className="text-xs text-zinc-500">Degraded</div>
+            <div className="text-xs text-gray-500 dark:text-zinc-500">Degraded</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-red-400">{status.instances.down}</div>
-            <div className="text-xs text-zinc-500">Down</div>
+            <div className="text-xs text-gray-500 dark:text-zinc-500">Down</div>
           </div>
         </div>
       </div>
 
       {/* Recent Incidents */}
       {status.recentIncidents.length > 0 && (
-        <div className="bg-white/[0.02] border border-white/10 rounded-xl p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">Recent Incidents</h2>
+        <div className="bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 rounded-xl p-6">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Incidents</h2>
           <div className="space-y-3">
             {status.recentIncidents.map((incident) => (
               <div
                 key={incident.date}
-                className="flex items-center justify-between p-3 bg-white/[0.03] rounded-lg"
+                className="flex items-center justify-between p-3 bg-gray-50 dark:bg-white/[0.03] rounded-lg"
               >
                 <div>
-                  <div className="text-sm text-white">{incident.date}</div>
+                  <div className="text-sm text-gray-900 dark:text-white">{incident.date}</div>
                   {incident.affected.length > 0 && (
-                    <div className="text-xs text-zinc-500 mt-1">
+                    <div className="text-xs text-gray-500 dark:text-zinc-500 mt-1">
                       Affected: {incident.affected.slice(0, 3).join(", ")}
                       {incident.affected.length > 3 && ` +${incident.affected.length - 3} more`}
                     </div>
@@ -222,7 +222,7 @@ export function StatusClient() {
       )}
 
       {/* Last Updated */}
-      <div className="text-center text-xs text-zinc-600">
+      <div className="text-center text-xs text-gray-400 dark:text-zinc-600">
         Last updated: {new Date(status.lastUpdated).toLocaleString()}
       </div>
     </div>

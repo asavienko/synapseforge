@@ -109,7 +109,7 @@ export default function BlogPage() {
                     {post.category}
                   </span>
                 </div>
-                <h2 className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-300 transition-colors mb-2 leading-snug">
+                <h2 className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors mb-2 leading-snug">
                   {post.title}
                 </h2>
                 <p className="text-sm text-gray-500 dark:text-white/50 mb-4 leading-relaxed line-clamp-2">{post.excerpt}</p>

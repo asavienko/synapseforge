@@ -134,7 +134,7 @@ export default function SignUpPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#050507] flex items-center justify-center px-4 py-8 relative overflow-hidden">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] flex items-center justify-center px-4 py-8 relative overflow-hidden">
       {/* Ambient glow orbs */}
       <div className="glow-orb w-[500px] h-[500px] bg-blue-500/10 dark:bg-blue-500/20 -top-40 -right-40 fixed -z-10" />
       <div className="glow-orb w-[400px] h-[400px] bg-indigo-500/10 dark:bg-indigo-500/15 bottom-10 left-10 fixed -z-10" />
@@ -178,7 +178,7 @@ export default function SignUpPage() {
               <div className="w-full border-t border-gray-200 dark:border-white/10" />
             </div>
             <div className="relative flex justify-center">
-              <span className="bg-white dark:bg-[#050507] px-3 text-gray-400 dark:text-white/25 text-xs">{t("orEmail")}</span>
+              <span className="bg-white dark:bg-[#0a0a0f] px-3 text-gray-400 dark:text-white/25 text-xs">{t("orEmail")}</span>
             </div>
           </div>
 
@@ -272,7 +272,7 @@ export default function SignUpPage() {
                               : passwordStrength === 3
                               ? "bg-blue-500"
                               : "bg-emerald-500"
-                            : "bg-white/10"
+                            : "bg-gray-200 dark:bg-white/10"
                         }`}
                       />
                     ))}

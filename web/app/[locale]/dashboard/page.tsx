@@ -30,6 +30,7 @@ import { OnboardingToast } from "@/components/OnboardingToast";
 import { OnboardingChecklist } from "@/components/OnboardingChecklist";
 import { EmailVerificationBanner } from "@/components/EmailVerificationBanner";
 import { PlanUsageCard } from "@/components/PlanUsageCard";
+import { InstanceAnalytics } from "@/components/InstanceAnalytics";
 import { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -294,6 +295,11 @@ export default async function DashboardPage() {
           instanceLimit={instanceLimit}
           messageCount={totalChatMessages}
         />
+      </div>
+
+      {/* Instance Analytics */}
+      <div className="mb-6">
+        <InstanceAnalytics />
       </div>
 
       {/* Quick Setup Guide for new users */}
