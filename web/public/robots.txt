@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://openhelixai.com/sitemap.xml
+
+# Disallow admin and private routes
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /manager/
+Disallow: /admin/
+Disallow: /verify-email
+Disallow: /reset-password
+Disallow: /forgot-password
+Disallow: /widget-chat/
+Disallow: /embed
+
+# Crawl-delay for rate limiting
+Crawl-delay: 1
