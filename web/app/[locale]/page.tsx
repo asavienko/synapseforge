@@ -230,48 +230,7 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════════════════
-          HOW IT WORKS (quick overview) — 3 numbered cards
-      ═══════════════════════════════════════════════════════════════════ */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 py-24">
-        <FadeInView direction="up">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-200/60 dark:border-blue-500/20 text-[12px] text-blue-600 dark:text-blue-400 font-medium mb-5 bg-blue-50/50 dark:bg-blue-500/[0.06]">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-              {tl("howItWorks.title")}
-            </div>
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{tl("howItWorks.title")}</h2>
-            <p className="text-gray-500 dark:text-white/45 mt-3 max-w-md mx-auto text-[15px]">Get your AI agent up and running in three simple steps</p>
-          </div>
-        </FadeInView>
-        <div className="relative grid md:grid-cols-3 gap-8">
-          {/* Connector line between cards (desktop) */}
-          <div className="hidden md:block absolute top-[56px] left-[calc(16.67%+32px)] right-[calc(16.67%+32px)] h-px">
-            <div className="h-full bg-gradient-to-r from-blue-300 via-blue-400 to-blue-300 dark:from-blue-500/30 dark:via-blue-500/40 dark:to-blue-500/30" />
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-300 via-blue-400 to-blue-300 dark:from-blue-500/30 dark:via-blue-500/40 dark:to-blue-500/30 blur-sm" />
-          </div>
-          {[
-            { num: tl("howItWorks.step1.num"), Icon: MessagesIcon, title: tl("howItWorks.step1.title"), desc: tl("howItWorks.step1.desc"), accent: "from-blue-500 to-blue-600" },
-            { num: tl("howItWorks.step2.num"), Icon: SettingsIcon, title: tl("howItWorks.step2.title"), desc: tl("howItWorks.step2.desc"), accent: "from-violet-500 to-violet-600" },
-            { num: tl("howItWorks.step3.num"), Icon: RocketLaunchIcon, title: tl("howItWorks.step3.title"), desc: tl("howItWorks.step3.desc"), accent: "from-emerald-500 to-emerald-600" },
-          ].map((step, i) => (
-            <FadeInView key={i} direction="up" delay={i * 150}>
-              <div className="relative p-8 rounded-2xl border border-gray-200/60 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] h-full group hover:border-blue-200 dark:hover:border-blue-500/20 hover:shadow-xl hover:shadow-blue-500/[0.06] dark:hover:shadow-blue-500/[0.08] transition-all duration-300 hover:-translate-y-1">
-                {/* Step number badge */}
-                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${step.accent} flex items-center justify-center mb-6 shadow-lg shadow-blue-500/20 dark:shadow-blue-500/10 relative z-10 group-hover:scale-105 transition-transform duration-300`}>
-                  <span className="text-[15px] font-bold text-white">{step.num}</span>
-                </div>
-                {/* Icon */}
-                <div className="w-11 h-11 rounded-xl bg-gray-50 dark:bg-white/[0.04] border border-gray-100 dark:border-white/[0.06] flex items-center justify-center mb-5 group-hover:bg-blue-50 dark:group-hover:bg-blue-500/10 group-hover:border-blue-200/60 dark:group-hover:border-blue-500/20 transition-all duration-300">
-                  <step.Icon className="w-5 h-5 text-gray-400 dark:text-white/30 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300" />
-                </div>
-                <h3 className="font-semibold text-[17px] mb-3 tracking-tight">{step.title}</h3>
-                <p className="text-gray-500 dark:text-white/45 text-[14px] leading-relaxed">{step.desc}</p>
-              </div>
-            </FadeInView>
-          ))}
-        </div>
-      </section>
+      {/* spacer before templates */}
 
       {/* ═══════════════════════════════════════════════════════════════════
           TEMPLATES — 4 cards with alternating bg
@@ -319,11 +278,15 @@ export default async function LandingPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════════
-          HOW IT WORKS (detailed) — 3 steps + terminal demo
+          HOW IT WORKS — 3 steps + terminal demo
       ═══════════════════════════════════════════════════════════════════ */}
       <section id="how" className="max-w-5xl mx-auto px-4 sm:px-6 py-20">
         <FadeInView direction="up">
           <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-200/60 dark:border-blue-500/20 text-[12px] text-blue-600 dark:text-blue-400 font-medium mb-5 bg-blue-50/50 dark:bg-blue-500/[0.06]">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+              {tl("howItWorks.title")}
+            </div>
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-3">{t("how.title")}</h2>
             <p className="text-gray-500 dark:text-white/50 text-[15px]">{t("how.subtitle")}</p>
           </div>

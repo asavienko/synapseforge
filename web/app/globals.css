@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ============================================
    LIGHT MODE (default)
    Apple-inspired clean whites and grays
@@ -772,6 +774,98 @@ a.touch-target {
 
 .hover-lift:hover {
   transform: translateY(-4px);
+}
+
+/* ============================================
+   RANGE SLIDER — custom track + thumb
+   ============================================ */
+
+/* Webkit (Chrome, Safari, Edge) */
+input[type="range"].roi-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+}
+
+input[type="range"].roi-slider::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: transparent;
+}
+
+input[type="range"].roi-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--primary-500);
+  border: 2px solid white;
+  box-shadow:
+    0 1px 3px rgba(59, 130, 246, 0.3),
+    0 0 0 2px rgba(59, 130, 246, 0.08);
+  margin-top: -6px;
+  cursor: grab;
+  transition: box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+input[type="range"].roi-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow:
+    0 2px 6px rgba(59, 130, 246, 0.4),
+    0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+input[type="range"].roi-slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.05);
+}
+
+.dark input[type="range"].roi-slider::-webkit-slider-thumb {
+  border-color: #18181b;
+  box-shadow:
+    0 1px 4px rgba(59, 130, 246, 0.45),
+    0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.dark input[type="range"].roi-slider::-webkit-slider-thumb:hover {
+  box-shadow:
+    0 2px 8px rgba(59, 130, 246, 0.5),
+    0 0 0 4px rgba(59, 130, 246, 0.12);
+}
+
+/* Firefox */
+input[type="range"].roi-slider::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: transparent;
+  border: none;
+}
+
+input[type="range"].roi-slider::-moz-range-progress {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--primary-500);
+}
+
+input[type="range"].roi-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--primary-500);
+  border: 2px solid white;
+  box-shadow:
+    0 1px 3px rgba(59, 130, 246, 0.3),
+    0 0 0 2px rgba(59, 130, 246, 0.08);
+  cursor: grab;
+}
+
+.dark input[type="range"].roi-slider::-moz-range-thumb {
+  border-color: #18181b;
 }
 
 /* ============================================
