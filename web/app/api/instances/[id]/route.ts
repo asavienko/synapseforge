@@ -60,6 +60,24 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
     }
   }
 
+  // Calculate uptime from health check history (last 24 hours)
+  let uptimePercent: number | null = null;
+  if (instance.vpsUrl) {
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const recentChecks = await prisma.healthCheck.findMany({
+      where: { 
+        instanceId: id, 
+        checkedAt: { gte: twentyFourHoursAgo } 
+      },
+      select: { status: true },
+    });
+    
+    if (recentChecks.length > 0) {
+      const healthyCount = recentChecks.filter(c => c.status === "healthy").length;
+      uptimePercent = Math.round((healthyCount / recentChecks.length) * 100);
+    }
+  }
+
   // Return instance but never expose gatewayToken; expose hasGateway flag
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { gatewayToken: _token, vpsUrl: _vps, sshPrivateKey: _ssh, ...safeInstance } = instance;
@@ -68,6 +86,7 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
     hasGateway: !!instance.vpsUrl,
     healthStatus: liveHealthStatus,
     lastCheckedAt: liveLastCheckedAt?.toISOString(),
+    uptimePercentage: uptimePercent,
   });
 }
 
