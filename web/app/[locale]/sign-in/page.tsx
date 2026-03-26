@@ -35,18 +35,22 @@ export default function SignInPage() {
         callbackUrl: "/dashboard",
       });
 
-      console.log("Sign in result:", result);
+      console.log("Sign in result:", JSON.stringify(result, null, 2));
 
+      // NextAuth signIn returns: { ok: boolean, error: string | null, url: string | null, status: number }
       if (result?.error) {
+        console.log("Sign in error:", result.error);
         setError(t("error"));
-      } else if (result?.ok) {
-        router.push("/dashboard");
+      } else if (result?.ok === true || result?.url) {
+        console.log("Sign in successful, redirecting to:", result.url || "/dashboard");
+        router.push(result.url || "/dashboard");
         router.refresh();
       } else {
+        console.log("Unexpected sign in result:", result);
         setError(t("error"));
       }
     } catch (err) {
-      console.error("Sign in error:", err);
+      console.error("Sign in exception:", err);
       setError(t("error"));
     } finally {
       setLoading(false);
