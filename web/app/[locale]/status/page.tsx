@@ -14,7 +14,7 @@ export default async function StatusPage() {
   const t = await getTranslations("status");
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#0a0a0f]">
+    <div className="min-h-screen bg-white dark:bg-[#0a0a0f] text-gray-900 dark:text-[#f5f5f7]">
       <div className="max-w-4xl mx-auto px-4 py-16">
         {/* Header */}
         <div className="text-center mb-12">
@@ -36,7 +36,7 @@ export default async function StatusPage() {
             {t("questions")}{" "}
             <a
               href="mailto:hello@openhelixai.com"
-              className="text-blue-400 hover:text-blue-300 transition-colors"
+              className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
             >
               hello@openhelixai.com
             </a>

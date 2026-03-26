@@ -62,7 +62,7 @@ export function WebhookDeliveriesTab({ instanceId }: WebhookDeliveriesTabProps) 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <RefreshCw className="w-6 h-6 text-violet-400 animate-spin" />
+        <RefreshCw className="w-6 h-6 text-blue-600 dark:text-blue-400 animate-spin" />
       </div>
     );
   }
@@ -78,7 +78,7 @@ export function WebhookDeliveriesTab({ instanceId }: WebhookDeliveriesTabProps) 
 
   if (webhooks.length === 0) {
     return (
-      <div className="text-center py-12 text-zinc-500">
+      <div className="text-center py-12 text-gray-500 dark:text-zinc-500">
         <Webhook className="w-12 h-12 mx-auto mb-4 opacity-50" />
         <p>{t("noWebhooks")}</p>
         <p className="text-sm mt-2">{t("noWebhooksHint")}</p>
@@ -91,20 +91,20 @@ export function WebhookDeliveriesTab({ instanceId }: WebhookDeliveriesTabProps) 
       {webhooks.map((webhook) => (
         <div
           key={webhook.id}
-          className="bg-white/[0.02] border border-white/10 rounded-xl overflow-hidden"
+          className="bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden"
         >
           {/* Webhook header */}
-          <div className="flex items-center justify-between px-4 py-3 bg-white/[0.03] border-b border-white/10">
+          <div className="flex items-center justify-between px-4 py-3 bg-white dark:bg-white/[0.03] border-b border-gray-200 dark:border-white/10">
             <div className="flex items-center gap-3">
-              <Webhook className="w-4 h-4 text-violet-400" />
-              <span className="text-sm text-zinc-300 truncate max-w-md">
+              <Webhook className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <span className="text-sm text-gray-700 dark:text-zinc-300 truncate max-w-md">
                 {webhook.url}
               </span>
               <a
                 href={webhook.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-zinc-500 hover:text-zinc-300"
+                className="text-gray-500 dark:text-zinc-500 hover:text-gray-700 dark:text-zinc-300"
               >
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
@@ -115,7 +115,7 @@ export function WebhookDeliveriesTab({ instanceId }: WebhookDeliveriesTabProps) 
                   "text-xs px-2 py-1 rounded-full",
                   webhook.active
                     ? "bg-emerald-500/10 text-emerald-400"
-                    : "bg-zinc-500/10 text-zinc-400"
+                    : "bg-zinc-500/10 text-gray-500 dark:text-zinc-400"
                 )}
               >
                 {webhook.active ? t("active") : t("inactive")}
@@ -124,12 +124,12 @@ export function WebhookDeliveriesTab({ instanceId }: WebhookDeliveriesTabProps) 
           </div>
 
           {/* Events */}
-          <div className="px-4 py-2 border-b border-white/10">
+          <div className="px-4 py-2 border-b border-gray-200 dark:border-white/10">
             <div className="flex items-center gap-2 flex-wrap">
               {webhook.events.map((event) => (
                 <span
                   key={event}
-                  className="text-xs bg-violet-500/10 text-violet-300 px-2 py-1 rounded"
+                  className="text-xs bg-blue-500/10 text-blue-600 dark:text-blue-300 px-2 py-1 rounded"
                 >
                   {event}
                 </span>
@@ -138,16 +138,16 @@ export function WebhookDeliveriesTab({ instanceId }: WebhookDeliveriesTabProps) 
           </div>
 
           {/* Deliveries */}
-          <div className="divide-y divide-white/5">
+          <div className="divide-y divide-gray-200 dark:divide-white/5">
             {webhook.deliveries.length === 0 ? (
-              <div className="px-4 py-6 text-center text-zinc-500 text-sm">
+              <div className="px-4 py-6 text-center text-gray-500 dark:text-zinc-500 text-sm">
                 {t("noDeliveries")}
               </div>
             ) : (
               webhook.deliveries.map((delivery) => (
                 <div
                   key={delivery.id}
-                  className="px-4 py-3 flex items-center justify-between hover:bg-white/[0.02]"
+                  className="px-4 py-3 flex items-center justify-between hover:bg-white dark:bg-white/[0.02]"
                 >
                   <div className="flex items-center gap-3">
                     {delivery.success ? (
@@ -156,13 +156,13 @@ export function WebhookDeliveriesTab({ instanceId }: WebhookDeliveriesTabProps) 
                       <XCircle className="w-4 h-4 text-red-400" />
                     )}
                     <div>
-                      <p className="text-sm text-zinc-300">{delivery.event}</p>
+                      <p className="text-sm text-gray-700 dark:text-zinc-300">{delivery.event}</p>
                       {delivery.error && (
                         <p className="text-xs text-red-400 mt-0.5">{delivery.error}</p>
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 text-zinc-500">
+                  <div className="flex items-center gap-3 text-gray-500 dark:text-zinc-500">
                     {delivery.statusCode && (
                       <span
                         className={cn(

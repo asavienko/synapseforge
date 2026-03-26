@@ -68,17 +68,17 @@ export function LogsTab({ instanceId, hasVps }: LogsTabProps) {
       case "error": return "text-red-400";
       case "warn": return "text-amber-400";
       case "info": return "text-sky-400";
-      case "debug": return "text-zinc-500";
-      default: return "text-zinc-400";
+      case "debug": return "text-gray-500 dark:text-zinc-500";
+      default: return "text-gray-500 dark:text-zinc-400";
     }
   }
 
   if (!hasVps) {
     return (
-      <div className="glow-border rounded-2xl bg-white/[0.02] p-8 text-center">
+      <div className="glow-border rounded-2xl bg-white dark:bg-white/[0.02] p-8 text-center">
         <Terminal className="w-12 h-12 text-zinc-700 mx-auto mb-4" />
-        <h3 className="text-sm font-semibold text-white mb-2">Instance Logs</h3>
-        <p className="text-sm text-zinc-500 max-w-md mx-auto">
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">Instance Logs</h3>
+        <p className="text-sm text-gray-500 dark:text-zinc-500 max-w-md mx-auto">
           Real-time logs are available once your instance is provisioned on a VPS.
           Sandbox instances do not have remote logs.
         </p>
@@ -87,38 +87,38 @@ export function LogsTab({ instanceId, hasVps }: LogsTabProps) {
   }
 
   return (
-    <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden flex flex-col h-[600px]">
+    <div className="glow-border rounded-2xl bg-white dark:bg-white/[0.02] overflow-hidden flex flex-col h-[600px]">
       {/* Header */}
-      <div className="p-4 border-b border-white/5 flex flex-col sm:flex-row sm:items-center gap-3 justify-between shrink-0">
+      <div className="p-4 border-b border-gray-200 dark:border-white/5 flex flex-col sm:flex-row sm:items-center gap-3 justify-between shrink-0">
         <div className="flex items-center gap-2">
-          <Terminal className="w-4 h-4 text-zinc-500" />
-          <h3 className="text-sm font-semibold text-white">Instance Logs</h3>
-          {loading && <Loader2 className="w-3.5 h-3.5 text-zinc-600 animate-spin" />}
+          <Terminal className="w-4 h-4 text-gray-500 dark:text-zinc-500" />
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Instance Logs</h3>
+          {loading && <Loader2 className="w-3.5 h-3.5 text-gray-400 dark:text-zinc-600 animate-spin" />}
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           <select
             value={lines}
             onChange={(e) => setLines(Number(e.target.value))}
-            className="text-xs bg-white/5 border border-white/10 rounded-lg px-2.5 py-1.5 text-zinc-300 focus:outline-none focus:border-violet-500"
+            className="text-xs bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-2.5 py-1.5 text-gray-700 dark:text-zinc-300 focus:outline-none focus:border-blue-500"
           >
             <option value={50}>50 lines</option>
             <option value={100}>100 lines</option>
             <option value={250}>250 lines</option>
             <option value={500}>500 lines</option>
           </select>
-          <label className="flex items-center gap-1.5 text-xs text-zinc-500 cursor-pointer">
+          <label className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-zinc-500 cursor-pointer">
             <input
               type="checkbox"
               checked={autoRefresh}
               onChange={(e) => setAutoRefresh(e.target.checked)}
-              className="rounded border-white/10 bg-white/5 text-violet-500 focus:ring-violet-500"
+              className="rounded border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 text-blue-600 dark:text-blue-500 focus:ring-blue-500"
             />
             Auto-refresh
           </label>
           <button
             onClick={fetchLogs}
             disabled={loading}
-            className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 px-2.5 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+            className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-zinc-400 hover:text-white bg-gray-50 dark:bg-white/5 hover:bg-gray-200 dark:bg-white/10 px-2.5 py-1.5 rounded-lg transition-colors disabled:opacity-50"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
             Refresh
@@ -126,7 +126,7 @@ export function LogsTab({ instanceId, hasVps }: LogsTabProps) {
           {logs.length > 0 && (
             <button
               onClick={downloadLogs}
-              className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 px-2.5 py-1.5 rounded-lg transition-colors"
+              className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-zinc-400 hover:text-white bg-gray-50 dark:bg-white/5 hover:bg-gray-200 dark:bg-white/10 px-2.5 py-1.5 rounded-lg transition-colors"
             >
               <Download className="w-3.5 h-3.5" />
               Export
@@ -145,18 +145,18 @@ export function LogsTab({ instanceId, hasVps }: LogsTabProps) {
       {/* Log content */}
       <div className="flex-1 overflow-auto p-4 font-mono text-xs bg-black/20">
         {logs.length === 0 ? (
-          <div className="text-center py-8 text-zinc-600">
+          <div className="text-center py-8 text-gray-400 dark:text-zinc-600">
             {loading ? "Loading logs..." : "No logs available"}
           </div>
         ) : (
           <div className="space-y-1">
             {logs.map((log, i) => (
-              <div key={i} className="flex gap-3 hover:bg-white/5 px-2 py-0.5 rounded">
+              <div key={i} className="flex gap-3 hover:bg-gray-50 dark:bg-white/5 px-2 py-0.5 rounded">
                 <span className="text-zinc-600 shrink-0">{log.timestamp}</span>
                 <span className={`shrink-0 w-12 ${getLevelColor(log.level)}`}>
                   {log.level.toUpperCase()}
                 </span>
-                <span className="text-zinc-300 break-all">{log.message}</span>
+                <span className="text-gray-700 dark:text-zinc-300 break-all">{log.message}</span>
               </div>
             ))}
           </div>

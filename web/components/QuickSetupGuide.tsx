@@ -80,24 +80,24 @@ export function QuickSetupGuide({ instances, credentials = [] }: QuickSetupGuide
   if (dismissed || hasSeen || completedSteps === steps.length) return null;
 
   return (
-    <div className="glow-border rounded-2xl bg-gradient-to-br from-violet-600/10 to-blue-600/10 border border-violet-500/20 p-6 mb-6">
+    <div className="glow-border rounded-2xl bg-gradient-to-br from-violet-600/10 to-blue-600/10 border border-blue-500/20 p-6 mb-6">
       <div className="flex items-start justify-between mb-4">
         <div>
-          <h2 className="text-lg font-semibold text-white mb-1">{t("title")}</h2>
-          <p className="text-sm text-zinc-400">{t("subtitle")}</p>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">{t("title")}</h2>
+          <p className="text-sm text-gray-500 dark:text-zinc-400">{t("subtitle")}</p>
         </div>
         <button
           onClick={dismiss}
-          className="p-2 text-zinc-500 hover:text-white transition-colors"
+          className="p-2 text-gray-500 dark:text-zinc-500 hover:text-white transition-colors"
         >
           <X className="w-4 h-4" />
         </button>
       </div>
 
       {/* Progress bar */}
-      <div className="h-2 bg-white/10 rounded-full mb-4 overflow-hidden">
+      <div className="h-2 bg-gray-200 dark:bg-white/10 rounded-full mb-4 overflow-hidden">
         <div
-          className="h-full bg-violet-500 rounded-full transition-all"
+          className="h-full bg-blue-500 rounded-full transition-all"
           style={{ width: `${progress}%` }}
         />
       </div>
@@ -115,13 +115,13 @@ export function QuickSetupGuide({ instances, credentials = [] }: QuickSetupGuide
                 "flex items-center gap-3 p-3 rounded-lg transition-colors",
                 isComplete
                   ? "bg-emerald-500/10 border border-emerald-500/20"
-                  : "bg-white/5 border border-white/10 hover:bg-white/[0.08]"
+                  : "bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 hover:bg-gray-100 dark:bg-white/[0.08]"
               )}
             >
               {isComplete ? (
                 <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
               ) : (
-                <Circle className="w-5 h-5 text-zinc-500 shrink-0" />
+                <Circle className="w-5 h-5 text-gray-500 dark:text-zinc-500 shrink-0" />
               )}
               <div className="flex-1">
                 <p className={cn(
@@ -130,9 +130,9 @@ export function QuickSetupGuide({ instances, credentials = [] }: QuickSetupGuide
                 )}>
                   {step.label}
                 </p>
-                <p className="text-xs text-zinc-500">{step.description}</p>
+                <p className="text-xs text-gray-500 dark:text-zinc-500">{step.description}</p>
               </div>
-              <Icon className="w-4 h-4 text-zinc-600 shrink-0" />
+              <Icon className="w-4 h-4 text-gray-400 dark:text-zinc-600 shrink-0" />
             </Link>
           );
         })}

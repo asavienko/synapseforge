@@ -40,7 +40,7 @@ function HealthDot({ healthStatus, lastCheckedAt }: { healthStatus?: string | nu
 
   if (healthStatus === "healthy") {
     return (
-      <span title={tooltip} className="inline-flex items-center gap-1 text-xs text-zinc-500 cursor-default">
+      <span title={tooltip} className="inline-flex items-center gap-1 text-xs text-gray-500 dark:text-zinc-500 cursor-default">
         <span className="relative inline-flex w-2 h-2">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-50" />
           <span className="relative inline-flex rounded-full w-2 h-2 bg-emerald-400" />
@@ -50,20 +50,20 @@ function HealthDot({ healthStatus, lastCheckedAt }: { healthStatus?: string | nu
   }
   if (healthStatus === "degraded") {
     return (
-      <span title={tooltip} className="inline-flex items-center gap-1 text-xs text-zinc-500 cursor-default">
+      <span title={tooltip} className="inline-flex items-center gap-1 text-xs text-gray-500 dark:text-zinc-500 cursor-default">
         <span className="w-2 h-2 rounded-full bg-yellow-400 inline-block" />
       </span>
     );
   }
   if (healthStatus === "down") {
     return (
-      <span title={tooltip} className="inline-flex items-center gap-1 text-xs text-zinc-500 cursor-default">
+      <span title={tooltip} className="inline-flex items-center gap-1 text-xs text-gray-500 dark:text-zinc-500 cursor-default">
         <span className="w-2 h-2 rounded-full bg-red-500 inline-block" />
       </span>
     );
   }
   return (
-    <span title={tooltip} className="inline-flex items-center gap-1 text-xs text-zinc-500 cursor-default">
+    <span title={tooltip} className="inline-flex items-center gap-1 text-xs text-gray-500 dark:text-zinc-500 cursor-default">
       <span className="w-2 h-2 rounded-full bg-zinc-600 inline-block" />
     </span>
   );
@@ -289,25 +289,25 @@ export default function InstancesPage() {
       {toast && <Toast text={toast.text} type={toast.type} />}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-white">{t("title")}</h1>
-          <p className="text-zinc-400 mt-1">{t("subtitle")}</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t("title")}</h1>
+          <p className="text-gray-500 dark:text-zinc-400 mt-1">{t("subtitle")}</p>
         </div>
         <div className="flex items-center gap-2">
           {/* Search */}
           {instances.length > 0 && (
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 dark:text-zinc-500" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search instances..."
-                className="w-40 sm:w-48 bg-white/5 border border-white/10 rounded-lg pl-9 pr-8 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 transition-colors"
+                className="w-40 sm:w-48 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg pl-9 pr-8 py-2.5 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-500 focus:outline-none focus:border-blue-500 transition-colors"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-zinc-500 hover:text-gray-700 dark:text-zinc-300"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -318,20 +318,20 @@ export default function InstancesPage() {
             onClick={loadInstances}
             disabled={loading}
             title="Refresh health status"
-            className="flex items-center justify-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] disabled:opacity-50 transition-colors px-3 py-2.5 rounded-lg text-sm font-semibold text-zinc-300"
+            className="flex items-center justify-center gap-2 border border-gray-200 dark:border-white/10 hover:border-white/20 hover:bg-white dark:bg-white/[0.03] disabled:opacity-50 transition-colors px-3 py-2.5 rounded-lg text-sm font-semibold text-gray-700 dark:text-zinc-300"
           >
             <RefreshIcon className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
           </button>
           <Link
             href="/templates"
-            className="hidden sm:flex items-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] transition-colors px-4 py-2.5 rounded-lg text-sm font-semibold text-zinc-300"
+            className="hidden sm:flex items-center gap-2 border border-gray-200 dark:border-white/10 hover:border-white/20 hover:bg-white dark:bg-white/[0.03] transition-colors px-4 py-2.5 rounded-lg text-sm font-semibold text-gray-700 dark:text-zinc-300"
           >
             <SparklesIcon className="w-4 h-4" />
             Browse Templates
           </Link>
           <button
             onClick={() => setShowTemplateSelector(true)}
-            className="flex items-center justify-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] transition-colors px-3 sm:px-4 py-2.5 rounded-lg text-sm font-semibold text-zinc-300 whitespace-nowrap"
+            className="flex items-center justify-center gap-2 border border-gray-200 dark:border-white/10 hover:border-white/20 hover:bg-white dark:bg-white/[0.03] transition-colors px-3 sm:px-4 py-2.5 rounded-lg text-sm font-semibold text-gray-700 dark:text-zinc-300 whitespace-nowrap"
           >
             <SparklesIcon className="w-4 h-4" />
             <span className="hidden sm:inline">From Template</span>
@@ -339,7 +339,7 @@ export default function InstancesPage() {
           </button>
           <button
             onClick={() => setShowWizard(true)}
-            className="flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-3 sm:px-4 py-2.5 rounded-lg text-sm font-semibold text-white whitespace-nowrap"
+            className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-600 transition-colors px-3 sm:px-4 py-2.5 rounded-lg text-sm font-semibold text-gray-900 dark:text-white whitespace-nowrap"
           >
             <PlusIcon className="w-4 h-4" />
             <span className="hidden sm:inline">{t("newInstance")}</span>
@@ -350,26 +350,26 @@ export default function InstancesPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <LoadingIcon className="w-6 h-6 text-zinc-500 animate-spin" />
+          <LoadingIcon className="w-6 h-6 text-gray-500 dark:text-zinc-500 animate-spin" />
         </div>
       ) : instances.length === 0 ? (
         <div className="space-y-8">
           {/* Empty state with quick start */}
-          <div className="glow-border rounded-2xl p-12 bg-white/[0.02] text-center">
-            <BotIcon className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-white mb-2">{t("emptyTitle")}</h3>
-            <p className="text-zinc-400 text-sm mb-6 max-w-md mx-auto">{t("emptyDesc")}</p>
+          <div className="glow-border rounded-2xl p-12 bg-white dark:bg-white/[0.02] text-center">
+            <BotIcon className="w-12 h-12 text-gray-400 dark:text-zinc-600 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{t("emptyTitle")}</h3>
+            <p className="text-gray-500 dark:text-zinc-400 text-sm mb-6 max-w-md mx-auto">{t("emptyDesc")}</p>
             <div className="flex items-center justify-center gap-3">
               <button
                 onClick={() => setShowWizard(true)}
-                className="inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-6 py-3 rounded-lg text-sm font-semibold text-white"
+                className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-600 transition-colors px-6 py-3 rounded-lg text-sm font-semibold text-gray-900 dark:text-white"
               >
                 <PlusIcon className="w-4 h-4" />
                 {t("createInstance")}
               </button>
               <Link
                 href="/templates"
-                className="inline-flex items-center gap-2 border border-white/10 hover:border-white/20 hover:bg-white/[0.03] transition-colors px-6 py-3 rounded-lg text-sm font-semibold text-zinc-300"
+                className="inline-flex items-center gap-2 border border-gray-200 dark:border-white/10 hover:border-white/20 hover:bg-white dark:bg-white/[0.03] transition-colors px-6 py-3 rounded-lg text-sm font-semibold text-gray-700 dark:text-zinc-300"
               >
                 <SparklesIcon className="w-4 h-4" />
                 Browse Templates
@@ -379,7 +379,7 @@ export default function InstancesPage() {
 
           {/* Featured templates */}
           <div>
-            <h4 className="text-sm font-medium text-zinc-500 mb-4 uppercase tracking-wider">Quick Start Templates</h4>
+            <h4 className="text-sm font-medium text-gray-500 dark:text-zinc-500 mb-4 uppercase tracking-wider">Quick Start Templates</h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {agentTemplates
                 .filter((t) => t.featured || t.popular)
@@ -391,15 +391,15 @@ export default function InstancesPage() {
                       setSelectedTemplate(template);
                       setShowWizard(true);
                     }}
-                    className="glow-border rounded-2xl p-5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors text-left"
+                    className="glow-border rounded-2xl p-5 bg-white dark:bg-white/[0.02] hover:bg-white dark:bg-white/[0.04] transition-colors text-left"
                   >
                     <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-violet-600/20 border border-violet-500/20 flex items-center justify-center text-xl">
+                      <div className="w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/20 flex items-center justify-center text-xl">
                         {template.icon}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h5 className="font-semibold text-white mb-1">{template.name}</h5>
-                        <p className="text-xs text-zinc-500 line-clamp-2">{template.shortDescription}</p>
+                        <h5 className="font-semibold text-gray-900 dark:text-white mb-1">{template.name}</h5>
+                        <p className="text-xs text-gray-500 dark:text-zinc-500 line-clamp-2">{template.shortDescription}</p>
                       </div>
                     </div>
                   </button>
@@ -411,11 +411,11 @@ export default function InstancesPage() {
         <>
           {filteredInstances.length === 0 && searchQuery ? (
             <div className="text-center py-12">
-              <Search className="w-8 h-8 text-zinc-600 mx-auto mb-3" />
-              <p className="text-zinc-500">{t("searchNoMatch", { query: searchQuery })}</p>
+              <Search className="w-8 h-8 text-gray-400 dark:text-zinc-600 mx-auto mb-3" />
+              <p className="text-gray-500 dark:text-zinc-500">{t("searchNoMatch", { query: searchQuery })}</p>
               <button
                 onClick={() => setSearchQuery("")}
-                className="text-violet-400 hover:text-violet-300 text-sm mt-2"
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-300 text-sm mt-2"
               >
                 {t("clearSearch")}
               </button>
@@ -429,11 +429,11 @@ export default function InstancesPage() {
               <Link
                 key={instance.id}
                 href={`/dashboard/instances/${instance.id}`}
-                className="glow-border rounded-2xl p-5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors block group"
+                className="glow-border rounded-2xl p-5 bg-white dark:bg-white/[0.02] hover:bg-white dark:bg-white/[0.04] transition-colors block group"
               >
                 <div className="flex items-start justify-between mb-4">
-                  <div className="relative w-10 h-10 rounded-xl bg-violet-600/20 border border-violet-500/20 flex items-center justify-center">
-                    <BotIcon className="w-5 h-5 text-violet-400" />
+                  <div className="relative w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/20 flex items-center justify-center">
+                    <BotIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                     {isProvisioning && (
                       <span className="absolute -top-1 -right-1 w-3.5 h-3.5">
                         <LoadingIcon className="w-3.5 h-3.5 text-amber-400 animate-spin" />
@@ -475,7 +475,7 @@ export default function InstancesPage() {
                         <button
                           onClick={(e) => duplicateInstance(instance, e)}
                           disabled={creating}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white disabled:opacity-50"
+                          className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-gray-200 dark:bg-white/10 text-gray-500 dark:text-zinc-400 hover:text-white disabled:opacity-50"
                           title="Duplicate instance"
                         >
                           {creating ? (
@@ -488,10 +488,10 @@ export default function InstancesPage() {
                     )}
                   </div>
                 </div>
-                <h3 className="font-semibold text-white mb-1 truncate">{instance.name}</h3>
-                <p className="text-xs text-zinc-500 mb-3 capitalize">{instance.type} · {instance.tier}</p>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-1 truncate">{instance.name}</h3>
+                <p className="text-xs text-gray-500 dark:text-zinc-500 mb-3 capitalize">{instance.type} · {instance.tier}</p>
                 {instance.description && (
-                  <p className="text-sm text-zinc-400 line-clamp-2">{instance.description}</p>
+                  <p className="text-sm text-gray-500 dark:text-zinc-400 line-clamp-2">{instance.description}</p>
                 )}
               </Link>
             );
@@ -503,48 +503,48 @@ export default function InstancesPage() {
 
       {showCreate && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 px-4">
-          <div className="bg-[#111118] border border-white/10 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+          <div className="bg-white dark:bg-[#111118] border border-gray-200 dark:border-white/10 rounded-2xl p-6 w-full max-w-md shadow-2xl">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-bold text-white">{t("modal.title")}</h2>
-              <button onClick={() => setShowCreate(false)} className="text-zinc-500 hover:text-white transition-colors">
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t("modal.title")}</h2>
+              <button onClick={() => setShowCreate(false)} className="text-gray-500 dark:text-zinc-500 hover:text-white transition-colors">
                 <CloseIcon className="w-5 h-5" />
               </button>
             </div>
 
             <form onSubmit={handleCreate} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-1.5">{t("modal.nameLabel")}</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1.5">{t("modal.nameLabel")}</label>
                 <input
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   required
                   placeholder={t("modal.namePlaceholder")}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
+                  className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-1.5">{t("modal.typeLabel")}</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1.5">{t("modal.typeLabel")}</label>
                 <select
                   value={form.type}
                   onChange={(e) => setForm({ ...form, type: e.target.value })}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
+                  className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
                 >
                   {INSTANCE_TYPES.map((tp) => (
-                    <option key={tp.value} value={tp.value} className="bg-zinc-900">
+                    <option key={tp.value} value={tp.value} className="bg-white dark:bg-zinc-900">
                       {tp.label}
                     </option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-1.5">{t("modal.descLabel")}</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1.5">{t("modal.descLabel")}</label>
                 <textarea
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
                   rows={3}
                   placeholder={t("modal.descPlaceholder")}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors resize-none"
+                  className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors resize-none"
                 />
               </div>
 
@@ -552,7 +552,7 @@ export default function InstancesPage() {
                 <div className="text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-4 py-3">
                   {error}
                   {planLimitHit && (
-                    <Link href="/dashboard/billing" className="block mt-2 text-violet-400 hover:text-violet-300 font-medium transition-colors">
+                    <Link href="/dashboard/billing" className="block mt-2 text-blue-600 dark:text-blue-400 hover:text-blue-300 font-medium transition-colors">
                       Upgrade your plan →
                     </Link>
                   )}
@@ -563,14 +563,14 @@ export default function InstancesPage() {
                 <button
                   type="button"
                   onClick={() => setShowCreate(false)}
-                  className="flex-1 py-3 border border-white/10 hover:border-white/20 text-zinc-300 rounded-lg text-sm font-semibold transition-colors"
+                  className="flex-1 py-3 border border-gray-200 dark:border-white/10 hover:border-white/20 text-gray-700 dark:text-zinc-300 rounded-lg text-sm font-semibold transition-colors"
                 >
                   {t("modal.cancelBtn")}
                 </button>
                 <button
                   type="submit"
                   disabled={creating}
-                  className="flex-1 flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 transition-colors py-3 rounded-lg text-sm font-semibold text-white"
+                  className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-600 disabled:opacity-50 transition-colors py-3 rounded-lg text-sm font-semibold text-gray-900 dark:text-white"
                 >
                   {creating ? <LoadingIcon className="w-4 h-4 animate-spin" /> : null}
                   {t("modal.createBtn")}

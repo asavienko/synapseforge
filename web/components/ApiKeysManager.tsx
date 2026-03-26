@@ -134,18 +134,18 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center">
-            <Key className="w-5 h-5 text-violet-400" />
+          <div className="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+            <Key className="w-5 h-5 text-blue-600 dark:text-blue-400" />
           </div>
           <div>
             <h3 className="font-semibold">{t("title")}</h3>
-            <p className="text-xs text-zinc-500">{t("subtitle")}</p>
+            <p className="text-xs text-gray-500 dark:text-zinc-500">{t("subtitle")}</p>
           </div>
         </div>
         {!showCreateForm && (
           <button
             onClick={() => setShowCreateForm(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-500 rounded-lg text-sm font-medium transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-600 rounded-lg text-sm font-medium transition-colors"
           >
             <Plus className="w-4 h-4" />
             {t("createKey")}
@@ -163,7 +163,7 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
             {t("warningDesc")}
           </p>
           <div className="flex items-center gap-2">
-            <code className="flex-1 bg-black/30 rounded px-3 py-2 text-sm font-mono break-all">
+            <code className="flex-1 bg-gray-100 dark:bg-black/30 rounded px-3 py-2 text-sm font-mono break-all">
               {newlyCreatedKey}
             </code>
             <button
@@ -184,28 +184,28 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
 
       {/* Create Form */}
       {showCreateForm && (
-        <div className="glow-border rounded-xl bg-white/[0.02] p-4 space-y-4">
+        <div className="glow-border rounded-xl bg-white dark:bg-white/[0.02] p-4 space-y-4">
           <div>
-            <label className="text-sm text-zinc-400 mb-2 block">{t("keyNameLabel")}</label>
+            <label className="text-sm text-gray-500 dark:text-zinc-400 mb-2 block">{t("keyNameLabel")}</label>
             <input
               type="text"
               value={newKeyName}
               onChange={(e) => setNewKeyName(e.target.value)}
               placeholder={t("keyNamePlaceholder")}
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500"
+              className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-600 focus:outline-none focus:border-blue-500"
             />
           </div>
           <div className="flex justify-end gap-2">
             <button
               onClick={() => setShowCreateForm(false)}
-              className="px-4 py-2 text-sm text-zinc-400 hover:text-white transition-colors"
+              className="px-4 py-2 text-sm text-gray-500 dark:text-zinc-400 hover:text-white transition-colors"
             >
               {t("cancel")}
             </button>
             <button
               onClick={createKey}
               disabled={creating || !newKeyName.trim()}
-              className="px-4 py-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 rounded-lg text-sm font-medium transition-colors"
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-600 disabled:opacity-50 rounded-lg text-sm font-medium transition-colors"
             >
               {creating ? t("creating") : t("create")}
             </button>
@@ -216,28 +216,28 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
       {/* Keys List */}
       <div className="space-y-3">
         {keys.length === 0 ? (
-          <div className="text-center py-8 text-zinc-500">
+          <div className="text-center py-8 text-gray-500 dark:text-zinc-500">
             {t("emptyState")}
           </div>
         ) : (
           keys.map((key) => (
-            <div key={key.id} className="glow-border rounded-xl bg-white/[0.02] p-4">
+            <div key={key.id} className="glow-border rounded-xl bg-white dark:bg-white/[0.02] p-4">
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="font-medium">{key.name}</span>
-                    <span className="text-xs text-zinc-500">
+                    <span className="text-xs text-gray-500 dark:text-zinc-500">
                       {t("created")} {formatDate(key.createdAt)}
                     </span>
                   </div>
                   
                   <div className="flex items-center gap-2 mt-2">
-                    <code className="text-sm font-mono text-zinc-400">
+                    <code className="text-sm font-mono text-gray-500 dark:text-zinc-400">
                       {visibleKeys.has(key.id) ? key.key : "••••••••••••••••"}
                     </code>
                     <button
                       onClick={() => toggleKeyVisibility(key.id)}
-                      className="p-1.5 text-zinc-500 hover:text-white hover:bg-white/10 rounded transition-colors"
+                      className="p-1.5 text-gray-500 dark:text-zinc-500 hover:text-white hover:bg-gray-200 dark:bg-white/10 rounded transition-colors"
                       title={visibleKeys.has(key.id) ? t("hide") : t("show")}
                     >
                       {visibleKeys.has(key.id) ? (
@@ -248,7 +248,7 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
                     </button>
                     <button
                       onClick={() => copyToClipboard(key.key, key.id)}
-                      className="p-1.5 text-zinc-500 hover:text-white hover:bg-white/10 rounded transition-colors"
+                      className="p-1.5 text-gray-500 dark:text-zinc-500 hover:text-white hover:bg-gray-200 dark:bg-white/10 rounded transition-colors"
                       title={t("copy")}
                     >
                       {copiedId === key.id ? (
@@ -260,7 +260,7 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
                   </div>
                   
                   {key.lastUsedAt && (
-                    <p className="text-xs text-zinc-600 mt-1">
+                    <p className="text-xs text-gray-400 dark:text-zinc-600 mt-1">
                       {t("lastUsed")} {formatDate(key.lastUsedAt)}
                     </p>
                   )}
@@ -268,7 +268,7 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
                 
                 <button
                   onClick={() => deleteKey(key.id)}
-                  className="p-2 text-zinc-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors ml-4"
+                  className="p-2 text-gray-500 dark:text-zinc-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors ml-4"
                   title={t("deleteKey")}
                 >
                   <Trash2 className="w-4 h-4" />
@@ -281,39 +281,39 @@ export function ApiKeysManager({ instanceId }: ApiKeysManagerProps) {
 
       {/* Usage Examples */}
       <div className="space-y-4">
-        <h4 className="text-sm font-semibold text-zinc-300">{t("usageExamples")}</h4>
+        <h4 className="text-sm font-semibold text-gray-700 dark:text-zinc-300">{t("usageExamples")}</h4>
 
         {/* OpenHelix format */}
-        <div className="rounded-xl bg-white/[0.03] border border-white/5 overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-2 border-b border-white/5 bg-white/[0.02]">
-            <span className="text-xs font-mono text-violet-400">/api/v1/chat</span>
-            <span className="text-xs text-zinc-500">{t("openhelixFormat")}</span>
+        <div className="rounded-xl bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-white/5 overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200 dark:border-white/5 bg-white dark:bg-white/[0.02]">
+            <span className="text-xs font-mono text-blue-600 dark:text-blue-400">/api/v1/chat</span>
+            <span className="text-xs text-gray-500 dark:text-zinc-500">{t("openhelixFormat")}</span>
           </div>
-          <pre className="p-4 text-xs font-mono text-zinc-300 overflow-x-auto whitespace-pre-wrap break-all">{`curl -X POST https://openhelixai.com/api/v1/chat \\
+          <pre className="p-4 text-xs font-mono text-gray-700 dark:text-zinc-300 overflow-x-auto whitespace-pre-wrap break-all">{`curl -X POST https://openhelixai.com/api/v1/chat \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{"message": "Hello!"}'`}</pre>
         </div>
 
         {/* OpenAI-compatible format */}
-        <div className="rounded-xl bg-white/[0.03] border border-white/5 overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-2 border-b border-white/5 bg-white/[0.02]">
-            <span className="text-xs font-mono text-violet-400">/api/v1/chat/completions</span>
-            <span className="text-xs text-zinc-500">{t("openaiCompatible")}</span>
+        <div className="rounded-xl bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-white/5 overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200 dark:border-white/5 bg-white dark:bg-white/[0.02]">
+            <span className="text-xs font-mono text-blue-600 dark:text-blue-400">/api/v1/chat/completions</span>
+            <span className="text-xs text-gray-500 dark:text-zinc-500">{t("openaiCompatible")}</span>
           </div>
-          <pre className="p-4 text-xs font-mono text-zinc-300 overflow-x-auto whitespace-pre-wrap break-all">{`curl -X POST https://openhelixai.com/api/v1/chat/completions \\
+          <pre className="p-4 text-xs font-mono text-gray-700 dark:text-zinc-300 overflow-x-auto whitespace-pre-wrap break-all">{`curl -X POST https://openhelixai.com/api/v1/chat/completions \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{"messages": [{"role": "user", "content": "Hello!"}]}'`}</pre>
         </div>
 
         {/* Python example */}
-        <div className="rounded-xl bg-white/[0.03] border border-white/5 overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-2 border-b border-white/5 bg-white/[0.02]">
-            <span className="text-xs font-mono text-zinc-400">Python</span>
-            <span className="text-xs text-zinc-500">{t("sdkExample")}</span>
+        <div className="rounded-xl bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-white/5 overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200 dark:border-white/5 bg-white dark:bg-white/[0.02]">
+            <span className="text-xs font-mono text-gray-500 dark:text-zinc-400">Python</span>
+            <span className="text-xs text-gray-500 dark:text-zinc-500">{t("sdkExample")}</span>
           </div>
-          <pre className="p-4 text-xs font-mono text-zinc-300 overflow-x-auto whitespace-pre-wrap break-all">{`from openai import OpenAI
+          <pre className="p-4 text-xs font-mono text-gray-700 dark:text-zinc-300 overflow-x-auto whitespace-pre-wrap break-all">{`from openai import OpenAI
 
 client = OpenAI(
     api_key="YOUR_API_KEY",

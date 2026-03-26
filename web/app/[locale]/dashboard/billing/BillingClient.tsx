@@ -193,8 +193,8 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
     <div className="pt-14 md:pt-0 p-4 md:p-8 max-w-6xl">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white">{tb("title")}</h1>
-        <p className="text-zinc-400 mt-1">{tb("subtitle")}</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{tb("title")}</h1>
+        <p className="text-gray-500 dark:text-zinc-400 mt-1">{tb("subtitle")}</p>
       </div>
 
       {/* Billing error banner */}
@@ -202,7 +202,7 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
         <div className="flex items-start gap-3 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 mb-6">
           <AlertTriangle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
           <p className="text-sm text-red-300 flex-1">{billingError}</p>
-          <button onClick={() => setBillingError(null)} className="text-zinc-500 hover:text-zinc-300 transition-colors shrink-0">
+          <button onClick={() => setBillingError(null)} className="text-gray-500 dark:text-zinc-500 hover:text-gray-700 dark:text-zinc-300 transition-colors shrink-0">
             <CloseIcon className="w-4 h-4" />
           </button>
         </div>
@@ -213,8 +213,8 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
         <div className="mb-6 glow-border rounded-2xl bg-emerald-500/10 border border-emerald-500/30 p-6 flex items-start gap-4">
           <div className="text-3xl">🎉</div>
           <div>
-            <h3 className="text-lg font-semibold text-white mb-1">{tb("upgradeSuccess")}</h3>
-            <p className="text-sm text-zinc-400">{tb("upgradeSuccessDesc")}</p>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">{tb("upgradeSuccess")}</h3>
+            <p className="text-sm text-gray-500 dark:text-zinc-400">{tb("upgradeSuccessDesc")}</p>
             <div className="flex flex-wrap gap-3 mt-4">
               {([tb("unlockInstances"), tb("unlockPriority"), tb("unlockSupport")] as string[]).map(
                 (feature) => (
@@ -233,8 +233,8 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
 
       {/* Cancel banner */}
       {cancelled && (
-        <div className="flex items-center gap-3 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 mb-6">
-          <p className="text-sm text-zinc-400">{tb("cancelled")}</p>
+        <div className="flex items-center gap-3 bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl px-4 py-3 mb-6">
+          <p className="text-sm text-gray-500 dark:text-zinc-400">{tb("cancelled")}</p>
         </div>
       )}
 
@@ -252,12 +252,12 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
       )}
 
       {/* Current plan card */}
-      <div className="glow-border rounded-2xl p-6 bg-white/[0.02] mb-8">
+      <div className="glow-border rounded-2xl p-6 bg-white dark:bg-white/[0.02] mb-8">
         <div className="flex items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <BillingIcon className="w-4 h-4 text-violet-400" />
-              <span className="text-xs text-zinc-500 uppercase tracking-wider">{tb("currentPlan")}</span>
+              <BillingIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <span className="text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider">{tb("currentPlan")}</span>
               {isManagedPlan && (
                 <span className="ml-2 text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full">
                   Managed
@@ -269,11 +269,11 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
                 </span>
               )}
             </div>
-            <div className="text-xl font-bold text-white capitalize">{getPlanName(plan)}</div>
+            <div className="text-xl font-bold text-gray-900 dark:text-white capitalize">{getPlanName(plan)}</div>
             {periodEnd && (
               <div className="flex items-center gap-1.5 mt-1">
-                <Clock className="w-3.5 h-3.5 text-zinc-500" />
-                <span className="text-sm text-zinc-400">
+                <Clock className="w-3.5 h-3.5 text-gray-500 dark:text-zinc-500" />
+                <span className="text-sm text-gray-500 dark:text-zinc-400">
                   {tb("renews")}{" "}
                   {new Date(periodEnd).toLocaleDateString("en-US", {
                     month: "long",
@@ -288,7 +288,7 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
             <button
               onClick={handlePortal}
               disabled={loading === "portal"}
-              className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors px-4 py-2 rounded-xl text-sm font-medium text-zinc-300 disabled:opacity-50"
+              className="flex items-center gap-2 bg-gray-50 dark:bg-white/5 hover:bg-gray-200 dark:bg-white/10 border border-gray-200 dark:border-white/10 transition-colors px-4 py-2 rounded-xl text-sm font-medium text-gray-700 dark:text-zinc-300 disabled:opacity-50"
             >
               {loading === "portal" ? (
                 <LoadingIcon className="w-4 h-4" />
@@ -313,43 +313,43 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
               className={cn(
                 "relative rounded-2xl p-5 border transition-all flex flex-col",
                 p.highlight
-                  ? "border-violet-500/50 bg-violet-600/5"
-                  : "border-white/10 bg-white/[0.02]"
+                  ? "border-blue-500/50 bg-blue-600/5"
+                  : "border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02]"
               )}
             >
               {p.highlight && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="bg-violet-600 text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
+                  <span className="bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
                     <Sparkles className="w-3 h-3" /> {tb("mostPopular")}
                   </span>
                 </div>
               )}
 
               <div className="mb-4">
-                <div className="text-sm font-semibold text-zinc-300 mb-1">{planName}</div>
+                <div className="text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-1">{planName}</div>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-2xl font-bold text-white">{p.price}</span>
-                  <span className="text-zinc-500 text-sm">/mo</span>
+                  <span className="text-2xl font-bold text-gray-900 dark:text-white">{p.price}</span>
+                  <span className="text-gray-500 dark:text-zinc-500 text-sm">/mo</span>
                 </div>
               </div>
 
               <ul className="space-y-2 mb-6 flex-1">
                 {p.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-xs text-zinc-400">
-                    <CheckIcon className="w-3.5 h-3.5 text-violet-400 shrink-0 mt-0.5" />
+                  <li key={f} className="flex items-start gap-2 text-xs text-gray-500 dark:text-zinc-400">
+                    <CheckIcon className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
                     {f}
                   </li>
                 ))}
               </ul>
 
               {isCurrent ? (
-                <div className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-white/10 text-sm text-zinc-500 font-medium">
+                <div className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-gray-200 dark:border-white/10 text-sm text-gray-500 dark:text-zinc-500 font-medium">
                   <ShieldCheckIcon className="w-4 h-4" /> {tb("currentPlan")}
                 </div>
               ) : p.key === "free" ? (
                 <button
                   onClick={() => setShowCancelSurvey(true)}
-                  className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-white/10 text-sm text-zinc-600 font-medium hover:text-zinc-400 hover:border-white/20 transition-colors"
+                  className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-gray-200 dark:border-white/10 text-sm text-gray-400 dark:text-zinc-600 font-medium hover:text-zinc-400 hover:border-white/20 transition-colors"
                 >
                   {tb("downgradeViaSupport")}
                 </button>
@@ -360,8 +360,8 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
                   className={cn(
                     "w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-colors disabled:opacity-50",
                     p.highlight
-                      ? "bg-violet-600 hover:bg-violet-500 text-white"
-                      : "bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-200"
+                      ? "bg-blue-600 hover:bg-blue-600 text-white"
+                      : "bg-gray-50 dark:bg-white/5 hover:bg-gray-200 dark:bg-white/10 border border-gray-200 dark:border-white/10 text-gray-700 dark:text-zinc-200"
                   )}
                 >
                   {loading === p.key ? <LoadingIcon className="w-4 h-4" /> : null}
@@ -374,26 +374,26 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
       </div>
 
       {/* Support Add-on info */}
-      <div className="mt-8 p-4 rounded-xl bg-white/[0.02] border border-white/10">
+      <div className="mt-8 p-4 rounded-xl bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/10">
         <div className="flex items-center gap-2 mb-2">
-          <Sparkles className="w-4 h-4 text-violet-400" />
-          <span className="text-sm font-medium text-white">Support Hours Add-on</span>
+          <Sparkles className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+          <span className="text-sm font-medium text-gray-900 dark:text-white">Support Hours Add-on</span>
         </div>
-        <p className="text-xs text-zinc-400">
+        <p className="text-xs text-gray-500 dark:text-zinc-400">
           Purchase additional support hours at $100/hour, or bundled at $50/hour with managed plans.
           {" "}
-          <a href="mailto:hello@openhelixai.com" className="text-violet-400 hover:text-violet-300">
+          <a href="mailto:hello@openhelixai.com" className="text-blue-600 dark:text-blue-400 hover:text-blue-300">
             Contact us to add support hours.
           </a>
         </p>
       </div>
 
       {/* Annual note */}
-      <p className="text-xs text-zinc-600 mt-6 text-center">
+      <p className="text-xs text-gray-400 dark:text-zinc-600 mt-6 text-center">
         {tb("annualNote")}{" "}
         <a
           href={`mailto:${tb("annualNoteEmail")}`}
-          className="text-violet-400 hover:text-violet-300 transition-colors"
+          className="text-blue-600 dark:text-blue-400 hover:text-blue-300 transition-colors"
         >
           {tb("annualNoteEmail")}
         </a>{" "}
@@ -403,15 +403,15 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
       {/* Cancellation survey modal */}
       {showCancelSurvey && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
-          <div className="w-full max-w-sm sm:max-w-md glow-border rounded-2xl bg-[#111113] p-5 sm:p-6">
+          <div className="w-full max-w-sm sm:max-w-md glow-border rounded-2xl bg-white dark:bg-[#111113] p-5 sm:p-6">
             <div className="flex items-start justify-between mb-4">
               <div>
-                <h2 className="text-lg font-semibold text-white">{tb("cancelTitle")}</h2>
-                <p className="text-sm text-zinc-400 mt-1">{tb("cancelDesc")}</p>
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{tb("cancelTitle")}</h2>
+                <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">{tb("cancelDesc")}</p>
               </div>
               <button
                 onClick={() => setShowCancelSurvey(false)}
-                className="text-zinc-500 hover:text-zinc-300 transition-colors ml-4 shrink-0"
+                className="text-gray-500 dark:text-zinc-500 hover:text-gray-700 dark:text-zinc-300 transition-colors ml-4 shrink-0"
               >
                 <CloseIcon className="w-5 h-5" />
               </button>
@@ -424,8 +424,8 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
                   className={cn(
                     "flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors",
                     cancelReason === key
-                      ? "border-violet-500/50 bg-violet-500/10"
-                      : "border-white/10 bg-white/[0.02] hover:bg-white/5"
+                      ? "border-blue-500/50 bg-blue-500/10"
+                      : "border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] hover:bg-gray-50 dark:bg-white/5"
                   )}
                 >
                   <input
@@ -434,9 +434,9 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
                     value={key}
                     checked={cancelReason === key}
                     onChange={() => setCancelReason(key)}
-                    className="accent-violet-500"
+                    className="accent-blue-500"
                   />
-                  <span className="text-sm text-zinc-300">{tb(`cancelReasons.${key}` as Parameters<typeof tb>[0])}</span>
+                  <span className="text-sm text-gray-700 dark:text-zinc-300">{tb(`cancelReasons.${key}` as Parameters<typeof tb>[0])}</span>
                 </label>
               ))}
             </div>
@@ -446,20 +446,20 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
               onChange={(e) => setCancelFeedback(e.target.value)}
               placeholder={tb("cancelFeedbackPlaceholder")}
               rows={3}
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors text-sm resize-none mb-4"
+              className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors text-sm resize-none mb-4"
             />
 
             <div className="flex gap-3">
               <button
                 onClick={() => setShowCancelSurvey(false)}
-                className="flex-1 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-sm font-medium text-zinc-300 transition-colors"
+                className="flex-1 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 hover:bg-gray-200 dark:bg-white/10 text-sm font-medium text-gray-700 dark:text-zinc-300 transition-colors"
               >
                 {tb("cancelKeepPlan")}
               </button>
               <button
                 onClick={handleSurveySubmit}
                 disabled={!cancelReason || surveySubmitting}
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-red-600/80 hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium text-white transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-red-600/80 hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium text-gray-900 dark:text-white transition-colors"
               >
                 {surveySubmitting ? <LoadingIcon className="w-4 h-4" /> : null}
                 {tb("cancelSubmit")}
@@ -475,18 +475,18 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
           className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={(e) => e.target === e.currentTarget && setShowContactUpgrade(false)}
         >
-          <div className="bg-[#111118] border border-white/10 rounded-2xl p-5 sm:p-7 w-full max-w-sm sm:max-w-md relative">
+          <div className="bg-white dark:bg-[#111118] border border-gray-200 dark:border-white/10 rounded-2xl p-5 sm:p-7 w-full max-w-sm sm:max-w-md relative">
             <button
               onClick={() => setShowContactUpgrade(false)}
-              className="absolute top-4 right-4 text-zinc-600 hover:text-zinc-300 transition-colors text-lg leading-none"
+              className="absolute top-4 right-4 text-gray-400 dark:text-zinc-600 hover:text-gray-700 dark:text-zinc-300 transition-colors text-lg leading-none"
             >
               ✕
             </button>
 
             <div className="text-center mb-6">
               <div className="text-3xl mb-3">💳</div>
-              <h2 className="text-lg font-bold text-white mb-2">Complete Your Upgrade</h2>
-              <p className="text-sm text-zinc-400 leading-relaxed">
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Complete Your Upgrade</h2>
+              <p className="text-sm text-gray-500 dark:text-zinc-400 leading-relaxed">
                 Our payment system is temporarily unavailable. Book a quick setup call 
                 and we&apos;ll activate your plan right away — usually within a few hours.
               </p>
@@ -497,21 +497,21 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
                 href="https://cal.com/openhelixai/setup"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full py-3 bg-violet-600 hover:bg-violet-500 text-white font-semibold text-sm rounded-xl transition-colors"
+                className="flex items-center justify-center gap-2 w-full py-3 bg-blue-600 hover:bg-blue-600 text-gray-900 dark:text-white font-semibold text-sm rounded-xl transition-colors"
               >
                 📅 Book a 15-min setup call
               </a>
               <Link
                 href="/contact"
-                className="flex items-center justify-center gap-2 w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 font-medium text-sm rounded-xl transition-colors"
+                className="flex items-center justify-center gap-2 w-full py-3 bg-gray-50 dark:bg-white/5 hover:bg-gray-200 dark:bg-white/10 border border-gray-200 dark:border-white/10 text-gray-700 dark:text-zinc-300 font-medium text-sm rounded-xl transition-colors"
               >
                 ✉️ Send us a message
               </Link>
             </div>
 
-            <p className="text-center text-xs text-zinc-600 mt-5">
+            <p className="text-center text-xs text-gray-400 dark:text-zinc-600 mt-5">
               Questions? Email us at{" "}
-              <a href="mailto:hello@openhelixai.com" className="text-violet-400 hover:text-violet-300">
+              <a href="mailto:hello@openhelixai.com" className="text-blue-600 dark:text-blue-400 hover:text-blue-300">
                 hello@openhelixai.com
               </a>
             </p>

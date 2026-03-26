@@ -128,17 +128,17 @@ export function WebhookConfig({ instanceId }: WebhookConfigProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center">
-            <Webhook className="w-5 h-5 text-violet-400" />
+          <div className="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+            <Webhook className="w-5 h-5 text-blue-600 dark:text-blue-400" />
           </div>
           <div>
             <h3 className="font-semibold">Webhooks</h3>
-            <p className="text-xs text-zinc-500">Get notified when events occur</p>
+            <p className="text-xs text-gray-500 dark:text-zinc-500">Get notified when events occur</p>
           </div>
         </div>
         <button
           onClick={() => setShowAddForm(!showAddForm)}
-          className="flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-500 rounded-lg text-sm font-medium transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-600 rounded-lg text-sm font-medium transition-colors"
         >
           <Plus className="w-4 h-4" />
           Add Webhook
@@ -147,32 +147,32 @@ export function WebhookConfig({ instanceId }: WebhookConfigProps) {
 
       {/* Add Form */}
       {showAddForm && (
-        <div className="glow-border rounded-xl bg-white/[0.02] p-4 space-y-4">
+        <div className="glow-border rounded-xl bg-white dark:bg-white/[0.02] p-4 space-y-4">
           <div>
-            <label className="text-sm text-zinc-400 mb-2 block">Webhook URL</label>
+            <label className="text-sm text-gray-500 dark:text-zinc-400 mb-2 block">Webhook URL</label>
             <input
               type="url"
               value={newWebhook.url}
               onChange={(e) => setNewWebhook((prev) => ({ ...prev, url: e.target.value }))}
               placeholder="https://your-app.com/webhook"
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500"
+              className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-600 focus:outline-none focus:border-blue-500"
             />
           </div>
 
           <div>
-            <label className="text-sm text-zinc-400 mb-2 block">Events</label>
+            <label className="text-sm text-gray-500 dark:text-zinc-400 mb-2 block">Events</label>
             <div className="space-y-2">
               {AVAILABLE_EVENTS.map((event) => (
-                <label key={event.id} className="flex items-start gap-3 p-3 bg-white/5 rounded-lg cursor-pointer hover:bg-white/10 transition-colors">
+                <label key={event.id} className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-white/5 rounded-lg cursor-pointer hover:bg-gray-200 dark:bg-white/10 transition-colors">
                   <input
                     type="checkbox"
                     checked={newWebhook.events.includes(event.id)}
                     onChange={() => toggleEvent(event.id)}
-                    className="mt-1 w-4 h-4 rounded border-white/20 bg-white/5 text-violet-600 focus:ring-violet-500"
+                    className="mt-1 w-4 h-4 rounded border-gray-300 dark:border-white/20 bg-gray-50 dark:bg-white/5 text-blue-600 focus:ring-blue-500"
                   />
                   <div>
                     <div className="text-sm font-medium">{event.label}</div>
-                    <div className="text-xs text-zinc-500">{event.description}</div>
+                    <div className="text-xs text-gray-500 dark:text-zinc-500">{event.description}</div>
                   </div>
                 </label>
               ))}
@@ -182,14 +182,14 @@ export function WebhookConfig({ instanceId }: WebhookConfigProps) {
           <div className="flex justify-end gap-2">
             <button
               onClick={() => setShowAddForm(false)}
-              className="px-4 py-2 text-sm text-zinc-400 hover:text-white transition-colors"
+              className="px-4 py-2 text-sm text-gray-500 dark:text-zinc-400 hover:text-white transition-colors"
             >
               Cancel
             </button>
             <button
               onClick={saveWebhook}
               disabled={saving || !newWebhook.url || newWebhook.events.length === 0}
-              className="px-4 py-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 rounded-lg text-sm font-medium transition-colors"
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-600 disabled:opacity-50 rounded-lg text-sm font-medium transition-colors"
             >
               {saving ? "Saving..." : "Save Webhook"}
             </button>
@@ -200,18 +200,18 @@ export function WebhookConfig({ instanceId }: WebhookConfigProps) {
       {/* Webhook List */}
       <div className="space-y-3">
         {webhooks.length === 0 ? (
-          <div className="text-center py-8 text-zinc-500">
+          <div className="text-center py-8 text-gray-500 dark:text-zinc-500">
             No webhooks configured yet
           </div>
         ) : (
           webhooks.map((webhook) => (
-            <div key={webhook.id} className="glow-border rounded-xl bg-white/[0.02] p-4">
+            <div key={webhook.id} className="glow-border rounded-xl bg-white dark:bg-white/[0.02] p-4">
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-medium truncate">{webhook.url}</div>
                   <div className="flex flex-wrap gap-1 mt-2">
                     {webhook.events.map((event) => (
-                      <span key={event} className="px-2 py-0.5 bg-violet-500/20 text-violet-300 rounded text-xs">
+                      <span key={event} className="px-2 py-0.5 bg-blue-500/20 text-blue-600 dark:text-blue-300 rounded text-xs">
                         {AVAILABLE_EVENTS.find((e) => e.id === event)?.label || event}
                       </span>
                     ))}
@@ -220,14 +220,14 @@ export function WebhookConfig({ instanceId }: WebhookConfigProps) {
                 <div className="flex items-center gap-2 ml-4">
                   <button
                     onClick={() => testWebhook(webhook)}
-                    className="p-2 text-zinc-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                    className="p-2 text-gray-500 dark:text-zinc-400 hover:text-white hover:bg-gray-200 dark:bg-white/10 rounded-lg transition-colors"
                     title="Test webhook"
                   >
                     <TestTube className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => webhook.id && deleteWebhook(webhook.id)}
-                    className="p-2 text-zinc-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                    className="p-2 text-gray-500 dark:text-zinc-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
                     title="Delete webhook"
                   >
                     <Trash2 className="w-4 h-4" />

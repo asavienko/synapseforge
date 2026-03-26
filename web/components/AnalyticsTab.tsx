@@ -44,7 +44,7 @@ export function AnalyticsTab({ instanceId }: AnalyticsTabProps) {
 
   if (!data) {
     return (
-      <div className="text-center py-12 text-zinc-500">
+      <div className="text-center py-12 text-gray-500 dark:text-zinc-500">
         Failed to load analytics
       </div>
     );
@@ -72,8 +72,8 @@ export function AnalyticsTab({ instanceId }: AnalyticsTabProps) {
             onClick={() => setPeriod(days)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               period === days
-                ? "bg-violet-600 text-white"
-                : "bg-white/5 text-zinc-400 hover:bg-white/10"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-50 dark:bg-white/5 text-gray-500 dark:text-zinc-400 hover:bg-gray-200 dark:bg-white/10"
             }`}
           >
             Last {days} days
@@ -102,10 +102,10 @@ export function AnalyticsTab({ instanceId }: AnalyticsTabProps) {
 
       {/* Daily Chart */}
       {data.dailyStats.length > 0 && (
-        <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
-          <div className="p-4 border-b border-white/5">
+        <div className="glow-border rounded-2xl bg-white dark:bg-white/[0.02] overflow-hidden">
+          <div className="p-4 border-b border-gray-200 dark:border-white/5">
             <div className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-violet-400" />
+              <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               <h3 className="font-semibold">Daily Activity</h3>
             </div>
           </div>
@@ -120,11 +120,11 @@ export function AnalyticsTab({ instanceId }: AnalyticsTabProps) {
                     className="flex-1 flex flex-col items-center gap-1"
                   >
                     <div
-                      className="w-full bg-violet-600/50 rounded-t"
+                      className="w-full bg-blue-600/50 rounded-t"
                       style={{ height: `${height}%` }}
                       title={`${formatDate(day.date)}: ${day.count} messages`}
                     />
-                    <span className="text-[10px] text-zinc-500">
+                    <span className="text-[10px] text-gray-500 dark:text-zinc-500">
                       {new Date(day.date).getDate()}
                     </span>
                   </div>
@@ -137,8 +137,8 @@ export function AnalyticsTab({ instanceId }: AnalyticsTabProps) {
 
       {/* Channel Breakdown */}
       {data.channelStats.length > 0 && (
-        <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
-          <div className="p-4 border-b border-white/5">
+        <div className="glow-border rounded-2xl bg-white dark:bg-white/[0.02] overflow-hidden">
+          <div className="p-4 border-b border-gray-200 dark:border-white/5">
             <h3 className="font-semibold">Channel Breakdown</h3>
           </div>
           <div className="p-4 space-y-3">
@@ -147,12 +147,12 @@ export function AnalyticsTab({ instanceId }: AnalyticsTabProps) {
               const percentage = Math.round((channel.count / total) * 100);
               return (
                 <div key={channel.source} className="flex items-center gap-3">
-                  <span className="w-20 text-sm text-zinc-400 capitalize">
+                  <span className="w-20 text-sm text-gray-500 dark:text-zinc-400 capitalize">
                     {channel.source}
                   </span>
-                  <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
+                  <div className="flex-1 h-2 bg-gray-200 dark:bg-white/10 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-violet-600 rounded-full"
+                      className="h-full bg-blue-600 rounded-full"
                       style={{ width: `${percentage}%` }}
                     />
                   </div>
@@ -179,12 +179,12 @@ function StatCard({
   value: string | number;
 }) {
   return (
-    <div className="glow-border rounded-xl bg-white/[0.02] p-4">
+    <div className="glow-border rounded-xl bg-white dark:bg-white/[0.02] p-4">
       <div className="flex items-center gap-3 mb-2">
-        <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center">
-          <Icon className="w-4 h-4 text-violet-400" />
+        <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+          <Icon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
         </div>
-        <span className="text-xs text-zinc-500">{label}</span>
+        <span className="text-xs text-gray-500 dark:text-zinc-500">{label}</span>
       </div>
       <div className="text-2xl font-bold">{value}</div>
     </div>

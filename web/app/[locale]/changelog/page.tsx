@@ -65,10 +65,10 @@ const typeIcons = {
 };
 
 const typeColors = {
-  feature: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
-  improvement: "text-blue-400 bg-blue-500/10 border-blue-500/20",
-  fix: "text-amber-400 bg-amber-500/10 border-amber-500/20",
-  security: "text-red-400 bg-red-500/10 border-red-500/20",
+  feature: "text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
+  improvement: "text-blue-700 dark:text-blue-400 bg-blue-500/10 border-blue-500/20",
+  fix: "text-amber-700 dark:text-amber-400 bg-amber-500/10 border-amber-500/20",
+  security: "text-red-700 dark:text-red-400 bg-red-500/10 border-red-500/20",
 };
 
 export default async function ChangelogPage() {

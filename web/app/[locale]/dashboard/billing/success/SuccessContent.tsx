@@ -44,7 +44,7 @@ export function SuccessContent() {
 
   const isEnterprise = plan === "enterprise";
   const planName = isEnterprise ? t("welcomeEnterprise") : t("welcomePro");
-  const planColor = isEnterprise ? "amber" : "violet";
+  const planColor = isEnterprise ? "amber" : "blue";
 
   const nextSteps = [
     {
@@ -52,7 +52,7 @@ export function SuccessContent() {
       title: t("configureInstances"),
       desc: t("configureInstancesDesc"),
       href: "/dashboard/instances",
-      color: "violet",
+      color: "blue",
     },
     {
       icon: MessageSquare,
@@ -87,10 +87,10 @@ export function SuccessContent() {
   const features = isEnterprise ? enterpriseFeatures : proFeatures;
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white">
+    <div className="min-h-screen bg-white dark:bg-[#0a0a0f] text-gray-900 dark:text-white">
       {/* Confetti-like background effect */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-violet-600/10 rounded-full blur-[120px]" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px]" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-600/10 rounded-full blur-[120px]" />
       </div>
 
@@ -101,7 +101,7 @@ export function SuccessContent() {
             <CheckCircle2 className="w-10 h-10 text-emerald-400" />
           </div>
           <h1 className="text-3xl font-bold mb-3">{planName}</h1>
-          <p className="text-zinc-400">
+          <p className="text-gray-500 dark:text-zinc-400">
             {t("upgradeComplete", { plan: isEnterprise ? "Enterprise" : "Pro" })}
           </p>
         </div>
@@ -117,7 +117,7 @@ export function SuccessContent() {
             {features.map((feature, index) => (
               <li key={index} className="flex items-start gap-3">
                 <Zap className={`w-4 h-4 text-${planColor}-400 mt-0.5 shrink-0`} />
-                <span className="text-sm text-zinc-300">{feature}</span>
+                <span className="text-sm text-gray-700 dark:text-zinc-300">{feature}</span>
               </li>
             ))}
           </ul>
@@ -125,7 +125,7 @@ export function SuccessContent() {
 
         {/* Next Steps */}
         <div className="mb-8">
-          <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-4">
+          <h2 className="text-sm font-semibold text-gray-500 dark:text-zinc-500 uppercase tracking-wider mb-4">
             {t("nextSteps")}
           </h2>
           <div className="space-y-3">
@@ -133,7 +133,7 @@ export function SuccessContent() {
               <Link
                 key={step.title}
                 href={step.href}
-                className="flex items-start gap-4 p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/[0.08] hover:border-white/20 transition-colors group"
+                className="flex items-start gap-4 p-4 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl hover:bg-white/[0.08] hover:border-white/20 transition-colors group"
               >
                 <div className={`w-10 h-10 rounded-lg bg-${step.color}-500/10 border border-${step.color}-500/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform`}>
                   <step.icon className={`w-5 h-5 text-${step.color}-400`} />
@@ -141,9 +141,9 @@ export function SuccessContent() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <h3 className="font-medium">{step.title}</h3>
-                    <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 group-hover:translate-x-0.5 transition-all" />
+                    <ArrowRight className="w-4 h-4 text-gray-400 dark:text-zinc-600 group-hover:text-zinc-400 group-hover:translate-x-0.5 transition-all" />
                   </div>
-                  <p className="text-sm text-zinc-500">{step.desc}</p>
+                  <p className="text-sm text-gray-500 dark:text-zinc-500">{step.desc}</p>
                 </div>
               </Link>
             ))}
@@ -154,14 +154,14 @@ export function SuccessContent() {
         <div className="flex flex-col sm:flex-row gap-3">
           <Link
             href="/dashboard/instances"
-            className="flex-1 flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors py-3 rounded-xl font-semibold"
+            className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-600 transition-colors py-3 rounded-xl font-semibold"
           >
             {t("goToDashboard")}
             <ArrowRight className="w-4 h-4" />
           </Link>
           <Link
             href="/contact"
-            className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors py-3 rounded-xl font-medium text-zinc-300"
+            className="flex items-center justify-center gap-2 bg-gray-50 dark:bg-white/5 hover:bg-gray-200 dark:bg-white/10 border border-gray-200 dark:border-white/10 transition-colors py-3 rounded-xl font-medium text-gray-700 dark:text-zinc-300"
           >
             {t("bookOnboarding")}
             <ExternalLink className="w-4 h-4" />
@@ -169,7 +169,7 @@ export function SuccessContent() {
         </div>
 
         {/* Auto-redirect notice */}
-        <p className="text-center text-sm text-zinc-600 mt-6">
+        <p className="text-center text-sm text-gray-400 dark:text-zinc-600 mt-6">
           {t("redirecting", { count: countdown })}
         </p>
       </div>

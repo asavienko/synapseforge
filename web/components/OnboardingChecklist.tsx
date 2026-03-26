@@ -89,18 +89,18 @@ export function OnboardingChecklist({
 
   return (
     <div
-      className={`mb-8 p-6 bg-gradient-to-br from-violet-500/10 to-violet-600/5 border border-violet-500/20 rounded-2xl transition-all duration-300 ${
+      className={`mb-8 p-6 bg-gradient-to-br from-violet-500/10 to-violet-600/5 border border-blue-500/20 rounded-2xl transition-all duration-300 ${
         isDismissed ? "opacity-0 scale-95" : "opacity-100 scale-100"
       }`}
     >
       <div className="flex items-start justify-between mb-4">
         <div>
-          <h2 className="text-lg font-semibold text-white mb-1">{t("title")}</h2>
-          <p className="text-sm text-zinc-400">{t("subtitle")}</p>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">{t("title")}</h2>
+          <p className="text-sm text-gray-500 dark:text-zinc-400">{t("subtitle")}</p>
         </div>
         <button
           onClick={handleDismiss}
-          className="text-zinc-500 hover:text-white transition-colors"
+          className="text-gray-500 dark:text-zinc-500 hover:text-white transition-colors"
           aria-label="Dismiss"
         >
           <X className="w-5 h-5" />
@@ -110,14 +110,14 @@ export function OnboardingChecklist({
       {/* Progress bar */}
       <div className="mb-6">
         <div className="flex items-center justify-between text-sm mb-2">
-          <span className="text-zinc-400">
+          <span className="text-gray-500 dark:text-zinc-400">
             {t("progress", { completed: completedSteps, total: totalSteps })}
           </span>
-          <span className="text-violet-400 font-medium">{Math.round(progress)}%</span>
+          <span className="text-blue-600 dark:text-blue-400 font-medium">{Math.round(progress)}%</span>
         </div>
-        <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+        <div className="h-2 bg-gray-200 dark:bg-white/10 rounded-full overflow-hidden">
           <div
-            className="h-full bg-violet-500 rounded-full transition-all duration-500"
+            className="h-full bg-blue-500 rounded-full transition-all duration-500"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -135,14 +135,14 @@ export function OnboardingChecklist({
               className={`flex items-center gap-4 p-3 rounded-xl transition-all ${
                 step.done
                   ? "bg-emerald-500/10 border border-emerald-500/20"
-                  : "bg-white/5 hover:bg-white/10 border border-transparent"
+                  : "bg-gray-50 dark:bg-white/5 hover:bg-gray-200 dark:bg-white/10 border border-transparent"
               }`}
             >
               <div
                 className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
                   step.done
                     ? "bg-emerald-500/20 text-emerald-400"
-                    : "bg-violet-500/10 text-violet-400"
+                    : "bg-blue-500/10 text-blue-600 dark:text-blue-400"
                 }`}
               >
                 {step.done ? (
@@ -163,7 +163,7 @@ export function OnboardingChecklist({
               </div>
 
               {!step.done && (
-                <ChevronRight className="w-5 h-5 text-zinc-500 shrink-0" />
+                <ChevronRight className="w-5 h-5 text-gray-500 dark:text-zinc-500 shrink-0" />
               )}
             </Link>
           );

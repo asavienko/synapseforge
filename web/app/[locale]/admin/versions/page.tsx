@@ -18,7 +18,7 @@ export default async function AdminVersionsPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-white mb-6">{t("versionManagement")}</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">{t("versionManagement")}</h1>
       <AdminVersionsClient />
     </div>
   );

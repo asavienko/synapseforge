@@ -114,25 +114,25 @@ export function NotificationCenter() {
       <button
         aria-label={t("bellLabel")}
         onClick={() => setOpen((v) => !v)}
-        className="relative p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-colors"
+        className="relative p-2 rounded-lg text-gray-500 dark:text-zinc-400 hover:text-white hover:bg-gray-50 dark:bg-white/5 transition-colors"
       >
         <Bell className="w-5 h-5" />
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 bg-violet-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
+          <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 bg-blue-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
             {badgeLabel}
           </span>
         )}
       </button>
 
       {open && (
-        <div className="fixed sm:absolute right-2 sm:right-0 top-14 sm:top-auto sm:mt-2 w-[calc(100vw-1rem)] sm:w-80 max-w-[320px] z-[60] bg-[#13131a] border border-white/10 rounded-xl shadow-2xl overflow-hidden">
+        <div className="fixed sm:absolute right-2 sm:right-0 top-14 sm:top-auto sm:mt-2 w-[calc(100vw-1rem)] sm:w-80 max-w-[320px] z-[60] bg-[#13131a] border border-gray-200 dark:border-white/10 rounded-xl shadow-2xl overflow-hidden">
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
-            <span className="text-sm font-semibold text-white">{t("title")}</span>
+          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-white/5">
+            <span className="text-sm font-semibold text-gray-900 dark:text-white">{t("title")}</span>
             {unreadCount > 0 && (
               <button
                 onClick={markAllRead}
-                className="text-xs text-violet-400 hover:text-violet-300 transition-colors"
+                className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-300 transition-colors"
               >
                 {t("markAllRead")}
               </button>
@@ -140,13 +140,13 @@ export function NotificationCenter() {
           </div>
 
           {/* Body */}
-          <div className="max-h-[400px] overflow-y-auto divide-y divide-white/5">
+          <div className="max-h-[400px] overflow-y-auto divide-y divide-gray-200 dark:divide-white/5">
             {loading ? (
               <div className="flex items-center justify-center py-10">
-                <Loader2 className="w-5 h-5 text-violet-400 animate-spin" />
+                <Loader2 className="w-5 h-5 text-blue-600 dark:text-blue-400 animate-spin" />
               </div>
             ) : notifications.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-10 gap-2 text-zinc-500">
+              <div className="flex flex-col items-center justify-center py-10 gap-2 text-gray-500 dark:text-zinc-500">
                 <Bell className="w-8 h-8 opacity-30" />
                 <span className="text-sm">{t("empty")}</span>
               </div>
@@ -155,19 +155,19 @@ export function NotificationCenter() {
                 const icon = TYPE_ICONS[n.type] ?? "🔔";
                 const content = (
                   <div
-                    className={`flex gap-3 px-4 py-3 hover:bg-white/5 transition-colors ${
-                      !n.read ? "bg-violet-500/5" : ""
+                    className={`flex gap-3 px-4 py-3 hover:bg-gray-50 dark:bg-white/5 transition-colors ${
+                      !n.read ? "bg-blue-500/5" : ""
                     }`}
                   >
                     <span className="text-lg leading-none mt-0.5 shrink-0">{icon}</span>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
-                        <p className="text-sm font-medium text-white leading-tight line-clamp-1">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white leading-tight line-clamp-1">
                           {n.title}
                         </p>
                         <div className="flex items-center gap-1 shrink-0">
                           {n.href && (
-                            <ExternalLink className="w-3 h-3 text-zinc-500" />
+                            <ExternalLink className="w-3 h-3 text-gray-500 dark:text-zinc-500" />
                           )}
                           {!n.read && (
                             <button
@@ -177,7 +177,7 @@ export function NotificationCenter() {
                                 e.stopPropagation();
                                 markRead(n.id);
                               }}
-                              className="text-violet-400 hover:text-violet-300 transition-colors"
+                              className="text-blue-600 dark:text-blue-400 hover:text-blue-300 transition-colors"
                             >
                               <Check className="w-3.5 h-3.5" />
                             </button>
@@ -185,9 +185,9 @@ export function NotificationCenter() {
                         </div>
                       </div>
                       {n.body && (
-                        <p className="text-xs text-zinc-400 mt-0.5 line-clamp-2">{n.body}</p>
+                        <p className="text-xs text-gray-500 dark:text-zinc-400 mt-0.5 line-clamp-2">{n.body}</p>
                       )}
-                      <p className="text-[10px] text-zinc-600 mt-1">{relativeTime(n.createdAt)}</p>
+                      <p className="text-[10px] text-gray-400 dark:text-zinc-600 mt-1">{relativeTime(n.createdAt)}</p>
                     </div>
                   </div>
                 );

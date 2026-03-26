@@ -29,6 +29,7 @@ import { captureServerEvent } from "@/lib/posthog-server";
 import { OnboardingToast } from "@/components/OnboardingToast";
 import { OnboardingChecklist } from "@/components/OnboardingChecklist";
 import { EmailVerificationBanner } from "@/components/EmailVerificationBanner";
+import { PlanUsageCard } from "@/components/PlanUsageCard";
 import { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -164,11 +165,11 @@ export default async function DashboardPage() {
 
   const LOG_COLORS: Record<string, string> = {
     started: "text-emerald-400",
-    stopped: "text-zinc-400",
+    stopped: "text-gray-500 dark:text-zinc-400",
     config_changed: "text-blue-400",
-    key_generated: "text-violet-400",
+    key_generated: "text-blue-600 dark:text-blue-400",
     key_revoked: "text-red-400",
-    created: "text-violet-400",
+    created: "text-blue-600 dark:text-blue-400",
   };
 
   return (
@@ -184,88 +185,88 @@ export default async function DashboardPage() {
       {/* Live stats — refreshes every 30s and on window focus */}
       <DashboardRefresher />
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white">{t("greeting", { name: user.name?.split(" ")[0] ?? "" })}</h1>
-        <p className="text-zinc-400 mt-1">{t("subtitle")}</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t("greeting", { name: user.name?.split(" ")[0] ?? "" })}</h1>
+        <p className="text-gray-500 dark:text-zinc-400 mt-1">{t("subtitle")}</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
-        <div className="glow-border rounded-2xl p-5 bg-white/[0.02]">
+        <div className="glow-border rounded-2xl p-5 bg-white dark:bg-white/[0.02]">
           <div className="flex items-center gap-3 mb-3">
-            <InstancesIcon className="w-5 h-5 text-violet-400" />
-            <span className="text-xs text-zinc-500 uppercase tracking-wider">{t("instancesLabel")}</span>
+            <InstancesIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <span className="text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider">{t("instancesLabel")}</span>
           </div>
-          <div className="text-2xl font-bold text-white mb-2">{instanceUsage}</div>
+          <div className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{instanceUsage}</div>
           {instanceLimit ? (
             <>
-              <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden mb-1">
+              <div className="w-full h-1.5 bg-gray-200 dark:bg-white/10 rounded-full overflow-hidden mb-1">
                 <div
-                  className={`h-full rounded-full transition-all ${usagePct >= 100 ? "bg-red-500" : usagePct >= 75 ? "bg-amber-500" : "bg-violet-500"}`}
+                  className={`h-full rounded-full transition-all ${usagePct >= 100 ? "bg-red-500" : usagePct >= 75 ? "bg-amber-500" : "bg-blue-500"}`}
                   style={{ width: `${usagePct}%` }}
                 />
               </div>
-              <div className="text-xs text-zinc-500">{t("usedSlots", { used: instanceUsage, limit: instanceLimit })}</div>
+              <div className="text-xs text-gray-500 dark:text-zinc-500">{t("usedSlots", { used: instanceUsage, limit: instanceLimit })}</div>
             </>
           ) : (
-            <div className="text-xs text-zinc-500">{t("unlimited")}</div>
+            <div className="text-xs text-gray-500 dark:text-zinc-500">{t("unlimited")}</div>
           )}
         </div>
 
-        <div className="glow-border rounded-2xl p-5 bg-white/[0.02]">
+        <div className="glow-border rounded-2xl p-5 bg-white dark:bg-white/[0.02]">
           <div className="flex items-center gap-3 mb-3">
             <AnalyticsIcon className="w-5 h-5 text-emerald-400" />
-            <span className="text-xs text-zinc-500 uppercase tracking-wider">{t("runningLabel")}</span>
+            <span className="text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider">{t("runningLabel")}</span>
           </div>
-          <div className="text-2xl font-bold text-white mb-1">{runningCount}</div>
-          <div className="text-xs text-zinc-500">{t("activeNow")}</div>
+          <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{runningCount}</div>
+          <div className="text-xs text-gray-500 dark:text-zinc-500">{t("activeNow")}</div>
         </div>
 
-        <div className="glow-border rounded-2xl p-5 bg-white/[0.02]" data-testid="messages-stat">
+        <div className="glow-border rounded-2xl p-5 bg-white dark:bg-white/[0.02]" data-testid="messages-stat">
           <div className="flex items-center gap-3 mb-3">
             <MessagesIcon className="w-5 h-5 text-pink-400" />
-            <span className="text-xs text-zinc-500 uppercase tracking-wider">{t("messagesLabel")}</span>
+            <span className="text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider">{t("messagesLabel")}</span>
           </div>
-          <div className="text-2xl font-bold text-white mb-1">{totalChatMessages}</div>
-          <div className="text-xs text-zinc-500">{t("allTimeMessages")}</div>
+          <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{totalChatMessages}</div>
+          <div className="text-xs text-gray-500 dark:text-zinc-500">{t("allTimeMessages")}</div>
         </div>
 
-        <div className="glow-border rounded-2xl p-5 bg-white/[0.02]">
+        <div className="glow-border rounded-2xl p-5 bg-white dark:bg-white/[0.02]">
           <div className="flex items-center gap-3 mb-3">
             <RocketLaunchIcon className="w-5 h-5 text-blue-400" />
-            <span className="text-xs text-zinc-500 uppercase tracking-wider">{t("planLabel")}</span>
+            <span className="text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider">{t("planLabel")}</span>
           </div>
-          <div className="text-2xl font-bold text-white mb-1">{plan.label}</div>
+          <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{plan.label}</div>
           {user.plan === "free" && user.manager ? (
             <DashboardUpgrade currentPlan={user.plan} hasManager={true} />
           ) : (
-            <div className="text-xs text-zinc-500">
+            <div className="text-xs text-gray-500 dark:text-zinc-500">
               {user.plan === "free" ? t("managerBeingAssigned") : t("activeSubscription")}
             </div>
           )}
         </div>
 
-        <div className="glow-border rounded-2xl p-5 bg-white/[0.02]">
+        <div className="glow-border rounded-2xl p-5 bg-white dark:bg-white/[0.02]">
           <div className="flex items-center gap-3 mb-3">
             <HeartIcon className="w-5 h-5 text-rose-400" />
-            <span className="text-xs text-zinc-500 uppercase tracking-wider">{t("systemHealth")}</span>
+            <span className="text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider">{t("systemHealth")}</span>
           </div>
           {monitoredInstances === 0 ? (
             <>
-              <div className="text-2xl font-bold text-zinc-500 mb-1">—</div>
-              <div className="text-xs text-zinc-600">{t("noHealthData")}</div>
+              <div className="text-2xl font-bold text-gray-500 dark:text-zinc-500 mb-1">—</div>
+              <div className="text-xs text-gray-400 dark:text-zinc-600">{t("noHealthData")}</div>
             </>
           ) : allHealthy ? (
             <>
               <div className="text-lg font-bold text-emerald-400 mb-1 flex items-center gap-1.5">
                 <span>✅</span> {t("operational")}
               </div>
-              <div className="text-xs text-zinc-500">{t("instancesHealthy", { count: healthyInstances })}</div>
+              <div className="text-xs text-gray-500 dark:text-zinc-500">{t("instancesHealthy", { count: healthyInstances })}</div>
             </>
           ) : (
             <>
               <div className="text-lg font-bold text-amber-400 mb-1 flex items-center gap-1.5">
                 <span>⚠️</span> {t("attention")}
               </div>
-              <div className="text-xs text-zinc-500">
+              <div className="text-xs text-gray-500 dark:text-zinc-500">
                 {t("instancesNeedAttention", { count: needsAttention })}
               </div>
             </>
@@ -279,10 +280,20 @@ export default async function DashboardPage() {
           <AnalyticsIcon className="w-3.5 h-3.5 text-emerald-400" />
           <span className="text-xs font-medium text-emerald-400">{runningCount} running</span>
         </div>
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-violet-500/10 border border-violet-500/20">
-          <MessagesIcon className="w-3.5 h-3.5 text-violet-400" />
-          <span className="text-xs font-medium text-violet-400">{weeklyConversations} msgs this week</span>
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-500/10 border border-blue-500/20">
+          <MessagesIcon className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+          <span className="text-xs font-medium text-blue-600 dark:text-blue-400">{weeklyConversations} msgs this week</span>
         </div>
+      </div>
+
+      {/* Plan Usage Card */}
+      <div className="mb-6">
+        <PlanUsageCard
+          plan={user.plan}
+          instanceCount={instanceUsage}
+          instanceLimit={instanceLimit}
+          messageCount={totalChatMessages}
+        />
       </div>
 
       {/* Quick Setup Guide for new users */}
@@ -296,21 +307,21 @@ export default async function DashboardPage() {
       </div>
 
       {user.manager ? (
-        <div className="glow-border rounded-2xl p-5 bg-white/[0.02] mb-6 flex items-center gap-4">
-          <div className="w-10 h-10 rounded-full bg-violet-600/30 border border-violet-500/30 flex items-center justify-center shrink-0">
-            <UserIcon className="w-5 h-5 text-violet-400" />
+        <div className="glow-border rounded-2xl p-5 bg-white dark:bg-white/[0.02] mb-6 flex items-center gap-4">
+          <div className="w-10 h-10 rounded-full bg-blue-600/30 border border-blue-500/30 flex items-center justify-center shrink-0">
+            <UserIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-xs text-zinc-500 mb-0.5">{t("dedicatedManager")}</div>
-            <div className="font-semibold text-white">{user.manager.name}</div>
-            <a href={`mailto:${user.manager.email}`} className="text-sm text-violet-400 hover:text-violet-300 transition-colors">
+            <div className="text-xs text-gray-500 dark:text-zinc-500 mb-0.5">{t("dedicatedManager")}</div>
+            <div className="font-semibold text-gray-900 dark:text-white">{user.manager.name}</div>
+            <a href={`mailto:${user.manager.email}`} className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-300 transition-colors">
               {user.manager.email}
             </a>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <Link
               href="/dashboard/messages"
-              className="flex items-center gap-2 text-sm text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2.5 rounded-xl transition-colors"
+              className="flex items-center gap-2 text-sm text-gray-500 dark:text-zinc-400 hover:text-white bg-gray-50 dark:bg-white/5 hover:bg-gray-200 dark:bg-white/10 border border-gray-200 dark:border-white/10 px-4 py-2.5 rounded-xl transition-colors"
             >
               <MessagesIcon className="w-4 h-4" />
               <span className="hidden sm:inline">{t("messageBtn")}</span>
@@ -321,23 +332,23 @@ export default async function DashboardPage() {
           </div>
         </div>
       ) : (
-        <div className="glow-border rounded-2xl p-5 bg-white/[0.02] mb-6 flex items-center gap-4">
-          <div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center shrink-0">
-            <UserIcon className="w-5 h-5 text-zinc-500" />
+        <div className="glow-border rounded-2xl p-5 bg-white dark:bg-white/[0.02] mb-6 flex items-center gap-4">
+          <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-zinc-800 flex items-center justify-center shrink-0">
+            <UserIcon className="w-5 h-5 text-gray-500 dark:text-zinc-500" />
           </div>
           <div>
-            <div className="text-xs text-zinc-500 mb-0.5">{t("dedicatedManager")}</div>
-            <div className="text-sm text-zinc-400">{t("managerSoon")}</div>
+            <div className="text-xs text-gray-500 dark:text-zinc-500 mb-0.5">{t("dedicatedManager")}</div>
+            <div className="text-sm text-gray-500 dark:text-zinc-400">{t("managerSoon")}</div>
           </div>
         </div>
       )}
 
       {!allDone && (
-        <div className="glow-border rounded-2xl bg-white/[0.02] mb-6 overflow-hidden">
-          <div className="p-5 border-b border-white/5 flex items-center gap-3">
-            <HelixLogo className="w-4 h-4 text-violet-400" size={16} />
-            <h2 className="font-semibold text-white text-sm">{t("gettingStarted")}</h2>
-            <span className="ml-auto text-xs text-zinc-500">
+        <div className="glow-border rounded-2xl bg-white dark:bg-white/[0.02] mb-6 overflow-hidden">
+          <div className="p-5 border-b border-gray-200 dark:border-white/5 flex items-center gap-3">
+            <HelixLogo className="w-4 h-4 text-blue-600 dark:text-blue-400" size={16} />
+            <h2 className="font-semibold text-gray-900 dark:text-white text-sm">{t("gettingStarted")}</h2>
+            <span className="ml-auto text-xs text-gray-500 dark:text-zinc-500">
               {t("complete", { done: gettingStartedSteps.filter((s) => s.done).length, total: gettingStartedSteps.length })}
             </span>
           </div>
@@ -351,16 +362,16 @@ export default async function DashboardPage() {
                   ) : (
                     <CircleIcon className="w-4 h-4 text-zinc-700 shrink-0" />
                   )}
-                  <span className={`text-sm ${step.done ? "text-zinc-500 line-through" : "text-zinc-200"}`}>
+                  <span className={`text-sm ${step.done ? "text-gray-500 dark:text-zinc-500 line-through" : "text-gray-700 dark:text-zinc-200"}`}>
                     {label}
                   </span>
                   {!step.done && step.href && (
-                    <ArrowRightIcon className="w-3.5 h-3.5 text-violet-400 ml-auto shrink-0" />
+                    <ArrowRightIcon className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 ml-auto shrink-0" />
                   )}
                 </div>
               );
               return step.href && !step.done ? (
-                <Link key={step.key} href={step.href} className="block hover:bg-white/[0.03] transition-colors">
+                <Link key={step.key} href={step.href} className="block hover:bg-white dark:bg-white/[0.03] transition-colors">
                   {content}
                 </Link>
               ) : (
@@ -372,28 +383,28 @@ export default async function DashboardPage() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="glow-border rounded-2xl bg-white/[0.02]">
-          <div className="flex items-center justify-between p-5 border-b border-white/5">
-            <h2 className="font-semibold text-white text-sm">{t("aiInstances")}</h2>
-            <Link href="/dashboard/instances" className="text-xs text-violet-400 hover:text-violet-300 flex items-center gap-1 transition-colors">
+        <div className="glow-border rounded-2xl bg-white dark:bg-white/[0.02]">
+          <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-white/5">
+            <h2 className="font-semibold text-gray-900 dark:text-white text-sm">{t("aiInstances")}</h2>
+            <Link href="/dashboard/instances" className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors">
               {t("viewAll")} <ArrowRightIcon className="w-3 h-3" />
             </Link>
           </div>
           {user.instances.length === 0 ? (
             <div className="p-8 text-center">
               <BotIcon className="w-8 h-8 text-zinc-700 mx-auto mb-2" />
-              <p className="text-zinc-500 text-sm">{t("noInstancesYet")}</p>
-              <Link href="/dashboard/instances" className="text-violet-400 text-xs hover:text-violet-300 mt-1 inline-block">{t("createOne")}</Link>
+              <p className="text-gray-500 dark:text-zinc-500 text-sm">{t("noInstancesYet")}</p>
+              <Link href="/dashboard/instances" className="text-blue-600 dark:text-blue-400 text-xs hover:text-blue-300 mt-1 inline-block">{t("createOne")}</Link>
             </div>
           ) : (
             <div className="divide-y divide-white/5">
               {user.instances.map((instance) => (
                 <Link key={instance.id} href={`/dashboard/instances/${instance.id}`}
-                  className="flex items-center gap-3 px-5 py-3.5 hover:bg-white/[0.02] transition-colors">
-                  <BotIcon className="w-4 h-4 text-zinc-600 shrink-0" />
+                  className="flex items-center gap-3 px-5 py-3.5 hover:bg-white dark:bg-white/[0.02] transition-colors">
+                  <BotIcon className="w-4 h-4 text-gray-400 dark:text-zinc-600 shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm text-white truncate">{instance.name}</div>
-                    <div className="text-xs text-zinc-500">{msgCountMap[instance.id] ?? 0} msgs this week · {instance.type}</div>
+                    <div className="text-sm text-gray-900 dark:text-white truncate">{instance.name}</div>
+                    <div className="text-xs text-gray-500 dark:text-zinc-500">{msgCountMap[instance.id] ?? 0} msgs this week · {instance.type}</div>
                   </div>
                   <span className={`text-xs px-2 py-0.5 rounded-full ${STATUS_COLORS[instance.status]}`}>{instance.status}</span>
                 </Link>
@@ -403,36 +414,36 @@ export default async function DashboardPage() {
         </div>
 
         {/* Referral CTA */}
-        <Link href="/dashboard/referrals" className="glow-border rounded-2xl p-5 bg-white/[0.02] flex items-center gap-4 hover:bg-white/[0.04] transition-colors group">
-          <div className="w-10 h-10 rounded-xl bg-violet-600/20 border border-violet-500/20 flex items-center justify-center shrink-0">
-            <GiftIcon className="w-5 h-5 text-violet-400" />
+        <Link href="/dashboard/referrals" className="glow-border rounded-2xl p-5 bg-white dark:bg-white/[0.02] flex items-center gap-4 hover:bg-white dark:bg-white/[0.04] transition-colors group">
+          <div className="w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/20 flex items-center justify-center shrink-0">
+            <GiftIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-semibold text-white">{t("referralTitle")}</div>
-            <div className="text-xs text-zinc-500 mt-0.5">{t("referralDesc")}</div>
+            <div className="text-sm font-semibold text-gray-900 dark:text-white">{t("referralTitle")}</div>
+            <div className="text-xs text-gray-500 dark:text-zinc-500 mt-0.5">{t("referralDesc")}</div>
           </div>
-          <ArrowRightIcon className="w-4 h-4 text-zinc-600 group-hover:text-violet-400 transition-colors shrink-0" />
+          <ArrowRightIcon className="w-4 h-4 text-gray-400 dark:text-zinc-600 group-hover:text-blue-600 dark:text-blue-400 transition-colors shrink-0" />
         </Link>
 
-        <div className="glow-border rounded-2xl bg-white/[0.02]">
-          <div className="p-5 border-b border-white/5">
-            <h2 className="font-semibold text-white text-sm">{t("recentActivity")}</h2>
+        <div className="glow-border rounded-2xl bg-white dark:bg-white/[0.02]">
+          <div className="p-5 border-b border-gray-200 dark:border-white/5">
+            <h2 className="font-semibold text-gray-900 dark:text-white text-sm">{t("recentActivity")}</h2>
           </div>
           {recentLogs.length === 0 ? (
             <div className="p-8 text-center">
               <AnalyticsIcon className="w-8 h-8 text-zinc-700 mx-auto mb-2" />
-              <p className="text-zinc-500 text-sm">{t("noActivityYet")}</p>
+              <p className="text-gray-500 dark:text-zinc-500 text-sm">{t("noActivityYet")}</p>
             </div>
           ) : (
             <div className="divide-y divide-white/5">
               {recentLogs.map((log) => (
                 <div key={log.id} className="flex items-start gap-3 px-5 py-3.5">
-                  <span className={`text-sm mt-0.5 shrink-0 ${LOG_COLORS[log.event] ?? "text-zinc-400"}`}>●</span>
+                  <span className={`text-sm mt-0.5 shrink-0 ${LOG_COLORS[log.event] ?? "text-gray-500 dark:text-zinc-400"}`}>●</span>
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm text-zinc-200 capitalize">{log.event.replace(/_/g, " ")}</div>
-                    <div className="text-xs text-zinc-600">{log.instance.name}</div>
+                    <div className="text-sm text-gray-700 dark:text-zinc-200 capitalize">{log.event.replace(/_/g, " ")}</div>
+                    <div className="text-xs text-gray-400 dark:text-zinc-600">{log.instance.name}</div>
                   </div>
-                  <div className="text-xs text-zinc-600 shrink-0">{formatDate(log.createdAt)}</div>
+                  <div className="text-xs text-gray-400 dark:text-zinc-600 shrink-0">{formatDate(log.createdAt)}</div>
                 </div>
               ))}
             </div>

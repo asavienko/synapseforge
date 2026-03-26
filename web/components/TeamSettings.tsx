@@ -85,29 +85,29 @@ export function TeamSettings() {
 
   if (loading) {
     return (
-      <section className="glow-border rounded-2xl bg-white/[0.02] p-6 mb-6">
+      <section className="glow-border rounded-2xl bg-white dark:bg-white/[0.02] p-6 mb-6">
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="w-6 h-6 text-violet-400 animate-spin" />
+          <Loader2 className="w-6 h-6 text-blue-600 dark:text-blue-400 animate-spin" />
         </div>
       </section>
     );
   }
 
   return (
-    <section className="glow-border rounded-2xl bg-white/[0.02] p-6 mb-6">
+    <section className="glow-border rounded-2xl bg-white dark:bg-white/[0.02] p-6 mb-6">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center">
             <Users className="w-5 h-5 text-blue-400" />
           </div>
           <div>
-            <h2 className="font-semibold text-white">{t("title")}</h2>
-            <p className="text-sm text-zinc-500">{t("subtitle")}</p>
+            <h2 className="font-semibold text-gray-900 dark:text-white">{t("title")}</h2>
+            <p className="text-sm text-gray-500 dark:text-zinc-500">{t("subtitle")}</p>
           </div>
         </div>
         <button
           onClick={() => setShowInviteForm(true)}
-          className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2 rounded-lg text-sm font-semibold text-white"
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-600 transition-colors px-4 py-2 rounded-lg text-sm font-semibold text-gray-900 dark:text-white"
         >
           <Plus className="w-4 h-4" />
           {t("invite")}
@@ -116,28 +116,28 @@ export function TeamSettings() {
 
       {/* Invite Form */}
       {showInviteForm && (
-        <form onSubmit={sendInvite} className="mb-6 p-4 bg-white/5 border border-white/10 rounded-xl">
+        <form onSubmit={sendInvite} className="mb-6 p-4 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl">
           {error && (
             <p className="text-sm text-red-400 mb-3">{error}</p>
           )}
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1">
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 dark:text-zinc-500" />
                 <input
                   type="email"
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}
                   placeholder={t("emailPlaceholder")}
                   required
-                  className="w-full bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 transition-colors"
+                  className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-500 focus:outline-none focus:border-blue-500 transition-colors"
                 />
               </div>
             </div>
             <select
               value={inviteRole}
               onChange={(e) => setInviteRole(e.target.value as "admin" | "viewer")}
-              className="bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-violet-500 transition-colors"
+              className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 transition-colors"
             >
               <option value="viewer">{t("roleViewer")}</option>
               <option value="admin">{t("roleAdmin")}</option>
@@ -146,7 +146,7 @@ export function TeamSettings() {
               <button
                 type="submit"
                 disabled={sending}
-                className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 transition-colors px-4 py-2.5 rounded-lg text-sm font-semibold text-white"
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-600 disabled:opacity-50 transition-colors px-4 py-2.5 rounded-lg text-sm font-semibold text-gray-900 dark:text-white"
               >
                 {sending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -160,13 +160,13 @@ export function TeamSettings() {
                   setShowInviteForm(false);
                   setError("");
                 }}
-                className="p-2.5 text-zinc-400 hover:text-white transition-colors"
+                className="p-2.5 text-gray-500 dark:text-zinc-400 hover:text-white transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
           </div>
-          <p className="text-xs text-zinc-500 mt-2">
+          <p className="text-xs text-gray-500 dark:text-zinc-500 mt-2">
             <Shield className="w-3 h-3 inline mr-1" />
             {t("rolesNote")}
           </p>
@@ -178,20 +178,20 @@ export function TeamSettings() {
         {members.map((member) => (
           <div
             key={member.id}
-            className="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-lg"
+            className="flex items-center justify-between p-3 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg"
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-sm font-medium text-violet-400">
+              <div className="w-8 h-8 rounded-full bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-sm font-medium text-blue-600 dark:text-blue-400">
                 {member.email[0].toUpperCase()}
               </div>
               <div>
-                <p className="text-sm font-medium text-white">{member.email}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">{member.email}</p>
                 <div className="flex items-center gap-2">
                   <span className={cn(
                     "text-xs px-1.5 py-0.5 rounded",
                     member.role === "admin" 
-                      ? "bg-violet-500/20 text-violet-400" 
-                      : "bg-zinc-600/20 text-zinc-400"
+                      ? "bg-blue-500/20 text-blue-600 dark:text-blue-400" 
+                      : "bg-zinc-600/20 text-gray-500 dark:text-zinc-400"
                   )}>
                     {member.role}
                   </span>
@@ -205,7 +205,7 @@ export function TeamSettings() {
             {member.role !== "admin" && (
               <button
                 onClick={() => removeMember(member.id)}
-                className="p-2 text-zinc-500 hover:text-red-400 transition-colors"
+                className="p-2 text-gray-500 dark:text-zinc-500 hover:text-red-400 transition-colors"
                 title={t("removeTitle")}
               >
                 <X className="w-4 h-4" />
@@ -216,7 +216,7 @@ export function TeamSettings() {
       </div>
 
       {members.length === 0 && (
-        <div className="text-center py-8 text-zinc-500">
+        <div className="text-center py-8 text-gray-500 dark:text-zinc-500">
           <Users className="w-8 h-8 mx-auto mb-2 opacity-50" />
           <p className="text-sm">{t("noMembers")}</p>
           <p className="text-xs">{t("noMembersHint")}</p>

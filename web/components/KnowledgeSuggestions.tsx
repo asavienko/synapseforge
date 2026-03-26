@@ -85,13 +85,13 @@ export function KnowledgeSuggestions({ instanceId }: KnowledgeSuggestionsProps) 
 
   if (loading) {
     return (
-      <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
+      <div className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] p-4">
         <div className="flex items-center gap-3 mb-4">
           <Lightbulb className="w-5 h-5 text-amber-400" />
-          <h3 className="font-semibold text-white">{t("suggestions.title")}</h3>
+          <h3 className="font-semibold text-gray-900 dark:text-white">{t("suggestions.title")}</h3>
         </div>
         <div className="flex items-center justify-center py-8">
-          <Loader2 className="w-5 h-5 text-violet-400 animate-spin" />
+          <Loader2 className="w-5 h-5 text-blue-600 dark:text-blue-400 animate-spin" />
         </div>
       </div>
     );
@@ -99,10 +99,10 @@ export function KnowledgeSuggestions({ instanceId }: KnowledgeSuggestionsProps) 
 
   if (error) {
     return (
-      <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
+      <div className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] p-4">
         <div className="flex items-center gap-3 mb-4">
           <Lightbulb className="w-5 h-5 text-amber-400" />
-          <h3 className="font-semibold text-white">{t("suggestions.title")}</h3>
+          <h3 className="font-semibold text-gray-900 dark:text-white">{t("suggestions.title")}</h3>
         </div>
         <div className="flex items-center gap-2 text-red-400">
           <AlertCircle className="w-4 h-4" />
@@ -114,27 +114,27 @@ export function KnowledgeSuggestions({ instanceId }: KnowledgeSuggestionsProps) 
 
   if (suggestions.length === 0) {
     return (
-      <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
+      <div className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] p-4">
         <div className="flex items-center gap-3 mb-4">
           <Lightbulb className="w-5 h-5 text-amber-400" />
-          <h3 className="font-semibold text-white">{t("suggestions.title")}</h3>
+          <h3 className="font-semibold text-gray-900 dark:text-white">{t("suggestions.title")}</h3>
         </div>
         <div className="text-center py-6">
           <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto mb-2" />
-          <p className="text-zinc-400 text-sm">{t("suggestions.allCaughtUp")}</p>
+          <p className="text-gray-500 dark:text-zinc-400 text-sm">{t("suggestions.allCaughtUp")}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.02] overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-3 bg-amber-500/10 border-b border-white/10">
+    <div className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-3 bg-amber-500/10 border-b border-gray-200 dark:border-white/10">
         <div className="flex items-center gap-3">
           <Lightbulb className="w-5 h-5 text-amber-400" />
           <div>
-            <h3 className="font-semibold text-white">{t("suggestions.title")}</h3>
-            <p className="text-xs text-zinc-400">
+            <h3 className="font-semibold text-gray-900 dark:text-white">{t("suggestions.title")}</h3>
+            <p className="text-xs text-gray-500 dark:text-zinc-400">
               {t("suggestions.subtitle", { count: suggestions.length })}
             </p>
           </div>
@@ -147,13 +147,13 @@ export function KnowledgeSuggestions({ instanceId }: KnowledgeSuggestionsProps) 
         </div>
       </div>
 
-      <div className="divide-y divide-white/5 max-h-96 overflow-y-auto">
+      <div className="divide-y divide-gray-200 dark:divide-white/5 max-h-96 overflow-y-auto">
         {suggestions.map((suggestion) => (
           <div
             key={suggestion.id}
             className={cn(
               "p-4 transition-colors",
-              added.has(suggestion.id) ? "bg-emerald-500/5" : "hover:bg-white/[0.02]"
+              added.has(suggestion.id) ? "bg-emerald-500/5" : "hover:bg-white dark:bg-white/[0.02]"
             )}
           >
             <div className="flex items-start justify-between gap-3 mb-2">
@@ -174,28 +174,28 @@ export function KnowledgeSuggestions({ instanceId }: KnowledgeSuggestionsProps) 
                     ? t("suggestions.mediumPriority")
                     : t("suggestions.lowPriority")}
                 </span>
-                <span className="text-xs bg-violet-500/10 text-violet-300 px-2 py-0.5 rounded-full">
+                <span className="text-xs bg-blue-500/10 text-blue-600 dark:text-blue-300 px-2 py-0.5 rounded-full">
                   {suggestion.category}
                 </span>
                 {suggestion.frequency > 1 && (
-                  <span className="text-xs text-zinc-500">
+                  <span className="text-xs text-gray-500 dark:text-zinc-500">
                     {suggestion.frequency}x
                   </span>
                 )}
               </div>
               <button
                 onClick={() => dismissSuggestion(suggestion.id)}
-                className="text-zinc-500 hover:text-zinc-300 transition-colors"
+                className="text-gray-500 dark:text-zinc-500 hover:text-gray-700 dark:text-zinc-300 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <p className="text-sm text-zinc-300 mb-2">&ldquo;{suggestion.question}&rdquo;...</p>
+            <p className="text-sm text-gray-700 dark:text-zinc-300 mb-2">&ldquo;{suggestion.question}&rdquo;...</p>
 
             <div className="bg-black/20 rounded-lg p-3 mb-3">
-              <p className="text-xs text-zinc-400 mb-1">{t("suggestions.suggestedAnswer")}:</p>
-              <p className="text-sm text-zinc-300">{suggestion.suggestedAnswer}</p>
+              <p className="text-xs text-gray-500 dark:text-zinc-400 mb-1">{t("suggestions.suggestedAnswer")}:</p>
+              <p className="text-sm text-gray-700 dark:text-zinc-300">{suggestion.suggestedAnswer}</p>
             </div>
 
             {added.has(suggestion.id) ? (
@@ -207,7 +207,7 @@ export function KnowledgeSuggestions({ instanceId }: KnowledgeSuggestionsProps) 
               <button
                 onClick={() => addToKnowledgeBase(suggestion)}
                 disabled={adding === suggestion.id}
-                className="flex items-center gap-2 text-sm bg-violet-600 hover:bg-violet-500 disabled:opacity-50 disabled:cursor-not-allowed text-white px-3 py-1.5 rounded-lg transition-colors"
+                className="flex items-center gap-2 text-sm bg-blue-600 hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed text-white px-3 py-1.5 rounded-lg transition-colors"
               >
                 {adding === suggestion.id ? (
                   <>

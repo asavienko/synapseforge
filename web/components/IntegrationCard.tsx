@@ -59,14 +59,14 @@ export function IntegrationCard({
       className={`rounded-xl border p-4 transition-colors ${
         enabled
           ? "border-emerald-500/20 bg-emerald-500/5"
-          : "border-white/8 bg-white/3"
+          : "border-gray-200 dark:border-white/8 bg-white/3"
       }`}
     >
       <div className="flex items-start gap-3">
         <span className="text-2xl leading-none">{icon}</span>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <h4 className="text-sm font-semibold text-white">{name}</h4>
+            <h4 className="text-sm font-semibold text-gray-900 dark:text-white">{name}</h4>
             {enabled && (
               <span className="text-xs text-emerald-400 font-medium">
                 ✓ {t("connected")}
@@ -81,7 +81,7 @@ export function IntegrationCard({
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
           </div>
-          <p className="text-xs text-zinc-500 mt-0.5">{description}</p>
+          <p className="text-xs text-gray-500 dark:text-zinc-500 mt-0.5">{description}</p>
 
           {/* Key input */}
           <div className="flex gap-2 mt-3">
@@ -91,11 +91,11 @@ export function IntegrationCard({
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 placeholder={enabled ? t("updateKey") : placeholder}
-                className="w-full bg-black/40 border border-white/8 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 pr-8 focus:outline-none focus:border-violet-500/50"
+                className="w-full bg-gray-100 dark:bg-black/40 border border-gray-200 dark:border-white/8 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-600 pr-8 focus:outline-none focus:border-blue-500/50"
               />
               <button
                 onClick={() => setShow(!show)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-600"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-600"
                 type="button"
               >
                 {show ? (
@@ -108,7 +108,7 @@ export function IntegrationCard({
             <button
               onClick={handleSave}
               disabled={!value.trim() || saving}
-              className="px-3 py-2 text-sm bg-violet-600 hover:bg-violet-500 disabled:opacity-40 text-white rounded-lg transition-colors"
+              className="px-3 py-2 text-sm bg-blue-600 hover:bg-blue-600 disabled:opacity-40 text-white rounded-lg transition-colors"
               type="button"
             >
               {saving ? (
@@ -125,7 +125,7 @@ export function IntegrationCard({
               <button
                 onClick={handleTest}
                 disabled={testing}
-                className="text-xs text-zinc-500 hover:text-violet-400 transition-colors flex items-center gap-1"
+                className="text-xs text-gray-500 dark:text-zinc-500 hover:text-blue-400 transition-colors flex items-center gap-1"
                 type="button"
               >
                 {testing ? (
@@ -136,7 +136,7 @@ export function IntegrationCard({
                 {t("testConnection")}
               </button>
               {testResult && (
-                <p className="text-xs text-zinc-500 mt-1 font-mono truncate">
+                <p className="text-xs text-gray-500 dark:text-zinc-500 mt-1 font-mono truncate">
                   {testResult}
                 </p>
               )}

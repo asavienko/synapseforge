@@ -45,31 +45,31 @@ export function ProfileForm({ initialName, email }: ProfileFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-1">{t("fullName")}</label>
+        <label className="block text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider mb-1">{t("fullName")}</label>
         <input
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
-          className="w-full text-sm text-zinc-300 bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
+          className="w-full text-sm text-gray-700 dark:text-zinc-300 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
         />
       </div>
       <div>
-        <label className="block text-xs text-zinc-500 uppercase tracking-wider mb-1">{t("emailLabel")}</label>
-        <div className="text-sm text-zinc-500 bg-white/[0.02] border border-white/10 rounded-lg px-4 py-3">
+        <label className="block text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider mb-1">{t("emailLabel")}</label>
+        <div className="text-sm text-gray-500 dark:text-zinc-500 bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 rounded-lg px-4 py-3">
           {email}
         </div>
       </div>
 
-      <div className="pt-2 border-t border-white/5">
-        <p className="text-xs text-zinc-500 mb-3 uppercase tracking-wider">{t("changePassword")}</p>
+      <div className="pt-2 border-t border-gray-200 dark:border-white/5">
+        <p className="text-xs text-gray-500 dark:text-zinc-500 mb-3 uppercase tracking-wider">{t("changePassword")}</p>
         <div className="space-y-3">
           <input
             type="password"
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
             placeholder={t("currentPassword")}
-            className="w-full text-sm text-zinc-300 bg-white/5 border border-white/10 rounded-lg px-4 py-3 placeholder-zinc-600 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
+            className="w-full text-sm text-gray-700 dark:text-zinc-300 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-4 py-3 placeholder-zinc-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
           />
           <input
             type="password"
@@ -77,7 +77,7 @@ export function ProfileForm({ initialName, email }: ProfileFormProps) {
             onChange={(e) => setNewPassword(e.target.value)}
             placeholder={t("newPasswordPlaceholder")}
             minLength={8}
-            className="w-full text-sm text-zinc-300 bg-white/5 border border-white/10 rounded-lg px-4 py-3 placeholder-zinc-600 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
+            className="w-full text-sm text-gray-700 dark:text-zinc-300 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-4 py-3 placeholder-zinc-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
           />
         </div>
       </div>
@@ -97,7 +97,7 @@ export function ProfileForm({ initialName, email }: ProfileFormProps) {
       <button
         type="submit"
         disabled={loading}
-        className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 transition-colors px-5 py-2.5 rounded-lg text-sm font-semibold text-white"
+        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-600 disabled:opacity-50 transition-colors px-5 py-2.5 rounded-lg text-sm font-semibold text-gray-900 dark:text-white"
       >
         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
         {t("saveChanges")}

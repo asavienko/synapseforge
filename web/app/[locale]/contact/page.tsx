@@ -47,7 +47,7 @@ export default async function ContactPage() {
                   <p className="text-gray-500 dark:text-white/50 text-sm mb-2">For general inquiries and support</p>
                   <a
                     href="mailto:hello@openhelixai.com"
-                    className="text-blue-400 hover:text-blue-300 transition-colors text-sm"
+                    className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors text-sm"
                   >
                     hello@openhelixai.com
                   </a>

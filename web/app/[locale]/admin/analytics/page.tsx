@@ -62,15 +62,15 @@ function StatCard({
   icon: React.ElementType;
 }) {
   return (
-    <div className="p-6 bg-white/[0.02] border border-white/5 rounded-xl">
+    <div className="p-6 bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/5 rounded-xl">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm text-zinc-500 mb-1">{title}</p>
-          <p className="text-3xl font-bold text-white">{value}</p>
-          {subtitle && <p className="text-sm text-zinc-400 mt-1">{subtitle}</p>}
+          <p className="text-sm text-gray-500 dark:text-zinc-500 mb-1">{title}</p>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">{value}</p>
+          {subtitle && <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">{subtitle}</p>}
         </div>
-        <div className="w-10 h-10 rounded-lg bg-violet-500/10 flex items-center justify-center">
-          <Icon className="w-5 h-5 text-violet-400" />
+        <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+          <Icon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
         </div>
       </div>
     </div>
@@ -111,7 +111,7 @@ export default function AdminAnalyticsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 text-violet-400 animate-spin" />
+        <Loader2 className="w-8 h-8 text-blue-600 dark:text-blue-400 animate-spin" />
       </div>
     );
   }
@@ -129,13 +129,13 @@ export default function AdminAnalyticsPage() {
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Platform Analytics</h2>
         <div className="flex items-center gap-4">
-          <span className="text-sm text-zinc-500" title={new Date(data.generatedAt).toLocaleString()}>
+          <span className="text-sm text-gray-500 dark:text-zinc-500" title={new Date(data.generatedAt).toLocaleString()}>
             {timeAgo(data.generatedAt)}
           </span>
           <button
             onClick={fetchAnalytics}
             disabled={loading}
-            className="flex items-center gap-2 px-3 py-1.5 bg-white/5 hover:bg-white/10 disabled:opacity-50 rounded-lg text-sm text-zinc-300 transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 dark:bg-white/5 hover:bg-gray-200 dark:bg-white/10 disabled:opacity-50 rounded-lg text-sm text-gray-700 dark:text-zinc-300 transition-colors"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             Refresh
@@ -173,42 +173,42 @@ export default function AdminAnalyticsPage() {
 
       {/* Revenue Metrics */}
       {data.revenue && (
-        <div className="p-6 bg-white/[0.02] border border-white/5 rounded-xl">
+        <div className="p-6 bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/5 rounded-xl">
           <h3 className="text-lg font-semibold mb-4">Revenue Metrics (Last 30 Days)</h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="p-4 bg-white/5 rounded-lg">
-              <p className="text-sm text-zinc-500 mb-1">Checkouts Started</p>
-              <p className="text-2xl font-bold text-white">{data.revenue.checkoutStarted}</p>
+            <div className="p-4 bg-gray-50 dark:bg-white/5 rounded-lg">
+              <p className="text-sm text-gray-500 dark:text-zinc-500 mb-1">Checkouts Started</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{data.revenue.checkoutStarted}</p>
             </div>
-            <div className="p-4 bg-white/5 rounded-lg">
-              <p className="text-sm text-zinc-500 mb-1">Checkouts Completed</p>
+            <div className="p-4 bg-gray-50 dark:bg-white/5 rounded-lg">
+              <p className="text-sm text-gray-500 dark:text-zinc-500 mb-1">Checkouts Completed</p>
               <p className="text-2xl font-bold text-emerald-400">{data.revenue.checkoutCompleted}</p>
             </div>
-            <div className="p-4 bg-white/5 rounded-lg">
-              <p className="text-sm text-zinc-500 mb-1">Conversion Rate</p>
-              <p className="text-2xl font-bold text-violet-400">{data.revenue.conversionRate}%</p>
+            <div className="p-4 bg-gray-50 dark:bg-white/5 rounded-lg">
+              <p className="text-sm text-gray-500 dark:text-zinc-500 mb-1">Conversion Rate</p>
+              <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{data.revenue.conversionRate}%</p>
             </div>
           </div>
         </div>
       )}
 
       {/* Users by Plan */}
-      <div className="p-6 bg-white/[0.02] border border-white/5 rounded-xl">
+      <div className="p-6 bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/5 rounded-xl">
         <h3 className="text-lg font-semibold mb-4">Users by Plan</h3>
         <div className="space-y-3">
           {data.users.byPlan.map((plan) => (
             <div key={plan.plan} className="flex items-center justify-between">
-              <span className="text-zinc-400 capitalize">{plan.plan}</span>
+              <span className="text-gray-500 dark:text-zinc-400 capitalize">{plan.plan}</span>
               <div className="flex items-center gap-3">
-                <div className="w-32 h-2 bg-white/5 rounded-full overflow-hidden">
+                <div className="w-32 h-2 bg-gray-50 dark:bg-white/5 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-violet-500 rounded-full"
+                    className="h-full bg-blue-500 rounded-full"
                     style={{
                       width: `${(plan.count / data.users.total) * 100}%`,
                     }}
                   />
                 </div>
-                <span className="text-sm text-zinc-300 w-12 text-right">
+                <span className="text-sm text-gray-700 dark:text-zinc-300 w-12 text-right">
                   {plan.count}
                 </span>
               </div>
@@ -218,13 +218,13 @@ export default function AdminAnalyticsPage() {
       </div>
 
       {/* Instances by Status */}
-      <div className="p-6 bg-white/[0.02] border border-white/5 rounded-xl">
+      <div className="p-6 bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/5 rounded-xl">
         <h3 className="text-lg font-semibold mb-4">Instances by Status</h3>
         <div className="flex flex-wrap gap-4">
           {Object.entries(data.instances.byStatus).map(([status, count]) => (
             <div
               key={status}
-              className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg"
+              className="flex items-center gap-2 px-4 py-2 bg-gray-50 dark:bg-white/5 rounded-lg"
             >
               <span
                 className={`w-2 h-2 rounded-full ${
@@ -235,8 +235,8 @@ export default function AdminAnalyticsPage() {
                     : "bg-zinc-500"
                 }`}
               />
-              <span className="text-sm text-zinc-300 capitalize">{status}</span>
-              <span className="text-sm text-zinc-500">({count})</span>
+              <span className="text-sm text-gray-700 dark:text-zinc-300 capitalize">{status}</span>
+              <span className="text-sm text-gray-500 dark:text-zinc-500">({count})</span>
             </div>
           ))}
         </div>
@@ -244,14 +244,14 @@ export default function AdminAnalyticsPage() {
 
       {/* Top Events */}
       {data.events?.topEvents && data.events.topEvents.length > 0 && (
-        <div className="p-6 bg-white/[0.02] border border-white/5 rounded-xl">
+        <div className="p-6 bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/5 rounded-xl">
           <h3 className="text-lg font-semibold mb-4">Top Events (Last 30 Days)</h3>
           <div className="space-y-3">
             {data.events.topEvents.map((evt) => (
               <div key={evt.event} className="flex items-center justify-between">
-                <span className="text-zinc-400 font-mono text-sm">{evt.event}</span>
+                <span className="text-gray-500 dark:text-zinc-400 font-mono text-sm">{evt.event}</span>
                 <div className="flex items-center gap-3">
-                  <div className="w-32 h-2 bg-white/5 rounded-full overflow-hidden">
+                  <div className="w-32 h-2 bg-gray-50 dark:bg-white/5 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-emerald-500 rounded-full"
                       style={{
@@ -259,7 +259,7 @@ export default function AdminAnalyticsPage() {
                       }}
                     />
                   </div>
-                  <span className="text-sm text-zinc-300 w-12 text-right">
+                  <span className="text-sm text-gray-700 dark:text-zinc-300 w-12 text-right">
                     {formatNumber(evt.count)}
                   </span>
                 </div>
@@ -270,7 +270,7 @@ export default function AdminAnalyticsPage() {
       )}
 
       {/* Recent Signups */}
-      <div className="p-6 bg-white/[0.02] border border-white/5 rounded-xl">
+      <div className="p-6 bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/5 rounded-xl">
         <h3 className="text-lg font-semibold mb-4">Daily Signups (Last 30 Days)</h3>
         <div className="flex items-end gap-1 h-32">
           {data.trends.signupsByDay.slice(-30).map((day) => {
@@ -279,14 +279,14 @@ export default function AdminAnalyticsPage() {
             return (
               <div
                 key={day.date}
-                className="flex-1 bg-violet-500/20 hover:bg-violet-500/40 transition-colors rounded-t"
+                className="flex-1 bg-blue-500/20 hover:bg-blue-600/40 transition-colors rounded-t"
                 style={{ height: `${Math.max(height, 5)}%` }}
                 title={`${day.date}: ${day.count} signups`}
               />
             );
           })}
         </div>
-        <div className="flex justify-between mt-2 text-xs text-zinc-500">
+        <div className="flex justify-between mt-2 text-xs text-gray-500 dark:text-zinc-500">
           <span>{data.trends.signupsByDay[0]?.date}</span>
           <span>Today</span>
         </div>

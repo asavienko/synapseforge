@@ -79,7 +79,7 @@ export function InfrastructureTab({
   if (infraLoading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-6 h-6 text-zinc-500 animate-spin" />
+        <Loader2 className="w-6 h-6 text-gray-500 dark:text-zinc-500 animate-spin" />
       </div>
     );
   }
@@ -88,17 +88,17 @@ export function InfrastructureTab({
     <div className="space-y-6">
       {/* Provision Status */}
       {(instance.provisionStatus || instance.hasGateway) && (
-        <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
-          <div className="p-5 border-b border-white/5 flex items-center justify-between">
+        <div className="glow-border rounded-2xl bg-white dark:bg-white/[0.02] overflow-hidden">
+          <div className="p-5 border-b border-gray-200 dark:border-white/5 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Server className="w-4 h-4 text-zinc-500" />
-              <h3 className="text-sm font-semibold text-white">{t("infrastructure.vpsProvisioning")}</h3>
+              <Server className="w-4 h-4 text-gray-500 dark:text-zinc-500" />
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{t("infrastructure.vpsProvisioning")}</h3>
             </div>
             {isAdmin ? (
               <button
                 onClick={resyncConfig}
                 disabled={resyncLoading}
-                className="flex items-center gap-1.5 text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/20 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                className="flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-300 bg-blue-500/10 hover:bg-blue-600/20 border border-blue-500/20 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
               >
                 {resyncLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Zap className="w-3 h-3" />}
                 {t("infrastructure.resyncConfig")}
@@ -111,7 +111,7 @@ export function InfrastructureTab({
           </div>
           <div className="p-5 space-y-3">
             <div className="flex items-center gap-4">
-              <div className="text-xs text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.status")}</div>
+              <div className="text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.status")}</div>
               {(() => {
                 const ps = instance.provisionStatus;
                 if (ps === "provisioning") return (
@@ -135,19 +135,19 @@ export function InfrastructureTab({
                   </span>
                 );
                 return (
-                  <span className="text-sm px-3 py-1 rounded-full border font-medium bg-zinc-700/30 text-zinc-400 border-zinc-600/30">{ps ?? "Unknown"}</span>
+                  <span className="text-sm px-3 py-1 rounded-full border font-medium bg-gray-200 dark:bg-zinc-700/30 text-gray-500 dark:text-zinc-400 border-zinc-600/30">{ps ?? "Unknown"}</span>
                 );
               })()}
             </div>
             {healthData?.vpsUrl && (
               <div className="flex items-center gap-4">
-                <div className="text-xs text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.vpsUrlLabel")}</div>
-                <span className="text-sm text-zinc-300 font-mono">{healthData.vpsUrl}</span>
+                <div className="text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.vpsUrlLabel")}</div>
+                <span className="text-sm text-gray-700 dark:text-zinc-300 font-mono">{healthData.vpsUrl}</span>
               </div>
             )}
             {instance.configSynced === false && (
               <div className="flex items-center gap-4">
-                <div className="text-xs text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.config")}</div>
+                <div className="text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.config")}</div>
                 <span className="flex items-center gap-1.5 text-xs text-amber-400">
                   <AlertCircle className="w-3 h-3" /> {t("infrastructure.outOfSync")}
                 </span>
@@ -155,7 +155,7 @@ export function InfrastructureTab({
             )}
             {healthData?.liveCheck && (
               <div className="flex items-center gap-4">
-                <div className="text-xs text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.lastCheck")}</div>
+                <div className="text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.lastCheck")}</div>
                 <div className="flex items-center gap-2">
                   {healthData.liveCheck.healthy ? (
                     <>
@@ -169,14 +169,14 @@ export function InfrastructureTab({
                     </>
                   )}
                   {healthData.lastCheckedAt && (
-                    <span className="text-xs text-zinc-600">· {formatRelativeTime(healthData.lastCheckedAt)}</span>
+                    <span className="text-xs text-gray-400 dark:text-zinc-600">· {formatRelativeTime(healthData.lastCheckedAt)}</span>
                   )}
                 </div>
               </div>
             )}
             {healthData?.uptimePercentage !== null && healthData?.uptimePercentage !== undefined && (
               <div className="flex items-center gap-4">
-                <div className="text-xs text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.uptime")}</div>
+                <div className="text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.uptime")}</div>
                 <div className="flex items-center gap-2">
                   <span className={cn(
                     "text-sm font-medium",
@@ -185,7 +185,7 @@ export function InfrastructureTab({
                   )}>
                     {healthData.uptimePercentage}%
                   </span>
-                  <span className="text-xs text-zinc-600">
+                  <span className="text-xs text-gray-400 dark:text-zinc-600">
                     ({healthData.totalChecks} checks)
                   </span>
                 </div>
@@ -196,18 +196,18 @@ export function InfrastructureTab({
       )}
 
       {/* Gateway Status */}
-      <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
-        <div className="p-5 border-b border-white/5 flex items-center gap-2">
-          <Wifi className="w-4 h-4 text-zinc-500" />
-          <h3 className="text-sm font-semibold text-white">{t("infrastructure.gateway.title")}</h3>
+      <div className="glow-border rounded-2xl bg-white dark:bg-white/[0.02] overflow-hidden">
+        <div className="p-5 border-b border-gray-200 dark:border-white/5 flex items-center gap-2">
+          <Wifi className="w-4 h-4 text-gray-500 dark:text-zinc-500" />
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{t("infrastructure.gateway.title")}</h3>
         </div>
         <div className="p-5 space-y-4">
           <div className="flex items-center gap-4">
-            <div className="text-xs text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.status")}</div>
+            <div className="text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.status")}</div>
             {instance.hasGateway ? (
               <span className="text-sm px-3 py-1 rounded-full border font-medium bg-emerald-500/20 text-emerald-300 border-emerald-500/30">{t("infrastructure.gateway.connected")}</span>
             ) : (
-              <span className="text-sm px-3 py-1 rounded-full border font-medium bg-zinc-700/30 text-zinc-400 border-zinc-600/30">{t("infrastructure.gateway.notConfigured")}</span>
+              <span className="text-sm px-3 py-1 rounded-full border font-medium bg-gray-200 dark:bg-zinc-700/30 text-gray-500 dark:text-zinc-400 border-zinc-600/30">{t("infrastructure.gateway.notConfigured")}</span>
             )}
           </div>
 
@@ -215,7 +215,7 @@ export function InfrastructureTab({
             <>
               {gatewayStatus && (
                 <div className="flex items-center gap-4">
-                  <div className="text-xs text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.gateway.latency")}</div>
+                  <div className="text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.gateway.latency")}</div>
                   <div className="flex items-center gap-2">
                     {gatewayStatus.connected ? (
                       <>
@@ -235,7 +235,7 @@ export function InfrastructureTab({
                 <button
                   onClick={checkGatewayNow}
                   disabled={checkingGateway}
-                  className="flex items-center gap-2 text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/20 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                  className="flex items-center gap-2 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-300 bg-blue-500/10 hover:bg-blue-600/20 border border-blue-500/20 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
                 >
                   {checkingGateway ? (
                     <><Loader2 className="w-3 h-3 animate-spin" /> {t("infrastructure.gateway.checking")}</>
@@ -250,14 +250,14 @@ export function InfrastructureTab({
       </div>
 
       {/* Health Status */}
-      <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
-        <div className="p-5 border-b border-white/5 flex items-center gap-2">
-          <Server className="w-4 h-4 text-zinc-500" />
-          <h3 className="text-sm font-semibold text-white">{t("infrastructure.health.title")}</h3>
+      <div className="glow-border rounded-2xl bg-white dark:bg-white/[0.02] overflow-hidden">
+        <div className="p-5 border-b border-gray-200 dark:border-white/5 flex items-center gap-2">
+          <Server className="w-4 h-4 text-gray-500 dark:text-zinc-500" />
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{t("infrastructure.health.title")}</h3>
         </div>
         <div className="p-5 space-y-4">
           <div className="flex items-center gap-4">
-            <div className="text-xs text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.health.status")}</div>
+            <div className="text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.health.status")}</div>
             {(() => {
               const hs = healthData?.healthStatus ?? null;
               const colorMap: Record<string, string> = {
@@ -271,44 +271,44 @@ export function InfrastructureTab({
                 down: t("infrastructure.health.down"),
               };
               return (
-                <span className={`text-sm px-3 py-1 rounded-full border font-medium ${hs ? colorMap[hs] : "bg-zinc-700/30 text-zinc-400 border-zinc-600/30"}`}>
+                <span className={`text-sm px-3 py-1 rounded-full border font-medium ${hs ? colorMap[hs] : "bg-gray-200 dark:bg-zinc-700/30 text-gray-500 dark:text-zinc-400 border-zinc-600/30"}`}>
                   {hs ? labelMap[hs] ?? hs : t("infrastructure.health.unknown")}
                 </span>
               );
             })()}
           </div>
           <div className="flex items-center gap-4">
-            <div className="text-xs text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.health.lastChecked")}</div>
-            <span className="text-sm text-zinc-300">{healthData?.lastCheckedAt ? formatRelativeTime(healthData.lastCheckedAt) : t("infrastructure.health.noData")}</span>
+            <div className="text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.health.lastChecked")}</div>
+            <span className="text-sm text-gray-700 dark:text-zinc-300">{healthData?.lastCheckedAt ? formatRelativeTime(healthData.lastCheckedAt) : t("infrastructure.health.noData")}</span>
           </div>
           <div className="flex items-center gap-4">
-            <div className="text-xs text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.health.vpsUrl")}</div>
-            <span className="text-sm text-zinc-300 font-mono">{healthData?.vpsUrl ?? t("infrastructure.health.notConfigured")}</span>
+            <div className="text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.health.vpsUrl")}</div>
+            <span className="text-sm text-gray-700 dark:text-zinc-300 font-mono">{healthData?.vpsUrl ?? t("infrastructure.health.notConfigured")}</span>
           </div>
         </div>
-        <div className="border-t border-white/5">
+        <div className="border-t border-gray-200 dark:border-white/5">
           <div className="p-5 pb-3">
-            <h4 className="text-xs text-zinc-500 uppercase tracking-wider">{t("infrastructure.health.history")}</h4>
+            <h4 className="text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider">{t("infrastructure.health.history")}</h4>
           </div>
           {!healthData || healthData.checks.length === 0 ? (
             <div className="px-5 pb-8 text-center">
-              <p className="text-zinc-500 text-sm">{t("infrastructure.health.noData")}</p>
+              <p className="text-gray-500 dark:text-zinc-500 text-sm">{t("infrastructure.health.noData")}</p>
             </div>
           ) : (
             <MobileTableWrapper>
               <table className="w-full text-sm min-w-[500px]">
                 <thead>
-                  <tr className="text-xs text-zinc-500 border-b border-white/5">
+                  <tr className="text-xs text-gray-500 dark:text-zinc-500 border-b border-gray-200 dark:border-white/5">
                     <th className="text-left px-5 py-2">{t("infrastructure.health.time")}</th>
                     <th className="text-left px-5 py-2">{t("infrastructure.health.status")}</th>
                     <th className="text-left px-5 py-2">{t("infrastructure.health.responseTime")}</th>
                     <th className="text-left px-5 py-2">{t("infrastructure.health.error")}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-gray-200 dark:divide-white/5">
                   {healthData.checks.map((c) => (
-                    <tr key={c.id} className="hover:bg-white/[0.02]">
-                      <td className="px-5 py-2.5 text-zinc-400 text-xs">{formatRelativeTime(c.checkedAt)}</td>
+                    <tr key={c.id} className="hover:bg-white dark:bg-white/[0.02]">
+                      <td className="px-5 py-2.5 text-gray-500 dark:text-zinc-400 text-xs">{formatRelativeTime(c.checkedAt)}</td>
                       <td className="px-5 py-2.5">
                         <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                           c.status === "healthy" ? "bg-emerald-500/20 text-emerald-300" :
@@ -316,8 +316,8 @@ export function InfrastructureTab({
                           "bg-red-500/20 text-red-300"
                         }`}>{c.status}</span>
                       </td>
-                      <td className="px-5 py-2.5 text-zinc-400 text-xs">{c.responseMs != null ? `${c.responseMs}ms` : "—"}</td>
-                      <td className="px-5 py-2.5 text-zinc-500 text-xs text-wrap-safe">{c.error ?? "—"}</td>
+                      <td className="px-5 py-2.5 text-gray-500 dark:text-zinc-400 text-xs">{c.responseMs != null ? `${c.responseMs}ms` : "—"}</td>
+                      <td className="px-5 py-2.5 text-gray-500 dark:text-zinc-500 text-xs text-wrap-safe">{c.error ?? "—"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -328,32 +328,32 @@ export function InfrastructureTab({
       </div>
 
       {/* Version */}
-      <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
-        <div className="p-5 border-b border-white/5 flex items-center gap-2">
-          <Zap className="w-4 h-4 text-zinc-500" />
-          <h3 className="text-sm font-semibold text-white">{t("infrastructure.version.title")}</h3>
+      <div className="glow-border rounded-2xl bg-white dark:bg-white/[0.02] overflow-hidden">
+        <div className="p-5 border-b border-gray-200 dark:border-white/5 flex items-center gap-2">
+          <Zap className="w-4 h-4 text-gray-500 dark:text-zinc-500" />
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{t("infrastructure.version.title")}</h3>
         </div>
         <div className="p-5">
           <div className="bg-white/3 rounded-xl p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-zinc-500">{t("infrastructure.version.currentVersion")}</p>
-                <p className="text-sm text-white font-mono mt-1">{instance?.currentVersion ?? t("infrastructure.version.versionUnknown")}</p>
+                <p className="text-xs text-gray-500 dark:text-zinc-500">{t("infrastructure.version.currentVersion")}</p>
+                <p className="text-sm text-gray-900 dark:text-white font-mono mt-1">{instance?.currentVersion ?? t("infrastructure.version.versionUnknown")}</p>
               </div>
               <div className="flex items-center gap-2">
-                <label className="text-xs text-zinc-500">{t("infrastructure.version.autoUpdate")}</label>
+                <label className="text-xs text-gray-500 dark:text-zinc-500">{t("infrastructure.version.autoUpdate")}</label>
                 <button
                   onClick={toggleAutoUpdate}
-                  className={`relative w-9 h-5 rounded-full transition-colors ${instance?.autoUpdate ? "bg-violet-600" : "bg-zinc-700"}`}
+                  className={`relative w-9 h-5 rounded-full transition-colors ${instance?.autoUpdate ? "bg-blue-600" : "bg-gray-200 dark:bg-zinc-700"}`}
                 >
                   <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-transform ${instance?.autoUpdate ? "translate-x-4 left-0.5" : "translate-x-0 left-0.5"}`} />
                 </button>
               </div>
             </div>
             {currentVersionInfo?.changelog && (
-              <div className="mt-3 p-3 bg-white/3 rounded-lg border border-white/5">
-                <p className="text-xs text-zinc-500 mb-1">{t("infrastructure.version.changelog")}</p>
-                <p className="text-xs text-zinc-400 whitespace-pre-line">{currentVersionInfo.changelog}</p>
+              <div className="mt-3 p-3 bg-white/3 rounded-lg border border-gray-200 dark:border-white/5">
+                <p className="text-xs text-gray-500 dark:text-zinc-500 mb-1">{t("infrastructure.version.changelog")}</p>
+                <p className="text-xs text-gray-500 dark:text-zinc-400 whitespace-pre-line">{currentVersionInfo.changelog}</p>
               </div>
             )}
           </div>
@@ -361,26 +361,26 @@ export function InfrastructureTab({
       </div>
 
       {/* Backups */}
-      <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
-        <div className="p-5 border-b border-white/5 flex items-center gap-2">
-          <Database className="w-4 h-4 text-zinc-500" />
-          <h3 className="text-sm font-semibold text-white">{t("infrastructure.backups.title")}</h3>
+      <div className="glow-border rounded-2xl bg-white dark:bg-white/[0.02] overflow-hidden">
+        <div className="p-5 border-b border-gray-200 dark:border-white/5 flex items-center gap-2">
+          <Database className="w-4 h-4 text-gray-500 dark:text-zinc-500" />
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{t("infrastructure.backups.title")}</h3>
         </div>
         <div className="p-5 space-y-3">
           <div className="flex items-center gap-4">
-            <div className="text-xs text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.backups.lastBackup")}</div>
-            <span className="text-sm text-zinc-300">{snapshotsData?.lastBackupAt ? formatRelativeTime(snapshotsData.lastBackupAt) : t("infrastructure.backups.never")}</span>
+            <div className="text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider w-28">{t("infrastructure.backups.lastBackup")}</div>
+            <span className="text-sm text-gray-700 dark:text-zinc-300">{snapshotsData?.lastBackupAt ? formatRelativeTime(snapshotsData.lastBackupAt) : t("infrastructure.backups.never")}</span>
           </div>
         </div>
         {!snapshotsData || snapshotsData.snapshots.length === 0 ? (
           <div className="px-5 pb-8 text-center">
-            <p className="text-zinc-500 text-sm">{t("infrastructure.backups.noSnapshots")}</p>
+            <p className="text-gray-500 dark:text-zinc-500 text-sm">{t("infrastructure.backups.noSnapshots")}</p>
           </div>
         ) : (
           <MobileTableWrapper>
             <table className="w-full text-sm min-w-[600px]">
               <thead>
-                <tr className="text-xs text-zinc-500 border-b border-white/5">
+                <tr className="text-xs text-gray-500 dark:text-zinc-500 border-b border-gray-200 dark:border-white/5">
                   <th className="text-left px-5 py-2">{t("infrastructure.health.time")}</th>
                   <th className="text-left px-5 py-2">{t("infrastructure.backups.snapshotId")}</th>
                   <th className="text-left px-5 py-2">{t("infrastructure.backups.size")}</th>
@@ -388,15 +388,15 @@ export function InfrastructureTab({
                   <th className="px-5 py-2"></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-gray-200 dark:divide-white/5">
                 {snapshotsData.snapshots.map((s) => (
-                  <tr key={s.id} className="hover:bg-white/[0.02]">
-                    <td className="px-5 py-2.5 text-zinc-400 text-xs">{formatRelativeTime(s.createdAt)}</td>
-                    <td className="px-5 py-2.5 text-zinc-300 text-xs font-mono">
+                  <tr key={s.id} className="hover:bg-white dark:bg-white/[0.02]">
+                    <td className="px-5 py-2.5 text-gray-500 dark:text-zinc-400 text-xs">{formatRelativeTime(s.createdAt)}</td>
+                    <td className="px-5 py-2.5 text-gray-700 dark:text-zinc-300 text-xs font-mono">
                       <span>{s.snapshotId?.slice(0, 12)}</span>
-                      {s.label && <span className="ml-2 text-xs px-1.5 py-0.5 rounded bg-white/5 text-zinc-400">{s.label}</span>}
+                      {s.label && <span className="ml-2 text-xs px-1.5 py-0.5 rounded bg-gray-50 dark:bg-white/5 text-gray-500 dark:text-zinc-400">{s.label}</span>}
                     </td>
-                    <td className="px-5 py-2.5 text-zinc-400 text-xs">{s.sizeBytes != null ? `${(s.sizeBytes / 1024 / 1024).toFixed(1)} MB` : "—"}</td>
+                    <td className="px-5 py-2.5 text-gray-500 dark:text-zinc-400 text-xs">{s.sizeBytes != null ? `${(s.sizeBytes / 1024 / 1024).toFixed(1)} MB` : "—"}</td>
                     <td className="px-5 py-2.5">
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${s.healthy ? "bg-emerald-500/20 text-emerald-300" : "bg-red-500/20 text-red-300"}`}>{s.healthy ? t("infrastructure.health.healthy") : t("infrastructure.health.down")}</span>
                     </td>
@@ -411,13 +411,13 @@ export function InfrastructureTab({
                           >{t("infrastructure.backups.confirmRestore")}</button>
                           <button
                             onClick={() => setRestoreConfirmId(null)}
-                            className="text-xs text-zinc-500 hover:text-white touch-target"
+                            className="text-xs text-gray-500 dark:text-zinc-500 hover:text-white touch-target"
                           >{t("common.cancel")}</button>
                         </div>
                       ) : (
                         <button
                           onClick={() => setRestoreConfirmId(s.id)}
-                          className="text-xs text-zinc-500 hover:text-violet-400 transition-colors touch-target"
+                          className="text-xs text-gray-500 dark:text-zinc-500 hover:text-blue-400 transition-colors touch-target"
                         >{t("infrastructure.backups.restore")}</button>
                       )}
                     </td>
@@ -427,29 +427,29 @@ export function InfrastructureTab({
             </table>
           </MobileTableWrapper>
         )}
-        <div className="p-5 border-t border-white/5">
-          <p className="text-xs text-zinc-600">{t("infrastructure.backups.note")}</p>
+        <div className="p-5 border-t border-gray-200 dark:border-white/5">
+          <p className="text-xs text-gray-400 dark:text-zinc-600">{t("infrastructure.backups.note")}</p>
         </div>
       </div>
 
       {/* Command Queue */}
       {commands.length > 0 && (
-        <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
-          <div className="p-5 border-b border-white/5 flex items-center gap-2">
-            <Server className="w-4 h-4 text-zinc-500" />
-            <h3 className="text-sm font-semibold text-white">{t("infrastructure.commandQueue.title")}</h3>
+        <div className="glow-border rounded-2xl bg-white dark:bg-white/[0.02] overflow-hidden">
+          <div className="p-5 border-b border-gray-200 dark:border-white/5 flex items-center gap-2">
+            <Server className="w-4 h-4 text-gray-500 dark:text-zinc-500" />
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{t("infrastructure.commandQueue.title")}</h3>
           </div>
-          <div className="divide-y divide-white/5">
+          <div className="divide-y divide-gray-200 dark:divide-white/5">
             {commands.slice(0, 10).map((cmd) => (
               <div key={cmd.id} className="flex items-center justify-between px-5 py-3 text-xs">
-                <span className="text-zinc-400 font-mono">{cmd.type}</span>
+                <span className="text-gray-500 dark:text-zinc-400 font-mono">{cmd.type}</span>
                 <div className="flex items-center gap-3">
-                  {cmd.note && <span className="text-zinc-600">{cmd.note}</span>}
+                  {cmd.note && <span className="text-gray-400 dark:text-zinc-600">{cmd.note}</span>}
                   <span className={`font-medium ${
                     cmd.status === "done" ? "text-emerald-400" :
                     cmd.status === "running" ? "text-blue-400" :
                     cmd.status === "failed" ? "text-red-400" :
-                    "text-zinc-400"
+                    "text-gray-500 dark:text-zinc-400"
                   }`}>{cmd.status}</span>
                 </div>
               </div>
@@ -460,13 +460,13 @@ export function InfrastructureTab({
 
       {/* Test Chat */}
       {instance.hasGateway && instance.status === "running" && (
-        <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
-          <div className="p-5 border-b border-white/5 flex items-center gap-2">
-            <MessageSquare className="w-4 h-4 text-zinc-500" />
-            <h3 className="text-sm font-semibold text-white">{t("infrastructure.testChat.title")}</h3>
+        <div className="glow-border rounded-2xl bg-white dark:bg-white/[0.02] overflow-hidden">
+          <div className="p-5 border-b border-gray-200 dark:border-white/5 flex items-center gap-2">
+            <MessageSquare className="w-4 h-4 text-gray-500 dark:text-zinc-500" />
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{t("infrastructure.testChat.title")}</h3>
           </div>
           <div className="p-5 space-y-4">
-            <p className="text-xs text-zinc-500">{t("infrastructure.testChat.note")}</p>
+            <p className="text-xs text-gray-500 dark:text-zinc-500">{t("infrastructure.testChat.note")}</p>
             <div className="flex gap-3">
               <textarea
                 value={chatMessage}
@@ -474,12 +474,12 @@ export function InfrastructureTab({
                 onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendChatMessage(); } }}
                 placeholder={t("infrastructure.testChat.placeholder")}
                 rows={2}
-                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors resize-none"
+                className="flex-1 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-600 focus:outline-none focus:border-blue-500 transition-colors resize-none"
               />
               <button
                 onClick={sendChatMessage}
                 disabled={chatSending || !chatMessage.trim()}
-                className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 transition-colors px-4 py-3 rounded-xl text-sm font-semibold text-white self-end"
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-600 disabled:opacity-40 transition-colors px-4 py-3 rounded-xl text-sm font-semibold text-gray-900 dark:text-white self-end"
               >
                 {chatSending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 {chatSending ? t("infrastructure.testChat.sending") : t("infrastructure.testChat.send")}
@@ -492,14 +492,14 @@ export function InfrastructureTab({
               </div>
             )}
             {chatResponse && (
-              <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4">
+              <div className="bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-white/10 rounded-xl p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-zinc-500 uppercase tracking-wider">{t("infrastructure.testChat.responseLabel")}</span>
+                  <span className="text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider">{t("infrastructure.testChat.responseLabel")}</span>
                   {chatResponse.latencyMs != null && (
-                    <span className="text-xs text-zinc-600">{chatResponse.latencyMs}{t("infrastructure.gateway.ms")}</span>
+                    <span className="text-xs text-gray-400 dark:text-zinc-600">{chatResponse.latencyMs}{t("infrastructure.gateway.ms")}</span>
                   )}
                 </div>
-                <p className="text-sm text-zinc-200 whitespace-pre-wrap">{chatResponse.text}</p>
+                <p className="text-sm text-gray-700 dark:text-zinc-200 whitespace-pre-wrap">{chatResponse.text}</p>
               </div>
             )}
           </div>

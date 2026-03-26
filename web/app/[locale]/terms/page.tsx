@@ -14,7 +14,7 @@ export default async function TermsPage() {
       {/* ── Content ───────────────────────────────────────────────────────── */}
       <main className="max-w-3xl mx-auto px-6 py-16">
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-300 text-xs font-medium mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-blue-200 dark:border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-300 text-xs font-medium mb-6">
             <FileText className="w-3.5 h-3.5" />
             Legal Agreement
           </div>
@@ -66,7 +66,7 @@ export default async function TermsPage() {
                 <li>Notifying us immediately of any unauthorized access</li>
               </ul>
               <p className="mt-3">
-                <strong className="text-zinc-300">API Key Security:</strong> You are solely responsible for securing any API keys, bot tokens, or credentials
+                <strong className="text-gray-700 dark:text-zinc-300">API Key Security:</strong> You are solely responsible for securing any API keys, bot tokens, or credentials
                 associated with your account. Never share these credentials. OpenHelix AI encrypts stored credentials
                 but cannot be held liable for breaches resulting from your failure to maintain security.
               </p>
@@ -102,11 +102,11 @@ export default async function TermsPage() {
               4. Billing and Cancellation
             </h2>
             <div className="space-y-3 text-gray-500 dark:text-white/50 leading-relaxed">
-              <p><strong className="text-zinc-300">Payments:</strong> All payments are processed securely through Stripe. By subscribing to a paid plan, you authorize us to charge your payment method.</p>
-              <p><strong className="text-zinc-300">Billing Cycle:</strong> Subscriptions are billed monthly or annually in advance. You will be charged on the same date each billing period.</p>
-              <p><strong className="text-zinc-300">Cancellation:</strong> You may cancel your subscription at any time through your dashboard. Cancellation takes effect at the end of the current billing period.</p>
-              <p><strong className="text-zinc-300">Refunds:</strong> Refunds are handled on a case-by-case basis. Contact us within 14 days if you believe you are entitled to a refund.</p>
-              <p><strong className="text-zinc-300">Price Changes:</strong> We may update pricing with 30 days notice. Your continued use after changes constitutes acceptance.</p>
+              <p><strong className="text-gray-700 dark:text-zinc-300">Payments:</strong> All payments are processed securely through Stripe. By subscribing to a paid plan, you authorize us to charge your payment method.</p>
+              <p><strong className="text-gray-700 dark:text-zinc-300">Billing Cycle:</strong> Subscriptions are billed monthly or annually in advance. You will be charged on the same date each billing period.</p>
+              <p><strong className="text-gray-700 dark:text-zinc-300">Cancellation:</strong> You may cancel your subscription at any time through your dashboard. Cancellation takes effect at the end of the current billing period.</p>
+              <p><strong className="text-gray-700 dark:text-zinc-300">Refunds:</strong> Refunds are handled on a case-by-case basis. Contact us within 14 days if you believe you are entitled to a refund.</p>
+              <p><strong className="text-gray-700 dark:text-zinc-300">Price Changes:</strong> We may update pricing with 30 days notice. Your continued use after changes constitutes acceptance.</p>
             </div>
           </section>
 
@@ -114,11 +114,11 @@ export default async function TermsPage() {
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">5. Intellectual Property</h2>
             <div className="space-y-3 text-gray-500 dark:text-white/50 leading-relaxed">
               <p>
-                <strong className="text-zinc-300">Your Content:</strong> You retain all rights to the data, prompts, and configurations you create.
+                <strong className="text-gray-700 dark:text-zinc-300">Your Content:</strong> You retain all rights to the data, prompts, and configurations you create.
                 You grant us a limited license to host and process this data solely to provide the service.
               </p>
               <p>
-                <strong className="text-zinc-300">Our Content:</strong> The OpenHelix AI platform, including code, designs, logos, and trademarks,
+                <strong className="text-gray-700 dark:text-zinc-300">Our Content:</strong> The OpenHelix AI platform, including code, designs, logos, and trademarks,
                 is our property and protected by copyright and other laws.
               </p>
             </div>
@@ -160,8 +160,8 @@ export default async function TermsPage() {
           <section>
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">8. Termination</h2>
             <div className="space-y-3 text-gray-500 dark:text-white/50 leading-relaxed">
-              <p><strong className="text-zinc-300">By You:</strong> You may delete your account at any time. All data will be permanently removed within 30 days.</p>
-              <p><strong className="text-zinc-300">By Us:</strong> We may suspend or terminate your account for:</p>
+              <p><strong className="text-gray-700 dark:text-zinc-300">By You:</strong> You may delete your account at any time. All data will be permanently removed within 30 days.</p>
+              <p><strong className="text-gray-700 dark:text-zinc-300">By Us:</strong> We may suspend or terminate your account for:</p>
               <ul className="list-disc list-inside space-y-2 ml-2">
                 <li>Violation of these Terms</li>
                 <li>Fraudulent or illegal activity</li>
@@ -178,7 +178,7 @@ export default async function TermsPage() {
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">9. Governing Law</h2>
             <div className="space-y-3 text-gray-500 dark:text-white/50 leading-relaxed">
               <p>
-                These Terms shall be governed by and construed in accordance with the laws of <strong className="text-zinc-300">Spain</strong>,
+                These Terms shall be governed by and construed in accordance with the laws of <strong className="text-gray-700 dark:text-zinc-300">Spain</strong>,
                 without regard to conflict of law provisions. Any disputes shall be resolved in the courts of Alicante, Spain.
               </p>
               <p>
@@ -202,8 +202,8 @@ export default async function TermsPage() {
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">11. Contact</h2>
             <div className="space-y-3 text-gray-500 dark:text-white/50 leading-relaxed">
               <p>For questions about these Terms, contact us at:</p>
-              <p className="text-zinc-300">
-                Email: <a href="mailto:hello@openhelixai.com" className="text-blue-400 hover:text-blue-300 transition-colors">hello@openhelixai.com</a>
+              <p className="text-gray-700 dark:text-zinc-300">
+                Email: <a href="mailto:hello@openhelixai.com" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">hello@openhelixai.com</a>
               </p>
               <p className="text-sm text-gray-500 dark:text-white/40">
                 OpenHelix AI — Alicante, Spain

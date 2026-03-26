@@ -25,7 +25,7 @@ export function DeployStep({ state, updateState, configPreview, copied, error, c
       <div className="text-sm font-semibold text-white">{t("deploy.title")}</div>
 
       {/* Summary */}
-      <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4 space-y-2 text-sm">
+      <div className="bg-white/[0.03] border border-gray-200 dark:border-white/10 rounded-xl p-4 space-y-2 text-sm">
         <div className="text-xs text-zinc-500 uppercase tracking-wider mb-3">{t("deploy.summary")}</div>
         {[
           { label: "Name", value: state.name },
@@ -53,13 +53,13 @@ export function DeployStep({ state, updateState, configPreview, copied, error, c
           <span className="text-xs text-zinc-500 uppercase tracking-wider">{t("deploy.configPreview")}</span>
           <button
             onClick={copyConfig}
-            className="flex items-center gap-1.5 text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 px-2 py-1 rounded-lg transition-colors"
+            className="flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-300 bg-blue-500/10 px-2 py-1 rounded-lg transition-colors"
           >
             {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
             {copied ? t("deploy.copied") : t("deploy.copyConfig")}
           </button>
         </div>
-        <pre className="bg-black/40 border border-white/10 rounded-xl p-4 text-xs text-zinc-300 overflow-x-auto max-h-48 font-mono">
+        <pre className="bg-black/40 border border-gray-200 dark:border-white/10 rounded-xl p-4 text-xs text-zinc-300 overflow-x-auto max-h-48 font-mono">
           {configPreview}
         </pre>
       </div>
@@ -78,15 +78,15 @@ export function DeployStep({ state, updateState, configPreview, copied, error, c
               className={cn(
                 "w-full flex items-center gap-3 p-3 rounded-xl border text-left transition-colors",
                 state.deployMode === opt.value
-                  ? "border-violet-500 bg-violet-500/10"
-                  : "border-white/10 bg-white/[0.02] hover:border-white/20"
+                  ? "border-blue-500 bg-blue-500/10"
+                  : "border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] hover:border-white/20"
               )}
             >
               <div className={cn(
                 "w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0",
-                state.deployMode === opt.value ? "border-violet-500" : "border-zinc-600"
+                state.deployMode === opt.value ? "border-blue-500" : "border-zinc-600"
               )}>
-                {state.deployMode === opt.value && <div className="w-2 h-2 rounded-full bg-violet-500" />}
+                {state.deployMode === opt.value && <div className="w-2 h-2 rounded-full bg-blue-500" />}
               </div>
               <div>
                 <div className="text-sm font-medium text-white">{opt.label}</div>

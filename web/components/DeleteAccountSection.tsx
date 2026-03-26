@@ -42,14 +42,14 @@ export function DeleteAccountSection() {
     <section className="glow-border rounded-2xl bg-red-500/5 border-red-500/20 p-6 mt-6">
       <div className="flex items-center gap-3 mb-6">
         <Trash2 className="w-5 h-5 text-red-400" />
-        <h2 className="font-semibold text-white">{t("deleteAccountTitle")}</h2>
+        <h2 className="font-semibold text-gray-900 dark:text-white">{t("deleteAccountTitle")}</h2>
       </div>
 
-      <p className="text-sm text-zinc-400 mb-4">
+      <p className="text-sm text-gray-500 dark:text-zinc-400 mb-4">
         {t("deleteAccountDesc")}
       </p>
 
-      <ul className="text-sm text-zinc-500 space-y-1 mb-4 list-disc list-inside">
+      <ul className="text-sm text-gray-500 dark:text-zinc-500 space-y-1 mb-4 list-disc list-inside">
         <li>{t("deleteAllInstances")}</li>
         <li>{t("deleteAllData")}</li>
         <li>{t("cancelSubscription")}</li>
@@ -72,7 +72,7 @@ export function DeleteAccountSection() {
                 <p className="text-sm text-red-300 font-medium mb-2">
                   {t("deleteConfirmTitle")}
                 </p>
-                <p className="text-sm text-zinc-400 mb-3">
+                <p className="text-sm text-gray-500 dark:text-zinc-400 mb-3">
                   {t("deleteConfirmDesc")}
                 </p>
                 <input
@@ -80,7 +80,7 @@ export function DeleteAccountSection() {
                   value={confirmText}
                   onChange={(e) => setConfirmText(e.target.value)}
                   placeholder="DELETE"
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white placeholder-zinc-500 focus:outline-none focus:border-red-500 transition-colors"
+                  className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-4 py-2 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-500 focus:outline-none focus:border-red-500 transition-colors"
                 />
               </div>
             </div>
@@ -94,7 +94,7 @@ export function DeleteAccountSection() {
             <button
               onClick={handleDelete}
               disabled={loading}
-              className="flex items-center gap-2 bg-red-600 hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors px-4 py-2 rounded-lg text-white font-medium"
+              className="flex items-center gap-2 bg-red-600 hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors px-4 py-2 rounded-lg text-gray-900 dark:text-white font-medium"
             >
               {loading ? (
                 <>
@@ -115,7 +115,7 @@ export function DeleteAccountSection() {
                 setError("");
               }}
               disabled={loading}
-              className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors px-4 py-2 rounded-lg"
+              className="flex items-center gap-2 text-gray-500 dark:text-zinc-400 hover:text-white transition-colors px-4 py-2 rounded-lg"
             >
               <X className="w-4 h-4" />
               {t("cancel")}

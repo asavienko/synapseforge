@@ -246,12 +246,12 @@ export function KnowledgeBaseManager({ instanceId }: KnowledgeBaseManagerProps) 
     e.target.value = "";
   }
 
-  const storageColor = storage.percentage > 90 ? "bg-red-500" : storage.percentage > 70 ? "bg-amber-500" : "bg-violet-500";
+  const storageColor = storage.percentage > 90 ? "bg-red-500" : storage.percentage > 70 ? "bg-amber-500" : "bg-blue-500";
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
-        <Loader2 className="w-6 h-6 text-violet-400 animate-spin" />
+        <Loader2 className="w-6 h-6 text-blue-600 dark:text-blue-400 animate-spin" />
       </div>
     );
   }
@@ -259,17 +259,17 @@ export function KnowledgeBaseManager({ instanceId }: KnowledgeBaseManagerProps) 
   return (
     <div className="space-y-6">
       {/* Storage usage bar */}
-      <div className="bg-white/[0.02] border border-white/10 rounded-xl p-4">
+      <div className="bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 rounded-xl p-4">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <Database className="w-4 h-4 text-zinc-400" />
-            <span className="text-sm text-zinc-300">{t("knowledge.storageUsed")}</span>
+            <Database className="w-4 h-4 text-gray-500 dark:text-zinc-400" />
+            <span className="text-sm text-gray-700 dark:text-zinc-300">{t("knowledge.storageUsed")}</span>
           </div>
-          <span className="text-sm text-zinc-400">
+          <span className="text-sm text-gray-500 dark:text-zinc-400">
             {formatFileSize(storage.used)} / {formatFileSize(storage.limit)} ({storage.percentage}%)
           </span>
         </div>
-        <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+        <div className="h-2 bg-gray-50 dark:bg-white/5 rounded-full overflow-hidden">
           <div
             className={cn("h-full rounded-full transition-all duration-500", storageColor)}
             style={{ width: `${Math.min(storage.percentage, 100)}%` }}
@@ -298,17 +298,17 @@ export function KnowledgeBaseManager({ instanceId }: KnowledgeBaseManagerProps) 
 
       {/* Upload progress */}
       {uploadProgress && (
-        <div className="flex items-center gap-3 bg-violet-500/10 border border-violet-500/20 rounded-xl px-4 py-3">
+        <div className="flex items-center gap-3 bg-blue-500/10 border border-blue-500/20 rounded-xl px-4 py-3">
           {uploadProgress.status === "error" ? (
             <AlertCircle className="w-4 h-4 text-red-400" />
           ) : uploadProgress.status === "done" ? (
             <CheckCircle className="w-4 h-4 text-emerald-400" />
           ) : (
-            <Loader2 className="w-4 h-4 text-violet-400 animate-spin" />
+            <Loader2 className="w-4 h-4 text-blue-600 dark:text-blue-400 animate-spin" />
           )}
           <div className="flex-1">
-            <p className="text-sm text-zinc-300 truncate">{uploadProgress.filename}</p>
-            <p className="text-xs text-zinc-500">
+            <p className="text-sm text-gray-700 dark:text-zinc-300 truncate">{uploadProgress.filename}</p>
+            <p className="text-xs text-gray-500 dark:text-zinc-500">
               {uploadProgress.status === "uploading" && t("knowledge.statusUploading")}
               {uploadProgress.status === "processing" && t("knowledge.statusProcessing")}
               {uploadProgress.status === "done" && t("knowledge.statusDone")}
@@ -323,8 +323,8 @@ export function KnowledgeBaseManager({ instanceId }: KnowledgeBaseManagerProps) 
         className={cn(
           "relative border-2 border-dashed rounded-2xl p-8 transition-all duration-200",
           dragActive
-            ? "border-violet-500 bg-violet-500/10"
-            : "border-white/10 bg-white/[0.02] hover:border-white/20",
+            ? "border-blue-500 bg-blue-500/10"
+            : "border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] hover:border-gray-300 dark:border-white/20",
           storage.percentage >= 100 && "opacity-50 pointer-events-none"
         )}
         onDragEnter={handleDrag}
@@ -343,17 +343,17 @@ export function KnowledgeBaseManager({ instanceId }: KnowledgeBaseManagerProps) 
         />
         
         <div className="flex flex-col items-center text-center">
-          <div className="w-16 h-16 rounded-2xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center mb-4">
-            <Upload className="w-8 h-8 text-violet-400" />
+          <div className="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-4">
+            <Upload className="w-8 h-8 text-blue-600 dark:text-blue-400" />
           </div>
           
-          <h3 className="text-white font-medium mb-2">
+          <h3 className="text-gray-900 dark:text-white font-medium mb-2">
             {storage.percentage >= 100 
               ? t("knowledge.storageFullTitle") 
               : t("knowledge.dropzoneTitle")}
           </h3>
           
-          <p className="text-sm text-zinc-500 mb-4 max-w-sm">
+          <p className="text-sm text-gray-500 dark:text-zinc-500 mb-4 max-w-sm">
             {storage.percentage >= 100 
               ? t("knowledge.storageFullDesc")
               : t("knowledge.dropzoneDesc", { max: "10MB" })}
@@ -363,7 +363,7 @@ export function KnowledgeBaseManager({ instanceId }: KnowledgeBaseManagerProps) 
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-sm font-medium text-white transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-600 disabled:opacity-50 text-sm font-medium text-gray-900 dark:text-white transition-colors"
             >
               {uploading ? (
                 <>
@@ -379,7 +379,7 @@ export function KnowledgeBaseManager({ instanceId }: KnowledgeBaseManagerProps) 
             </button>
           )}
           
-          <p className="text-xs text-zinc-600 mt-4">
+          <p className="text-xs text-gray-400 dark:text-zinc-600 mt-4">
             {t("knowledge.supportedTypes", { types: "PDF, DOCX, TXT, MD" })}
           </p>
         </div>
@@ -388,20 +388,20 @@ export function KnowledgeBaseManager({ instanceId }: KnowledgeBaseManagerProps) 
       {/* Documents list */}
       {documents.length > 0 ? (
         <div className="space-y-2">
-          <h3 className="text-sm font-medium text-zinc-300 mb-3">
+          <h3 className="text-sm font-medium text-gray-700 dark:text-zinc-300 mb-3">
             {t("knowledge.documentsTitle")} ({documents.length})
           </h3>
           
           {documents.map((doc) => (
             <div
               key={doc.id}
-              className="flex items-center justify-between gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3 hover:border-white/20 transition-colors"
+              className="flex items-center justify-between gap-3 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 hover:border-gray-300 dark:border-white/20 transition-colors"
             >
               <div className="flex items-center gap-3 min-w-0">
                 <span className="text-2xl shrink-0">{getFileIcon(doc.type, doc.filename)}</span>
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-white truncate">{doc.filename}</p>
-                  <div className="flex items-center gap-2 text-xs text-zinc-500">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{doc.filename}</p>
+                  <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-zinc-500">
                     <span>{formatFileSize(doc.fileSize)}</span>
                     <span>·</span>
                     <span>{formatDate(doc.createdAt)}</span>
@@ -438,7 +438,7 @@ export function KnowledgeBaseManager({ instanceId }: KnowledgeBaseManagerProps) 
                 
                 <button
                   onClick={() => deleteDocument(doc.id, doc.filename)}
-                  className="text-zinc-500 hover:text-red-400 transition-colors p-1.5 rounded-lg hover:bg-white/5"
+                  className="text-gray-500 dark:text-zinc-500 hover:text-red-400 transition-colors p-1.5 rounded-lg hover:bg-gray-50 dark:bg-white/5"
                   title={t("knowledge.delete")}
                 >
                   <Trash2 className="w-4 h-4" />
@@ -448,9 +448,9 @@ export function KnowledgeBaseManager({ instanceId }: KnowledgeBaseManagerProps) 
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 border border-dashed border-white/10 rounded-xl">
+        <div className="text-center py-12 border border-dashed border-gray-200 dark:border-white/10 rounded-xl">
           <FileText className="w-12 h-12 text-zinc-700 mx-auto mb-3" />
-          <p className="text-zinc-500 text-sm">{t("knowledge.empty")}</p>
+          <p className="text-gray-500 dark:text-zinc-500 text-sm">{t("knowledge.empty")}</p>
           <p className="text-zinc-600 text-xs mt-1">{t("knowledge.emptyHint")}</p>
         </div>
       )}

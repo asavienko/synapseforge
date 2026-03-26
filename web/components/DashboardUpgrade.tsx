@@ -42,7 +42,7 @@ export function DashboardUpgrade({ currentPlan }: { currentPlan: string; hasMana
       <button
         onClick={requestUpgrade}
         disabled={loading}
-        className="text-xs text-violet-400 hover:text-violet-300 disabled:opacity-50 transition-colors flex items-center gap-1 mt-0.5"
+        className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-300 disabled:opacity-50 transition-colors flex items-center gap-1 mt-0.5"
       >
         {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : <ArrowUpRight className="w-3 h-3" />}
         {loading ? t("sendingUpgrade") : t("requestUpgradePro")}

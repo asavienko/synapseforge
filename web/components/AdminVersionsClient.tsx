@@ -102,15 +102,15 @@ export function AdminVersionsClient() {
   if (loading)
     return (
       <div className="flex justify-center py-20">
-        <Loader2 className="w-6 h-6 text-zinc-500 animate-spin" />
+        <Loader2 className="w-6 h-6 text-gray-500 dark:text-zinc-500 animate-spin" />
       </div>
     );
 
   return (
     <div className="space-y-8">
       {/* Publish new version */}
-      <div className="bg-[#12121a] border border-white/8 rounded-2xl p-6">
-        <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
+      <div className="bg-white dark:bg-[#12121a] border border-white/8 rounded-2xl p-6">
+        <h2 className="text-gray-900 dark:text-white font-semibold mb-4 flex items-center gap-2">
           <Plus className="w-4 h-4" /> {t("publishVersion")}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -120,7 +120,7 @@ export function AdminVersionsClient() {
             onChange={(e) =>
               setPublishForm((p) => ({ ...p, tag: e.target.value }))
             }
-            className="bg-black/40 border border-white/8 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500/50"
+            className="bg-black/40 border border-white/8 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-600 focus:outline-none focus:border-blue-500/50"
           />
           <input
             placeholder={t("imageRefPlaceholder")}
@@ -128,7 +128,7 @@ export function AdminVersionsClient() {
             onChange={(e) =>
               setPublishForm((p) => ({ ...p, imageRef: e.target.value }))
             }
-            className="bg-black/40 border border-white/8 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500/50 sm:col-span-2"
+            className="bg-black/40 border border-white/8 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-600 focus:outline-none focus:border-blue-500/50 sm:col-span-2"
           />
           <textarea
             placeholder={t("changelogPlaceholder")}
@@ -137,7 +137,7 @@ export function AdminVersionsClient() {
               setPublishForm((p) => ({ ...p, changelog: e.target.value }))
             }
             rows={3}
-            className="bg-black/40 border border-white/8 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500/50 sm:col-span-2 resize-none"
+            className="bg-black/40 border border-white/8 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-600 focus:outline-none focus:border-blue-500/50 sm:col-span-2 resize-none"
           />
           <div className="flex items-center gap-2">
             <input
@@ -148,14 +148,14 @@ export function AdminVersionsClient() {
                 setPublishForm((p) => ({ ...p, stable: e.target.checked }))
               }
             />
-            <label htmlFor="stable" className="text-sm text-zinc-400">
+            <label htmlFor="stable" className="text-sm text-gray-500 dark:text-zinc-400">
               {t("markStable")}
             </label>
           </div>
           <button
             onClick={publishVersion}
             disabled={publishing || !publishForm.tag || !publishForm.imageRef}
-            className="px-4 py-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 text-white text-sm font-medium rounded-lg transition-colors"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-600 disabled:opacity-40 text-white text-sm font-medium rounded-lg transition-colors"
           >
             {publishing ? (
               <Loader2 className="w-4 h-4 animate-spin mx-auto" />
@@ -167,8 +167,8 @@ export function AdminVersionsClient() {
       </div>
 
       {/* Version list */}
-      <div className="bg-[#12121a] border border-white/8 rounded-2xl p-6">
-        <h2 className="text-white font-semibold mb-4">{t("versions")}</h2>
+      <div className="bg-white dark:bg-[#12121a] border border-white/8 rounded-2xl p-6">
+        <h2 className="text-gray-900 dark:text-white font-semibold mb-4">{t("versions")}</h2>
         {versions.length === 0 ? (
           <p className="text-zinc-600 text-sm">{t("noVersions")}</p>
         ) : (
@@ -176,7 +176,7 @@ export function AdminVersionsClient() {
             {versions.map((v) => (
               <div
                 key={v.id}
-                className="flex items-center justify-between p-3 bg-white/[0.03] rounded-xl border border-white/5"
+                className="flex items-center justify-between p-3 bg-white dark:bg-white/[0.03] rounded-xl border border-gray-200 dark:border-white/5"
               >
                 <div className="flex items-center gap-3">
                   <span className="font-mono text-white text-sm">{v.tag}</span>
@@ -190,7 +190,7 @@ export function AdminVersionsClient() {
                       {t("deprecatedLabel")}
                     </span>
                   )}
-                  <span className="text-xs text-zinc-600 font-mono">
+                  <span className="text-xs text-gray-400 dark:text-zinc-600 font-mono">
                     {versionGroups[v.tag]
                       ? t("instanceCount", { count: versionGroups[v.tag] })
                       : ""}
@@ -202,7 +202,7 @@ export function AdminVersionsClient() {
                     className={`text-xs px-2 py-1 rounded border transition-colors ${
                       v.stable
                         ? "border-emerald-500/30 text-emerald-400 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30"
-                        : "border-white/10 text-zinc-500 hover:border-emerald-500/30 hover:text-emerald-400"
+                        : "border-gray-200 dark:border-white/10 text-gray-500 dark:text-zinc-500 hover:border-emerald-500/30 hover:text-emerald-400"
                     }`}
                   >
                     {v.stable ? t("unmarkStable") : t("markStable")}
@@ -213,7 +213,7 @@ export function AdminVersionsClient() {
                     }
                     className={`text-xs px-2 py-1 rounded border transition-colors ${
                       v.deprecated
-                        ? "border-white/10 text-zinc-500"
+                        ? "border-gray-200 dark:border-white/10 text-gray-500 dark:text-zinc-500"
                         : "border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
                     }`}
                   >
@@ -227,15 +227,15 @@ export function AdminVersionsClient() {
       </div>
 
       {/* Instance version coverage */}
-      <div className="bg-[#12121a] border border-white/8 rounded-2xl p-6">
+      <div className="bg-white dark:bg-[#12121a] border border-white/8 rounded-2xl p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-white font-semibold">{t("instanceCoverage")}</h2>
+          <h2 className="text-gray-900 dark:text-white font-semibold">{t("instanceCoverage")}</h2>
           {selectedInstanceIds.length > 0 && (
             <div className="flex items-center gap-2">
               <select
                 value={bulkUpdateTag}
                 onChange={(e) => setBulkUpdateTag(e.target.value)}
-                className="bg-black/40 border border-white/8 rounded-lg px-2 py-1.5 text-sm text-white"
+                className="bg-black/40 border border-white/8 rounded-lg px-2 py-1.5 text-sm text-gray-900 dark:text-white"
               >
                 <option value="">{t("selectVersion")}</option>
                 {versions
@@ -249,7 +249,7 @@ export function AdminVersionsClient() {
               <button
                 onClick={bulkUpdate}
                 disabled={bulkUpdating || !bulkUpdateTag}
-                className="text-xs px-3 py-1.5 bg-violet-600 text-white rounded-lg disabled:opacity-40"
+                className="text-xs px-3 py-1.5 bg-blue-600 text-white rounded-lg disabled:opacity-40"
               >
                 {bulkUpdating ? (
                   <Loader2 className="w-3 h-3 animate-spin" />
@@ -266,18 +266,18 @@ export function AdminVersionsClient() {
           <div className="space-y-2 mb-4">
             {Object.entries(versionGroups).map(([version, count]) => (
               <div key={version} className="flex items-center gap-3">
-                <span className="text-xs font-mono text-zinc-400 w-24 shrink-0">
+                <span className="text-xs font-mono text-gray-500 dark:text-zinc-400 w-24 shrink-0">
                   {version}
                 </span>
-                <div className="flex-1 h-2 bg-white/5 rounded-full overflow-hidden">
+                <div className="flex-1 h-2 bg-gray-50 dark:bg-white/5 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-violet-500 rounded-full"
+                    className="h-full bg-blue-500 rounded-full"
                     style={{
                       width: `${(count / instances.length) * 100}%`,
                     }}
                   />
                 </div>
-                <span className="text-xs text-zinc-600">
+                <span className="text-xs text-gray-400 dark:text-zinc-600">
                   {count}/{instances.length}
                 </span>
               </div>
@@ -290,7 +290,7 @@ export function AdminVersionsClient() {
           {instances.map((inst) => (
             <div
               key={inst.id}
-              className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/[0.03] transition-colors"
+              className="flex items-center gap-3 p-2 rounded-lg hover:bg-white dark:bg-white/[0.03] transition-colors"
             >
               <input
                 type="checkbox"
@@ -304,20 +304,20 @@ export function AdminVersionsClient() {
                 }
                 className="rounded"
               />
-              <span className="text-sm text-white flex-1 truncate">
+              <span className="text-sm text-gray-900 dark:text-white flex-1 truncate">
                 {inst.name}
               </span>
-              <span className="text-xs font-mono text-zinc-500">
+              <span className="text-xs font-mono text-gray-500 dark:text-zinc-500">
                 {inst.user?.email}
               </span>
-              <span className="text-xs font-mono text-zinc-400">
+              <span className="text-xs font-mono text-gray-500 dark:text-zinc-400">
                 {inst.currentVersion || "unknown"}
               </span>
               <span
                 className={`text-xs ${
                   inst.status === "running"
                     ? "text-emerald-400"
-                    : "text-zinc-600"
+                    : "text-gray-400 dark:text-zinc-600"
                 }`}
               >
                 {inst.status}

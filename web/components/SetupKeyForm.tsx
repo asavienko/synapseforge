@@ -83,7 +83,7 @@ export function SetupKeyForm() {
   return (
     <div className="space-y-4">
       {/* Provider tabs */}
-      <div className="flex gap-1 p-1 bg-white/5 rounded-xl">
+      <div className="flex gap-1 p-1 bg-gray-50 dark:bg-white/5 rounded-xl">
         {(["openai", "anthropic", "openrouter"] as Provider[]).map((p) => (
           <button
             key={p}
@@ -91,8 +91,8 @@ export function SetupKeyForm() {
             onClick={() => { setProvider(p); setKeyValue(""); setError(""); }}
             className={`flex-1 text-sm py-2 rounded-lg font-medium transition-colors ${
               provider === p
-                ? "bg-violet-600 text-white"
-                : "text-zinc-500 hover:text-zinc-300"
+                ? "bg-blue-600 text-white"
+                : "text-gray-500 dark:text-zinc-500 hover:text-gray-700 dark:text-zinc-300"
             }`}
           >
             {t(PROVIDER_LABEL_KEY[p])}
@@ -108,7 +108,7 @@ export function SetupKeyForm() {
         onKeyDown={(e) => { if (e.key === "Enter") handleSave(); }}
         placeholder={PROVIDER_PLACEHOLDER[provider]}
         autoComplete="off"
-        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors"
+        className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-600 focus:outline-none focus:border-blue-500 transition-colors"
       />
 
       {/* Error */}
@@ -121,7 +121,7 @@ export function SetupKeyForm() {
         type="button"
         onClick={handleSave}
         disabled={saving || saved || !keyValue.trim()}
-        className="w-full flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors px-6 py-3 rounded-xl text-sm font-semibold text-white"
+        className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors px-6 py-3 rounded-xl text-sm font-semibold text-gray-900 dark:text-white"
       >
         {saving ? (
           <>
@@ -140,7 +140,7 @@ export function SetupKeyForm() {
 
       {/* Alt providers note */}
       {provider === "openai" && (
-        <p className="text-xs text-zinc-500 text-center">{t("altProviders")}</p>
+        <p className="text-xs text-gray-500 dark:text-zinc-500 text-center">{t("altProviders")}</p>
       )}
     </div>
   );

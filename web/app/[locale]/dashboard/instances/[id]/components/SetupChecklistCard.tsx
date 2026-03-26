@@ -36,15 +36,15 @@ export function SetupChecklistCard({ instance, credentials, onGoToCredentials, i
   // Show provisioning state
   if (isProvisioning) {
     return (
-      <div className="rounded-2xl bg-violet-500/10 border border-violet-500/20 p-4 mb-4 flex items-center gap-3">
-        <div className="w-8 h-8 rounded-full bg-violet-500/20 flex items-center justify-center shrink-0">
-          <Loader2 className="w-4 h-4 text-violet-400 animate-spin" />
+      <div className="rounded-2xl bg-blue-500/10 border border-blue-500/20 p-4 mb-4 flex items-center gap-3">
+        <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
+          <Loader2 className="w-4 h-4 text-blue-600 dark:text-blue-400 animate-spin" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-violet-300">Provisioning your AI server...</p>
-          <p className="text-xs text-violet-400/70 mt-0.5">This takes 2-3 minutes. You&apos;ll get a notification when it&apos;s ready.</p>
+          <p className="text-sm font-semibold text-blue-600 dark:text-blue-300">Provisioning your AI server...</p>
+          <p className="text-xs text-blue-600 dark:text-blue-400/70 mt-0.5">This takes 2-3 minutes. You&apos;ll get a notification when it&apos;s ready.</p>
         </div>
-        <button onClick={dismiss} className="text-violet-600 hover:text-violet-400 transition-colors shrink-0">
+        <button onClick={dismiss} className="text-blue-600 hover:text-blue-600 dark:text-blue-400 transition-colors shrink-0">
           <X className="w-4 h-4" />
         </button>
       </div>
@@ -71,7 +71,7 @@ export function SetupChecklistCard({ instance, credentials, onGoToCredentials, i
             {!llmReady && (
               <button
                 onClick={onGoToCredentials}
-                className="flex-1 text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 px-3 py-2 rounded-lg transition-colors"
+                className="flex-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-600 dark:text-blue-300 bg-blue-500/10 px-3 py-2 rounded-lg transition-colors"
               >
                 Add API key →
               </button>
@@ -79,7 +79,7 @@ export function SetupChecklistCard({ instance, credentials, onGoToCredentials, i
             {!hasChannel && (
               <button
                 onClick={onGoToCredentials}
-                className="flex-1 text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 px-3 py-2 rounded-lg transition-colors"
+                className="flex-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-600 dark:text-blue-300 bg-blue-500/10 px-3 py-2 rounded-lg transition-colors"
               >
                 Connect channel →
               </button>
@@ -128,7 +128,7 @@ export function SetupChecklistCard({ instance, credentials, onGoToCredentials, i
     <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden mb-4">
       <div className="p-4 border-b border-white/5 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Zap className="w-4 h-4 text-violet-400" />
+          <Zap className="w-4 h-4 text-blue-600 dark:text-blue-400" />
           <h3 className="text-sm font-semibold text-white">Get your agent live</h3>
           <span className="text-xs text-zinc-500">
             {items.filter((i) => i.done).length}/{items.length} complete
@@ -157,7 +157,7 @@ export function SetupChecklistCard({ instance, credentials, onGoToCredentials, i
             {!item.done && item.action && (
               <button
                 onClick={item.action}
-                className="text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 px-2 py-1 rounded-lg transition-colors shrink-0"
+                className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-600 dark:text-blue-300 bg-blue-500/10 px-2 py-1 rounded-lg transition-colors shrink-0"
               >
                 {item.actionLabel}
               </button>

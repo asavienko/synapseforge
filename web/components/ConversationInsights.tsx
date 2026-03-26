@@ -55,7 +55,7 @@ const INTENT_COLORS: Record<string, string> = {
   booking: "bg-emerald-500",
   pricing: "bg-blue-500",
   complaint: "bg-red-500",
-  faq: "bg-violet-500",
+  faq: "bg-blue-500",
   out_of_scope: "bg-amber-500",
   other: "bg-zinc-500",
 };
@@ -93,7 +93,7 @@ function getTrendIcon(change: number) {
 function getTrendColor(change: number): string {
   if (change > 0) return "text-emerald-400";
   if (change < 0) return "text-red-400";
-  return "text-zinc-400";
+  return "text-gray-500 dark:text-zinc-400";
 }
 
 export function ConversationInsights({ instanceId }: ConversationInsightsProps) {
@@ -137,7 +137,7 @@ export function ConversationInsights({ instanceId }: ConversationInsightsProps) 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-6 h-6 text-zinc-500 animate-spin" />
+        <Loader2 className="w-6 h-6 text-gray-500 dark:text-zinc-500 animate-spin" />
       </div>
     );
   }
@@ -153,7 +153,7 @@ export function ConversationInsights({ instanceId }: ConversationInsightsProps) 
 
   if (!data || data.totalMessages === 0) {
     return (
-      <div className="text-center py-12 text-zinc-500">
+      <div className="text-center py-12 text-gray-500 dark:text-zinc-500">
         <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-30" />
         <p>{t("empty")}</p>
       </div>
@@ -172,8 +172,8 @@ export function ConversationInsights({ instanceId }: ConversationInsightsProps) 
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-white">{t("title")}</h2>
-        <span className="text-xs text-zinc-500">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t("title")}</h2>
+        <span className="text-xs text-gray-500 dark:text-zinc-500">
           Updated {formatRelativeTime(lastUpdated.toISOString())}
         </span>
       </div>
@@ -181,8 +181,8 @@ export function ConversationInsights({ instanceId }: ConversationInsightsProps) 
       {/* Stats Row */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {/* Conversation Quality */}
-        <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4">
-          <div className="flex items-center gap-2 text-zinc-400 text-sm mb-2">
+        <div className="bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-white/10 rounded-xl p-4">
+          <div className="flex items-center gap-2 text-gray-500 dark:text-zinc-400 text-sm mb-2">
             <MessageSquare className="w-4 h-4" />
             {t("quality")}
           </div>
@@ -194,18 +194,18 @@ export function ConversationInsights({ instanceId }: ConversationInsightsProps) 
             )}>
               {data.conversationQuality}%
             </span>
-            <span className="text-zinc-500 text-sm mb-1">
+            <span className="text-gray-500 dark:text-zinc-500 text-sm mb-1">
               answered
             </span>
           </div>
-          <div className="text-xs text-zinc-500 mt-1">
+          <div className="text-xs text-gray-500 dark:text-zinc-500 mt-1">
             {data.answeredCount} / {data.totalMessages} messages
           </div>
         </div>
 
         {/* Unanswered Questions */}
-        <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4">
-          <div className="flex items-center gap-2 text-zinc-400 text-sm mb-2">
+        <div className="bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-white/10 rounded-xl p-4">
+          <div className="flex items-center gap-2 text-gray-500 dark:text-zinc-400 text-sm mb-2">
             <HelpCircle className="w-4 h-4" />
             {t("unanswered")}
           </div>
@@ -217,11 +217,11 @@ export function ConversationInsights({ instanceId }: ConversationInsightsProps) 
             )}>
               {data.unansweredCount}
             </span>
-            <span className="text-zinc-500 text-sm mb-1">
+            <span className="text-gray-500 dark:text-zinc-500 text-sm mb-1">
               {unansweredTrend > 0 && `(${unansweredTrend}%)`}
             </span>
           </div>
-          <div className="text-xs text-zinc-500 mt-1">
+          <div className="text-xs text-gray-500 dark:text-zinc-500 mt-1">
             {data.unansweredCount === 0 
               ? "All questions answered" 
               : `${data.unansweredCount} need attention`}
@@ -229,25 +229,25 @@ export function ConversationInsights({ instanceId }: ConversationInsightsProps) 
         </div>
 
         {/* Total Messages */}
-        <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4">
-          <div className="flex items-center gap-2 text-zinc-400 text-sm mb-2">
+        <div className="bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-white/10 rounded-xl p-4">
+          <div className="flex items-center gap-2 text-gray-500 dark:text-zinc-400 text-sm mb-2">
             <MessageSquare className="w-4 h-4" />
             Total Messages
           </div>
           <div className="flex items-end gap-2">
-            <span className="text-3xl font-bold text-white">
+            <span className="text-3xl font-bold text-gray-900 dark:text-white">
               {data.totalMessages.toLocaleString()}
             </span>
           </div>
-          <div className="text-xs text-zinc-500 mt-1">
+          <div className="text-xs text-gray-500 dark:text-zinc-500 mt-1">
             All time conversations
           </div>
         </div>
       </div>
 
       {/* Intent Breakdown */}
-      <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4">
-        <h3 className="text-sm font-medium text-white mb-4">{t("intentBreakdown")}</h3>
+      <div className="bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-white/10 rounded-xl p-4">
+        <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-4">{t("intentBreakdown")}</h3>
         <div className="space-y-3">
           {Object.entries(data.intentBreakdown)
             .filter(([_, count]) => count > 0)
@@ -258,17 +258,17 @@ export function ConversationInsights({ instanceId }: ConversationInsightsProps) 
               
               return (
                 <div key={intent} className="flex items-center gap-3">
-                  <div className="w-24 text-sm text-zinc-400 shrink-0">
+                  <div className="w-24 text-sm text-gray-500 dark:text-zinc-400 shrink-0">
                     {INTENT_LABELS[intent] || intent}
                   </div>
-                  <div className="flex-1 h-6 bg-white/5 rounded-full overflow-hidden">
+                  <div className="flex-1 h-6 bg-gray-50 dark:bg-white/5 rounded-full overflow-hidden">
                     <div
                       className={cn("h-full rounded-full transition-all duration-500", INTENT_COLORS[intent] || "bg-zinc-500")}
                       style={{ width: barWidth }}
                     />
                   </div>
-                  <div className="w-16 text-right text-sm text-zinc-300 shrink-0">
-                    {count} <span className="text-zinc-500">({percentage}%)</span>
+                  <div className="w-16 text-right text-sm text-gray-700 dark:text-zinc-300 shrink-0">
+                    {count} <span className="text-gray-500 dark:text-zinc-500">({percentage}%)</span>
                   </div>
                 </div>
               );
@@ -278,18 +278,18 @@ export function ConversationInsights({ instanceId }: ConversationInsightsProps) 
 
       {/* Intent Trends */}
       {data.intentTrends.length > 0 && (
-        <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4">
-          <h3 className="text-sm font-medium text-white mb-4">Trending Intents (Last 7 Days)</h3>
+        <div className="bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-white/10 rounded-xl p-4">
+          <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-4">Trending Intents (Last 7 Days)</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
             {data.intentTrends.map((trend) => (
               <div 
                 key={trend.intent} 
-                className="bg-white/5 rounded-lg p-3 text-center"
+                className="bg-gray-50 dark:bg-white/5 rounded-lg p-3 text-center"
               >
-                <div className="text-xs text-zinc-400 mb-1">
+                <div className="text-xs text-gray-500 dark:text-zinc-400 mb-1">
                   {INTENT_LABELS[trend.intent] || trend.intent}
                 </div>
-                <div className="text-lg font-semibold text-white">
+                <div className="text-lg font-semibold text-gray-900 dark:text-white">
                   {trend.currentWeek}
                 </div>
                 <div className={cn("flex items-center justify-center gap-1 text-xs mt-1", getTrendColor(trend.change))}>
@@ -304,32 +304,32 @@ export function ConversationInsights({ instanceId }: ConversationInsightsProps) 
 
       {/* Recent Unanswered Questions */}
       {data.recentUnanswered.length > 0 && (
-        <div className="bg-white/[0.03] border border-white/10 rounded-xl overflow-hidden">
+        <div className="bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden">
           <button
             onClick={() => setShowUnanswered(!showUnanswered)}
-            className="w-full flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors"
+            className="w-full flex items-center justify-between p-4 hover:bg-white dark:bg-white/[0.02] transition-colors"
           >
             <div className="flex items-center gap-2">
               <HelpCircle className="w-4 h-4 text-amber-400" />
-              <span className="text-sm font-medium text-white">
-                {t("recentUnanswered")} <span className="text-zinc-500">({data.recentUnanswered.length})</span>
+              <span className="text-sm font-medium text-gray-900 dark:text-white">
+                {t("recentUnanswered")} <span className="text-gray-500 dark:text-zinc-500">({data.recentUnanswered.length})</span>
               </span>
             </div>
             {showUnanswered ? (
-              <ChevronUp className="w-4 h-4 text-zinc-500" />
+              <ChevronUp className="w-4 h-4 text-gray-500 dark:text-zinc-500" />
             ) : (
-              <ChevronDown className="w-4 h-4 text-zinc-500" />
+              <ChevronDown className="w-4 h-4 text-gray-500 dark:text-zinc-500" />
             )}
           </button>
           
           {showUnanswered && (
-            <div className="border-t border-white/10 divide-y divide-white/10">
+            <div className="border-t border-gray-200 dark:border-white/10 divide-y divide-white/10">
               {data.recentUnanswered.map((question) => (
-                <div key={question.id} className="p-4 hover:bg-white/[0.02] transition-colors">
-                  <p className="text-sm text-zinc-300 mb-1 line-clamp-2">
+                <div key={question.id} className="p-4 hover:bg-white dark:bg-white/[0.02] transition-colors">
+                  <p className="text-sm text-gray-700 dark:text-zinc-300 mb-1 line-clamp-2">
                     {question.content}
                   </p>
-                  <p className="text-xs text-zinc-500">
+                  <p className="text-xs text-gray-500 dark:text-zinc-500">
                     {formatRelativeTime(question.createdAt)}
                   </p>
                 </div>

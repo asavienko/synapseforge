@@ -114,7 +114,7 @@ export default function MessagesPage() {
   if (loading) {
     return (
       <div className="pt-14 md:pt-0 flex items-center justify-center h-full py-20">
-        <Loader2 className="w-6 h-6 text-zinc-500 animate-spin" />
+        <Loader2 className="w-6 h-6 text-gray-500 dark:text-zinc-500 animate-spin" />
       </div>
     );
   }
@@ -122,12 +122,12 @@ export default function MessagesPage() {
   if (noManager) {
     return (
       <div className="p-4 pt-14 md:p-8 md:pt-6">
-        <h1 className="text-2xl font-bold text-white mb-2">{t("title")}</h1>
-        <p className="text-zinc-400 text-sm mb-8">{t("subtitle")}</p>
-        <div className="glow-border rounded-2xl p-12 bg-white/[0.02] text-center max-w-lg">
-          <MessageCircle className="w-10 h-10 text-zinc-600 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-white mb-2">{t("noManagerTitle")}</h3>
-          <p className="text-zinc-400 text-sm leading-relaxed">{t("noManagerDesc")}</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{t("title")}</h1>
+        <p className="text-gray-500 dark:text-zinc-400 text-sm mb-8">{t("subtitle")}</p>
+        <div className="glow-border rounded-2xl p-12 bg-white dark:bg-white/[0.02] text-center max-w-lg">
+          <MessageCircle className="w-10 h-10 text-gray-400 dark:text-zinc-600 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{t("noManagerTitle")}</h3>
+          <p className="text-gray-500 dark:text-zinc-400 text-sm leading-relaxed">{t("noManagerDesc")}</p>
         </div>
       </div>
     );
@@ -135,26 +135,26 @@ export default function MessagesPage() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-3.5rem)] md:h-[calc(100vh)] pt-14 md:pt-0">
-      <div className="p-4 md:p-6 border-b border-white/5 shrink-0">
+      <div className="p-4 md:p-6 border-b border-gray-200 dark:border-white/5 shrink-0">
         <div className="flex items-center justify-between gap-4 mb-3">
           <div>
-            <h1 className="text-2xl font-bold text-white">{t("title")}</h1>
-            <p className="text-zinc-400 text-sm mt-1">{t("subtitle")}</p>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t("title")}</h1>
+            <p className="text-gray-500 dark:text-zinc-400 text-sm mt-1">{t("subtitle")}</p>
           </div>
           {messages.length > 0 && (
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 dark:text-zinc-500" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search messages..."
-                className="w-40 sm:w-56 bg-white/5 border border-white/10 rounded-lg pl-9 pr-8 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 transition-colors"
+                className="w-40 sm:w-56 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg pl-9 pr-8 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-500 focus:outline-none focus:border-blue-500 transition-colors"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-zinc-500 hover:text-gray-700 dark:text-zinc-300"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -163,7 +163,7 @@ export default function MessagesPage() {
           )}
         </div>
         {searchQuery && (
-          <p className="text-xs text-zinc-500">
+          <p className="text-xs text-gray-500 dark:text-zinc-500">
             {filteredMessages.length} of {messages.length} messages
           </p>
         )}
@@ -171,11 +171,11 @@ export default function MessagesPage() {
 
       {/* Book a call CTA — shown only when manager has a Cal.com link */}
       {calLink && (
-        <div className="px-4 md:px-6 py-3 border-b border-white/5 bg-violet-600/5 shrink-0">
+        <div className="px-4 md:px-6 py-3 border-b border-gray-200 dark:border-white/5 bg-blue-600/5 shrink-0">
           <div className="flex items-center justify-between gap-2 flex-wrap">
             <div className="flex items-center gap-2">
-              <CalendarDays className="w-4 h-4 text-violet-400" />
-              <span className="text-sm text-zinc-300">Prefer a live conversation?</span>
+              <CalendarDays className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <span className="text-sm text-gray-700 dark:text-zinc-300">Prefer a live conversation?</span>
             </div>
             <CalBookingButton calLink={calLink} variant="outline" label={t("scheduleCall")} />
           </div>
@@ -185,8 +185,8 @@ export default function MessagesPage() {
       <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 space-y-4">
         {filteredMessages.length === 0 ? (
           <div className="text-center py-12">
-            <MessageCircle className="w-8 h-8 text-zinc-600 mx-auto mb-3" />
-            <p className="text-zinc-500 text-sm">{searchQuery ? "No messages match your search" : t("noMessagesYet")}</p>
+            <MessageCircle className="w-8 h-8 text-gray-400 dark:text-zinc-600 mx-auto mb-3" />
+            <p className="text-gray-500 dark:text-zinc-500 text-sm">{searchQuery ? "No messages match your search" : t("noMessagesYet")}</p>
           </div>
         ) : (
           filteredMessages.map((msg) => {
@@ -194,24 +194,24 @@ export default function MessagesPage() {
             return (
               <div key={msg.id} className={cn("flex gap-3", isUser ? "justify-end" : "justify-start")}>
                 {!isUser && (
-                  <div className="w-8 h-8 rounded-full bg-violet-600/30 border border-violet-500/30 flex items-center justify-center shrink-0 mt-0.5">
-                    <Shield className="w-4 h-4 text-violet-400" />
+                  <div className="w-8 h-8 rounded-full bg-blue-600/30 border border-blue-500/30 flex items-center justify-center shrink-0 mt-0.5">
+                    <Shield className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                   </div>
                 )}
                 <div className={cn("max-w-[85%] md:max-w-[70%]", isUser ? "items-end" : "items-start", "flex flex-col gap-1")}>
                   <div className={cn(
                     "px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap",
                     isUser
-                      ? "bg-violet-600 text-white rounded-tr-sm"
-                      : "bg-white/[0.05] border border-white/10 text-zinc-200 rounded-tl-sm"
+                      ? "bg-blue-600 text-white rounded-tr-sm"
+                      : "bg-gray-50 dark:bg-white/[0.05] border border-gray-200 dark:border-white/10 text-gray-700 dark:text-zinc-200 rounded-tl-sm"
                   )}>
                     {msg.body}
                   </div>
-                  <span className="text-xs text-zinc-600">{formatTime(msg.createdAt)}</span>
+                  <span className="text-xs text-gray-400 dark:text-zinc-600">{formatTime(msg.createdAt)}</span>
                 </div>
                 {isUser && (
                   <div className="w-8 h-8 rounded-full bg-zinc-700 flex items-center justify-center shrink-0 mt-0.5">
-                    <User className="w-4 h-4 text-zinc-400" />
+                    <User className="w-4 h-4 text-gray-500 dark:text-zinc-400" />
                   </div>
                 )}
               </div>
@@ -221,7 +221,7 @@ export default function MessagesPage() {
         <div ref={bottomRef} />
       </div>
 
-      <div className="p-4 border-t border-white/5 shrink-0">
+      <div className="p-4 border-t border-gray-200 dark:border-white/5 shrink-0">
         {error && <p className="text-red-400 text-xs mb-2">{error}</p>}
         <form onSubmit={handleSend} className="flex gap-3">
           <input
@@ -229,12 +229,12 @@ export default function MessagesPage() {
             value={body}
             onChange={(e) => setBody(e.target.value)}
             placeholder={t("messagePlaceholder")}
-            className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-zinc-500 text-sm focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
+            className="flex-1 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
           />
           <button
             type="submit"
             disabled={sending || !body.trim()}
-            className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 transition-colors px-4 py-3 rounded-xl text-sm font-semibold text-white"
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-600 disabled:opacity-40 transition-colors px-4 py-3 rounded-xl text-sm font-semibold text-gray-900 dark:text-white"
           >
             {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
           </button>

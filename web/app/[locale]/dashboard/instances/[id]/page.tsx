@@ -109,7 +109,7 @@ export default function InstanceDetailPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full py-20">
-        <Loader2 className="w-6 h-6 text-zinc-500 animate-spin" />
+        <Loader2 className="w-6 h-6 text-gray-500 dark:text-zinc-500 animate-spin" />
       </div>
     );
   }
@@ -129,18 +129,18 @@ export default function InstanceDetailPage() {
         )}
 
         {/* Back */}
-        <Link href="/dashboard/instances" className="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-white transition-colors mb-6">
+        <Link href="/dashboard/instances" className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-zinc-500 hover:text-white transition-colors mb-6">
           <ArrowLeft className="w-4 h-4" /> {t("backToInstances")}
         </Link>
 
         {/* Header */}
         <div className="flex items-start gap-4 mb-4">
-          <div className="w-14 h-14 rounded-2xl bg-violet-600/20 border border-violet-500/30 flex items-center justify-center shrink-0">
-            <Bot className="w-7 h-7 text-violet-400" />
+          <div className="w-14 h-14 rounded-2xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center shrink-0">
+            <Bot className="w-7 h-7 text-blue-600 dark:text-blue-400" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-3 mb-1">
-              <h1 className="text-2xl font-bold text-white truncate">{instance.name}</h1>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white truncate">{instance.name}</h1>
               <span className={`text-xs px-2.5 py-1 rounded-full font-medium shrink-0 ${STATUS_COLORS[instance.status]}`}>{instance.status}</span>
               {instance.healthStatus && (
                 <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${
@@ -155,13 +155,13 @@ export default function InstanceDetailPage() {
               )}
             </div>
             <div className="flex items-center gap-2 text-sm">
-              <p className="text-zinc-400">{typeLabel} · {instance.tier} {t("tierSuffix")}</p>
+              <p className="text-gray-500 dark:text-zinc-400">{typeLabel} · {instance.tier} {t("tierSuffix")}</p>
               <button
                 onClick={() => {
                   navigator.clipboard.writeText(id);
                   showToast("Instance ID copied to clipboard");
                 }}
-                className="text-xs text-zinc-500 hover:text-violet-400 transition-colors font-mono bg-white/5 px-2 py-0.5 rounded"
+                className="text-xs text-gray-500 dark:text-zinc-500 hover:text-blue-600 dark:text-blue-400 transition-colors font-mono bg-gray-50 dark:bg-white/5 px-2 py-0.5 rounded"
                 title="Copy instance ID"
               >
                 {id.slice(0, 8)}...{id.slice(-4)}
@@ -211,7 +211,7 @@ export default function InstanceDetailPage() {
 
         {/* Tabs */}
         <div className="relative mb-6 -mx-4 px-4 sm:mx-0 sm:px-0">
-          <div className="flex gap-1 border-b border-white/5 pb-px overflow-x-auto scrollbar-none tab-scroll-snap">
+          <div className="flex gap-1 border-b border-gray-200 dark:border-white/5 pb-px overflow-x-auto scrollbar-none tab-scroll-snap">
             {TABS.map((tabKey) => {
               const tabLabels: Record<string, string> = {
                 "Overview": t("tabs.overview"),
@@ -232,14 +232,14 @@ export default function InstanceDetailPage() {
               return (
                 <button key={tabKey} data-tab={tabKey} onClick={() => setTab(tabKey)}
                   className={cn("px-3 sm:px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px shrink-0 whitespace-nowrap touch-target",
-                    tab === tabKey ? "border-violet-500 text-white" : "border-transparent text-zinc-500 hover:text-zinc-300"
+                    tab === tabKey ? "border-blue-500 text-white" : "border-transparent text-gray-500 dark:text-zinc-500 hover:text-gray-700 dark:text-zinc-300"
                   )}>{tabLabels[tabKey]}
                 </button>
               );
             })}
           </div>
-          <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-8 sm:w-12 bg-gradient-to-r from-[#0a0a0f] to-transparent sm:hidden" />
-          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 sm:w-12 bg-gradient-to-l from-[#0a0a0f] to-transparent sm:hidden" />
+          <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-8 sm:w-12 bg-gradient-to-r from-white dark:from-[#0a0a0f] to-transparent sm:hidden" />
+          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 sm:w-12 bg-gradient-to-l from-white dark:from-[#0a0a0f] to-transparent sm:hidden" />
         </div>
 
         {/* Tab Content */}
@@ -390,10 +390,10 @@ export default function InstanceDetailPage() {
           className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={(e) => e.target === e.currentTarget && setPendingConfirm(null)}
         >
-          <div className="bg-[#111118] border border-white/10 rounded-2xl p-6 w-full max-w-sm">
-            <p className="text-sm text-white mb-6 leading-relaxed">{pendingConfirm.message}</p>
+          <div className="bg-white dark:bg-[#111118] border border-gray-200 dark:border-white/10 rounded-2xl p-6 w-full max-w-sm">
+            <p className="text-sm text-gray-900 dark:text-white mb-6 leading-relaxed">{pendingConfirm.message}</p>
             <div className="flex gap-3 justify-end">
-              <button onClick={() => setPendingConfirm(null)} className="px-4 py-2 rounded-xl text-sm text-zinc-400 hover:text-white border border-white/10 hover:border-white/20 transition-colors">Cancel</button>
+              <button onClick={() => setPendingConfirm(null)} className="px-4 py-2 rounded-xl text-sm text-gray-500 dark:text-zinc-400 hover:text-white border border-gray-200 dark:border-white/10 hover:border-white/20 transition-colors">Cancel</button>
               <button onClick={() => { const fn = pendingConfirm.onConfirm; setPendingConfirm(null); fn(); }} className="px-4 py-2 rounded-xl text-sm font-semibold bg-red-600 hover:bg-red-500 text-white transition-colors">Confirm</button>
             </div>
           </div>
@@ -406,40 +406,40 @@ export default function InstanceDetailPage() {
           className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={(e) => e.target === e.currentTarget && setShowGraduationModal(false)}
         >
-          <div className="bg-[#111118] border border-white/10 rounded-2xl p-7 w-full max-w-lg">
+          <div className="bg-white dark:bg-[#111118] border border-gray-200 dark:border-white/10 rounded-2xl p-7 w-full max-w-lg">
             <div className="text-center mb-7">
               <div className="text-4xl mb-3">🚀</div>
-              <h2 className="text-xl font-bold text-white mb-2">Your agent is live!</h2>
-              <p className="text-sm text-zinc-400 leading-relaxed">You&apos;re now running on your own API key — no message limits. Connect a channel so real customers can start talking to your agent.</p>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Your agent is live!</h2>
+              <p className="text-sm text-gray-500 dark:text-zinc-400 leading-relaxed">You&apos;re now running on your own API key — no message limits. Connect a channel so real customers can start talking to your agent.</p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-              <button onClick={() => { setShowGraduationModal(false); setTab("Credentials"); }} className="flex flex-col items-center gap-2 p-4 bg-white/[0.03] hover:bg-sky-600/10 border border-white/10 hover:border-sky-500/30 rounded-xl transition-all">
+              <button onClick={() => { setShowGraduationModal(false); setTab("Credentials"); }} className="flex flex-col items-center gap-2 p-4 bg-white dark:bg-white/[0.03] hover:bg-sky-600/10 border border-gray-200 dark:border-white/10 hover:border-sky-500/30 rounded-xl transition-all">
                 <span className="text-2xl">✈️</span>
-                <span className="text-sm font-semibold text-white">Telegram</span>
-                <span className="text-[11px] text-zinc-500">Live in ~5 min</span>
+                <span className="text-sm font-semibold text-gray-900 dark:text-white">Telegram</span>
+                <span className="text-[11px] text-gray-500 dark:text-zinc-500">Live in ~5 min</span>
               </button>
-              <button onClick={() => { setShowGraduationModal(false); setTab("Credentials"); }} className="flex flex-col items-center gap-2 p-4 bg-white/[0.03] hover:bg-emerald-600/10 border border-white/10 hover:border-emerald-500/30 rounded-xl transition-all">
+              <button onClick={() => { setShowGraduationModal(false); setTab("Credentials"); }} className="flex flex-col items-center gap-2 p-4 bg-white dark:bg-white/[0.03] hover:bg-emerald-600/10 border border-gray-200 dark:border-white/10 hover:border-emerald-500/30 rounded-xl transition-all">
                 <span className="text-2xl">💬</span>
-                <span className="text-sm font-semibold text-white">WhatsApp</span>
-                <span className="text-[11px] text-zinc-500">Live in ~10 min</span>
+                <span className="text-sm font-semibold text-gray-900 dark:text-white">WhatsApp</span>
+                <span className="text-[11px] text-gray-500 dark:text-zinc-500">Live in ~10 min</span>
               </button>
-              <button onClick={() => { setShowGraduationModal(false); setTab("Deploy"); }} className="flex flex-col items-center gap-2 p-4 bg-white/[0.03] hover:bg-violet-600/10 border border-white/10 hover:border-violet-500/30 rounded-xl transition-all">
+              <button onClick={() => { setShowGraduationModal(false); setTab("Deploy"); }} className="flex flex-col items-center gap-2 p-4 bg-white dark:bg-white/[0.03] hover:bg-blue-700/10 border border-gray-200 dark:border-white/10 hover:border-blue-500/30 rounded-xl transition-all">
                 <span className="text-2xl">🌐</span>
-                <span className="text-sm font-semibold text-white">Web Widget</span>
-                <span className="text-[11px] text-zinc-500">Paste one snippet</span>
+                <span className="text-sm font-semibold text-gray-900 dark:text-white">Web Widget</span>
+                <span className="text-[11px] text-gray-500 dark:text-zinc-500">Paste one snippet</span>
               </button>
             </div>
 
-            <div className="bg-violet-600/10 border border-violet-500/20 rounded-xl p-4 mb-5 flex items-center justify-between gap-3">
+            <div className="bg-blue-600/10 border border-blue-500/20 rounded-xl p-4 mb-5 flex items-center justify-between gap-3">
               <div>
-                <p className="text-xs font-semibold text-violet-300 mb-0.5">Your agent&apos;s public URL</p>
-                <p className="text-[11px] text-zinc-500 font-mono truncate">/chat/{id}</p>
+                <p className="text-xs font-semibold text-blue-600 dark:text-blue-300 mb-0.5">Your agent&apos;s public URL</p>
+                <p className="text-[11px] text-gray-500 dark:text-zinc-500 font-mono truncate">/chat/{id}</p>
               </div>
-              <button onClick={() => navigator.clipboard.writeText(`${window.location.origin}/chat/${id}`)} className="shrink-0 text-xs text-violet-400 hover:text-violet-300 bg-violet-600/10 hover:bg-violet-600/20 border border-violet-500/20 px-3 py-1.5 rounded-lg transition-colors">Copy link</button>
+              <button onClick={() => navigator.clipboard.writeText(`${window.location.origin}/chat/${id}`)} className="shrink-0 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-300 bg-blue-600/10 hover:bg-blue-700/20 border border-blue-500/20 px-3 py-1.5 rounded-lg transition-colors">Copy link</button>
             </div>
 
-            <button onClick={() => setShowGraduationModal(false)} className="w-full text-center text-xs text-zinc-600 hover:text-zinc-400 transition-colors py-1">I&apos;ll set up channels later</button>
+            <button onClick={() => setShowGraduationModal(false)} className="w-full text-center text-xs text-gray-400 dark:text-zinc-600 hover:text-zinc-400 transition-colors py-1">I&apos;ll set up channels later</button>
           </div>
         </div>
       )}

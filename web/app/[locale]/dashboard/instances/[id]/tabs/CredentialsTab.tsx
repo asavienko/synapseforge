@@ -204,20 +204,20 @@ export function CredentialsTab({
   return (
     <div className="space-y-5">
       {/* User-level Credential Vault section */}
-      <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
-        <div className="p-4 border-b border-white/5 flex items-center justify-between">
+      <div className="glow-border rounded-2xl bg-white dark:bg-white/[0.02] overflow-hidden">
+        <div className="p-4 border-b border-gray-200 dark:border-white/5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center shrink-0">
-              <ShieldCheck className="w-4 h-4 text-violet-400" />
+            <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0">
+              <ShieldCheck className="w-4 h-4 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-white">Your API Key Vault</h3>
-              <p className="text-xs text-zinc-500">Global API keys available to all instances</p>
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Your API Key Vault</h3>
+              <p className="text-xs text-gray-500 dark:text-zinc-500">Global API keys available to all instances</p>
             </div>
           </div>
           <Link
             href="/dashboard/settings"
-            className="flex items-center gap-1.5 text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 px-3 py-1.5 rounded-lg transition-colors"
+            className="flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-300 bg-blue-500/10 px-3 py-1.5 rounded-lg transition-colors"
           >
             Manage in Settings →
           </Link>
@@ -246,11 +246,11 @@ export function CredentialsTab({
       )}
 
       {/* Connected Channels Overview */}
-      <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
-        <div className="p-4 border-b border-white/5">
-          <h3 className="text-xs text-zinc-500 uppercase tracking-wider">{t("credentials.connectedChannels")}</h3>
+      <div className="glow-border rounded-2xl bg-white dark:bg-white/[0.02] overflow-hidden">
+        <div className="p-4 border-b border-gray-200 dark:border-white/5">
+          <h3 className="text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider">{t("credentials.connectedChannels")}</h3>
         </div>
-        <div className="divide-y divide-white/5">
+        <div className="divide-y divide-gray-200 dark:divide-white/5">
           {/* Telegram */}
           {(() => {
             const hasTelegram = credentials.some((c) => c.key === "telegram_bot_token");
@@ -259,7 +259,7 @@ export function CredentialsTab({
               <div className="flex items-center gap-3 p-4">
                 <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-base shrink-0">✈</div>
                 <div className="flex-1">
-                  <div className="text-sm font-medium text-white">{t("credentials.telegram.header")}</div>
+                  <div className="text-sm font-medium text-gray-900 dark:text-white">{t("credentials.telegram.header")}</div>
                   {hasTelegram && tgUsername ? (
                     <div className="text-xs text-emerald-400 mt-0.5 flex items-center gap-1">
                       <Check className="w-3 h-3" /> {tgUsername} — {t("credentials.connected")}
@@ -269,11 +269,11 @@ export function CredentialsTab({
                       <Check className="w-3 h-3" /> {t("credentials.tokenSaved")}
                     </div>
                   ) : (
-                    <div className="text-xs text-zinc-500 mt-0.5">{t("credentials.notConnected")}</div>
+                    <div className="text-xs text-gray-500 dark:text-zinc-500 mt-0.5">{t("credentials.notConnected")}</div>
                   )}
                 </div>
                 {!hasTelegram && (
-                  <span className="text-xs text-zinc-600 bg-white/5 px-2 py-1 rounded-lg">{t("credentials.notSetUp")}</span>
+                  <span className="text-xs text-gray-400 dark:text-zinc-600 bg-gray-50 dark:bg-white/5 px-2 py-1 rounded-lg">{t("credentials.notSetUp")}</span>
                 )}
                 {hasTelegram && (
                   <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-lg">{t("credentials.live")}</span>
@@ -288,17 +288,17 @@ export function CredentialsTab({
               <div className="flex items-center gap-3 p-4">
                 <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-base shrink-0">🎮</div>
                 <div className="flex-1">
-                  <div className="text-sm font-medium text-white">{t("credentials.discord.header")}</div>
+                  <div className="text-sm font-medium text-gray-900 dark:text-white">{t("credentials.discord.header")}</div>
                   {hasDiscord ? (
                     <div className="text-xs text-emerald-400 mt-0.5 flex items-center gap-1"><Check className="w-3 h-3" /> {t("credentials.tokenSaved")}</div>
                   ) : (
-                    <div className="text-xs text-zinc-500 mt-0.5">{t("credentials.notConnected")}</div>
+                    <div className="text-xs text-gray-500 dark:text-zinc-500 mt-0.5">{t("credentials.notConnected")}</div>
                   )}
                 </div>
                 {hasDiscord ? (
                   <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-lg">{t("credentials.live")}</span>
                 ) : (
-                  <span className="text-xs text-zinc-600 bg-white/5 px-2 py-1 rounded-lg">{t("credentials.notSetUp")}</span>
+                  <span className="text-xs text-gray-400 dark:text-zinc-600 bg-gray-50 dark:bg-white/5 px-2 py-1 rounded-lg">{t("credentials.notSetUp")}</span>
                 )}
               </div>
             );
@@ -310,17 +310,17 @@ export function CredentialsTab({
               <div className="flex items-center gap-3 p-4">
                 <div className="w-8 h-8 rounded-lg bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-base shrink-0">💬</div>
                 <div className="flex-1">
-                  <div className="text-sm font-medium text-white">{t("credentials.slack.header")}</div>
+                  <div className="text-sm font-medium text-gray-900 dark:text-white">{t("credentials.slack.header")}</div>
                   {hasSlack ? (
                     <div className="text-xs text-emerald-400 mt-0.5 flex items-center gap-1"><Check className="w-3 h-3" /> {t("credentials.tokenSaved")}</div>
                   ) : (
-                    <div className="text-xs text-zinc-500 mt-0.5">{t("credentials.notConnected")}</div>
+                    <div className="text-xs text-gray-500 dark:text-zinc-500 mt-0.5">{t("credentials.notConnected")}</div>
                   )}
                 </div>
                 {hasSlack ? (
                   <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-lg">{t("credentials.live")}</span>
                 ) : (
-                  <span className="text-xs text-zinc-600 bg-white/5 px-2 py-1 rounded-lg">{t("credentials.notSetUp")}</span>
+                  <span className="text-xs text-gray-400 dark:text-zinc-600 bg-gray-50 dark:bg-white/5 px-2 py-1 rounded-lg">{t("credentials.notSetUp")}</span>
                 )}
               </div>
             );
@@ -332,17 +332,17 @@ export function CredentialsTab({
               <div className="flex items-center gap-3 p-4">
                 <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-base shrink-0">💬</div>
                 <div className="flex-1">
-                  <div className="text-sm font-medium text-white">{t("credentials.whatsapp.title")}</div>
+                  <div className="text-sm font-medium text-gray-900 dark:text-white">{t("credentials.whatsapp.title")}</div>
                   {hasWhatsapp ? (
                     <div className="text-xs text-emerald-400 mt-0.5 flex items-center gap-1"><Check className="w-3 h-3" /> {t("credentials.whatsapp.connected")}</div>
                   ) : (
-                    <div className="text-xs text-zinc-500 mt-0.5">{t("credentials.notConnected")}</div>
+                    <div className="text-xs text-gray-500 dark:text-zinc-500 mt-0.5">{t("credentials.notConnected")}</div>
                   )}
                 </div>
                 {hasWhatsapp ? (
                   <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-lg">{t("credentials.connected")}</span>
                 ) : (
-                  <span className="text-xs text-zinc-600 bg-white/5 px-2 py-1 rounded-lg">{t("credentials.notSetUp")}</span>
+                  <span className="text-xs text-gray-400 dark:text-zinc-600 bg-gray-50 dark:bg-white/5 px-2 py-1 rounded-lg">{t("credentials.notSetUp")}</span>
                 )}
               </div>
             );
@@ -351,37 +351,37 @@ export function CredentialsTab({
       </div>
 
       {/* Config preview */}
-      <div className="glow-border rounded-2xl bg-white/[0.02] p-5">
+      <div className="glow-border rounded-2xl bg-white dark:bg-white/[0.02] p-5">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-zinc-500" />
-            <span className="text-sm font-semibold text-white">{t("credentials.openclawConfig")}</span>
+            <ShieldCheck className="w-4 h-4 text-gray-500 dark:text-zinc-500" />
+            <span className="text-sm font-semibold text-gray-900 dark:text-white">{t("credentials.openclawConfig")}</span>
           </div>
           <button
             onClick={() => { if (!configPreviewText) loadConfigPreview(); else setConfigPreviewText(null); }}
             disabled={configPreviewLoading}
-            className="flex items-center gap-1.5 text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 px-3 py-1.5 rounded-lg transition-colors"
+            className="flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-300 bg-blue-500/10 px-3 py-1.5 rounded-lg transition-colors"
           >
             {configPreviewLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Eye className="w-3 h-3" />}
             {configPreviewText ? t("credentials.hideConfig") : t("credentials.viewConfig")}
           </button>
         </div>
         {configPreviewText && (
-          <pre data-testid="config-preview" className="bg-black/40 border border-white/10 rounded-xl p-4 text-xs text-zinc-300 overflow-x-auto max-h-64 font-mono">
+          <pre data-testid="config-preview" className="bg-gray-100 dark:bg-black/40 border border-gray-200 dark:border-white/10 rounded-xl p-4 text-xs text-gray-700 dark:text-zinc-300 overflow-x-auto max-h-64 font-mono">
             {configPreviewText}
           </pre>
         )}
       </div>
 
       {/* LLM Provider section */}
-      <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
-        <div className="p-4 border-b border-white/5">
-          <h3 className="text-xs text-zinc-500 uppercase tracking-wider">{t("credentials.llmProvider")}</h3>
+      <div className="glow-border rounded-2xl bg-white dark:bg-white/[0.02] overflow-hidden">
+        <div className="p-4 border-b border-gray-200 dark:border-white/5">
+          <h3 className="text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider">{t("credentials.llmProvider")}</h3>
         </div>
         {credsLoading ? (
-          <div className="p-8 flex justify-center"><Loader2 className="w-5 h-5 text-zinc-500 animate-spin" /></div>
+          <div className="p-8 flex justify-center"><Loader2 className="w-5 h-5 text-gray-500 dark:text-zinc-500 animate-spin" /></div>
         ) : (
-          <div className="divide-y divide-white/5">
+          <div className="divide-y divide-gray-200 dark:divide-white/5">
             {["openai_api_key", "anthropic_api_key", "openrouter_api_key"].map((key) => {
               const existing = credentials.find((c) => c.key === key);
               const isEditing = editingKey === key;
@@ -393,15 +393,15 @@ export function CredentialsTab({
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="flex items-center gap-2">
-                        <div className="text-sm font-medium text-white">{CREDENTIAL_KEY_LABELS[key]}</div>
+                        <div className="text-sm font-medium text-gray-900 dark:text-white">{CREDENTIAL_KEY_LABELS[key]}</div>
                         {CREDENTIAL_HELP[key] && (
                           <Tooltip content={CREDENTIAL_HELP[key]} />
                         )}
                       </div>
                       {existing && !isEditing && (
-                        <div className="text-xs font-mono text-zinc-500 mt-0.5">
+                        <div className="text-xs font-mono text-gray-500 dark:text-zinc-500 mt-0.5">
                           {revealedCreds[key] ? (
-                            <span className="text-zinc-300">{revealedCreds[key]}</span>
+                            <span className="text-gray-700 dark:text-zinc-300">{revealedCreds[key]}</span>
                           ) : (
                             existing.maskedValue
                           )}
@@ -433,7 +433,7 @@ export function CredentialsTab({
                               }
                             }}
                             disabled={revealingCred === key}
-                            className="text-xs text-zinc-500 hover:text-zinc-300 bg-white/5 px-2 py-1 rounded-lg transition-colors flex items-center gap-1"
+                            className="text-xs text-gray-500 dark:text-zinc-500 hover:text-gray-700 dark:text-zinc-300 bg-gray-50 dark:bg-white/5 px-2 py-1 rounded-lg transition-colors flex items-center gap-1"
                           >
                             {revealingCred === key ? (
                               <Loader2 className="w-3 h-3 animate-spin" />
@@ -445,7 +445,7 @@ export function CredentialsTab({
                           </button>
                           <button
                             onClick={() => { setEditingKey(key); setEditValue(""); setCredValidState((p) => { const n = { ...p }; delete n[key]; return n; }); }}
-                            className="text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 px-2 py-1 rounded-lg transition-colors"
+                            className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-300 bg-blue-500/10 px-2 py-1 rounded-lg transition-colors"
                           >
                             {t("credentials.editCredential")}
                           </button>
@@ -460,7 +460,7 @@ export function CredentialsTab({
                       {!existing && !isAdding && (
                         <button
                           onClick={() => { setAddingKey(key); setAddValue(""); setCredValidState((p) => { const n = { ...p }; delete n[key]; return n; }); }}
-                          className="text-xs text-zinc-500 hover:text-white bg-white/5 px-2 py-1 rounded-lg transition-colors"
+                          className="text-xs text-gray-500 dark:text-zinc-500 hover:text-white bg-gray-50 dark:bg-white/5 px-2 py-1 rounded-lg transition-colors"
                         >
                           {t("credentials.addCredential")}
                         </button>
@@ -479,7 +479,7 @@ export function CredentialsTab({
                           }}
                           placeholder={t("credentials.valuePlaceholder")}
                           autoFocus
-                          className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-violet-500 transition-colors font-mono"
+                          className="flex-1 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-600 focus:outline-none focus:border-blue-500 transition-colors font-mono"
                         />
                         <button
                           onClick={() => LLM_CRED_KEYS.includes(key)
@@ -492,7 +492,7 @@ export function CredentialsTab({
                               ? "bg-emerald-600 hover:bg-emerald-500 text-white"
                               : validState === "invalid"
                               ? "bg-red-600/80 hover:bg-red-500 text-white"
-                              : "bg-violet-600 hover:bg-violet-500 text-white"
+                              : "bg-blue-600 hover:bg-blue-600 text-white"
                           )}
                         >
                           {(validatingCred || savingCred) && <Loader2 className="w-3 h-3 animate-spin" />}
@@ -504,7 +504,7 @@ export function CredentialsTab({
                         </button>
                         <button
                           onClick={() => { setEditingKey(null); setAddingKey(null); setCredValidState((p) => { const n = {...p}; delete n[key]; return n; }); }}
-                          className="text-zinc-500 hover:text-white px-2 py-2 rounded-lg border border-white/10 transition-colors"
+                          className="text-gray-500 dark:text-zinc-500 hover:text-white px-2 py-2 rounded-lg border border-gray-200 dark:border-white/10 transition-colors"
                         >
                           <X className="w-3 h-3" />
                         </button>
@@ -630,13 +630,13 @@ function UserCredentialVaultPreview({ instanceId }: { instanceId: string }) {
   const PROVIDER_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
     openai: { label: "OpenAI", color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
     anthropic: { label: "Anthropic", color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20" },
-    openrouter: { label: "OpenRouter", color: "text-violet-400", bg: "bg-violet-500/10", border: "border-violet-500/20" },
+    openrouter: { label: "OpenRouter", color: "text-blue-600 dark:text-blue-400", bg: "bg-blue-500/10", border: "border-blue-500/20" },
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
-        <Loader2 className="w-5 h-5 text-zinc-500 animate-spin" />
+        <Loader2 className="w-5 h-5 text-gray-500 dark:text-zinc-500 animate-spin" />
       </div>
     );
   }
@@ -644,8 +644,8 @@ function UserCredentialVaultPreview({ instanceId }: { instanceId: string }) {
   if (credentials.length === 0) {
     return (
       <div className="text-center py-6">
-        <p className="text-sm text-zinc-400 mb-2">No global API keys stored</p>
-        <p className="text-xs text-zinc-500">Add API keys in Settings to use them across all your instances</p>
+        <p className="text-sm text-gray-500 dark:text-zinc-400 mb-2">No global API keys stored</p>
+        <p className="text-xs text-gray-500 dark:text-zinc-500">Add API keys in Settings to use them across all your instances</p>
       </div>
     );
   }
@@ -667,12 +667,12 @@ function UserCredentialVaultPreview({ instanceId }: { instanceId: string }) {
               <Key className={cn("w-4 h-4", config.color)} />
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-medium text-white">{config.label}</span>
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400">
+                  <span className="font-medium text-gray-900 dark:text-white">{config.label}</span>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-zinc-400">
                     Global
                   </span>
                 </div>
-                <p className="text-xs text-zinc-500 font-mono">
+                <p className="text-xs text-gray-500 dark:text-zinc-500 font-mono">
                   ••••••••••••{cred.lastFour}
                 </p>
               </div>
@@ -711,9 +711,9 @@ function TelegramConnectCard({
   const tgUsername = instance.telegramBotUsername ?? (telegramConnected?.username ?? null);
 
   return (
-    <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
-      <div className="p-4 border-b border-white/5 flex items-center justify-between">
-        <h3 className="text-xs text-zinc-500 uppercase tracking-wider">{t("credentials.telegram.header")}</h3>
+    <div className="glow-border rounded-2xl bg-white dark:bg-white/[0.02] overflow-hidden">
+      <div className="p-4 border-b border-gray-200 dark:border-white/5 flex items-center justify-between">
+        <h3 className="text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider">{t("credentials.telegram.header")}</h3>
         {hasTelegram && (
           <button
             onClick={() => {
@@ -733,12 +733,12 @@ function TelegramConnectCard({
             <div className="w-10 h-10 rounded-xl bg-sky-500/20 border border-sky-500/30 flex items-center justify-center text-xl shrink-0">✈</div>
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-sm font-semibold text-white">
+                <span className="text-sm font-semibold text-gray-900 dark:text-white">
                   {tgUsername || "Bot connected"}
                 </span>
                 <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">{t("credentials.connected")}</span>
               </div>
-              <p className="text-xs text-zinc-500">{t("credentials.telegram.live")}</p>
+              <p className="text-xs text-gray-500 dark:text-zinc-500">{t("credentials.telegram.live")}</p>
               <button
                 onClick={() => {
                   setTelegramTokenInput("");
@@ -746,7 +746,7 @@ function TelegramConnectCard({
                   setTelegramConnected(null);
                   setAddingKey("telegram_bot_token");
                 }}
-                className="mt-2 text-xs text-violet-400 hover:text-violet-300 transition-colors"
+                className="mt-2 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-300 transition-colors"
               >
                 {t("credentials.replaceToken")}
               </button>
@@ -757,8 +757,8 @@ function TelegramConnectCard({
             <div className="flex items-start gap-3 mb-4">
               <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-xl shrink-0">✈</div>
               <div>
-                <p className="text-sm font-medium text-white mb-0.5">{t("credentials.telegram.connect")}</p>
-                <p className="text-xs text-zinc-500">
+                <p className="text-sm font-medium text-gray-900 dark:text-white mb-0.5">{t("credentials.telegram.connect")}</p>
+                <p className="text-xs text-gray-500 dark:text-zinc-500">
                   Create a bot via{" "}
                   <a href="https://t.me/BotFather" target="_blank" rel="noopener noreferrer" className="text-sky-400 hover:text-sky-300">@BotFather</a>
                   , then paste the token here.
@@ -775,19 +775,19 @@ function TelegramConnectCard({
                     onChange={(e) => { setTelegramTokenInput(e.target.value); setTelegramError(null); }}
                     placeholder="1234567890:AAFake_tokenHere..."
                     autoFocus
-                    className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-sky-500 transition-colors font-mono"
+                    className="flex-1 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-600 focus:outline-none focus:border-sky-500 transition-colors font-mono"
                   />
                   <button
                     onClick={() => setupTelegram(telegramTokenInput)}
                     disabled={telegramConnecting || !telegramTokenInput.trim()}
-                    className="flex items-center gap-1.5 bg-sky-600 hover:bg-sky-500 disabled:opacity-40 px-4 py-2 rounded-lg text-xs font-semibold text-white transition-colors"
+                    className="flex items-center gap-1.5 bg-sky-600 hover:bg-sky-500 disabled:opacity-40 px-4 py-2 rounded-lg text-xs font-semibold text-gray-900 dark:text-white transition-colors"
                   >
                     {telegramConnecting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Zap className="w-3 h-3" />}
                     {telegramConnecting ? t("credentials.connecting") : t("credentials.telegram.connectBtn")}
                   </button>
                   <button
                     onClick={() => { setAddingKey(null); setTelegramTokenInput(""); setTelegramError(null); }}
-                    className="text-zinc-500 hover:text-white px-2 py-2 rounded-lg border border-white/10 transition-colors"
+                    className="text-gray-500 dark:text-zinc-500 hover:text-white px-2 py-2 rounded-lg border border-gray-200 dark:border-white/10 transition-colors"
                   >
                     <X className="w-3 h-3" />
                   </button>
@@ -835,9 +835,9 @@ function DiscordConnectCard({
   const hasDiscord = credentials.some((c: CredentialRow) => c.key === "discord_bot_token");
 
   return (
-    <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
-      <div className="p-4 border-b border-white/5 flex items-center justify-between">
-        <h3 className="text-xs text-zinc-500 uppercase tracking-wider">{t("credentials.discord.header")}</h3>
+    <div className="glow-border rounded-2xl bg-white dark:bg-white/[0.02] overflow-hidden">
+      <div className="p-4 border-b border-gray-200 dark:border-white/5 flex items-center justify-between">
+        <h3 className="text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider">{t("credentials.discord.header")}</h3>
         {(hasDiscord || discordConnected) && (
           <button
             onClick={() => {
@@ -858,12 +858,12 @@ function DiscordConnectCard({
             <div className="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-xl shrink-0">🎮</div>
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-sm font-semibold text-white">
+                <span className="text-sm font-semibold text-gray-900 dark:text-white">
                   {instance.discordBotUsername ?? discordConnected?.username ?? "Bot connected"}
                 </span>
                 <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">{t("credentials.connected")}</span>
               </div>
-              <p className="text-xs text-zinc-500">{t("credentials.discord.live")}</p>
+              <p className="text-xs text-gray-500 dark:text-zinc-500">{t("credentials.discord.live")}</p>
               {(discordConnected?.inviteUrl || discordInviteUrl) && (
                 <a
                   href={discordConnected?.inviteUrl ?? discordInviteUrl ?? "#"}
@@ -881,8 +881,8 @@ function DiscordConnectCard({
             <div className="flex items-start gap-3 mb-4">
               <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-xl shrink-0">🎮</div>
               <div>
-                <p className="text-sm font-medium text-white mb-0.5">{t("credentials.discord.connect")}</p>
-                <p className="text-xs text-zinc-500">
+                <p className="text-sm font-medium text-gray-900 dark:text-white mb-0.5">{t("credentials.discord.connect")}</p>
+                <p className="text-xs text-gray-500 dark:text-zinc-500">
                   1. Create a bot at{" "}
                   <a href="https://discord.com/developers/applications" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300">discord.com/developers</a>{" "}
                   2. Copy the bot token
@@ -899,19 +899,19 @@ function DiscordConnectCard({
                     onChange={(e) => { setDiscordTokenInput(e.target.value); setDiscordError(null); }}
                     placeholder={t("credentials.discord.botTokenPlaceholder")}
                     autoFocus
-                    className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-indigo-500 transition-colors font-mono"
+                    className="flex-1 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-600 focus:outline-none focus:border-indigo-500 transition-colors font-mono"
                   />
                   <button
                     onClick={() => setupDiscord(discordTokenInput)}
                     disabled={discordConnecting || !discordTokenInput.trim()}
-                    className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 px-4 py-2 rounded-lg text-xs font-semibold text-white transition-colors"
+                    className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 px-4 py-2 rounded-lg text-xs font-semibold text-gray-900 dark:text-white transition-colors"
                   >
                     {discordConnecting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Zap className="w-3 h-3" />}
                     {discordConnecting ? t("credentials.connecting") : t("credentials.discord.connectBtn")}
                   </button>
                   <button
                     onClick={() => { setAddingKey(null); setDiscordTokenInput(""); setDiscordError(null); }}
-                    className="text-zinc-500 hover:text-white px-2 py-2 rounded-lg border border-white/10 transition-colors"
+                    className="text-gray-500 dark:text-zinc-500 hover:text-white px-2 py-2 rounded-lg border border-gray-200 dark:border-white/10 transition-colors"
                   >
                     <X className="w-3 h-3" />
                   </button>
@@ -959,9 +959,9 @@ function SlackConnectCard({
   const hasSlack = credentials.some((c: CredentialRow) => c.key === "slack_app_token" || c.key === "slack_bot_token");
 
   return (
-    <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
-      <div className="p-4 border-b border-white/5 flex items-center justify-between">
-        <h3 className="text-xs text-zinc-500 uppercase tracking-wider">{t("credentials.slack.header")}</h3>
+    <div className="glow-border rounded-2xl bg-white dark:bg-white/[0.02] overflow-hidden">
+      <div className="p-4 border-b border-gray-200 dark:border-white/5 flex items-center justify-between">
+        <h3 className="text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider">{t("credentials.slack.header")}</h3>
         {(hasSlack || slackConnected) && (
           <button
             onClick={async () => {
@@ -982,17 +982,17 @@ function SlackConnectCard({
             <div className="w-10 h-10 rounded-xl bg-yellow-500/20 border border-yellow-500/30 flex items-center justify-center text-xl shrink-0">💬</div>
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-sm font-semibold text-white">
+                <span className="text-sm font-semibold text-gray-900 dark:text-white">
                   {(instance.slackBotName ?? slackConnected?.botName)
                     ? `@${instance.slackBotName ?? slackConnected?.botName}`
                     : "Bot connected"}
                   {(instance.slackTeamName ?? slackConnected?.teamName) && (
-                    <span className="text-zinc-400 font-normal"> in {instance.slackTeamName ?? slackConnected?.teamName}</span>
+                    <span className="text-gray-500 dark:text-zinc-400 font-normal"> in {instance.slackTeamName ?? slackConnected?.teamName}</span>
                   )}
                 </span>
                 <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">{t("credentials.connected")}</span>
               </div>
-              <p className="text-xs text-zinc-500">{t("credentials.slack.live")}</p>
+              <p className="text-xs text-gray-500 dark:text-zinc-500">{t("credentials.slack.live")}</p>
             </div>
           </div>
         ) : (
@@ -1000,8 +1000,8 @@ function SlackConnectCard({
             <div className="flex items-start gap-3 mb-4">
               <div className="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-xl shrink-0">💬</div>
               <div>
-                <p className="text-sm font-medium text-white mb-0.5">{t("credentials.slack.connect")}</p>
-                <p className="text-xs text-zinc-500">{t("credentials.slack.instructions")}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white mb-0.5">{t("credentials.slack.connect")}</p>
+                <p className="text-xs text-gray-500 dark:text-zinc-500">{t("credentials.slack.instructions")}</p>
               </div>
             </div>
 
@@ -1013,27 +1013,27 @@ function SlackConnectCard({
                   onChange={(e) => { setSlackAppTokenInput(e.target.value); setSlackError(null); }}
                   placeholder={t("credentials.slack.appTokenPlaceholder")}
                   autoFocus
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-yellow-500 transition-colors font-mono"
+                  className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-600 focus:outline-none focus:border-yellow-500 transition-colors font-mono"
                 />
                 <input
                   type="password"
                   value={slackBotTokenInput}
                   onChange={(e) => { setSlackBotTokenInput(e.target.value); setSlackError(null); }}
                   placeholder={t("credentials.slack.botTokenPlaceholder")}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-yellow-500 transition-colors font-mono"
+                  className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-600 focus:outline-none focus:border-yellow-500 transition-colors font-mono"
                 />
                 <div className="flex gap-2">
                   <button
                     onClick={() => setupSlack(slackAppTokenInput, slackBotTokenInput)}
                     disabled={slackConnecting || !slackAppTokenInput.trim()}
-                    className="flex items-center gap-1.5 bg-yellow-600 hover:bg-yellow-500 disabled:opacity-40 px-4 py-2 rounded-lg text-xs font-semibold text-white transition-colors"
+                    className="flex items-center gap-1.5 bg-yellow-600 hover:bg-yellow-500 disabled:opacity-40 px-4 py-2 rounded-lg text-xs font-semibold text-gray-900 dark:text-white transition-colors"
                   >
                     {slackConnecting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Zap className="w-3 h-3" />}
                     {slackConnecting ? t("credentials.connecting") : t("credentials.slack.connectBtn")}
                   </button>
                   <button
                     onClick={() => { setAddingKey(null); setSlackAppTokenInput(""); setSlackBotTokenInput(""); setSlackError(null); }}
-                    className="text-zinc-500 hover:text-white px-2 py-2 rounded-lg border border-white/10 transition-colors"
+                    className="text-gray-500 dark:text-zinc-500 hover:text-white px-2 py-2 rounded-lg border border-gray-200 dark:border-white/10 transition-colors"
                   >
                     <X className="w-3 h-3" />
                   </button>
@@ -1062,13 +1062,13 @@ function SlackConnectCard({
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function IntegrationsSection({ id, credentials, saveCredential, t }: { id: string; credentials: CredentialRow[]; saveCredential: (key: string, value: string) => Promise<boolean>; t: ReturnType<typeof useTranslations> }) {
   return (
-    <div className="glow-border rounded-2xl bg-white/[0.02] overflow-hidden">
-      <div className="p-4 border-b border-white/5">
-        <h3 className="text-xs text-zinc-500 uppercase tracking-wider">{t("credentials.integrations.title")}</h3>
-        <p className="text-xs text-zinc-600 mt-0.5">{t("credentials.integrations.subtitle")}</p>
+    <div className="glow-border rounded-2xl bg-white dark:bg-white/[0.02] overflow-hidden">
+      <div className="p-4 border-b border-gray-200 dark:border-white/5">
+        <h3 className="text-xs text-gray-500 dark:text-zinc-500 uppercase tracking-wider">{t("credentials.integrations.title")}</h3>
+        <p className="text-xs text-gray-400 dark:text-zinc-600 mt-0.5">{t("credentials.integrations.subtitle")}</p>
       </div>
       <div className="p-4 space-y-3">
-        <p className="text-xs text-zinc-500 font-medium uppercase tracking-wider">{t("credentials.integrations.webIntelligence")}</p>
+        <p className="text-xs text-gray-500 dark:text-zinc-500 font-medium uppercase tracking-wider">{t("credentials.integrations.webIntelligence")}</p>
         <IntegrationCard
           name="Tavily Search"
           icon="🔍"
@@ -1094,7 +1094,7 @@ function IntegrationsSection({ id, credentials, saveCredential, t }: { id: strin
           toolName="brave_search"
         />
 
-        <p className="text-xs text-zinc-500 font-medium uppercase tracking-wider pt-2">{t("credentials.integrations.socialMedia")}</p>
+        <p className="text-xs text-gray-500 dark:text-zinc-500 font-medium uppercase tracking-wider pt-2">{t("credentials.integrations.socialMedia")}</p>
         <IntegrationCard
           name="Facebook Page Token"
           icon="📘"
@@ -1132,7 +1132,7 @@ function IntegrationsSection({ id, credentials, saveCredential, t }: { id: strin
           onSave={async (key, value) => { await saveCredential(key, value); }}
           toolName="crypto_price"
         />
-        <p className="text-xs text-zinc-500 font-medium uppercase tracking-wider pt-2">{t("credentials.integrations.businessTools")}</p>
+        <p className="text-xs text-gray-500 dark:text-zinc-500 font-medium uppercase tracking-wider pt-2">{t("credentials.integrations.businessTools")}</p>
         <IntegrationCard
           name="GitHub"
           icon="🐙"
