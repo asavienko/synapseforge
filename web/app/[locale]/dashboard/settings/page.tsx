@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { User, Shield, Zap, Moon, RotateCcw } from "lucide-react";
+import { User, Shield, Zap, Moon, CreditCard } from "lucide-react";
 import { PLANS } from "@/lib/utils";
 import { ProfileForm } from "@/components/ProfileForm";
 import { DashboardUpgrade } from "@/components/DashboardUpgrade";
@@ -9,6 +9,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { TeamSettings } from "@/components/TeamSettings";
 import { getTranslations } from "next-intl/server";
 import { RestartTourButton } from "@/components/RestartTourButton";
+import { BillingPortalButton } from "@/components/BillingPortalButton";
 import { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -84,6 +85,11 @@ export default async function SettingsPage() {
               hello@openhelixai.com
             </a>
           </p>
+        )}
+        {user.plan !== "free" && user.stripeCustomerId && (
+          <div className="mt-4">
+            <BillingPortalButton />
+          </div>
         )}
       </section>
 
