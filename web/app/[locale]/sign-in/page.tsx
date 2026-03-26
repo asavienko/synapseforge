@@ -41,10 +41,10 @@ export default function SignInPage() {
       if (result?.error) {
         console.log("Sign in error:", result.error);
         setError(t("error"));
-      } else if (result?.ok === true || result?.url) {
-        console.log("Sign in successful, redirecting to:", result.url || "/dashboard");
-        router.push(result.url || "/dashboard");
-        router.refresh();
+      } else if (result?.ok === true) {
+        console.log("Sign in successful, redirecting to dashboard");
+        // Use window.location for a full page redirect to ensure session is set
+        window.location.href = "/dashboard";
       } else {
         console.log("Unexpected sign in result:", result);
         setError(t("error"));
