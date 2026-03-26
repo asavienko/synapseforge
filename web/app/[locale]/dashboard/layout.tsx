@@ -37,7 +37,7 @@ export default async function DashboardLayout({
   const isManager = !!managerRecord;
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] flex flex-col">
+    <div className="min-h-screen bg-white dark:bg-[#0a0a0f] flex flex-col">
       {needsVerification && <EmailVerifyBanner />}
       <Suspense fallback={null}>
         <VerifiedSuccessBanner />

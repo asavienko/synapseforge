@@ -1,6 +1,8 @@
 import { Metadata } from "next";
 import { Link } from "@/i18n/navigation";
-import { ArrowRight, Zap, Clock, Calendar, Check } from "lucide-react";
+import { ArrowRight, Clock, Calendar, Check } from "lucide-react";
+import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
   title: "How to Build a Telegram AI Chatbot in 10 Minutes (2026 Guide)",
@@ -44,20 +46,10 @@ const howToSchema = {
 
 export default function TelegramChatbotPost() {
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white">
+    <div className="min-h-screen bg-white dark:bg-[#0a0a0f] text-gray-900 dark:text-[#f5f5f7]">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }} />
-
-      <nav className="border-b border-white/5 bg-[#0a0a0f]/90 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 font-bold text-white">
-            <Zap className="w-5 h-5 text-violet-400" />OpenHelix AI
-          </Link>
-          <Link href="/sign-up" className="flex items-center gap-1.5 bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2 rounded-lg text-sm font-semibold">
-            Try Free <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-      </nav>
+      <SiteHeader />
 
       <main className="max-w-3xl mx-auto px-4 py-16">
 
@@ -266,6 +258,7 @@ Always be friendly and brief. Respond in the customer's language.`}</div>
         </div>
 
       </main>
+      <SiteFooter />
     </div>
   );
 }

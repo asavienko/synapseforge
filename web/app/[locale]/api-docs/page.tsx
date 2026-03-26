@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Metadata } from "next";
-import { HelixLogo } from "@/components/icons/BrandIcons";
-import { ArrowLeft, Code, Terminal, Copy, Check } from "lucide-react";
+import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
+import { Code } from "lucide-react";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("apiDocs");
@@ -60,21 +61,7 @@ export default async function ApiDocsPage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#0a0a0f] text-gray-900 dark:text-[#f5f5f7]">
-      {/* Nav */}
-      <nav className="border-b border-gray-200/50 dark:border-white/[0.06] backdrop-blur-sm sticky top-0 z-50 bg-white/80 dark:bg-[#0a0a0f]/80">
-        <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <HelixLogo className="w-7 h-7 text-blue-600 dark:text-blue-400" size={28} />
-            <span className="font-bold text-lg tracking-tight text-gray-900 dark:text-white">OpenHelix<span className="text-blue-600 dark:text-blue-400">.</span></span>
-          </Link>
-          <Link
-            href="/dashboard"
-            className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors"
-          >
-            Go to Dashboard →
-          </Link>
-        </div>
-      </nav>
+      <SiteHeader />
 
       {/* Content */}
       <main className="max-w-4xl mx-auto px-6 py-12">
@@ -198,6 +185,8 @@ export default async function ApiDocsPage() {
           </p>
         </section>
       </main>
+
+      <SiteFooter />
     </div>
   );
 }

@@ -1,6 +1,8 @@
 import { Metadata } from "next";
 import { Link } from "@/i18n/navigation";
-import { ArrowLeft, ArrowRight, Calculator, TrendingDown, Clock, Users } from "lucide-react";
+import { ArrowRight, Calculator, TrendingDown, Clock, Users } from "lucide-react";
+import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
   title: "AI Customer Support ROI: Calculate Your Cost Savings",
@@ -15,15 +17,9 @@ export const metadata: Metadata = {
 
 export default function BlogPost() {
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white">
+    <div className="min-h-screen bg-white dark:bg-[#0a0a0f] text-gray-900 dark:text-[#f5f5f7]">
       {/* Header */}
-      <nav className="border-b border-white/5 bg-[#0a0a0f]/90 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-3xl mx-auto px-4 h-14 flex items-center">
-          <Link href="/blog" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors text-sm">
-            <ArrowLeft className="w-4 h-4" /> Back to Blog
-          </Link>
-        </div>
-      </nav>
+      <SiteHeader />
 
       <article className="max-w-3xl mx-auto px-4 py-12">
         {/* Title */}
@@ -324,6 +320,7 @@ export default function BlogPost() {
           </div>
         </section>
       </article>
+      <SiteFooter />
     </div>
   );
 }

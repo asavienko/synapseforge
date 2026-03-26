@@ -1,7 +1,8 @@
 import { Metadata } from "next";
 import NextLink from "next/link";
 import { Link } from "@/i18n/navigation";
-import { HelixLogo } from "@/components/icons/BrandIcons";
+import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 import { ArrowRight, ShoppingCart, Users, UtensilsCrossed, Building2, Globe, Headphones, HeartPulse, Landmark } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -87,16 +88,7 @@ const industries = [
 export default function UseCasesPage() {
   return (
     <div className="min-h-screen bg-white dark:bg-[#0a0a0f] text-gray-900 dark:text-[#f5f5f7]">
-      <nav className="border-b border-gray-200/50 dark:border-white/[0.06] bg-white/80 dark:bg-[#0a0a0f]/90 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 font-bold text-gray-900 dark:text-white">
-            <HelixLogo className="w-7 h-7 text-blue-600 dark:text-blue-400" size={28} />OpenHelix<span className="text-blue-600 dark:text-blue-400">.</span>
-          </Link>
-          <Link href="/sign-up" className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 transition-colors px-4 py-2 rounded-lg text-sm font-semibold text-white">
-            Try Free <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-      </nav>
+      <SiteHeader />
 
       <main className="max-w-5xl mx-auto px-4 py-16">
 
@@ -174,6 +166,7 @@ export default function UseCasesPage() {
         </div>
 
       </main>
+      <SiteFooter />
     </div>
   );
 }

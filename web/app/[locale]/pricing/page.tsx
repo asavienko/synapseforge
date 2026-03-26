@@ -1,5 +1,6 @@
 import { Link } from "@/i18n/navigation";
-import { HelixLogo } from "@/components/icons/BrandIcons";
+import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 import { Check } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Metadata } from "next";
@@ -42,26 +43,7 @@ export default async function PricingPage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#0a0a0f] text-gray-900 dark:text-[#f5f5f7]">
-      {/* Nav */}
-      <nav className="border-b border-gray-200/50 dark:border-white/[0.06] backdrop-blur-sm sticky top-0 z-50 bg-white/80 dark:bg-[#0a0a0f]/80">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <HelixLogo className="w-7 h-7 text-blue-600 dark:text-blue-400" size={28} />
-            <span className="font-bold text-lg tracking-tight text-gray-900 dark:text-white">OpenHelix<span className="text-blue-600 dark:text-blue-400">.</span></span>
-          </Link>
-          <div className="flex items-center gap-3">
-            <Link href="/" className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors px-4 py-2">
-              ← {t("common.back")}
-            </Link>
-            <Link
-              href="/sign-in"
-              className="text-sm bg-blue-600 hover:bg-blue-700 transition-colors px-4 py-2 rounded-lg font-medium text-white"
-            >
-              {t("nav.signIn")}
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <SiteHeader />
 
       {/* Header */}
       <section className="max-w-7xl mx-auto px-6 pt-20 pb-10 text-center">
@@ -149,26 +131,7 @@ export default async function PricingPage() {
         {t("pricingAnnual.forDetails")}
       </p>
 
-      {/* Footer */}
-      <footer className="border-t border-gray-100 dark:border-white/[0.06] py-8">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500 dark:text-white/50">
-          <div className="flex items-center gap-2">
-            <HelixLogo className="w-7 h-7 text-blue-600 dark:text-blue-400" size={28} />
-            <span>{t("footer.copyright", { year: 2026 })}</span>
-          </div>
-          <div className="flex gap-6">
-            <Link href="/privacy" className="hover:text-gray-900 dark:hover:text-white transition-colors">
-              {t("footer.privacy")}
-            </Link>
-            <Link href="/terms" className="hover:text-gray-900 dark:hover:text-white transition-colors">
-              {t("footer.terms")}
-            </Link>
-            <a href="mailto:hello@openhelixai.com" className="hover:text-gray-900 dark:hover:text-white transition-colors">
-              {t("footer.contact")}
-            </a>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { HelixLogo } from "@/components/icons/BrandIcons";
-import { ArrowLeft, Calendar, Sparkles, Bug, Shield, ZapIcon } from "lucide-react";
+import { Calendar, Sparkles, Bug, Shield, ZapIcon } from "lucide-react";
 import { Metadata } from "next";
+import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 import { SubscribeSection } from "./SubscribeSection";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -75,22 +76,7 @@ export default async function ChangelogPage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#0a0a0f] text-gray-900 dark:text-[#f5f5f7]">
-      {/* Nav */}
-      <nav className="border-b border-gray-200/50 dark:border-white/[0.06] backdrop-blur-sm sticky top-0 z-50 bg-white/80 dark:bg-[#0a0a0f]/80">
-        <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <HelixLogo className="w-7 h-7 text-blue-600 dark:text-blue-400" size={28} />
-            <span className="font-bold text-lg tracking-tight text-gray-900 dark:text-white">OpenHelix<span className="text-blue-600 dark:text-blue-400">.</span></span>
-          </Link>
-          <Link
-            href="/"
-            className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors flex items-center gap-1"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to home
-          </Link>
-        </div>
-      </nav>
+      <SiteHeader />
 
       {/* Content */}
       <main className="max-w-4xl mx-auto px-6 py-16">
@@ -153,16 +139,9 @@ export default async function ChangelogPage() {
         {/* Subscribe */}
         <SubscribeSection />
 
-        {/* Footer */}
-        <div className="mt-16 pt-8 border-t border-gray-100 dark:border-white/[0.06] text-center">
-          <p className="text-sm text-gray-500 dark:text-white/50">
-            Have feedback?{" "}
-            <Link href="/contact" className="text-blue-400 hover:underline">
-              Contact us
-            </Link>
-          </p>
-        </div>
       </main>
+
+      <SiteFooter />
     </div>
   );
 }

@@ -9,7 +9,6 @@ import {
   getIconComponent,
 } from "@/lib/templates";
 import {
-  ArrowLeft,
   ArrowRight,
   Check,
   Sparkles,
@@ -20,6 +19,8 @@ import { CopyButton } from "@/components/CopyButton";
 import { auth } from "@/lib/auth";
 import { getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
+import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 
 // Skip static generation to avoid next-intl config issues during build
 export const dynamic = 'force-dynamic';
@@ -86,39 +87,7 @@ export default async function TemplateDetailPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#0a0a0f] text-gray-900 dark:text-[#f5f5f7]">
-      {/* ── Navigation ────────────────────────────────────────────────── */}
-      <nav className="border-b border-gray-200/50 dark:border-white/[0.06] backdrop-blur-sm sticky top-0 z-50 bg-white/80 dark:bg-[#0a0a0f]/80">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link
-            href="/templates"
-            className="flex items-center gap-2 text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Templates
-          </Link>
-
-          <div className="flex items-center gap-2">
-            <HelixLogo className="w-7 h-7 text-blue-600 dark:text-blue-400" size={28} />
-            <span className="font-bold text-gray-900 dark:text-white">OpenHelix<span className="text-blue-600 dark:text-blue-400">.</span></span>
-          </div>
-
-          {isLoggedIn ? (
-            <Link
-              href="/dashboard"
-              className="text-sm bg-blue-600 hover:bg-blue-700 transition-colors px-4 py-2 rounded-lg font-medium text-white"
-            >
-              Dashboard
-            </Link>
-          ) : (
-            <Link
-              href="/sign-up"
-              className="text-sm bg-blue-600 hover:bg-blue-700 transition-colors px-4 py-2 rounded-lg font-medium text-white"
-            >
-              Get Started
-            </Link>
-          )}
-        </div>
-      </nav>
+      <SiteHeader />
 
       {/* ── Hero ───────────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden">
@@ -441,34 +410,7 @@ export default async function TemplateDetailPage({ params }: Props) {
             ))}
         </div>
       </section>
-
-      {/* ── Footer ────────────────────────────────────────────────────── */}
-      <footer className="border-t border-gray-100 dark:border-white/[0.06] py-10">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500 dark:text-white/40">
-          <div className="flex items-center gap-2">
-            <HelixLogo className="w-4 h-4 text-blue-600 dark:text-blue-400" size={16} />
-            <span className="font-semibold text-gray-500 dark:text-white/50">OpenHelix AI</span>
-            <span>{t("footer.copyright", { year: 2026 })}</span>
-          </div>
-          <div className="flex gap-6">
-            <Link
-              href="/privacy"
-              className="hover:text-gray-900 dark:hover:text-white transition-colors"
-            >
-              Privacy
-            </Link>
-            <Link href="/terms" className="hover:text-gray-900 dark:hover:text-white transition-colors">
-              Terms
-            </Link>
-            <Link
-              href="/contact"
-              className="hover:text-gray-900 dark:hover:text-white transition-colors"
-            >
-              Contact
-            </Link>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

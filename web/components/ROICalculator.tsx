@@ -74,15 +74,15 @@ export function ROICalculator() {
   const [messagesPerDay, setMessagesPerDay] = useState(20);
   const [timePerMessage, setTimePerMessage] = useState(5);
   const [hourlyRate, setHourlyRate] = useState(25);
-  const [showResults, setShowResults] = useState(false);
+  const [showResults, setShowResults] = useState(true);
 
   const stats = useMemo(() => {
     const dailyHoursSaved = (messagesPerDay * timePerMessage) / 60;
     const monthlyHoursSaved = dailyHoursSaved * 22;
     const monthlyCostSaved = monthlyHoursSaved * hourlyRate;
     const synapseforgeCost = 49;
-    const netMonthlySavings = monthlyCostSaved - synapseforgeCost;
-    const roi = (netMonthlySavings / synapseforgeCost) * 100;
+    const netMonthlySavings = Math.max(0, monthlyCostSaved - synapseforgeCost);
+    const roi = synapseforgeCost > 0 ? Math.max(0, Math.round(((monthlyCostSaved - synapseforgeCost) / synapseforgeCost) * 100)) : 0;
     return { monthlyHoursSaved, monthlyCostSaved, netMonthlySavings, roi };
   }, [messagesPerDay, timePerMessage, hourlyRate]);
 
@@ -92,7 +92,7 @@ export function ROICalculator() {
   };
 
   return (
-    <div className="rounded-xl border border-gray-200/60 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] p-6 md:p-8 shadow-sm">
+    <div className="rounded-2xl border border-gray-200/60 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">
         <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400">
@@ -167,7 +167,7 @@ export function ROICalculator() {
           <div className="text-center rounded-lg p-4 bg-amber-50/50 dark:bg-amber-500/[0.06] ring-1 ring-amber-100 dark:ring-amber-500/10">
             <div className="text-2xl font-extrabold text-amber-600 dark:text-amber-400 tabular-nums flex items-center justify-center gap-1">
               <TrendingUp className="w-4 h-4" />
-              {Math.round(stats.roi)}%
+              {stats.roi.toLocaleString()}%
             </div>
             <div className="text-[11px] font-medium text-gray-500 dark:text-white/45 mt-0.5">{t("roiLabel")}</div>
           </div>
