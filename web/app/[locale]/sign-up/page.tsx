@@ -95,7 +95,7 @@ export default function SignUpPage() {
 
     if (!res.ok) {
       setLoading(false);
-      setError(data.error || "Something went wrong.");
+      setError(data.error || t("somethingWrong"));
       return;
     }
 
@@ -185,9 +185,9 @@ export default function SignUpPage() {
           <div className="flex items-start gap-3 bg-violet-500/10 border border-violet-500/20 rounded-xl p-4 mb-6">
             <Zap className="w-4 h-4 text-violet-400 mt-0.5 shrink-0" />
             <div className="text-sm">
-              <div className="text-violet-300 font-medium mb-1">Free plan includes:</div>
+              <div className="text-violet-300 font-medium mb-1">{t("freePlanTitle")}</div>
               <div className="text-white/40 space-y-0.5">
-                {["1 AI instance (minimal tier)", "Dedicated manager assigned", "Upgrade by request anytime"].map((f) => (
+                {[t("freePlan1"), t("freePlan2"), t("freePlan3")].map((f) => (
                   <div key={f} className="flex items-center gap-2">
                     <Check className="w-3 h-3 text-emerald-400" />
                     {f}
@@ -206,7 +206,7 @@ export default function SignUpPage() {
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 required
-                placeholder="John Doe"
+                placeholder={t("namePlaceholder")}
                 className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-white placeholder-white/25 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-all"
               />
             </div>

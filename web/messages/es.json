@@ -247,7 +247,13 @@
       "creatingAccount": "Creando cuenta...",
       "successTitle": "¡Cuenta creada!",
       "successMessage": "Redirigiendo a la configuración inicial...",
-      "orEmail": "o regístrate con email"
+      "orEmail": "o regístrate con email",
+      "freePlanTitle": "El plan gratuito incluye:",
+      "freePlan1": "1 instancia IA (nivel mínimo)",
+      "freePlan2": "Manager dedicado asignado",
+      "freePlan3": "Mejora bajo petición en cualquier momento",
+      "namePlaceholder": "Juan García",
+      "somethingWrong": "Algo salió mal."
     },
     "forgotPassword": {
       "title": "¿Olvidaste tu contraseña?",

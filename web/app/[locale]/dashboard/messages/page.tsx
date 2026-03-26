@@ -177,7 +177,7 @@ export default function MessagesPage() {
               <CalendarDays className="w-4 h-4 text-violet-400" />
               <span className="text-sm text-zinc-300">Prefer a live conversation?</span>
             </div>
-            <CalBookingButton calLink={calLink} variant="outline" label="Schedule a call" />
+            <CalBookingButton calLink={calLink} variant="outline" label={t("scheduleCall")} />
           </div>
         </div>
       )}

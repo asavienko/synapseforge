@@ -251,7 +251,13 @@
       "invalidEmail": "Please enter a valid email address",
       "alreadyRegistered": "That email is already registered",
       "signInInstead": "Sign in instead?",
-      "orEmail": "or sign up with email"
+      "orEmail": "or sign up with email",
+      "freePlanTitle": "Free plan includes:",
+      "freePlan1": "1 AI instance (minimal tier)",
+      "freePlan2": "Dedicated manager assigned",
+      "freePlan3": "Upgrade by request anytime",
+      "namePlaceholder": "John Doe",
+      "somethingWrong": "Something went wrong."
     },
     "forgotPassword": {
       "title": "Forgot your password?",
