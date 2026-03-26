@@ -5,15 +5,18 @@ import type { NextRequest } from 'next/server';
 const intlMiddleware = createIntlMiddleware(routing);
 
 export default function middleware(req: NextRequest) {
-  // Skip i18n middleware for API routes (especially /api/auth/*)
-  if (req.nextUrl.pathname.startsWith('/api/')) {
-    return;
-  }
   return intlMiddleware(req);
 }
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)',
+    // Match all pathnames except for:
+    // - /api/* (API routes)
+    // - /_next/* (Next.js internals)
+    // - /_vercel/* (Vercel internals)
+    // - /static/* (static files)
+    // - /favicon.ico, /robots.txt (static files)
+    // - all root files with extensions (.jpg, .png, etc.)
+    '/((?!api|_next|_vercel|static|favicon.ico|robots.txt|sitemap.xml|.*\\..*).*)',
   ],
 };
