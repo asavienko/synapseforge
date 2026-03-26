@@ -28,6 +28,7 @@ import { getTranslations } from "next-intl/server";
 import { captureServerEvent } from "@/lib/posthog-server";
 import { OnboardingToast } from "@/components/OnboardingToast";
 import { OnboardingChecklist } from "@/components/OnboardingChecklist";
+import { EmailVerificationBanner } from "@/components/EmailVerificationBanner";
 import { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -174,6 +175,11 @@ export default async function DashboardPage() {
     <div className="p-6 pt-14 md:p-8 md:pt-6">
       {/* Onboarding completion toast */}
       <OnboardingToast />
+      
+      {/* Email verification banner */}
+      {!user.emailVerified && (
+        <EmailVerificationBanner email={user.email} />
+      )}
       
       {/* Live stats — refreshes every 30s and on window focus */}
       <DashboardRefresher />
