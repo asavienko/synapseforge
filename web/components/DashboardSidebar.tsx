@@ -203,7 +203,7 @@ function SidebarContent({ userName, userEmail, unreadCount, isAdmin, isManager, 
           }}
           className="mt-2 flex items-center justify-between text-xs text-zinc-600 hover:text-zinc-400 transition-colors py-2 px-3 rounded-lg hover:bg-white/5 w-full border border-white/5 border-dashed"
         >
-          <span>Command Palette</span>
+          <span>{t("commandPalette")}</span>
           <kbd className="flex items-center gap-0.5 px-1.5 py-0.5 bg-white/5 rounded text-[10px]">
             <span>⌘</span><span>K</span>
           </kbd>

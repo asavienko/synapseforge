@@ -450,7 +450,8 @@
       "adminPanel": "Panel de Administración",
       "apiDocs": "Docs de API",
       "integrations": "Integraciones",
-      "referral": "Referidos"
+      "referral": "Referidos",
+      "commandPalette": "Paleta de comandos"
     },
     "billing": {
       "title": "Facturación y Planes",
@@ -2120,5 +2121,32 @@
     "note": "Planes anuales disponibles — 2 meses gratis.",
     "contactUs": "Contáctanos",
     "forDetails": "para más detalles."
+  },
+  "teamSettings": {
+    "title": "Miembros del equipo",
+    "subtitle": "Invita a otros a colaborar en tus instancias",
+    "invite": "Invitar",
+    "sendInvite": "Enviar invitación",
+    "emailPlaceholder": "colega@empresa.com",
+    "roleViewer": "Visor — Solo lectura",
+    "roleAdmin": "Administrador — Acceso completo",
+    "rolesNote": "Los administradores pueden gestionar instancias y facturación. Los visores solo pueden monitorizar.",
+    "failedInvite": "Error al enviar la invitación",
+    "pending": "Pendiente",
+    "noMembers": "Aún no hay miembros del equipo",
+    "noMembersHint": "Invita a colegas para colaborar",
+    "removeTitle": "Eliminar miembro"
+  },
+  "configImportExport": {
+    "export": "Exportar configuración",
+    "copy": "Copiar",
+    "copied": "¡Copiado!",
+    "download": "Descargar",
+    "import": "Importar configuración",
+    "uploadJson": "Subir JSON",
+    "imported": "¡Importado!",
+    "uploadHint": "Sube un archivo de configuración exportado anteriormente para restaurar los ajustes",
+    "parseError": "Error al analizar el archivo de configuración",
+    "invalidFormat": "Formato de configuración no válido"
   }
 }

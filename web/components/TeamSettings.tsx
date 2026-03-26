@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Users, Plus, X, Loader2, Mail, Shield } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 interface TeamMember {
@@ -13,6 +14,7 @@ interface TeamMember {
 }
 
 export function TeamSettings() {
+  const t = useTranslations("teamSettings");
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [inviteEmail, setInviteEmail] = useState("");
@@ -61,10 +63,10 @@ export function TeamSettings() {
         setInviteEmail("");
         setShowInviteForm(false);
       } else {
-        setError(data.error || "Failed to send invite");
+        setError(data.error || t("failedInvite"));
       }
     } catch {
-      setError("Failed to send invite");
+      setError(t("failedInvite"));
     } finally {
       setSending(false);
     }
@@ -99,8 +101,8 @@ export function TeamSettings() {
             <Users className="w-5 h-5 text-blue-400" />
           </div>
           <div>
-            <h2 className="font-semibold text-white">Team Members</h2>
-            <p className="text-sm text-zinc-500">Invite others to collaborate on your instances</p>
+            <h2 className="font-semibold text-white">{t("title")}</h2>
+            <p className="text-sm text-zinc-500">{t("subtitle")}</p>
           </div>
         </div>
         <button
@@ -108,7 +110,7 @@ export function TeamSettings() {
           className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2 rounded-lg text-sm font-semibold text-white"
         >
           <Plus className="w-4 h-4" />
-          Invite
+          {t("invite")}
         </button>
       </div>
 
@@ -126,7 +128,7 @@ export function TeamSettings() {
                   type="email"
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}
-                  placeholder="colleague@company.com"
+                  placeholder={t("emailPlaceholder")}
                   required
                   className="w-full bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500 transition-colors"
                 />
@@ -137,8 +139,8 @@ export function TeamSettings() {
               onChange={(e) => setInviteRole(e.target.value as "admin" | "viewer")}
               className="bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-violet-500 transition-colors"
             >
-              <option value="viewer">Viewer — View only</option>
-              <option value="admin">Admin — Full access</option>
+              <option value="viewer">{t("roleViewer")}</option>
+              <option value="admin">{t("roleAdmin")}</option>
             </select>
             <div className="flex gap-2">
               <button
@@ -149,7 +151,7 @@ export function TeamSettings() {
                 {sending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
-                  "Send Invite"
+                  t("sendInvite")
                 )}
               </button>
               <button
@@ -166,7 +168,7 @@ export function TeamSettings() {
           </div>
           <p className="text-xs text-zinc-500 mt-2">
             <Shield className="w-3 h-3 inline mr-1" />
-            Admins can manage instances and billing. Viewers can only monitor.
+            {t("rolesNote")}
           </p>
         </form>
       )}
@@ -194,7 +196,7 @@ export function TeamSettings() {
                     {member.role}
                   </span>
                   {member.status === "pending" && (
-                    <span className="text-xs text-amber-400">Pending</span>
+                    <span className="text-xs text-amber-400">{t("pending")}</span>
                   )}
                 </div>
               </div>
@@ -204,7 +206,7 @@ export function TeamSettings() {
               <button
                 onClick={() => removeMember(member.id)}
                 className="p-2 text-zinc-500 hover:text-red-400 transition-colors"
-                title="Remove member"
+                title={t("removeTitle")}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -216,8 +218,8 @@ export function TeamSettings() {
       {members.length === 0 && (
         <div className="text-center py-8 text-zinc-500">
           <Users className="w-8 h-8 mx-auto mb-2 opacity-50" />
-          <p className="text-sm">No team members yet</p>
-          <p className="text-xs">Invite colleagues to collaborate</p>
+          <p className="text-sm">{t("noMembers")}</p>
+          <p className="text-xs">{t("noMembersHint")}</p>
         </div>
       )}
     </section>

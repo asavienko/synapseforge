@@ -447,7 +447,8 @@
       "adminPanel": "Admin Panel",
       "apiDocs": "API Docs",
       "integrations": "Integrations",
-      "referral": "Referrals"
+      "referral": "Referrals",
+      "commandPalette": "Command Palette"
     },
     "billing": {
       "title": "Billing & Plans",
@@ -2101,5 +2102,32 @@
     "note": "Annual plans available — 2 months free.",
     "contactUs": "Contact us",
     "forDetails": "for details."
+  },
+  "teamSettings": {
+    "title": "Team Members",
+    "subtitle": "Invite others to collaborate on your instances",
+    "invite": "Invite",
+    "sendInvite": "Send Invite",
+    "emailPlaceholder": "colleague@company.com",
+    "roleViewer": "Viewer — View only",
+    "roleAdmin": "Admin — Full access",
+    "rolesNote": "Admins can manage instances and billing. Viewers can only monitor.",
+    "failedInvite": "Failed to send invite",
+    "pending": "Pending",
+    "noMembers": "No team members yet",
+    "noMembersHint": "Invite colleagues to collaborate",
+    "removeTitle": "Remove member"
+  },
+  "configImportExport": {
+    "export": "Export Configuration",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "download": "Download",
+    "import": "Import Configuration",
+    "uploadJson": "Upload JSON",
+    "imported": "Imported!",
+    "uploadHint": "Upload a previously exported config file to restore settings",
+    "parseError": "Failed to parse config file",
+    "invalidFormat": "Invalid config format"
   }
 }

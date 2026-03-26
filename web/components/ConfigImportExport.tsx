@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { Download, Upload, Copy, Check, FileJson, AlertCircle } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 interface ConfigImportExportProps {
@@ -11,6 +12,7 @@ interface ConfigImportExportProps {
 }
 
 export function ConfigImportExport({ config, onImport, readOnly = false }: ConfigImportExportProps) {
+  const t = useTranslations("configImportExport");
   const [copied, setCopied] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
   const [importSuccess, setImportSuccess] = useState(false);
@@ -51,14 +53,14 @@ export function ConfigImportExport({ config, onImport, readOnly = false }: Confi
         
         // Basic validation
         if (typeof parsed !== "object" || parsed === null) {
-          throw new Error("Invalid config format");
+          throw new Error(t("invalidFormat"));
         }
 
         onImport?.(parsed);
         setImportSuccess(true);
         setTimeout(() => setImportSuccess(false), 3000);
       } catch (err) {
-        setImportError(err instanceof Error ? err.message : "Failed to parse config file");
+        setImportError(err instanceof Error ? err.message : t("parseError"));
       }
     };
     reader.readAsText(file);
@@ -74,7 +76,7 @@ export function ConfigImportExport({ config, onImport, readOnly = false }: Confi
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2 text-sm text-zinc-300">
             <FileJson className="w-4 h-4 text-violet-400" />
-            <span>Export Configuration</span>
+            <span>{t("export")}</span>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -82,14 +84,14 @@ export function ConfigImportExport({ config, onImport, readOnly = false }: Confi
               className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 px-2 py-1.5 rounded-lg transition-colors"
             >
               {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-              {copied ? "Copied!" : "Copy"}
+              {copied ? t("copied") : t("copy")}
             </button>
             <button
               onClick={handleDownload}
               className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 px-2 py-1.5 rounded-lg transition-colors"
             >
               <Download className="w-3.5 h-3.5" />
-              Download
+              {t("download")}
             </button>
           </div>
         </div>
@@ -104,7 +106,7 @@ export function ConfigImportExport({ config, onImport, readOnly = false }: Confi
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2 text-sm text-zinc-300">
               <Upload className="w-4 h-4 text-emerald-400" />
-              <span>Import Configuration</span>
+              <span>{t("import")}</span>
             </div>
             <button
               onClick={() => fileInputRef.current?.click()}
@@ -116,7 +118,7 @@ export function ConfigImportExport({ config, onImport, readOnly = false }: Confi
               )}
             >
               {importSuccess ? <Check className="w-3.5 h-3.5" /> : <Upload className="w-3.5 h-3.5" />}
-              {importSuccess ? "Imported!" : "Upload JSON"}
+              {importSuccess ? t("imported") : t("uploadJson")}
             </button>
             <input
               ref={fileInputRef}
@@ -127,7 +129,7 @@ export function ConfigImportExport({ config, onImport, readOnly = false }: Confi
             />
           </div>
           <p className="text-xs text-zinc-500">
-            Upload a previously exported config file to restore settings
+            {t("uploadHint")}
           </p>
           {importError && (
             <div className="flex items-center gap-2 mt-2 text-xs text-red-400">
