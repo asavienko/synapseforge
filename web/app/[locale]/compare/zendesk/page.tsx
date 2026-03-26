@@ -25,7 +25,7 @@ const faqSchema = {
     {
       "@type": "Question",
       name: "How much cheaper is OpenHelix AI vs Zendesk?",
-      acceptedAnswer: { "@type": "Answer", text: "Zendesk Suite starts at $55/agent/month — a team of 5 agents costs $275/month, or $3,300/year. OpenHelix AI's Pro plan is $79/month flat — $948/year, with unlimited AI conversations. For most SMBs, that's 70–90% cheaper." },
+      acceptedAnswer: { "@type": "Answer", text: "Zendesk Suite starts at $55/agent/month — a team of 5 agents costs $275/month, or $3,300/year. OpenHelix AI's Pro plan is $49/month flat — $588/year, with unlimited AI conversations. For most SMBs, that's 70–90% cheaper." },
     },
     {
       "@type": "Question",
@@ -62,7 +62,7 @@ const features = [
 
 const pricing = [
   { plan: "OpenHelix Free", price: "$0/mo", features: ["2,000 messages/month", "1 AI agent", "Web + Telegram + WhatsApp", "GPT-4o or Claude"], cta: "Start Free", href: "/sign-up", highlight: false },
-  { plan: "OpenHelix Pro", price: "$79/mo", features: ["Unlimited messages", "Multiple instances", "Priority support", "Advanced analytics", "White-label"], cta: "Start Pro", href: "/sign-up", highlight: true },
+  { plan: "OpenHelix Pro", price: "$49/mo", features: ["Unlimited messages", "Multiple instances", "Priority support", "Advanced analytics", "White-label"], cta: "Start Pro", href: "/sign-up", highlight: true },
   { plan: "Zendesk Suite Team", price: "$55/agent/mo", features: ["Ticketing system", "Email + chat", "Basic reporting", "Zendesk AI (extra cost)"], cta: "zendesk.com", href: "https://zendesk.com", highlight: false },
 ];
 

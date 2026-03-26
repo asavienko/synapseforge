@@ -25,7 +25,7 @@ const faqSchema = {
     {
       "@type": "Question",
       name: "How does Freshdesk pricing compare to OpenHelix AI?",
-      acceptedAnswer: { "@type": "Answer", text: "Freshdesk's Growth plan is $15/agent/month, but Freddy AI starts at $29/agent/month on top. A 5-agent team with AI costs $220/month ($2,640/year). OpenHelix AI Pro is $79/month flat ($948/year) — and AI is included by default, not an add-on." },
+      acceptedAnswer: { "@type": "Answer", text: "Freshdesk's Growth plan is $15/agent/month, but Freddy AI starts at $29/agent/month on top. A 5-agent team with AI costs $220/month ($2,640/year). OpenHelix AI Pro is $49/month flat ($588/year) — and AI is included by default, not an add-on." },
     },
     {
       "@type": "Question",
@@ -155,7 +155,7 @@ export default function VsFreshdeskPage() {
               <div className="p-6">
                 <div className="text-xs text-zinc-500 uppercase tracking-wider mb-4">OpenHelix AI Pro (unlimited agents)</div>
                 {[
-                  { label: "Pro plan (flat)", value: "$79/mo" },
+                  { label: "Pro plan (flat)", value: "$49/mo" },
                   { label: "AI model cost (est.)", value: "~$5–50/mo" },
                   { label: "Total monthly", value: "$84–129/mo", highlight: true },
                   { label: "Annual cost", value: "$948–1,548/yr", green: true },

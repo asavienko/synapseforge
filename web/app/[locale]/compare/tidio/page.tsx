@@ -78,7 +78,7 @@ const features = [
 const pricing = [
   { plan: "Free", openhelix: "2,000 msgs/mo", tidio: "50 conversations" },
   { plan: "Starter", openhelix: "$29/mo", tidio: "$29/mo" },
-  { plan: "Pro", openhelix: "$79/mo", tidio: "$59/mo" },
+  { plan: "Pro", openhelix: "$49/mo", tidio: "$59/mo" },
   { plan: "Enterprise", openhelix: "Custom", tidio: "Custom" },
 ];
 

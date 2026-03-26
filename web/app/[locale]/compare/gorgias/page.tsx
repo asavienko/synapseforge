@@ -73,7 +73,7 @@ export default function CompareGorgiasPage() {
               <div className="text-3xl font-bold text-violet-400 mb-2">$29<span className="text-lg text-violet-300/70">/mo</span></div>
               <ul className="text-sm text-zinc-300 space-y-1">
                 <li>• Starter: $29/month (10K messages)</li>
-                <li>• Growth: $79/month (30K messages)</li>
+                <li>• Pro: $49/month flat</li>
                 <li>• No per-agent fees</li>
                 <li>• Unlimited AI instances</li>
               </ul>
