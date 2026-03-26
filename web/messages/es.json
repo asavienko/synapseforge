@@ -2261,5 +2261,6 @@
     "failedCreate": "No se pudo crear la clave API",
     "failedDelete": "No se pudo eliminar la clave API",
     "confirmDelete": "¿Seguro que quieres eliminar esta clave API? Esta acción no se puede deshacer."
-  }
+  },
+  "poweredBy": "Funciona con las herramientas que ya usas"
 }

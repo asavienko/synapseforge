@@ -467,22 +467,23 @@ export default async function LandingPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════════
-          TRUSTED BY — logos
+          INTEGRATES WITH — real technology logos
       ═══════════════════════════════════════════════════════════════════ */}
       <section className="border-y border-gray-100 dark:border-white/[0.06] py-10 bg-gray-50/30 dark:bg-transparent">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <p className="text-center text-[11px] font-medium tracking-[0.15em] text-gray-400 dark:text-white/25 uppercase mb-6">{t("trustedBy")}</p>
-          <div className="flex flex-wrap items-center justify-center gap-10 md:gap-14">
+          <p className="text-center text-[11px] font-medium tracking-[0.15em] text-gray-400 dark:text-white/25 uppercase mb-7">{t("poweredBy")}</p>
+          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
             {[
-              { name: "Lumina Wellness", icon: "\u2726" },
-              { name: "TechStart Inc", icon: "\u25C6" },
-              { name: "GreenLeaf Co", icon: "\u2756" },
-              { name: "Urban Fitness", icon: "\u2739" },
-              { name: "CloudNine Labs", icon: "\u273B" },
-            ].map((c) => (
-              <div key={c.name} className="flex items-center gap-2 text-gray-400 dark:text-white/25">
-                <span className="text-lg">{c.icon}</span>
-                <span className="text-[13px] font-medium">{c.name}</span>
+              { name: "OpenAI",    emoji: "🤖" },
+              { name: "Anthropic", emoji: "🧠" },
+              { name: "Telegram",  emoji: "✈️" },
+              { name: "WhatsApp",  emoji: "💬" },
+              { name: "Discord",   emoji: "🎮" },
+              { name: "Slack",     emoji: "⚡" },
+            ].map((item) => (
+              <div key={item.name} className="flex items-center gap-2 text-gray-400 dark:text-white/30">
+                <span className="text-base">{item.emoji}</span>
+                <span className="text-[13px] font-medium">{item.name}</span>
               </div>
             ))}
           </div>

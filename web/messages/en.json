@@ -2242,5 +2242,6 @@
     "failedCreate": "Failed to create API key",
     "failedDelete": "Failed to delete API key",
     "confirmDelete": "Are you sure you want to delete this API key? This action cannot be undone."
-  }
+  },
+  "poweredBy": "Works with the tools you already use"
 }
