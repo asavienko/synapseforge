@@ -135,3 +135,9 @@ export const handlers = {
   GET: NextAuth(authOptions),
   POST: NextAuth(authOptions),
 };
+
+// Admin check helper
+export function isAdmin(email: string | null | undefined) {
+  const adminEmails = (process.env.ADMIN_EMAILS || "").split(",").map((e) => e.trim());
+  return !!email && adminEmails.includes(email);
+}

@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Metadata } from "next";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { FadeInView } from "@/components/animations/FadeInView";
 import { Code } from "lucide-react";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -63,106 +64,121 @@ export default async function ApiDocsPage() {
     <div className="min-h-screen bg-white dark:bg-[#0a0a0f] text-gray-900 dark:text-[#f5f5f7]">
       <SiteHeader />
 
-      {/* Content */}
-      <main className="max-w-4xl mx-auto px-6 py-12">
-        <div className="mb-12">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 flex items-center justify-center">
-              <Code className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+      {/* Hero */}
+      <section className="relative mesh-gradient grid-bg py-16 sm:py-24 md:py-32">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 text-center">
+          <FadeInView direction="up">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-blue-200 dark:border-blue-500/20 text-[12px] text-blue-600 dark:text-blue-400 mb-6">
+              <Code className="w-3.5 h-3.5" />
+              REST API
             </div>
-            <h1 className="text-3xl font-bold">API Documentation</h1>
-          </div>
-          <p className="text-gray-500 dark:text-white/50 text-lg">
-            Integrate OpenHelix AI into your applications with our REST API.
-          </p>
-        </div>
-
-        {/* Base URL */}
-        <section className="mb-12 p-6 bg-white dark:bg-white/[0.02] border border-gray-100 dark:border-white/[0.06] rounded-xl">
-          <h2 className="text-xl font-semibold mb-4">Base URL</h2>
-          <code className="block p-4 bg-gray-50 dark:bg-black/50 rounded-lg font-mono text-sm text-blue-600 dark:text-blue-300">
-            https://openhelixai.com/api/v1
-          </code>
-        </section>
-
-        {/* Authentication */}
-        <section className="mb-12">
-          <h2 className="text-xl font-semibold mb-4">Authentication</h2>
-          <div className="p-6 bg-white dark:bg-white/[0.02] border border-gray-100 dark:border-white/[0.06] rounded-xl">
-            <p className="text-gray-500 dark:text-white/50 mb-4">
-              Include your API key in the request headers:
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4">
+              <span className="gradient-text">API Documentation</span>
+            </h1>
+            <p className="text-lg text-gray-500 dark:text-white/50 max-w-xl mx-auto">
+              Integrate OpenHelix AI into your applications with our REST API.
             </p>
-            <pre className="p-4 bg-gray-50 dark:bg-black/50 rounded-lg overflow-x-auto">
-              <code className="font-mono text-sm text-gray-600 dark:text-zinc-300">{
-`X-API-Key: your_api_key_here`}
+          </FadeInView>
+        </div>
+      </section>
+
+      {/* Content */}
+      <section className="py-16 sm:py-24">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+
+          {/* Base URL */}
+          <FadeInView direction="up">
+            <div className="glass-card glow-border rounded-xl p-4 sm:p-6 mb-8 sm:mb-12">
+              <h2 className="text-lg sm:text-xl font-semibold mb-4">Base URL</h2>
+              <code className="block p-3 sm:p-4 bg-gray-50 dark:bg-black/50 rounded-lg font-mono text-xs sm:text-sm text-blue-600 dark:text-blue-400 overflow-x-auto">
+                https://openhelixai.com/api/v1
               </code>
-            </pre>
-            <div className="mt-4 p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
-              <p className="text-sm text-amber-400">
-                💡 Generate API keys from your{" "}
-                <Link href="/dashboard/instances" className="underline">dashboard</Link>.
-                Keep your API keys secure and never share them.
-              </p>
             </div>
-          </div>
-        </section>
+          </FadeInView>
 
-        {/* Endpoints */}
-        <section className="mb-12">
-          <h2 className="text-xl font-semibold mb-6">Endpoints</h2>
-          <div className="space-y-6">
-            {endpoints.map((endpoint, index) => (
-              <div
-                key={index}
-                className="border border-gray-100 dark:border-white/[0.06] rounded-xl overflow-hidden"
-              >
-                <div className="p-6 bg-white dark:bg-white/[0.02]">
-                  <div className="flex items-center gap-3 mb-3">
-                    <span
-                      className={`px-2 py-1 rounded text-xs font-mono font-bold ${
-                        endpoint.method === "GET"
-                          ? "bg-emerald-500/10 text-emerald-400"
-                          : "bg-blue-500/10 text-blue-600 dark:text-blue-400"
-                      }`}
-                    >
-                      {endpoint.method}
-                    </span>
-                    <code className="font-mono text-sm text-gray-600 dark:text-zinc-300">
-                      {endpoint.path}
-                    </code>
-                  </div>
-                  <p className="text-gray-500 dark:text-white/50 mb-2">{endpoint.description}</p>
-                  <p className="text-xs text-gray-500 dark:text-white/50">🔒 {endpoint.auth}</p>
-                </div>
-
-                <div className="p-6 border-t border-gray-100 dark:border-white/[0.06]">
-                  {endpoint.request && (
-                    <div className="mb-4">
-                      <p className="text-sm font-medium text-gray-600 dark:text-zinc-300 mb-2">Request Body</p>
-                      <pre className="p-3 bg-gray-50 dark:bg-black/50 rounded-lg overflow-x-auto">
-                        <code className="font-mono text-xs text-gray-600 dark:text-zinc-300">{endpoint.request}</code>
-                      </pre>
-                    </div>
-                  )}
-
-                  <div>
-                    <p className="text-sm font-medium text-gray-600 dark:text-zinc-300 mb-2">Response</p>
-                    <pre className="p-3 bg-gray-50 dark:bg-black/50 rounded-lg overflow-x-auto">
-                      <code className="font-mono text-xs text-gray-600 dark:text-zinc-300">{endpoint.response}</code>
-                    </pre>
-                  </div>
+          {/* Authentication */}
+          <FadeInView direction="up" delay={100}>
+            <div className="mb-8 sm:mb-12">
+              <h2 className="text-xl font-semibold mb-4">Authentication</h2>
+              <div className="glass-card glow-border rounded-xl p-4 sm:p-6">
+                <p className="text-gray-500 dark:text-white/50 mb-4">
+                  Include your API key in the request headers:
+                </p>
+                <pre className="p-4 bg-gray-50 dark:bg-black/50 rounded-lg overflow-x-auto">
+                  <code className="font-mono text-sm text-gray-600 dark:text-white/55">{
+`X-API-Key: your_api_key_here`}
+                  </code>
+                </pre>
+                <div className="mt-4 p-4 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-lg">
+                  <p className="text-sm text-amber-700 dark:text-amber-400">
+                    Generate API keys from your{" "}
+                    <Link href="/dashboard/instances" className="underline">dashboard</Link>.
+                    Keep your API keys secure and never share them.
+                  </p>
                 </div>
               </div>
-            ))}
-          </div>
-        </section>
+            </div>
+          </FadeInView>
 
-        {/* Example */}
-        <section className="mb-12">
-          <h2 className="text-xl font-semibold mb-4">Example: cURL</h2>
-          <div className="p-6 bg-white dark:bg-white/[0.02] border border-gray-100 dark:border-white/[0.06] rounded-xl">
-            <pre className="p-4 bg-gray-50 dark:bg-black/50 rounded-lg overflow-x-auto">
-              <code className="font-mono text-xs text-gray-600 dark:text-zinc-300">{
+          {/* Endpoints */}
+          <FadeInView direction="up" delay={200}>
+            <div className="mb-8 sm:mb-12">
+              <h2 className="text-xl font-semibold mb-6">Endpoints</h2>
+              <div className="space-y-6">
+                {endpoints.map((endpoint, index) => (
+                  <div
+                    key={index}
+                    className="glass-card glow-border rounded-xl overflow-hidden"
+                  >
+                    <div className="p-4 sm:p-6">
+                      <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-3">
+                        <span
+                          className={`px-2 py-1 rounded text-xs font-mono font-bold ${
+                            endpoint.method === "GET"
+                              ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                              : "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400"
+                          }`}
+                        >
+                          {endpoint.method}
+                        </span>
+                        <code className="font-mono text-sm text-gray-600 dark:text-white/55">
+                          {endpoint.path}
+                        </code>
+                      </div>
+                      <p className="text-gray-500 dark:text-white/50 mb-2">{endpoint.description}</p>
+                      <p className="text-xs text-gray-500 dark:text-white/50">{endpoint.auth}</p>
+                    </div>
+
+                    <div className="p-4 sm:p-6 border-t border-gray-100 dark:border-white/[0.06]">
+                      {endpoint.request && (
+                        <div className="mb-4">
+                          <p className="text-sm font-medium text-gray-600 dark:text-white/55 mb-2">Request Body</p>
+                          <pre className="p-3 bg-gray-50 dark:bg-black/50 rounded-lg overflow-x-auto">
+                            <code className="font-mono text-xs text-gray-600 dark:text-white/55">{endpoint.request}</code>
+                          </pre>
+                        </div>
+                      )}
+
+                      <div>
+                        <p className="text-sm font-medium text-gray-600 dark:text-white/55 mb-2">Response</p>
+                        <pre className="p-3 bg-gray-50 dark:bg-black/50 rounded-lg overflow-x-auto">
+                          <code className="font-mono text-xs text-gray-600 dark:text-white/55">{endpoint.response}</code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </FadeInView>
+
+          {/* Example */}
+          <FadeInView direction="up" delay={300}>
+            <div className="mb-12">
+              <h2 className="text-xl font-semibold mb-4">Example: cURL</h2>
+              <div className="glass-card glow-border rounded-xl p-4 sm:p-6">
+                <pre className="p-4 bg-gray-50 dark:bg-black/50 rounded-lg overflow-x-auto">
+                  <code className="font-mono text-xs text-gray-600 dark:text-white/55">{
 `curl -X POST "https://openhelixai.com/api/v1/chat" \\
   -H "Content-Type: application/json" \\
   -H "X-API-Key: your_api_key_here" \\
@@ -170,21 +186,25 @@ export default async function ApiDocsPage() {
     "instanceId": "your-instance-id",
     "message": "Hello, how can you help me?"
   }'`}
-              </code>
-            </pre>
-          </div>
-        </section>
+                  </code>
+                </pre>
+              </div>
+            </div>
+          </FadeInView>
 
-        {/* Help */}
-        <section className="text-center py-12 border-t border-gray-100 dark:border-white/[0.06]">
-          <p className="text-gray-500 dark:text-white/50">
-            Need help?{" "}
-            <Link href="/contact" className="text-blue-400 hover:underline">
-              Contact our support team
-            </Link>
-          </p>
-        </section>
-      </main>
+          {/* Help */}
+          <FadeInView direction="up" delay={400}>
+            <div className="text-center py-12 border-t border-gray-100 dark:border-white/[0.06]">
+              <p className="text-gray-500 dark:text-white/50">
+                Need help?{" "}
+                <Link href="/contact" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 transition-colors">
+                  Contact our support team
+                </Link>
+              </p>
+            </div>
+          </FadeInView>
+        </div>
+      </section>
 
       <SiteFooter />
     </div>

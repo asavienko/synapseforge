@@ -3,9 +3,10 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import NextLink from "next/link";
 import { Clock, Calendar } from "lucide-react";
-import { HelixLogo } from "@/components/icons/BrandIcons";
+import { BlogImage } from "@/components/BlogImages";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { FadeInView } from "@/components/animations/FadeInView";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("blog");
@@ -30,7 +31,7 @@ const posts = [
     date: "March 23, 2026",
     readTime: "12 min read",
     category: "Implementation",
-    categoryColor: "text-blue-400 bg-blue-400/10",
+    categoryColor: "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10",
   },
   {
     slug: "ai-customer-support-roi-guide",
@@ -39,7 +40,7 @@ const posts = [
     date: "March 23, 2026",
     readTime: "10 min read",
     category: "ROI Guide",
-    categoryColor: "text-emerald-400 bg-emerald-400/10",
+    categoryColor: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10",
   },
   {
     slug: "how-to-build-telegram-chatbot",
@@ -48,7 +49,7 @@ const posts = [
     date: "March 23, 2026",
     readTime: "8 min read",
     category: "Tutorial",
-    categoryColor: "text-blue-400 bg-blue-400/10",
+    categoryColor: "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10",
   },
   {
     slug: "best-ai-models-for-customer-support",
@@ -57,7 +58,7 @@ const posts = [
     date: "March 23, 2026",
     readTime: "10 min read",
     category: "Comparison",
-    categoryColor: "text-blue-400 bg-blue-400/10",
+    categoryColor: "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10",
   },
   {
     slug: "reduce-customer-support-costs-with-ai",
@@ -66,7 +67,7 @@ const posts = [
     date: "March 23, 2026",
     readTime: "9 min read",
     category: "ROI Guide",
-    categoryColor: "text-emerald-400 bg-emerald-400/10",
+    categoryColor: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10",
   },
   {
     slug: "how-to-automate-ecommerce-customer-support",
@@ -75,7 +76,7 @@ const posts = [
     date: "March 23, 2026",
     readTime: "11 min read",
     category: "Playbook",
-    categoryColor: "text-blue-400 bg-blue-400/10",
+    categoryColor: "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10",
   },
 ];
 
@@ -84,44 +85,59 @@ export default function BlogPage() {
     <div className="min-h-screen bg-white dark:bg-[#0a0a0f] text-gray-900 dark:text-[#f5f5f7]">
       <SiteHeader />
 
-      <main className="max-w-5xl mx-auto px-4 py-16">
-        <div className="mb-12">
-          <h1 className="text-3xl sm:text-4xl font-bold mb-3">Blog</h1>
-          <p className="text-gray-500 dark:text-white/50 max-w-xl">
-            Guides, tutorials, and insights on AI customer support, chatbot deployment, and business automation.
-          </p>
+      {/* Hero */}
+      <section className="relative mesh-gradient grid-bg py-16 sm:py-24 md:py-32">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 text-center">
+          <FadeInView direction="up">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-blue-200 dark:border-blue-500/20 text-[12px] text-blue-600 dark:text-blue-400 mb-6">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+              Guides & Insights
+            </div>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4">
+              <span className="gradient-text">Blog</span>
+            </h1>
+            <p className="text-lg text-gray-500 dark:text-white/50 max-w-xl mx-auto">
+              Guides, tutorials, and insights on AI customer support, chatbot deployment, and business automation.
+            </p>
+          </FadeInView>
         </div>
+      </section>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {posts.map((post) => (
-            <NextLink
-              key={post.slug}
-              href={`/blog/${post.slug}`}
-              className="group bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 hover:border-blue-200 dark:hover:border-blue-500/30 hover:bg-gray-50 dark:hover:bg-white/[0.04] transition-all rounded-xl overflow-hidden"
-            >
-              {/* Thumbnail placeholder */}
-              <div className="h-40 bg-gradient-to-br from-blue-500/20 to-blue-900/10 border-b border-gray-100 dark:border-white/[0.06] flex items-center justify-center">
-                <HelixLogo className="w-10 h-10 text-blue-400/40" size={40} />
-              </div>
-              <div className="p-5">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${post.categoryColor}`}>
-                    {post.category}
-                  </span>
-                </div>
-                <h2 className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors mb-2 leading-snug">
-                  {post.title}
-                </h2>
-                <p className="text-sm text-gray-500 dark:text-white/50 mb-4 leading-relaxed line-clamp-2">{post.excerpt}</p>
-                <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-white/40">
-                  <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{post.date}</span>
-                  <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{post.readTime}</span>
-                </div>
-              </div>
-            </NextLink>
-          ))}
+      {/* Posts Grid */}
+      <section className="py-12 sm:py-24">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {posts.map((post, i) => (
+              <FadeInView key={post.slug} direction="up" delay={i * 60}>
+                <NextLink
+                  href={`/blog/${post.slug}`}
+                  className="group glass-card rounded-xl overflow-hidden h-full flex flex-col hover:-translate-y-0.5 transition-all duration-300"
+                >
+                  {/* Blog post illustration */}
+                  <div className="h-40 border-b border-gray-100 dark:border-white/[0.06] flex items-center justify-center overflow-hidden">
+                    <BlogImage slug={post.slug} className="w-full h-full" />
+                  </div>
+                  <div className="p-5 flex flex-col flex-1">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${post.categoryColor}`}>
+                        {post.category}
+                      </span>
+                    </div>
+                    <h2 className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-2 leading-snug">
+                      {post.title}
+                    </h2>
+                    <p className="text-sm text-gray-500 dark:text-white/50 mb-4 leading-relaxed line-clamp-2 flex-1">{post.excerpt}</p>
+                    <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-white/40">
+                      <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{post.date}</span>
+                      <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{post.readTime}</span>
+                    </div>
+                  </div>
+                </NextLink>
+              </FadeInView>
+            ))}
+          </div>
         </div>
-      </main>
+      </section>
 
       <SiteFooter />
     </div>

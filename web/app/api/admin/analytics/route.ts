@@ -1,161 +1,152 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { isAdmin } from "@/lib/auth";
 
 /**
  * GET /api/admin/analytics
  *
- * Admin endpoint returning comprehensive platform analytics.
- * Protected by admin authentication.
+ * Returns business analytics for the admin dashboard.
  */
-export async function GET() {
+export async function GET(req: NextRequest) {
   const session = await auth();
-  
-  // Check if user is admin
-  const adminEmails = (process.env.ADMIN_EMAILS ?? "").split(",").map((e) => e.trim()).filter(Boolean);
-  const isAdmin = adminEmails.includes(session?.user?.email ?? "");
-  
-  if (!isAdmin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!isAdmin(session?.user?.email)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   try {
     // Get date ranges
     const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const thirtyDaysAgo = new Date(now);
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    
+    const sevenDaysAgo = new Date(now);
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    // Parallel queries for performance
-    const [
-      totalUsers,
-      newUsersToday,
-      newUsersThisMonth,
-      totalInstances,
-      activeInstances,
-      instancesByStatus,
-      totalMessages,
-      messagesToday,
-      messagesThisMonth,
-      usersByPlan,
-    ] = await Promise.all([
-      // User stats
-      prisma.user.count(),
-      prisma.user.count({ where: { createdAt: { gte: today } } }),
-      prisma.user.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
-      
-      // Instance stats
-      prisma.aIInstance.count(),
-      prisma.aIInstance.count({ where: { status: "running" } }),
-      prisma.aIInstance.groupBy({
-        by: ["status"],
-        _count: { status: true },
-      }),
-      
-      // Message stats
-      prisma.activityLog.count({ where: { event: "message" } }),
-      prisma.activityLog.count({
-        where: { event: "message", createdAt: { gte: today } },
-      }),
-      prisma.activityLog.count({
-        where: { event: "message", createdAt: { gte: thirtyDaysAgo } },
-      }),
-      
-      // Users by plan
-      prisma.user.groupBy({
-        by: ["plan"],
-        _count: { plan: true },
-      }),
-    ]);
-
-    // Get daily signup data for the last 30 days
-    const dailySignups = await prisma.user.groupBy({
-      by: ["createdAt"],
-      where: { createdAt: { gte: thirtyDaysAgo } },
-      _count: { id: true },
+    // Get all users with their data
+    const users = await prisma.user.findMany({
+      include: {
+        instances: true,
+        manager: true,
+      },
     });
 
-    // Build a map of existing signups
-    const signupsMap = new Map<string, number>();
-    dailySignups.forEach((day) => {
-      const dateKey = day.createdAt.toISOString().split("T")[0];
-      signupsMap.set(dateKey, (signupsMap.get(dateKey) || 0) + day._count.id);
+    // Plan counts
+    const planCounts = {
+      free: users.filter((u) => u.plan === "free").length,
+      pro: users.filter((u) => ["starter_10k", "growth_30k", "scale_100k", "business_200k"].includes(u.plan)).length,
+      enterprise: users.filter((u) => ["managed_starter", "managed_growth", "managed_scale"].includes(u.plan)).length,
+    };
+
+    // Calculate MRR
+    const planPricing: Record<string, number> = {
+      free: 0,
+      starter_10k: 29,
+      growth_30k: 79,
+      scale_100k: 199,
+      business_200k: 499,
+      managed_starter: 299,
+      managed_growth: 799,
+      managed_scale: 1499,
+    };
+
+    const mrr = users.reduce((sum, user) => {
+      return sum + (planPricing[user.plan] || 0);
+    }, 0);
+
+    const totalUsers = users.length;
+
+    // New this week
+    const newThisWeek = users.filter((u) => u.createdAt >= sevenDaysAgo).length;
+
+    // Instances
+    const allInstances = await prisma.aIInstance.findMany({
+      include: { user: { select: { email: true } } },
     });
 
-    // Fill in all 30 days (including zeros for days with no signups)
-    const signupsByDay = [];
-    for (let i = 0; i < 30; i++) {
-      const d = new Date(thirtyDaysAgo);
-      d.setDate(d.getDate() + i);
+    const activeInstances = allInstances.filter((i) => i.status === "running").length;
+    const provisionedVps = allInstances.filter((i) => i.vpsUrl).length;
+
+    // Health breakdown
+    const healthBreakdown = {
+      healthy: allInstances.filter((i) => i.healthStatus === "healthy").length,
+      degraded: allInstances.filter((i) => i.healthStatus === "degraded").length,
+      down: allInstances.filter((i) => i.healthStatus === "down").length,
+      notDeployed: allInstances.filter((i) => !i.vpsUrl).length,
+    };
+
+    // Down instances
+    const downInstances = allInstances
+      .filter((i) => i.healthStatus === "down")
+      .map((i) => ({
+        id: i.id,
+        name: i.name,
+        userEmail: i.user.email,
+      }));
+
+    // User growth (last 30 days)
+    const userGrowth: { date: string; count: number }[] = [];
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(now);
+      d.setDate(d.getDate() - i);
       const dateStr = d.toISOString().split("T")[0];
-      signupsByDay.push({
-        date: dateStr,
-        count: signupsMap.get(dateStr) || 0,
-      });
+      const count = users.filter((u) => {
+        const uDate = u.createdAt.toISOString().split("T")[0];
+        return uDate === dateStr;
+      }).length;
+      userGrowth.push({ date: dateStr, count });
     }
 
-    // Get top events from analytics
-    const topEvents = await prisma.analyticsEvent.groupBy({
-      by: ["event"],
-      where: { timestamp: { gte: thirtyDaysAgo } },
-      _count: { event: true },
-      orderBy: { _count: { event: "desc" } },
-      take: 10,
-    });
-
-    // Get checkout events for conversion tracking
-    const checkoutEvents = await prisma.analyticsEvent.groupBy({
-      by: ["event"],
-      where: {
-        timestamp: { gte: thirtyDaysAgo },
-        event: { in: ["checkout_started", "checkout_completed"] },
+    // Manager efficiency
+    const managers = await prisma.manager.findMany({
+      include: {
+        _count: { select: { users: true } },
       },
-      _count: { event: true },
     });
 
-    const checkoutStarted = checkoutEvents.find((e) => e.event === "checkout_started")?._count.event || 0;
-    const checkoutCompleted = checkoutEvents.find((e) => e.event === "checkout_completed")?._count.event || 0;
+    const managerEfficiency = managers.map((m) => ({
+      id: m.id,
+      name: m.name,
+      email: m.email,
+      userCount: m._count.users,
+    }));
+
+    // Unassigned users
+    const unassignedUsers = users.filter((u) => !u.managerId).length;
+
+    // Funnel data
+    const funnel = {
+      signedUp: totalUsers,
+      emailVerified: users.filter((u) => u.emailVerified).length,
+      onboardingDone: users.filter((u) => !!u.onboardingData).length,
+      triedSandbox: users.filter((u) => 
+        u.instances.some((i) => i.sandboxMode && i.sandboxUsed > 0)
+      ).length,
+      sandboxExhausted: users.filter((u) =>
+        u.instances.some((i) => i.sandboxMode && i.sandboxUsed >= 50)
+      ).length,
+      addedApiKey: 0, // Would need credentials query
+      connectedTelegram: users.filter((u) =>
+        u.instances.some((i) => i.telegramBotUsername)
+      ).length,
+    };
 
     return NextResponse.json({
-      users: {
-        total: totalUsers,
-        newToday: newUsersToday,
-        newThisMonth: newUsersThisMonth,
-        byPlan: usersByPlan.map((p) => ({
-          plan: p.plan || "free",
-          count: p._count.plan,
-        })),
-      },
-      instances: {
-        total: totalInstances,
-        active: activeInstances,
-        byStatus: instancesByStatus.reduce((acc, curr) => {
-          acc[curr.status] = curr._count.status;
-          return acc;
-        }, {} as Record<string, number>),
-      },
-      messages: {
-        total: totalMessages,
-        today: messagesToday,
-        thisMonth: messagesThisMonth,
-      },
-      trends: {
-        signupsByDay,
-      },
-      events: {
-        topEvents: topEvents.map((e) => ({
-          event: e.event,
-          count: e._count.event,
-        })),
-      },
-      revenue: {
-        checkoutStarted,
-        checkoutCompleted,
-        conversionRate: checkoutStarted > 0 ? Math.round((checkoutCompleted / checkoutStarted) * 100) : 0,
-      },
-      generatedAt: now.toISOString(),
+      planCounts,
+      mrr,
+      totalUsers,
+      newThisWeek,
+      activeInstances,
+      provisionedVps,
+      healthBreakdown,
+      downInstances,
+      userGrowth,
+      managerEfficiency,
+      unassignedUsers,
+      funnel,
     });
-  } catch (err) {
-    console.error("[admin/analytics] Error:", err);
+  } catch (error) {
+    console.error("[admin/analytics] Error:", error);
     return NextResponse.json(
       { error: "Failed to fetch analytics" },
       { status: 500 }

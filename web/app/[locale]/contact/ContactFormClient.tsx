@@ -68,7 +68,7 @@ export function ContactFormClient() {
   }
 
   return (
-    <div className="glow-border rounded-2xl bg-white dark:bg-white/[0.02] p-8 md:p-10">
+    <div className="glow-border rounded-2xl bg-white dark:bg-white/[0.02] p-5 sm:p-8 md:p-10">
       <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">{t("formTitle")}</h2>
 
       <form onSubmit={handleSubmit} className="space-y-5">

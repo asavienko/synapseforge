@@ -105,14 +105,14 @@ pre, code {
   white-space: pre-wrap;
 }
 
-/* Improve touch targets on mobile */
-button, a {
+/* Improve touch targets on mobile - applied via utility class */
+.touch-target {
   min-height: 44px;
   min-width: 44px;
 }
 
-/* But allow small inline buttons */
-button.inline, a.inline, button svg, a svg {
+/* Ensure SVGs inside buttons/links don't inherit min-height */
+button svg, a svg {
   min-height: auto;
   min-width: auto;
 }

@@ -29,6 +29,7 @@ import {
   SlackIcon,
   WhatsAppIcon,
   WebIcon,
+  IntegrationsIcon,
 } from "@/components/icons/BrandIcons";
 import { getTranslations } from "next-intl/server";
 
@@ -295,8 +296,8 @@ export default async function LandingPage() {
         <div className="grid md:grid-cols-3 gap-6 mb-14">
           {[
             { step: "01", Icon: KeyIcon, color: "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400", borderColor: "group-hover:border-blue-200 dark:group-hover:border-blue-500/20", title: t("how.step1title"), desc: t("how.step1desc") },
-            { step: "02", Icon: MessagesIcon, color: "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400", borderColor: "group-hover:border-emerald-200 dark:group-hover:border-emerald-500/20", title: t("how.step2title"), desc: t("how.step2desc") },
-            { step: "03", Icon: MessagesIcon, color: "bg-violet-50 dark:bg-violet-500/10 text-violet-600 dark:text-violet-400", borderColor: "group-hover:border-violet-200 dark:group-hover:border-violet-500/20", title: t("how.step3title"), desc: t("how.step3desc") },
+            { step: "02", Icon: SettingsIcon, color: "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400", borderColor: "group-hover:border-emerald-200 dark:group-hover:border-emerald-500/20", title: t("how.step2title"), desc: t("how.step2desc") },
+            { step: "03", Icon: RocketLaunchIcon, color: "bg-violet-50 dark:bg-violet-500/10 text-violet-600 dark:text-violet-400", borderColor: "group-hover:border-violet-200 dark:group-hover:border-violet-500/20", title: t("how.step3title"), desc: t("how.step3desc") },
           ].map((s, i) => (
             <FadeInView key={i} direction="up" delay={i * 100}>
               <div className={`group relative p-7 rounded-2xl border border-gray-100 dark:border-white/[0.06] h-full bg-white dark:bg-white/[0.02] hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-none transition-all duration-300 hover:-translate-y-0.5 ${s.borderColor}`}>
@@ -485,7 +486,7 @@ export default async function LandingPage() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[
             { Icon: MessagesIcon, color: "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400", title: t("features.f1title"), desc: t("features.f1desc") },
-            { Icon: CodeIcon, color: "bg-violet-50 dark:bg-violet-500/10 text-violet-600 dark:text-violet-400", title: t("features.f2title"), desc: t("features.f2desc") },
+            { Icon: IntegrationsIcon, color: "bg-violet-50 dark:bg-violet-500/10 text-violet-600 dark:text-violet-400", title: t("features.f2title"), desc: t("features.f2desc") },
             { Icon: RefreshIcon, color: "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400", title: t("features.f3title"), desc: t("features.f3desc") },
             { Icon: UserIcon, color: "bg-pink-50 dark:bg-pink-500/10 text-pink-600 dark:text-pink-400", title: t("features.f4title"), desc: t("features.f4desc") },
             { Icon: ShieldCheckIcon, color: "bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400", title: t("features.f5title"), desc: t("features.f5desc") },
@@ -568,7 +569,7 @@ export default async function LandingPage() {
             <p className="text-gray-500 dark:text-white/50 text-[15px]">{t("testimonials.subtitle")}</p>
           </div>
         </FadeInView>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {([1, 2, 3, 4, 5, 6] as const).map((n, i) => (
             <FadeInView key={n} direction="up" delay={i * 60}>
               <div className="p-5 rounded-xl border border-gray-100 dark:border-white/[0.06] flex flex-col gap-3 h-full">

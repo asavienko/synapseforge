@@ -3,6 +3,7 @@ import NextLink from "next/link";
 import { Link } from "@/i18n/navigation";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { FadeInView } from "@/components/animations/FadeInView";
 import { ArrowRight, ShoppingCart, Users, UtensilsCrossed, Building2, Globe, Headphones, HeartPulse, Landmark } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -90,82 +91,97 @@ export default function UseCasesPage() {
     <div className="min-h-screen bg-white dark:bg-[#0a0a0f] text-gray-900 dark:text-[#f5f5f7]">
       <SiteHeader />
 
-      <main className="max-w-5xl mx-auto px-4 py-16">
-
-        <nav className="text-sm text-gray-500 dark:text-white/50 mb-8">
-          <Link href="/" className="hover:text-gray-700 dark:hover:text-zinc-300 transition-colors">Home</Link>
-          <span className="mx-2">/</span>
-          <span className="text-gray-700 dark:text-zinc-300">Use Cases</span>
-        </nav>
-
-        <div className="mb-12">
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4">AI Chatbot <span className="text-blue-600 dark:text-blue-400">Use Cases</span></h1>
-          <p className="text-lg text-gray-500 dark:text-white/50 max-w-2xl leading-relaxed">
-            OpenHelix AI adapts to any business type. Explore how companies like yours deploy AI customer support agents — and what they automate.
-          </p>
+      {/* Hero */}
+      <section className="relative mesh-gradient grid-bg py-16 sm:py-24 md:py-32">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 text-center">
+          <FadeInView direction="up">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-blue-200 dark:border-blue-500/20 text-[12px] text-blue-600 dark:text-blue-400 mb-6">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+              Industries & Business Types
+            </div>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4">
+              AI Chatbot <span className="gradient-text">Use Cases</span>
+            </h1>
+            <p className="text-lg text-gray-500 dark:text-white/50 max-w-2xl mx-auto leading-relaxed">
+              OpenHelix AI adapts to any business type. Explore how companies like yours deploy AI customer support agents — and what they automate.
+            </p>
+          </FadeInView>
         </div>
+      </section>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
-          {industries.map((ind, i) => {
-            const Card = (
-              <div className={`relative bg-white dark:bg-white/[0.02] border rounded-xl p-6 h-full flex flex-col ${ind.highlight ? "border-blue-200 dark:border-blue-500/20 hover:border-blue-300 dark:hover:border-blue-500/40" : "border-gray-100 dark:border-white/[0.06] hover:border-gray-200 dark:hover:border-white/10"} transition-all group`}>
-                {ind.comingSoon && (
-                  <span className="absolute top-4 right-4 text-xs text-gray-400 dark:text-zinc-600 bg-gray-100 dark:bg-white/5 px-2 py-0.5 rounded-full">Coming soon</span>
-                )}
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${ind.highlight ? "bg-blue-500/10 border border-blue-200 dark:border-blue-500/20" : "bg-gray-100 dark:bg-white/5"}`}>
-                  <ind.icon className={`w-5 h-5 ${ind.highlight ? "text-blue-600 dark:text-blue-400" : "text-gray-500 dark:text-zinc-500"}`} />
-                </div>
-                <h2 className="font-bold text-lg mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors">{ind.title}</h2>
-                <p className="text-sm text-gray-500 dark:text-white/50 leading-relaxed mb-4 flex-1">{ind.desc}</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {ind.tags.map((tag, j) => (
-                    <span key={j} className="text-xs text-gray-500 dark:text-zinc-500 bg-gray-100 dark:bg-white/5 px-2 py-0.5 rounded-full">{tag}</span>
-                  ))}
-                </div>
-                {ind.slug && !ind.comingSoon && (
-                  <div className="mt-4 flex items-center gap-1 text-sm text-blue-600 dark:text-blue-400 group-hover:text-blue-500 dark:group-hover:text-blue-300 transition-colors">
-                    Explore <ArrowRight className="w-3.5 h-3.5" />
+      {/* Industries Grid */}
+      <section className="py-12 sm:py-24">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
+            {industries.map((ind, i) => {
+              const Card = (
+                <div className={`relative glass-card rounded-xl p-6 h-full flex flex-col transition-all duration-300 hover:-translate-y-0.5 group ${ind.highlight ? "glow-border" : ""}`}>
+                  {ind.comingSoon && (
+                    <span className="absolute top-4 right-4 text-xs text-gray-400 dark:text-white/30 bg-gray-100 dark:bg-white/5 px-2 py-0.5 rounded-full">Coming soon</span>
+                  )}
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${ind.highlight ? "bg-blue-500/10 border border-blue-200 dark:border-blue-500/20" : "bg-gray-100 dark:bg-white/5"}`}>
+                    <ind.icon className={`w-5 h-5 ${ind.highlight ? "text-blue-600 dark:text-blue-400" : "text-gray-500 dark:text-white/40"}`} />
                   </div>
-                )}
-              </div>
-            );
+                  <h2 className="font-bold text-lg mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{ind.title}</h2>
+                  <p className="text-sm text-gray-500 dark:text-white/50 leading-relaxed mb-4 flex-1">{ind.desc}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {ind.tags.map((tag, j) => (
+                      <span key={j} className="text-xs text-gray-500 dark:text-white/40 bg-gray-100 dark:bg-white/5 px-2 py-0.5 rounded-full">{tag}</span>
+                    ))}
+                  </div>
+                  {ind.slug && !ind.comingSoon && (
+                    <div className="mt-4 flex items-center gap-1 text-sm text-blue-600 dark:text-blue-400 group-hover:gap-2 transition-all">
+                      Explore <ArrowRight className="w-3.5 h-3.5" />
+                    </div>
+                  )}
+                </div>
+              );
 
-            return ind.slug ? (
-              <NextLink key={i} href={`/use-cases/${ind.slug}`} className="block">
-                {Card}
-              </NextLink>
-            ) : (
-              <div key={i}>{Card}</div>
-            );
-          })}
+              return (
+                <FadeInView key={i} direction="up" delay={i * 60}>
+                  {ind.slug ? (
+                    <NextLink href={`/use-cases/${ind.slug}`} className="block h-full">
+                      {Card}
+                    </NextLink>
+                  ) : (
+                    <div className="h-full">{Card}</div>
+                  )}
+                </FadeInView>
+              );
+            })}
+          </div>
+
+          {/* Quick CTA */}
+          <FadeInView direction="up">
+            <div className="glass-card glow-border rounded-2xl p-8 text-center mb-12">
+              <h2 className="text-xl font-bold mb-2">Don&apos;t see your industry?</h2>
+              <p className="text-gray-500 dark:text-white/50 text-sm mb-5">OpenHelix AI works for any business with repetitive customer questions. Start free and configure it for your use case.</p>
+              <Link href="/sign-up" className="glass-btn-primary inline-flex items-center gap-2 px-6 py-3 font-semibold text-white text-sm">
+                Try It Free <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </FadeInView>
+
+          {/* Related */}
+          <FadeInView direction="up" delay={100}>
+            <div className="grid sm:grid-cols-3 gap-3">
+              <Link href="/compare" className="flex items-center gap-3 glass-card rounded-xl p-4 group">
+                <div className="flex-1"><div className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Compare Alternatives</div><div className="text-xs text-gray-500 dark:text-white/50 mt-0.5">vs Tidio, Intercom, Crisp</div></div>
+                <ArrowRight className="w-4 h-4 text-gray-400 dark:text-white/30 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors shrink-0" />
+              </Link>
+              <Link href="/integrations" className="flex items-center gap-3 glass-card rounded-xl p-4 group">
+                <div className="flex-1"><div className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Integrations</div><div className="text-xs text-gray-500 dark:text-white/50 mt-0.5">Telegram, WhatsApp, Discord</div></div>
+                <ArrowRight className="w-4 h-4 text-gray-400 dark:text-white/30 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors shrink-0" />
+              </Link>
+              <Link href="/pricing" className="flex items-center gap-3 glass-card rounded-xl p-4 group">
+                <div className="flex-1"><div className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Pricing</div><div className="text-xs text-gray-500 dark:text-white/50 mt-0.5">Free plan · No credit card</div></div>
+                <ArrowRight className="w-4 h-4 text-gray-400 dark:text-white/30 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors shrink-0" />
+              </Link>
+            </div>
+          </FadeInView>
         </div>
+      </section>
 
-        {/* Quick CTA */}
-        <div className="bg-blue-600/5 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 rounded-2xl p-8 text-center mb-12">
-          <h2 className="text-xl font-bold mb-2">Don&apos;t see your industry?</h2>
-          <p className="text-gray-500 dark:text-white/50 text-sm mb-5">OpenHelix AI works for any business with repetitive customer questions. Start free and configure it for your use case.</p>
-          <Link href="/sign-up" className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 transition-colors px-6 py-3 rounded-xl font-semibold text-white">
-            Try It Free <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-
-        {/* Related */}
-        <div className="grid sm:grid-cols-3 gap-3">
-          <Link href="/compare" className="flex items-center gap-3 bg-white dark:bg-white/[0.02] border border-gray-100 dark:border-white/[0.06] hover:border-blue-200 dark:hover:border-blue-500/20 rounded-xl p-4 group">
-            <div className="flex-1"><div className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors">Compare Alternatives</div><div className="text-xs text-gray-500 dark:text-white/50 mt-0.5">vs Tidio, Intercom, Crisp</div></div>
-            <ArrowRight className="w-4 h-4 text-gray-400 dark:text-zinc-600 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors shrink-0" />
-          </Link>
-          <Link href="/integrations" className="flex items-center gap-3 bg-white dark:bg-white/[0.02] border border-gray-100 dark:border-white/[0.06] hover:border-blue-200 dark:hover:border-blue-500/20 rounded-xl p-4 group">
-            <div className="flex-1"><div className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors">Integrations</div><div className="text-xs text-gray-500 dark:text-white/50 mt-0.5">Telegram, WhatsApp, Discord</div></div>
-            <ArrowRight className="w-4 h-4 text-gray-400 dark:text-zinc-600 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors shrink-0" />
-          </Link>
-          <Link href="/pricing" className="flex items-center gap-3 bg-white dark:bg-white/[0.02] border border-gray-100 dark:border-white/[0.06] hover:border-blue-200 dark:hover:border-blue-500/20 rounded-xl p-4 group">
-            <div className="flex-1"><div className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors">Pricing</div><div className="text-xs text-gray-500 dark:text-white/50 mt-0.5">Free plan · No credit card</div></div>
-            <ArrowRight className="w-4 h-4 text-gray-400 dark:text-zinc-600 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors shrink-0" />
-          </Link>
-        </div>
-
-      </main>
       <SiteFooter />
     </div>
   );
