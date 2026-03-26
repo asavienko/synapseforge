@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Activity, Bot, MessageSquare, Zap, AlertCircle, CheckCircle2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 interface ActivityItem {
@@ -13,6 +14,7 @@ interface ActivityItem {
 }
 
 export function RecentActivity() {
+  const t = useTranslations("recentActivity");
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -72,8 +74,8 @@ export function RecentActivity() {
             <Activity className="w-5 h-5 text-violet-400" />
           </div>
           <div>
-            <h2 className="font-semibold text-white">Recent Activity</h2>
-            <p className="text-sm text-zinc-500">Last 24 hours</p>
+            <h2 className="font-semibold text-white">{t("title")}</h2>
+            <p className="text-sm text-zinc-500">{t("last24h")}</p>
           </div>
         </div>
       </div>
@@ -91,7 +93,7 @@ export function RecentActivity() {
                 <p className="text-xs text-zinc-500 mt-0.5">{activity.instanceName}</p>
               )}
               <p className="text-xs text-zinc-600 mt-1">
-                {formatRelativeTime(activity.timestamp)}
+                {formatRelativeTime(activity.timestamp, t("justNow"))}
               </p>
             </div>
           </div>
@@ -120,7 +122,7 @@ function ActivityIcon({ type }: { type: ActivityItem["type"] }) {
   );
 }
 
-function formatRelativeTime(timestamp: string): string {
+function formatRelativeTime(timestamp: string, justNow: string): string {
   const date = new Date(timestamp);
   const now = new Date();
   const diff = now.getTime() - date.getTime();
@@ -128,7 +130,7 @@ function formatRelativeTime(timestamp: string): string {
   const minutes = Math.floor(diff / 60000);
   const hours = Math.floor(diff / 3600000);
   
-  if (minutes < 1) return "Just now";
+  if (minutes < 1) return justNow;
   if (minutes < 60) return `${minutes}m ago`;
   if (hours < 24) return `${hours}h ago`;
   return date.toLocaleDateString();

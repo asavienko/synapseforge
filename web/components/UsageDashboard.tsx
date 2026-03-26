@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BarChart3, Bot, MessageSquare, Zap, Calendar, AlertTriangle } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 interface UsageData {
@@ -19,6 +20,7 @@ interface UsageData {
 }
 
 export function UsageDashboard() {
+  const t = useTranslations("usageDashboard");
   const [usage, setUsage] = useState<UsageData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -88,7 +90,7 @@ export function UsageDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <UsageCard
           icon={MessageSquare}
-          label="Messages"
+          label={t("messages")}
           used={usage.messagesUsed}
           limit={usage.messagesLimit}
           percent={messagePercent}
@@ -97,7 +99,7 @@ export function UsageDashboard() {
         
         <UsageCard
           icon={Bot}
-          label="Instances"
+          label={t("instances")}
           used={usage.instancesUsed}
           limit={usage.instancesLimit}
           percent={instancePercent}
@@ -106,7 +108,7 @@ export function UsageDashboard() {
         
         <UsageCard
           icon={Zap}
-          label="API Calls"
+          label={t("apiCalls")}
           used={usage.apiCallsUsed}
           limit={usage.apiCallsLimit}
           percent={apiPercent}

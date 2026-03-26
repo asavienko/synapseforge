@@ -2172,5 +2172,27 @@
     "uploadHint": "Sube un archivo de configuración exportado anteriormente para restaurar los ajustes",
     "parseError": "Error al analizar el archivo de configuración",
     "invalidFormat": "Formato de configuración no válido"
+  },
+  "quickSetup": {
+    "title": "Guía de configuración rápida",
+    "subtitle": "Completa estos pasos para poner en marcha tu asistente IA",
+    "step1label": "Crea tu primera instancia IA",
+    "step1desc": "Configura un agente IA para tu negocio",
+    "step2label": "Añade credenciales de API",
+    "step2desc": "Conecta tu clave de API de OpenAI/Anthropic",
+    "step3label": "Prueba tu IA",
+    "step3desc": "Chatea con tu agente para verificar que funciona",
+    "step4label": "Despliega en tu sitio web",
+    "step4desc": "Añade el widget a tu sitio"
+  },
+  "usageDashboard": {
+    "messages": "Mensajes",
+    "instances": "Instancias",
+    "apiCalls": "Llamadas API"
+  },
+  "recentActivity": {
+    "justNow": "Ahora mismo",
+    "title": "Actividad reciente",
+    "last24h": "Últimas 24 horas"
   }
 }

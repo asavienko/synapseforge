@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, Circle, Bot, Key, MessageSquare, Rocket, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 interface SetupStep {
@@ -20,6 +21,7 @@ interface QuickSetupGuideProps {
 }
 
 export function QuickSetupGuide({ instances, credentials = [] }: QuickSetupGuideProps) {
+  const t = useTranslations("quickSetup");
   const [dismissed, setDismissed] = useState(false);
   const [hasSeen, setHasSeen] = useState(true);
 
@@ -38,16 +40,16 @@ export function QuickSetupGuide({ instances, credentials = [] }: QuickSetupGuide
   const steps: SetupStep[] = [
     {
       id: "instance",
-      label: "Create your first AI instance",
-      description: "Set up an AI agent for your business",
+      label: t("step1label"),
+      description: t("step1desc"),
       href: "/dashboard/instances/new",
       icon: Bot,
       check: () => instances.length > 0,
     },
     {
       id: "credentials",
-      label: "Add API credentials",
-      description: "Connect your OpenAI/Anthropic API key",
+      label: t("step2label"),
+      description: t("step2desc"),
       href: instances[0] ? `/dashboard/instances/${instances[0].id}` : "/dashboard/instances",
       icon: Key,
       check: () => credentials.some((c) =>
@@ -56,16 +58,16 @@ export function QuickSetupGuide({ instances, credentials = [] }: QuickSetupGuide
     },
     {
       id: "test",
-      label: "Test your AI",
-      description: "Chat with your agent to verify it works",
+      label: t("step3label"),
+      description: t("step3desc"),
       href: instances[0] ? `/dashboard/instances/${instances[0].id}/chat` : "/dashboard/instances",
       icon: MessageSquare,
       check: () => false, // Would need message count from API
     },
     {
       id: "deploy",
-      label: "Deploy to your website",
-      description: "Add the widget to your site",
+      label: t("step4label"),
+      description: t("step4desc"),
       href: instances[0] ? `/dashboard/instances/${instances[0].id}/deploy` : "/dashboard/instances",
       icon: Rocket,
       check: () => false,
@@ -81,8 +83,8 @@ export function QuickSetupGuide({ instances, credentials = [] }: QuickSetupGuide
     <div className="glow-border rounded-2xl bg-gradient-to-br from-violet-600/10 to-blue-600/10 border border-violet-500/20 p-6 mb-6">
       <div className="flex items-start justify-between mb-4">
         <div>
-          <h2 className="text-lg font-semibold text-white mb-1">Quick Setup Guide</h2>
-          <p className="text-sm text-zinc-400">Complete these steps to get your AI assistant live</p>
+          <h2 className="text-lg font-semibold text-white mb-1">{t("title")}</h2>
+          <p className="text-sm text-zinc-400">{t("subtitle")}</p>
         </div>
         <button
           onClick={dismiss}

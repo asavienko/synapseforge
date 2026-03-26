@@ -2153,5 +2153,27 @@
     "uploadHint": "Upload a previously exported config file to restore settings",
     "parseError": "Failed to parse config file",
     "invalidFormat": "Invalid config format"
+  },
+  "quickSetup": {
+    "title": "Quick Setup Guide",
+    "subtitle": "Complete these steps to get your AI assistant live",
+    "step1label": "Create your first AI instance",
+    "step1desc": "Set up an AI agent for your business",
+    "step2label": "Add API credentials",
+    "step2desc": "Connect your OpenAI/Anthropic API key",
+    "step3label": "Test your AI",
+    "step3desc": "Chat with your agent to verify it works",
+    "step4label": "Deploy to your website",
+    "step4desc": "Add the widget to your site"
+  },
+  "usageDashboard": {
+    "messages": "Messages",
+    "instances": "Instances",
+    "apiCalls": "API Calls"
+  },
+  "recentActivity": {
+    "justNow": "Just now",
+    "title": "Recent Activity",
+    "last24h": "Last 24 hours"
   }
 }
