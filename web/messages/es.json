@@ -2194,5 +2194,24 @@
     "justNow": "Ahora mismo",
     "title": "Actividad reciente",
     "last24h": "Últimas 24 horas"
+  },
+  "usageWarning": {
+    "sandboxLimit": "Límite del sandbox alcanzado — añade tu propia API key para continuar",
+    "sandboxUsage": "Sandbox: {used}/{limit} mensajes usados",
+    "messagesLimit": "Límite mensual de mensajes alcanzado — actualiza para continuar",
+    "messagesUsage": "Aproximándose al límite mensual: {used}/{limit} mensajes",
+    "instancesLimit": "Límite de instancias alcanzado — actualiza para crear más",
+    "instancesUsage": "Aproximándose al límite de instancias: {used}/{limit}",
+    "setupCredentials": "Configurar credenciales",
+    "upgrade": "Actualizar →"
+  },
+  "onboardingChecklist": {
+    "title": "¡Bienvenido a OpenHelix AI! 🎉",
+    "subtitle": "Completa estos pasos para poner en marcha tu agente IA",
+    "progress": "{completed} de {total} completados",
+    "step1": "Crea tu primera instancia IA",
+    "step2": "Añade tu clave API de OpenAI",
+    "step3": "Conecta un canal (Telegram, Discord)",
+    "step4": "Prueba tu agente IA"
   }
 }

@@ -2175,5 +2175,24 @@
     "justNow": "Just now",
     "title": "Recent Activity",
     "last24h": "Last 24 hours"
+  },
+  "usageWarning": {
+    "sandboxLimit": "Sandbox limit reached — add your own API key to continue chatting",
+    "sandboxUsage": "Sandbox: {used}/{limit} messages used",
+    "messagesLimit": "Monthly message limit reached — upgrade to continue",
+    "messagesUsage": "Approaching monthly limit: {used}/{limit} messages",
+    "instancesLimit": "Instance limit reached — upgrade to create more",
+    "instancesUsage": "Approaching instance limit: {used}/{limit}",
+    "setupCredentials": "Set up credentials",
+    "upgrade": "Upgrade →"
+  },
+  "onboardingChecklist": {
+    "title": "Welcome to OpenHelix AI! 🎉",
+    "subtitle": "Complete these steps to get your AI agent running",
+    "progress": "{completed} of {total} completed",
+    "step1": "Create your first AI instance",
+    "step2": "Add your OpenAI API key",
+    "step3": "Connect a channel (Telegram, Discord)",
+    "step4": "Test your AI agent"
   }
 }

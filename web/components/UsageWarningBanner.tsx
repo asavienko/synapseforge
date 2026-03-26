@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AlertTriangle, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface UsageWarning {
   type: "messages" | "instances" | "sandbox";
@@ -12,6 +13,7 @@ interface UsageWarning {
 }
 
 export function UsageWarningBanner() {
+  const t = useTranslations("usageWarning");
   const [warnings, setWarnings] = useState<UsageWarning[]>([]);
   const [dismissed, setDismissed] = useState<string[]>([]);
 
@@ -28,10 +30,10 @@ export function UsageWarningBanner() {
             w.push({
               type: "sandbox",
               message: pct >= 100
-                ? "Sandbox limit reached — add your own API key to continue chatting"
-                : `Sandbox: ${data.sandbox.used}/${data.sandbox.limit} messages used`,
+                ? t("sandboxLimit")
+                : t("sandboxUsage", { used: data.sandbox.used, limit: data.sandbox.limit }),
               percentage: pct,
-              action: { label: "Set up credentials", href: "/dashboard/instances" },
+              action: { label: t("setupCredentials"), href: "/dashboard/instances" },
             });
           }
         }
@@ -43,10 +45,10 @@ export function UsageWarningBanner() {
             w.push({
               type: "messages",
               message: pct >= 100
-                ? "Monthly message limit reached — upgrade to continue"
-                : `Approaching monthly limit: ${data.messages.used}/${data.messages.limit} messages`,
+                ? t("messagesLimit")
+                : t("messagesUsage", { used: data.messages.used, limit: data.messages.limit }),
               percentage: pct,
-              action: { label: "Upgrade →", href: "/dashboard/billing" },
+              action: { label: t("upgrade"), href: "/dashboard/billing" },
             });
           }
         }
@@ -58,10 +60,10 @@ export function UsageWarningBanner() {
             w.push({
               type: "instances",
               message: pct >= 100
-                ? "Instance limit reached — upgrade to create more"
-                : `Approaching instance limit: ${data.instances.used}/${data.instances.limit}`,
+                ? t("instancesLimit")
+                : t("instancesUsage", { used: data.instances.used, limit: data.instances.limit }),
               percentage: pct,
-              action: { label: "Upgrade →", href: "/dashboard/billing" },
+              action: { label: t("upgrade"), href: "/dashboard/billing" },
             });
           }
         }

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Check, X, Bot, Key, MessageSquare, Rocket, ChevronRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useAnalytics } from "@/components/AnalyticsProvider";
 
 interface OnboardingChecklistProps {
@@ -18,6 +19,7 @@ export function OnboardingChecklist({
   hasChannel,
   instanceId,
 }: OnboardingChecklistProps) {
+  const t = useTranslations("onboardingChecklist");
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
   const { track } = useAnalytics();
@@ -48,28 +50,28 @@ export function OnboardingChecklist({
   const steps = [
     {
       id: "create",
-      label: "Create your first AI instance",
+      label: t("step1"),
       done: hasInstances,
       href: "/dashboard/instances",
       icon: Bot,
     },
     {
       id: "apikey",
-      label: "Add your OpenAI API key",
+      label: t("step2"),
       done: hasApiKey,
       href: instanceId ? `/dashboard/instances/${instanceId}` : "/dashboard/instances",
       icon: Key,
     },
     {
       id: "channel",
-      label: "Connect a channel (Telegram, Discord)",
+      label: t("step3"),
       done: hasChannel,
       href: instanceId ? `/dashboard/instances/${instanceId}` : "/dashboard/instances",
       icon: MessageSquare,
     },
     {
       id: "test",
-      label: "Test your AI agent",
+      label: t("step4"),
       done: hasInstances && hasApiKey,
       href: instanceId ? `/dashboard/instances/${instanceId}` : "/dashboard/instances",
       icon: Rocket,
@@ -93,10 +95,8 @@ export function OnboardingChecklist({
     >
       <div className="flex items-start justify-between mb-4">
         <div>
-          <h2 className="text-lg font-semibold text-white mb-1">Welcome to OpenHelix AI! 🎉</h2>
-          <p className="text-sm text-zinc-400">
-            Complete these steps to get your AI agent running
-          </p>
+          <h2 className="text-lg font-semibold text-white mb-1">{t("title")}</h2>
+          <p className="text-sm text-zinc-400">{t("subtitle")}</p>
         </div>
         <button
           onClick={handleDismiss}
@@ -111,7 +111,7 @@ export function OnboardingChecklist({
       <div className="mb-6">
         <div className="flex items-center justify-between text-sm mb-2">
           <span className="text-zinc-400">
-            {completedSteps} of {totalSteps} completed
+            {t("progress", { completed: completedSteps, total: totalSteps })}
           </span>
           <span className="text-violet-400 font-medium">{Math.round(progress)}%</span>
         </div>
