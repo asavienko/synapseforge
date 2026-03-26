@@ -195,6 +195,7 @@ model AIInstance {
   versionLockedAt     DateTime? // When version was locked/pinned
   sandboxMode         Boolean   @default(true) // true = use platform key, false = use own key
   sandboxUsed         Int       @default(0) // messages used in sandbox
+  consecutiveFailures Int       @default(0) // consecutive health check failures
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 

@@ -86,6 +86,7 @@ export async function GET(req: Request) {
           data: {
             healthStatus: newStatus,
             lastCheckedAt: new Date(),
+            consecutiveFailures: healthy ? 0 : { increment: 1 },
           },
         }),
         prisma.healthCheck.create({
@@ -98,8 +99,12 @@ export async function GET(req: Request) {
         }),
       ]);
 
-      // Send alerts if status changed
-      if (previousStatus && previousStatus !== newStatus) {
+      // Send alerts only after 3 consecutive failures (or on recovery)
+      const shouldAlert = 
+        (newStatus === "down" && (instance.consecutiveFailures + 1) >= 3) ||
+        (newStatus === "healthy" && previousStatus === "down");
+      
+      if (shouldAlert) {
         await sendHealthAlerts(instance, previousStatus, newStatus);
         results.alerted++;
       }
@@ -114,7 +119,11 @@ export async function GET(req: Request) {
       await prisma.$transaction([
         prisma.aIInstance.update({
           where: { id: instance.id },
-          data: { healthStatus: "down", lastCheckedAt: new Date() },
+          data: {
+            healthStatus: "down",
+            lastCheckedAt: new Date(),
+            consecutiveFailures: { increment: 1 },
+          },
         }),
         prisma.healthCheck.create({
           data: {
@@ -126,9 +135,9 @@ export async function GET(req: Request) {
         }),
       ]);
 
-      // Send alert if transitioning to down
-      if (previousStatus && previousStatus !== "down") {
-        await sendHealthAlerts(instance, previousStatus, "down", errorMsg);
+      // Send alert only after 3 consecutive failures
+      if ((instance.consecutiveFailures + 1) >= 3) {
+        await sendHealthAlerts(instance, previousStatus ?? "unknown", "down", errorMsg);
         results.alerted++;
       }
     }
