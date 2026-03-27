@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Zap, X, Loader2, Server } from "lucide-react";
 import { Instance, CredentialRow } from "../types";
 
@@ -8,14 +8,26 @@ interface SetupChecklistCardProps {
   instance: Instance;
   credentials: CredentialRow[];
   onGoToCredentials: () => void;
+  onGoToKnowledge?: () => void;
   instanceId: string;
 }
 
-export function SetupChecklistCard({ instance, credentials, onGoToCredentials, instanceId }: SetupChecklistCardProps) {
+export function SetupChecklistCard({ instance, credentials, onGoToCredentials, onGoToKnowledge, instanceId }: SetupChecklistCardProps) {
   const [dismissed, setDismissed] = useState(() => {
     if (typeof window === "undefined") return false;
     return localStorage.getItem(`sf_checklist_dismissed_${instanceId}`) === "1";
   });
+  const [knowledgeDocCount, setKnowledgeDocCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch(`/api/instances/${instanceId}/knowledge`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.documents) setKnowledgeDocCount(data.documents.length);
+        else setKnowledgeDocCount(0);
+      })
+      .catch(() => setKnowledgeDocCount(0));
+  }, [instanceId]);
 
   const credKeys = credentials.map((c) => c.key);
   const hasLLMKey = credKeys.some((k) => ["openai_api_key", "anthropic_api_key", "openrouter_api_key"].includes(k));
@@ -92,18 +104,32 @@ export function SetupChecklistCard({ instance, credentials, onGoToCredentials, i
 
   if (allGreen) {
     return (
-      <div className="rounded-2xl bg-emerald-500/10 border border-emerald-500/20 p-4 mb-4 flex items-center gap-3">
-        <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-400 text-base">🎉</div>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-emerald-300">Your agent is live!</p>
-          <p className="text-xs text-emerald-400/70 mt-0.5">Messages from your connected channel will be answered by your AI agent.</p>
+      <div className="rounded-2xl bg-emerald-500/10 border border-emerald-500/20 p-4 mb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-400 text-base">🎉</div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-emerald-300">Your agent is live!</p>
+            <p className="text-xs text-emerald-400/70 mt-0.5">Messages from your connected channel will be answered by your AI agent.</p>
+          </div>
+          <button onClick={dismiss} className="text-emerald-600 hover:text-emerald-400 transition-colors shrink-0">
+            <X className="w-4 h-4" />
+          </button>
         </div>
-        <button onClick={dismiss} className="text-emerald-600 hover:text-emerald-400 transition-colors shrink-0">
-          <X className="w-4 h-4" />
-        </button>
+        {knowledgeDocCount === 0 && onGoToKnowledge && (
+          <button
+            onClick={onGoToKnowledge}
+            className="mt-3 w-full flex items-center gap-2 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-600 dark:text-blue-300 bg-blue-500/10 hover:bg-blue-500/15 px-3 py-2.5 rounded-xl transition-colors"
+          >
+            <span>📚</span>
+            <span>Upload docs or FAQs to make your AI smarter — it&apos;ll use them to answer questions</span>
+            <span className="ml-auto">→</span>
+          </button>
+        )}
       </div>
     );
   }
+
+  const hasKnowledgeDocs = (knowledgeDocCount ?? 0) > 0;
 
   const items = [
     {
@@ -121,6 +147,14 @@ export function SetupChecklistCard({ instance, credentials, onGoToCredentials, i
       pendingText: "Connect Telegram, WhatsApp, or Discord",
       action: onGoToCredentials,
       actionLabel: "Connect →",
+    },
+    {
+      done: hasKnowledgeDocs,
+      label: "Knowledge",
+      doneText: `${knowledgeDocCount} doc${knowledgeDocCount === 1 ? "" : "s"} uploaded — your AI uses them to answer questions`,
+      pendingText: "Upload docs or FAQs to make your AI smarter",
+      action: onGoToKnowledge,
+      actionLabel: "Upload →",
     },
   ];
 

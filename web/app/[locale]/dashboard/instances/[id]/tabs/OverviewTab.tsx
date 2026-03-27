@@ -22,6 +22,7 @@ interface OverviewTabProps {
   onGoToCredentials: () => void;
   onGoToDeploy: () => void;
   onGoToActivity?: () => void;
+  onGoToKnowledge?: () => void;
   showToast: (text: string, type?: "success" | "error") => void;
 }
 
@@ -35,6 +36,7 @@ export function OverviewTab({
   onGoToCredentials,
   onGoToDeploy,
   onGoToActivity,
+  onGoToKnowledge,
 }: OverviewTabProps) {
   const t = useTranslations("instanceDetail");
   const typeLabel = instance.type;
@@ -76,6 +78,7 @@ export function OverviewTab({
         instance={instance}
         credentials={credentials}
         onGoToCredentials={onGoToCredentials}
+        onGoToKnowledge={onGoToKnowledge}
         instanceId={id}
       />
 

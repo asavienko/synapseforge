@@ -254,6 +254,7 @@ export default function InstanceDetailPage() {
             onGoToCredentials={() => { setTab("Credentials"); loadCredentials(); }}
             onGoToDeploy={() => setTab("Deploy")}
             onGoToActivity={() => setTab("Activity Log")}
+            onGoToKnowledge={() => setTab("Knowledge")}
             showToast={showToast}
           />
         )}
