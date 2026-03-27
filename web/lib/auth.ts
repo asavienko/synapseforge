@@ -158,9 +158,7 @@ export async function auth() {
   return getServerSession(authOptions);
 }
 
-// Export signIn/signOut helpers (these will need to be used client-side)
-export const signIn = async () => {};
-export const signOut = async () => {};
+// Client-side auth uses next-auth/react directly — no server exports needed
 
 // Export handlers for API routes (v4 style)
 export const handlers = {
