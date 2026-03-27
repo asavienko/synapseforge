@@ -14,3 +14,7 @@ next.user-config.*
 node_modules/
 .next/
 .DS_Store
+# Production env files pulled during debugging — never commit
+.env.production.local
+.env.vercel-check
+.env.test
