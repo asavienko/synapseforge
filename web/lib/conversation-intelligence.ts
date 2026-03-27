@@ -73,7 +73,7 @@ export async function classifyConversation(messages: ChatMessage[]): Promise<Cla
 
   try {
     // Use GPT-4o-mini for intent classification
-    const apiKey = process.env.OPENHELIX_OPENAI_KEY || process.env.OPENAI_API_KEY;
+    const apiKey = process.env.SYNAPSEFORGE_OPENAI_KEY || process.env.OPENHELIX_OPENAI_KEY || process.env.OPENAI_API_KEY;
     if (!apiKey) {
       console.warn("[conversation-intelligence] No API key available for classification");
       return { intent: "other", wasAnswered: !hasUnansweredIndicator };

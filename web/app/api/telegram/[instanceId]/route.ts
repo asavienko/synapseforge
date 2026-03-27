@@ -153,7 +153,7 @@ export async function POST(
 
   if (!hasLLMCreds) {
     if (instance.sandboxMode && !isSandboxExhausted(instance.sandboxUsed ?? 0)) {
-      const platformKey = process.env.OPENHELIX_OPENAI_KEY || process.env.OPENAI_API_KEY;
+      const platformKey = process.env.SYNAPSEFORGE_OPENAI_KEY || process.env.OPENHELIX_OPENAI_KEY || process.env.OPENAI_API_KEY;
       if (platformKey) {
         sandboxActive = true;
         sandboxApiKey = platformKey;

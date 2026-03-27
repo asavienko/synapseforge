@@ -113,7 +113,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   if (!hasOwnCredentials) {
     if (instance.sandboxMode && !isSandboxExhausted(instance.sandboxUsed)) {
       // Use platform key in sandbox mode
-      const platformKey = process.env.OPENHELIX_OPENAI_KEY || process.env.OPENAI_API_KEY;
+      const platformKey = process.env.SYNAPSEFORGE_OPENAI_KEY || process.env.OPENHELIX_OPENAI_KEY || process.env.OPENAI_API_KEY;
       if (!platformKey) {
         return NextResponse.json(
           { error: "Sandbox unavailable — please add your own API key in Credentials" },
