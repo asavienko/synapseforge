@@ -154,8 +154,8 @@ export default NextAuth(authOptions);
 
 // Helper to get session in server components
 export async function auth() {
-  // This is a simplified version - in real usage you'd use getServerSession
-  return null;
+  const { getServerSession } = await import("next-auth/next");
+  return getServerSession(authOptions);
 }
 
 // Export signIn/signOut helpers (these will need to be used client-side)
