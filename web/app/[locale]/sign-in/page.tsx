@@ -32,7 +32,7 @@ export default function SignInPage() {
         email,
         password,
         redirect: false,
-        callbackUrl: "/dashboard",
+        callbackUrl: `${window.location.origin}/dashboard`,
       });
 
       console.log("Sign in result:", JSON.stringify(result, null, 2));

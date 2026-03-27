@@ -32,10 +32,13 @@ export function GoogleButton({ callbackUrl = "/dashboard", referralCode }: Googl
     analytics.signupCompleted("google");
     
     // Encode referral code in the callbackUrl so the post-auth page can pick it up
-    let finalCallbackUrl = callbackUrl;
+    // Use absolute URL to avoid next-auth v4 URL construction bug with relative paths
+    const base = typeof window !== "undefined" ? window.location.origin : "";
+    const absoluteCallbackUrl = callbackUrl.startsWith("http") ? callbackUrl : `${base}${callbackUrl}`;
+    let finalCallbackUrl = absoluteCallbackUrl;
     if (referralCode) {
-      const sep = callbackUrl.includes("?") ? "&" : "?";
-      finalCallbackUrl = `${callbackUrl}${sep}_ref=${encodeURIComponent(referralCode)}`;
+      const sep = absoluteCallbackUrl.includes("?") ? "&" : "?";
+      finalCallbackUrl = `${absoluteCallbackUrl}${sep}_ref=${encodeURIComponent(referralCode)}`;
     }
     
     try {
