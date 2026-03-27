@@ -634,6 +634,25 @@
       "deleting": "Deleting...",
       "confirmDelete": "DELETE",
       "cancel": "Cancel"
+    },
+    "planUsage": {
+      "title": "Використання плану",
+      "currentPlan": "Поточний план:",
+      "instances": "Екземпляри",
+      "messages": "Повідомлення",
+      "nearInstanceLimit": "Наближення до ліміту екземплярів",
+      "nearMessageLimit": "Наближення до ліміту повідомлень",
+      "freePlanUpgradePrompt": "Оновіться для більшої кількості екземплярів та преміум-функцій.",
+      "upgrade": "Оновити",
+      "viewPlans": "Переглянути плани"
+    },
+    "analytics": {
+      "title": "Аналітика",
+      "subtitle": "Активність за останні {period} днів",
+      "requests": "Запити",
+      "avgLatency": "Сер. затримка",
+      "errorRate": "Частота помилок",
+      "noData": "Дані про використання поки недоступні."
     }
   },
   "common": {

@@ -61,7 +61,7 @@ export function UsageDashboard() {
   }
 
   const messagePercent = Math.min((usage.messagesUsed / usage.messagesLimit) * 100, 100);
-  const instancePercent = Math.min((usage.instancesUsed / usage.instancesLimit) * 100, 100);
+  const instancePercent = usage.instancesLimit <= 0 ? 0 : Math.min((usage.instancesUsed / usage.instancesLimit) * 100, 100);
   const apiPercent = Math.min((usage.apiCallsUsed / usage.apiCallsLimit) * 100, 100);
 
   const isNearLimit = messagePercent >= 80 || instancePercent >= 80 || apiPercent >= 80;
@@ -197,8 +197,7 @@ function UsageCard({
         "text-xs mt-2",
         isHigh ? "text-red-400" : isMedium ? "text-amber-400" : "text-gray-500 dark:text-zinc-500"
       )}>
-        {percent.toFixed(0)}% used
-        {isHigh && " — Consider upgrading"}
+        {limit === -1 ? "Unlimited" : `${percent.toFixed(0)}% used${isHigh ? " — Consider upgrading" : ""}`}
       </p>
     </div>
   );

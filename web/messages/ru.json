@@ -634,6 +634,25 @@
       "deleting": "Deleting...",
       "confirmDelete": "DELETE",
       "cancel": "Cancel"
+    },
+    "planUsage": {
+      "title": "Использование плана",
+      "currentPlan": "Текущий план:",
+      "instances": "Экземпляры",
+      "messages": "Сообщения",
+      "nearInstanceLimit": "Приближение к лимиту экземпляров",
+      "nearMessageLimit": "Приближение к лимиту сообщений",
+      "freePlanUpgradePrompt": "Обновитесь для получения большего количества экземпляров и премиум-функций.",
+      "upgrade": "Обновить",
+      "viewPlans": "Просмотр планов"
+    },
+    "analytics": {
+      "title": "Аналитика",
+      "subtitle": "Активность за последние {period} дней",
+      "requests": "Запросы",
+      "avgLatency": "Ср. задержка",
+      "errorRate": "Частота ошибок",
+      "noData": "Данные об использовании пока недоступны."
     }
   },
   "common": {

@@ -647,6 +647,25 @@
       "deleting": "Deleting...",
       "confirmDelete": "DELETE",
       "cancel": "Cancel"
+    },
+    "planUsage": {
+      "title": "Plan Usage",
+      "currentPlan": "Current plan:",
+      "instances": "Instances",
+      "messages": "Messages",
+      "nearInstanceLimit": "Approaching instance limit",
+      "nearMessageLimit": "Approaching message limit",
+      "freePlanUpgradePrompt": "Upgrade to unlock more instances and premium features.",
+      "upgrade": "Upgrade",
+      "viewPlans": "View plans"
+    },
+    "analytics": {
+      "title": "Analytics",
+      "subtitle": "Last {period} days activity",
+      "requests": "Requests",
+      "avgLatency": "Avg Latency",
+      "errorRate": "Error Rate",
+      "noData": "No usage data available yet."
     }
   },
   "common": {

@@ -650,6 +650,25 @@
       "deleting": "Deleting...",
       "confirmDelete": "DELETE",
       "cancel": "Cancel"
+    },
+    "planUsage": {
+      "title": "Uso del plan",
+      "currentPlan": "Plan actual:",
+      "instances": "Instancias",
+      "messages": "Mensajes",
+      "nearInstanceLimit": "Alcanzando el límite de instancias",
+      "nearMessageLimit": "Alcanzando el límite de mensajes",
+      "freePlanUpgradePrompt": "Actualiza para desbloquear más instancias y funciones premium.",
+      "upgrade": "Actualizar",
+      "viewPlans": "Ver planes"
+    },
+    "analytics": {
+      "title": "Analíticas",
+      "subtitle": "Actividad de los últimos {period} días",
+      "requests": "Solicitudes",
+      "avgLatency": "Latencia media",
+      "errorRate": "Tasa de error",
+      "noData": "Aún no hay datos de uso."
     }
   },
   "common": {

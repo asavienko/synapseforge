@@ -6,7 +6,7 @@ import { AlertTriangle, Loader2, Trash2, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 export function DeleteAccountSection() {
-  const t = useTranslations("dashboard.settings");
+  const t = useTranslations("dashboard.settingsPage");
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [confirmText, setConfirmText] = useState("");
