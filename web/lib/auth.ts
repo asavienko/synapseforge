@@ -80,6 +80,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
 
 export const authOptions: NextAuthOptions = {
   providers,
+  secret: process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET,
   callbacks: {
     async signIn({ user, account }) {
       // For Google OAuth: upsert user into DB

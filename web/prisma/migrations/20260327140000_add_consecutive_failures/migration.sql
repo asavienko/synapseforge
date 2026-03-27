@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "AIInstance" ADD COLUMN IF NOT EXISTS "consecutiveFailures" INTEGER NOT NULL DEFAULT 0;
