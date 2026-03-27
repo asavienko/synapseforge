@@ -7,6 +7,7 @@ import { chunkText, Chunk } from '@/lib/knowledge/chunk';
 import { generateEmbedding } from '@/lib/knowledge/embeddings';
 
 export const dynamic = 'force-dynamic';
+export const maxDuration = 60;
 
 export async function POST(
   req: NextRequest,
@@ -89,67 +90,54 @@ export async function POST(
     },
   });
 
-  // Process async (don't await — return immediately)
-  (async () => {
-    try {
-      // Read file as buffer
-      const arrayBuffer = await file.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
+  // Process synchronously — Vercel kills Lambdas after response, fire-and-forget never completes
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const extracted = await extractText(buffer, file.name, file.type);
 
-      // Extract text based on file type
-      const extracted = await extractText(buffer, file.name, file.type);
+    await prisma.knowledgeDoc.update({
+      where: { id: doc.id },
+      data: { contentText: extracted.text.slice(0, 100000) },
+    });
 
-      // Update doc with extracted content
-      await prisma.knowledgeDoc.update({
-        where: { id: doc.id },
-        data: { 
-          contentText: extracted.text.slice(0, 100000), // Store first 100KB of text
-        },
-      });
+    const chunks: Chunk[] = chunkText(extracted.text, 1000, 200);
 
-      // Chunk the text
-      const chunks: Chunk[] = chunkText(extracted.text, 1000, 200);
-
-      // Generate embeddings and insert chunks
-      let processedChunks = 0;
-      for (const chunk of chunks) {
-        try {
-          const embedding = await generateEmbedding(chunk.content);
-          await insertChunkWithEmbedding(
-            doc.id, 
-            chunk.content, 
-            embedding,
-            chunk.metadata
-          );
-          processedChunks++;
-        } catch (err) {
-          console.error(`[knowledge] Failed to process chunk ${processedChunks}:`, err);
-          // Continue with other chunks
-        }
+    let processedChunks = 0;
+    for (const chunk of chunks) {
+      try {
+        const embedding = await generateEmbedding(chunk.content);
+        await insertChunkWithEmbedding(doc.id, chunk.content, embedding, chunk.metadata);
+        processedChunks++;
+      } catch (err) {
+        console.error(`[knowledge] Failed to process chunk ${processedChunks}:`, err);
       }
-
-      // Update doc status to ready
-      await prisma.knowledgeDoc.update({
-        where: { id: doc.id },
-        data: { 
-          status: "ready",
-          chunkCount: processedChunks,
-        },
-      });
-
-      console.log(`[knowledge] Processed ${file.name}: ${processedChunks} chunks created`);
-    } catch (err) {
-      console.error("[knowledge] processing error:", err);
-      await prisma.knowledgeDoc
-        .update({ where: { id: doc.id }, data: { status: "error" } })
-        .catch(console.error);
     }
-  })();
 
-  return NextResponse.json({ 
-    id: doc.id, 
-    name: file.name,
-    status: "processing",
-    chunkCount: 0
-  });
+    await prisma.knowledgeDoc.update({
+      where: { id: doc.id },
+      data: { status: "ready", chunkCount: processedChunks },
+    });
+
+    console.log(`[knowledge] Processed ${file.name}: ${processedChunks} chunks created`);
+
+    return NextResponse.json({
+      id: doc.id,
+      name: file.name,
+      status: "ready",
+      chunkCount: processedChunks,
+    });
+  } catch (err) {
+    console.error("[knowledge] processing error:", err);
+    await prisma.knowledgeDoc
+      .update({ where: { id: doc.id }, data: { status: "error" } })
+      .catch(console.error);
+
+    return NextResponse.json({
+      id: doc.id,
+      name: file.name,
+      status: "error",
+      error: err instanceof Error ? err.message : "Processing failed",
+    }, { status: 500 });
+  }
 }
