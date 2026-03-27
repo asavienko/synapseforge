@@ -63,24 +63,11 @@ export default function MessagesPage() {
     // Mark manager messages as read when page opens
     fetch("/api/messages/read-all", { method: "PATCH" }).catch(() => {});
 
-    // SSE for real-time updates — replaces the 10s polling interval
-    const es = new EventSource("/api/messages/stream");
-
-    es.addEventListener("message", (event) => {
-      const msg = JSON.parse(event.data) as Message;
-      setMessages((prev) => {
-        // Only add if not already in list (avoid duplicates)
-        if (prev.some((m) => m.id === msg.id)) return prev;
-        return [...prev, msg];
-      });
-    });
-
-    es.addEventListener("error", () => {
-      // SSE error — connection will retry automatically
-    });
+    // Poll for new messages every 8 seconds (SSE causes Vercel Lambda timeouts at 60s)
+    const poll = setInterval(loadMessages, 8000);
 
     return () => {
-      es.close();
+      clearInterval(poll);
     };
   }, []);
 

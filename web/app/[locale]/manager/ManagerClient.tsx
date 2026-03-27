@@ -388,33 +388,29 @@ export function ManagerClient({ manager, clients: initialClients }: {
     setClients((prev) => prev.map((c) => c.id === client.id ? { ...c, unreadMessages: 0 } : c));
   }
 
-  // SSE for real-time message updates from client
+  // Poll for new messages every 8 seconds (SSE causes Vercel Lambda timeouts at 60s)
   useEffect(() => {
     if (!activeClient) return;
 
-    const es = new EventSource(`/api/manager/messages/stream?userId=${activeClient.id}`);
-
-    es.addEventListener("message", (event) => {
-      const msg = JSON.parse(event.data) as Message;
+    const pollMessages = async () => {
+      const res = await fetch(`/api/messages?userId=${activeClient.id}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      const fetched: Message[] = Array.isArray(data) ? data : data.messages ?? [];
       setMessages((prev) => {
-        // Only add if not already in list (avoid duplicates)
-        if (prev.some((m) => m.id === msg.id)) return prev;
-        return [...prev, msg];
+        // Merge: add any new messages not already in state
+        const newOnes = fetched.filter((m) => !prev.some((p) => p.id === m.id));
+        if (!newOnes.length) return prev;
+        setTimeout(() => {
+          const el = document.getElementById("manager-thread-scroll");
+          if (el) el.scrollTop = el.scrollHeight;
+        }, 50);
+        return [...prev, ...newOnes];
       });
-      // Scroll to bottom on new message
-      setTimeout(() => {
-        const el = document.getElementById("manager-thread-scroll");
-        if (el) el.scrollTop = el.scrollHeight;
-      }, 50);
-    });
-
-    es.addEventListener("error", () => {
-      // SSE error — connection will retry automatically
-    });
-
-    return () => {
-      es.close();
     };
+
+    const interval = setInterval(pollMessages, 8000);
+    return () => clearInterval(interval);
   }, [activeClient?.id]);
 
   async function sendReply() {
