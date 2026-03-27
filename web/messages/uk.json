@@ -1508,7 +1508,10 @@
       "cancel": "Cancel"
     },
     "greetingDefault": "Привіт! Чим можу допомогти?",
-    "greetingLabel": "Привітання:"
+    "greetingLabel": "Привітання:",
+    "insights": {
+      "tab": "Аналітика"
+    }
   },
   "admin": {
     "health": {

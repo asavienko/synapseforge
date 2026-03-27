@@ -1524,7 +1524,10 @@
       "cancel": "Cancel"
     },
     "greetingDefault": "¡Hola! ¿En qué puedo ayudarte hoy?",
-    "greetingLabel": "Saludo:"
+    "greetingLabel": "Saludo:",
+    "insights": {
+      "tab": "Perspectivas"
+    }
   },
   "admin": {
     "health": {
