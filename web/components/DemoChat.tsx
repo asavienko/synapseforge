@@ -55,6 +55,9 @@ export function DemoChat() {
     setStreamingContent("");
 
     try {
+      // Send full history so context survives across Vercel Lambdas
+      // (server-side sessionStore is per-instance and unreliable on serverless)
+      const history = messages.map((m) => ({ role: m.role, content: m.content }));
       const res = await fetch("/api/demo/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -62,6 +65,7 @@ export function DemoChat() {
           message: text.trim(),
           sessionId,
           stream: true,
+          history,
         }),
       });
 

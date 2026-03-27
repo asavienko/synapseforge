@@ -83,7 +83,8 @@ export async function POST(req: NextRequest) {
     message?: string; 
     sessionId?: string; 
     stream?: boolean;
-    messages?: ChatMessage[] 
+    messages?: ChatMessage[];
+    history?: ChatMessage[];
   };
   try {
     body = await req.json();
@@ -102,11 +103,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Message is required" }, { status: 400 });
     }
 
-    // Get or create session context
-    let sessionMessages = sessionStore.get(sessionId) || [];
-    
-    // Add user message to context
-    sessionMessages.push({ role: "user", content: message.trim() });
+    // Use client-provided history (survives across Vercel Lambdas)
+    // Fall back to server-side session store for backward compat
+    let sessionMessages: ChatMessage[];
+    if (Array.isArray(body.history) && body.history.length > 0) {
+      sessionMessages = [
+        ...body.history.slice(-5),  // last 5 messages from client
+        { role: "user", content: message.trim() },
+      ];
+    } else {
+      sessionMessages = sessionStore.get(sessionId) || [];
+      sessionMessages.push({ role: "user", content: message.trim() });
+    }
     
     // Keep only last 6 messages (3 exchanges)
     if (sessionMessages.length > 6) {
