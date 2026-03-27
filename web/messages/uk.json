@@ -852,7 +852,10 @@
       "seeAll": "See all →",
       "upgradeHint": "Need a tier upgrade or custom integration? Contact your manager — they handle it for you.",
       "addApiKey": "Додати API-ключ →",
-      "sandboxExhaustedHint": "Додайте свій API-ключ, щоб продовжити без обмежень."
+      "sandboxExhaustedHint": "Додайте свій API-ключ, щоб продовжити без обмежень.",
+      "starterPrompt1": "Які послуги ви пропонуєте?",
+      "starterPrompt2": "Як зв'язатися з підтримкою?",
+      "starterPrompt3": "Розкажіть про ціни"
     },
     "config": {
       "aiModel": "Модель AI",

@@ -865,7 +865,10 @@
       "seeAll": "See all →",
       "upgradeHint": "Need a tier upgrade or custom integration? Contact your manager — they handle it for you.",
       "addApiKey": "Add API Key →",
-      "sandboxExhaustedHint": "Add your own API key to keep going — no per-message limits."
+      "sandboxExhaustedHint": "Add your own API key to keep going — no per-message limits.",
+      "starterPrompt1": "What services do you offer?",
+      "starterPrompt2": "How can I contact support?",
+      "starterPrompt3": "Tell me about pricing"
     },
     "config": {
       "aiModel": "AI Model",

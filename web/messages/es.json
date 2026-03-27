@@ -868,7 +868,10 @@
       "seeAll": "See all →",
       "upgradeHint": "Need a tier upgrade or custom integration? Contact your manager — they handle it for you.",
       "addApiKey": "Añadir clave API →",
-      "sandboxExhaustedHint": "Añade tu propia clave API para continuar sin límite de mensajes."
+      "sandboxExhaustedHint": "Añade tu propia clave API para continuar sin límite de mensajes.",
+      "starterPrompt1": "¿Qué servicios ofrecen?",
+      "starterPrompt2": "¿Cómo puedo contactar soporte?",
+      "starterPrompt3": "Cuéntame sobre los precios"
     },
     "config": {
       "aiModel": "Modelo de IA",

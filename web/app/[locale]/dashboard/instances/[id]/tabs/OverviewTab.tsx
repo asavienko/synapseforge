@@ -46,15 +46,17 @@ export function OverviewTab({
   const [overviewTestResponse, setOverviewTestResponse] = useState<{ text: string; latencyMs?: number } | null>(null);
   const [overviewTestError, setOverviewTestError] = useState<string | null>(null);
 
-  async function sendOverviewTestMessage() {
-    if (!overviewTestInput.trim()) return;
+  async function sendOverviewTestMessage(directMessage?: string) {
+    const msg = directMessage || overviewTestInput;
+    if (!msg.trim()) return;
+    if (directMessage) setOverviewTestInput(directMessage);
     setOverviewTestSending(true);
     setOverviewTestResponse(null);
     setOverviewTestError(null);
     const res = await fetch(`/api/instances/${id}/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: overviewTestInput.trim() }),
+      body: JSON.stringify({ message: msg.trim() }),
     });
     const data = await res.json();
     if (!res.ok) {
@@ -338,6 +340,20 @@ export function OverviewTab({
             <span className="text-xs text-gray-400 dark:text-zinc-600">{t("overview.quickTestHint")}</span>
           </div>
           <div className="p-4 space-y-3">
+            {/* Starter prompts — shown before first interaction */}
+            {!overviewTestResponse && !overviewTestError && !overviewTestInput && !overviewTestSending && (
+              <div className="flex flex-wrap gap-2">
+                {[t("overview.starterPrompt1"), t("overview.starterPrompt2"), t("overview.starterPrompt3")].map((prompt) => (
+                  <button
+                    key={prompt}
+                    onClick={() => sendOverviewTestMessage(prompt)}
+                    className="text-xs text-gray-600 dark:text-zinc-400 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 px-3 py-1.5 rounded-full transition-colors"
+                  >
+                    {prompt}
+                  </button>
+                ))}
+              </div>
+            )}
             <div className="flex gap-2">
               <input
                 type="text"
@@ -349,7 +365,7 @@ export function OverviewTab({
                 className="flex-1 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-600 focus:outline-none focus:border-blue-500 transition-colors disabled:opacity-50"
               />
               <button
-                onClick={sendOverviewTestMessage}
+                onClick={() => sendOverviewTestMessage()}
                 disabled={overviewTestSending || !overviewTestInput.trim()}
                 className="flex items-center gap-2 bg-blue-600 hover:bg-blue-600 disabled:opacity-40 transition-colors px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-900 dark:text-white shrink-0"
               >
