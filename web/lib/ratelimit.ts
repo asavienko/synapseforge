@@ -1,10 +1,14 @@
-import { Redis } from "ioredis";
+let redisClient: import("ioredis").Redis | undefined;
 
-let redisClient: Redis;
-
-// Initialize Redis client if available
+// Initialize Redis client if available (lazy import to avoid serverless crashes)
 if (process.env.REDIS_URL) {
-  redisClient = new Redis(process.env.REDIS_URL);
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { Redis } = require("ioredis");
+    redisClient = new Redis(process.env.REDIS_URL);
+  } catch (e) {
+    console.error("[rateLimit] Failed to initialize Redis:", e);
+  }
 }
 
 /**

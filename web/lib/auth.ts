@@ -14,6 +14,7 @@ const providers: NextAuthOptions["providers"] = [
       password: { label: "Password", type: "password" },
     },
     async authorize(credentials) {
+      try {
       console.log("[auth] Authorize called");
       
       const email = credentials?.email as string | undefined;
@@ -63,6 +64,10 @@ const providers: NextAuthOptions["providers"] = [
         name: user.name,
         image: user.image,
       };
+      } catch (err) {
+        console.error("[auth] Authorize exception:", err);
+        return null;
+      }
     },
   }),
 ];
