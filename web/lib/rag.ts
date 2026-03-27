@@ -3,7 +3,7 @@ import { searchSimilarChunks, getKnowledgeBaseStorage } from '@/lib/knowledge';
 import { EMBEDDING_MODEL } from '@/lib/knowledge/embeddings';
 import { randomUUID } from 'crypto';
 
-const OPENAI_KEY = process.env.SYNAPSEFORGE_OPENAI_KEY || process.env.OPENHELIX_OPENAI_KEY || process.env.OPENAI_API_KEY;
+const OPENAI_KEY = process.env.OPENHELIX_OPENAI_KEY || process.env.OPENAI_API_KEY;
 
 interface SimilarChunk {
   id: string;

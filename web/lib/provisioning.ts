@@ -82,7 +82,7 @@ docker pull ghcr.io/openclaw/openclaw:latest
 cat > .env <<EOF
 GATEWAY_TOKEN=${gatewayToken}
 INSTANCE_ID=${instanceId}
-SYNAPSEFORGE_API_URL=${sfApiUrl}
+OPENHELIX_API_URL=${sfApiUrl}
 EOF
 
 # Run OpenClaw gateway container

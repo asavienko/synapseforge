@@ -1,14 +1,11 @@
 /**
  * Resolve the platform OpenAI API key from available env vars.
  * Returns an array of available keys to try (for 401 retry scenarios).
- * Primary key is SYNAPSEFORGE_OPENAI_KEY (oldest, most likely valid).
  */
 export function getPlatformOpenAIKeys(): string[] {
   const keys: string[] = [];
-  if (process.env.SYNAPSEFORGE_OPENAI_KEY) keys.push(process.env.SYNAPSEFORGE_OPENAI_KEY);
   if (process.env.OPENHELIX_OPENAI_KEY) keys.push(process.env.OPENHELIX_OPENAI_KEY);
   if (process.env.OPENAI_API_KEY) keys.push(process.env.OPENAI_API_KEY);
-  // Deduplicate (in case same key is set under multiple names)
   return [...new Set(keys)];
 }
 

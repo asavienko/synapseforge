@@ -60,7 +60,7 @@ interface ChatMessage {
  */
 export async function POST(req: NextRequest) {
   // ── Check OpenAI key configured ─────────────────────────────────────────
-  const apiKey = process.env.SYNAPSEFORGE_OPENAI_KEY || process.env.OPENHELIX_OPENAI_KEY || process.env.OPENAI_API_KEY;
+  const apiKey = process.env.OPENHELIX_OPENAI_KEY || process.env.OPENAI_API_KEY;
   if (!apiKey) {
     return NextResponse.json(
       { error: "OpenAI API key not configured." },
