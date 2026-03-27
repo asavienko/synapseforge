@@ -46,14 +46,14 @@ export async function POST(req: NextRequest) {
   const userId = session?.user?.id ?? null;
   const userEmail = session?.user?.email ?? null;
 
-  // For now, just log the feedback since the model needs migration
-  // In production, this would be stored in the database
-  console.log("[Feedback received]", {
-    message: parsed.data.message,
-    userId,
-    userEmail,
-    ip,
-    timestamp: new Date().toISOString(),
+  // Store feedback in database (Feedback table created in migration 20260327221000)
+  await prisma.feedback.create({
+    data: {
+      message: parsed.data.message,
+      userId,
+      userEmail,
+      source: "dashboard_widget",
+    },
   });
 
   return NextResponse.json({ success: true });
