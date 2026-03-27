@@ -20,12 +20,14 @@ export async function GET() {
   }
 
   try {
-    // For now, return empty array since Feedback model needs migration
-    // In production, this would query the database
+    const feedback = await prisma.feedback.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 100,
+    });
+
     return NextResponse.json({ 
-      feedback: [],
-      total: 0,
-      note: "Feedback model requires database migration. Run: npx prisma migrate dev"
+      feedback,
+      total: feedback.length,
     });
   } catch (err) {
     console.error("[admin/feedback] Error:", err);
