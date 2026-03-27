@@ -39,6 +39,9 @@ jobs:
         
       - name: Build application
         run: cd web && pnpm build
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
 
   # ── E2E Tests (Smoke) ───────────────────────────────────────────────────────
   e2e-smoke:
@@ -80,6 +83,8 @@ jobs:
           spec: 'cypress/e2e/01-landing.cy.ts'
         env:
           CYPRESS_BASE_URL: http://localhost:3000
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
 
   # ── Deploy to Vercel ─────────────────────────────────────────────────────────
   deploy:
