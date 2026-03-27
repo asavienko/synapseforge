@@ -62,23 +62,55 @@ export async function POST(req: NextRequest) {
       ? `${business} Assistant` 
       : "My AI Assistant";
 
-    const instance = await prisma.aIInstance.create({
-      data: {
-        name: instanceName,
-        type: "assistant",
-        status: "stopped",
-        tier: "free",
-        description: useCaseDescription || `${useCase} assistant`,
-        config: JSON.stringify({
-          model: "gpt-4o-mini",
-          systemPrompt: templateSystemPrompt || "You are a helpful AI assistant.",
-          temperature: 0.7,
-          maxTokens: 1024,
-          ...(templateId ? { templateId } : {}),
-        }),
-        userId: user.id,
-      },
+    // Generate a meaningful system prompt based on use case if no template provided
+    const USE_CASE_PROMPTS: Record<string, string> = {
+      "customer-support": `You are a helpful and friendly customer support agent${business ? ` for ${business}` : ""}. Your job is to assist customers with their questions, resolve issues, and ensure a positive experience. Be empathetic, professional, and solution-oriented. If you cannot resolve an issue, offer to escalate to a human agent.`,
+      "sales-assistant": `You are a knowledgeable and helpful sales assistant${business ? ` at ${business}` : ""}. Your role is to understand customer needs, present relevant products or services, answer questions about pricing and features, and guide prospects through the buying process. Be consultative rather than pushy — focus on helping customers find the right solution.`,
+      "data-analyst": `You are an expert data analyst${business ? ` at ${business}` : ""}. You help users understand data, generate insights, and make data-driven decisions. You can interpret charts, analyze trends, explain statistical concepts, and provide actionable recommendations. Be precise and clear in your explanations.`,
+      "internal-tools": `You are an internal assistant${business ? ` for ${business}` : ""}. You help team members with tasks, answer questions about internal processes and tools, and improve workflow efficiency. Be concise, accurate, and proactive in offering relevant information.`,
+      "content": `You are a creative content assistant${business ? ` for ${business}` : ""}. You help with writing, editing, brainstorming, and content strategy. You can generate blog posts, social media content, marketing copy, and more. Adapt your tone and style to match the brand voice and target audience.`,
+      "custom": `You are a helpful AI assistant${business ? ` for ${business}` : ""}. ${useCaseDescription || "Help users with their questions and tasks efficiently and professionally."}`,
+    };
+
+    const derivedSystemPrompt = templateSystemPrompt 
+      || (useCase && USE_CASE_PROMPTS[useCase])
+      || `You are a helpful AI assistant${business ? ` for ${business}` : ""}. ${useCaseDescription || "Help users with their questions and tasks efficiently and professionally."}`;
+
+    // Upsert: update the existing starter instance (created at signup) rather than creating a duplicate
+    const existingInstance = await prisma.aIInstance.findFirst({
+      where: { userId: user.id },
+      orderBy: { createdAt: "asc" },
     });
+
+    const instanceConfig = JSON.stringify({
+      model: "gpt-4o-mini",
+      systemPrompt: derivedSystemPrompt,
+      temperature: 0.7,
+      maxTokens: 1024,
+      ...(templateId ? { templateId } : {}),
+    });
+
+    const instance = existingInstance
+      ? await prisma.aIInstance.update({
+          where: { id: existingInstance.id },
+          data: {
+            name: instanceName,
+            description: useCaseDescription || (useCase ? `${useCase.replace(/-/g, " ")} assistant` : "AI assistant"),
+            config: instanceConfig,
+            status: "running", // keep it running so chat works
+          },
+        })
+      : await prisma.aIInstance.create({
+          data: {
+            name: instanceName,
+            type: "assistant",
+            status: "running",
+            tier: "minimal",
+            description: useCaseDescription || (useCase ? `${useCase.replace(/-/g, " ")} assistant` : "AI assistant"),
+            config: instanceConfig,
+            userId: user.id,
+          },
+        });
 
     // Save credentials if provided
     if (credentials && Object.keys(credentials).length > 0) {
