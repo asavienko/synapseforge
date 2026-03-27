@@ -1,8 +1,7 @@
 import OpenAI from 'openai';
 
-const openai = process.env.OPENAI_API_KEY 
-  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
-  : null;
+const OPENAI_KEY = process.env.OPENAI_API_KEY || process.env.OPENHELIX_OPENAI_KEY || process.env.SYNAPSEFORGE_OPENAI_KEY;
+const openai = OPENAI_KEY ? new OpenAI({ apiKey: OPENAI_KEY }) : null;
 
 export const EMBEDDING_MODEL = 'text-embedding-ada-002';
 export const EMBEDDING_DIMENSION = 1536;

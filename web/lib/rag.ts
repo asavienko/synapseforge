@@ -1,6 +1,9 @@
 import { prisma } from '@/lib/prisma';
 import { searchSimilarChunks, getKnowledgeBaseStorage } from '@/lib/knowledge';
+import { EMBEDDING_MODEL } from '@/lib/knowledge/embeddings';
 import { randomUUID } from 'crypto';
+
+const OPENAI_KEY = process.env.OPENAI_API_KEY || process.env.OPENHELIX_OPENAI_KEY || process.env.SYNAPSEFORGE_OPENAI_KEY;
 
 interface SimilarChunk {
   id: string;
@@ -16,15 +19,15 @@ interface SimilarChunk {
 }
 
 async function getQueryEmbedding(query: string): Promise<number[] | null> {
-  if (!process.env.OPENAI_API_KEY) return null;
+  if (!OPENAI_KEY) return null;
   try {
     const res = await fetch("https://api.openai.com/v1/embeddings", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        Authorization: `Bearer ${OPENAI_KEY}`,
       },
-      body: JSON.stringify({ input: query, model: "text-embedding-3-small" }),
+      body: JSON.stringify({ input: query, model: EMBEDDING_MODEL }),
     });
     const data = await res.json();
     return data.data?.[0]?.embedding ?? null;

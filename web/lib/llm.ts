@@ -9,6 +9,7 @@ import { decrypt } from "@/lib/crypto";
 import { createOpenAI } from "@ai-sdk/openai";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { streamText, StreamTextResult, ToolSet, LanguageModel } from "ai";
+import { retrieveContext } from "@/lib/rag";
 
 export interface ChatMessage {
   role: "user" | "assistant" | "system";
@@ -270,6 +271,18 @@ export async function callLLM(
   }
 
   const { resolvedProvider, resolvedModelId, resolvedApiKey } = credResult;
+
+  // ── RAG: inject knowledge base context ──────────────────────────────────
+  const lastUserMsg = [...messages].reverse().find((m) => m.role === "user")?.content ?? "";
+  if (lastUserMsg) {
+    const ragResult = await retrieveContext(instanceId, lastUserMsg).catch(() => ({ context: "", sources: [] as string[] }));
+    if (ragResult.context) {
+      const citationsSection = ragResult.sources.length > 0
+        ? `\n\nSources: ${ragResult.sources.join(", ")}`
+        : "";
+      config.systemPrompt = `${config.systemPrompt}\n\n## Relevant Knowledge\n\nUse the following information to answer the user\'s question. Cite sources when using specific information.\n\n${ragResult.context}${citationsSection}`;
+    }
+  }
 
   const fullMessages: ChatMessage[] = [
     { role: "system", content: config.systemPrompt },
