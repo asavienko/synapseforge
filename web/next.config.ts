@@ -1,4 +1,7 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
+
+const withNextIntl = createNextIntlPlugin("./i18n.ts");
 
 const serverApiUrl = process.env.NEXT_PUBLIC_SERVER_API_URL;
 
@@ -117,4 +120,4 @@ if (process.env.ANALYZE === "true") {
   nextConfig = withBundleAnalyzer(nextConfig);
 }
 
-export default nextConfig;
+export default withNextIntl(nextConfig);
