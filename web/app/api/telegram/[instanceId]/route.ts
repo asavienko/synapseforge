@@ -147,9 +147,20 @@ export async function POST(
   const llmKeys = ["openai_api_key", "anthropic_api_key", "openrouter_api_key"];
   const hasLLMCreds = instance.credentials.some((c) => llmKeys.includes(c.key));
 
+  // Platform API key for sandbox mode
+  let sandboxActive = false;
+  let sandboxApiKey: string | null = null;
+
   if (!hasLLMCreds) {
     if (instance.sandboxMode && !isSandboxExhausted(instance.sandboxUsed ?? 0)) {
-      // Sandbox mode — allowed, will use platform key via callLLM
+      const platformKey = process.env.OPENHELIX_OPENAI_KEY || process.env.OPENAI_API_KEY;
+      if (platformKey) {
+        sandboxActive = true;
+        sandboxApiKey = platformKey;
+      } else {
+        await sendTelegramMessage(botToken, chatId, "⚠️ Sandbox unavailable. The agent owner needs to add an API key.");
+        return NextResponse.json({ ok: true });
+      }
     } else if (isSandboxExhausted(instance.sandboxUsed ?? 0)) {
       await sendTelegramMessage(
         botToken,
@@ -184,10 +195,13 @@ export async function POST(
     .map((m) => ({ role: m.role as "user" | "assistant", content: m.content }));
 
   // ── Call LLM ──────────────────────────────────────────────────────────────
-  const result = await callLLM(instanceId, [
-    ...contextMessages,
-    { role: "user", content: text },
-  ]);
+  const result = await callLLM(
+    instanceId,
+    [...contextMessages, { role: "user", content: text }],
+    sandboxActive && sandboxApiKey
+      ? { sandboxApiKey }
+      : undefined
+  );
 
   if ("error" in result) {
     await sendTelegramMessage(botToken, chatId, "⚠️ Sorry, I couldn't process that. Please try again.");
@@ -205,7 +219,7 @@ export async function POST(
   });
 
   // ── Increment sandbox usage if in sandbox mode ───────────────────────────
-  if (instance.sandboxMode && !hasLLMCreds) {
+  if (sandboxActive) {
     await prisma.aIInstance.update({
       where: { id: instanceId },
       data: { sandboxUsed: { increment: 1 } },

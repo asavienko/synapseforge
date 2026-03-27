@@ -20,6 +20,8 @@ export interface InstanceConfig {
   systemPrompt: string;
   temperature: number;
   maxTokens: number;
+  /** Platform API key injected for sandbox mode — not stored in DB */
+  sandboxApiKey?: string;
 }
 
 export const DEFAULT_CONFIG: InstanceConfig = {
@@ -87,6 +89,16 @@ export async function resolveCredentials(
   instanceId: string,
   config: InstanceConfig,
 ): Promise<CredentialResult> {
+  // Sandbox mode: platform injects its own API key — bypass DB credential lookup
+  if (config.sandboxApiKey) {
+    return {
+      ok: true,
+      resolvedProvider: "openai",
+      resolvedModelId: "gpt-4o-mini",
+      resolvedApiKey: config.sandboxApiKey,
+    };
+  }
+
   // Get instance and user ID
   const instance = await prisma.aIInstance.findUnique({
     where: { id: instanceId },
