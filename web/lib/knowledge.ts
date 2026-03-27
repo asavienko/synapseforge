@@ -61,8 +61,8 @@ export async function searchSimilarChunks(
       "KnowledgeChunk"."metadata"
     FROM "KnowledgeChunk"
     JOIN "KnowledgeDoc" ON "KnowledgeChunk"."docId" = "KnowledgeDoc"."id"
-    JOIN "KnowledgeBase" ON "KnowledgeDoc"."knowledgeBaseId" = "KnowledgeBase"."id"
-    JOIN "AIInstance" ON "KnowledgeBase"."instanceId" = "AIInstance"."id"
+    JOIN "knowledge_base" ON "KnowledgeDoc"."knowledgeBaseId" = "knowledge_base"."id"
+    JOIN "AIInstance" ON "knowledge_base"."instanceId" = "AIInstance"."id"
     WHERE 
       "AIInstance"."id" = ${instanceId}
       AND "AIInstance"."userId" = ${instance.userId}
@@ -85,7 +85,7 @@ export async function getKnowledgeBaseStorage(instanceId: string): Promise<{
       COALESCE(SUM(d."fileSize"), 0) as "totalBytes",
       COUNT(DISTINCT d."id") as "documentCount",
       COUNT(c."id") as "chunkCount"
-    FROM "KnowledgeBase" b
+    FROM "knowledge_base" b
     LEFT JOIN "KnowledgeDoc" d ON b."id" = d."knowledgeBaseId"
     LEFT JOIN "KnowledgeChunk" c ON d."id" = c."docId"
     WHERE b."instanceId" = ${instanceId}

@@ -24,7 +24,7 @@ export async function POST(
     SELECT COUNT(*) as "count"
     FROM "KnowledgeChunk" k
     JOIN "KnowledgeDoc" d ON k."docId" = d."id"
-    JOIN "KnowledgeBase" b ON d."knowledgeBaseId" = b."id"
+    JOIN "knowledge_base" b ON d."knowledgeBaseId" = b."id"
     JOIN "AIInstance" i ON b."instanceId" = i."id"
     WHERE i."id" = ${id}
       AND k."embedding" IS NOT NULL
@@ -47,7 +47,7 @@ export async function POST(
       SELECT k."id", k."embedding"
       FROM "KnowledgeChunk" k
       JOIN "KnowledgeDoc" d ON k."docId" = d."id"
-      JOIN "KnowledgeBase" b ON d."knowledgeBaseId" = b."id"
+      JOIN "knowledge_base" b ON d."knowledgeBaseId" = b."id"
       JOIN "AIInstance" i ON b."instanceId" = i."id"
       WHERE i."id" = ${id}
         AND k."embedding" IS NOT NULL

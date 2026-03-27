@@ -44,7 +44,7 @@ async function needsMigration(instanceId: string): Promise<boolean> {
     SELECT COUNT(*) as "count"
     FROM "KnowledgeChunk" c
     JOIN "KnowledgeDoc" d ON c."docId" = d."id"
-    JOIN "KnowledgeBase" b ON d."knowledgeBaseId" = b."id"
+    JOIN "knowledge_base" b ON d."knowledgeBaseId" = b."id"
     WHERE b."instanceId" = ${instanceId}
       AND c."embedding" IS NOT NULL
       AND pg_typeof(c."embedding") = 'text'::regtype

@@ -55,8 +55,8 @@ export async function POST(
       "KnowledgeChunk"."metadata"
     FROM "KnowledgeChunk"
     JOIN "KnowledgeDoc" ON "KnowledgeChunk"."docId" = "KnowledgeDoc"."id"
-    JOIN "KnowledgeBase" ON "KnowledgeDoc"."knowledgeBaseId" = "KnowledgeBase"."id"
-    JOIN "AIInstance" ON "KnowledgeBase"."instanceId" = "AIInstance"."id"
+    JOIN "knowledge_base" ON "KnowledgeDoc"."knowledgeBaseId" = "knowledge_base"."id"
+    JOIN "AIInstance" ON "knowledge_base"."instanceId" = "AIInstance"."id"
     WHERE 
       "AIInstance"."id" = ${id}
       AND "AIInstance"."userId" = ${session.user.id}
