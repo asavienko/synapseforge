@@ -104,7 +104,7 @@ export function OverviewTab({
         if (!isDeployed) {
           return (
             <button onClick={onGoToDeploy}
-              className="flex items-center justify-center gap-3 w-full bg-blue-600 hover:bg-blue-600 transition-colors text-gray-900 dark:text-white font-semibold text-sm px-5 py-3.5 rounded-xl">
+              className="glass-btn-primary flex items-center justify-center gap-3 w-full font-semibold text-sm px-5 py-3.5 rounded-xl text-white">
               <Zap className="w-4 h-4" />
               {t("overview.step2")}
             </button>

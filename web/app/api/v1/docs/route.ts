@@ -15,11 +15,11 @@ export async function GET(_req: NextRequest) {
   const docs = {
     name: "SynapseForge API",
     version: "v1",
-    baseUrl: "https://api.synapseforge.ai/api/v1",
+    baseUrl: "https://api.openhelixai.com/api/v1",
     authentication: {
       type: "Bearer Token",
       header: "Authorization: Bearer {api_key}",
-      description: "API keys start with 'sf-live-' and can be generated in your instance dashboard",
+      description: "API keys start with 'oh-live-' and can be generated in your instance dashboard",
     },
     rateLimits: {
       "GET /instance": "120 requests per minute",
@@ -32,7 +32,7 @@ export async function GET(_req: NextRequest) {
         path: "GET /instance",
         description: "Get instance metadata (status, model, channels)",
         example: {
-          request: "curl https://api.synapseforge.ai/api/v1/instance \\\n  -H \"Authorization: Bearer sf-live-xxxxx\"",
+          request: "curl https://api.openhelixai.com/api/v1/instance \\\n  -H \"Authorization: Bearer oh-live-xxxxx\"",
           response: {
             id: "inst_123",
             name: "My AI Agent",
@@ -61,7 +61,7 @@ export async function GET(_req: NextRequest) {
           sessionId: "string (optional, auto-generated if omitted)",
         },
         example: {
-          request: "curl -X POST https://api.synapseforge.ai/api/v1/chat \\\n  -H \"Authorization: Bearer sf-live-xxxxx\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"message\": \"Hello!\", \"sessionId\": \"sess_abc\"}'",
+          request: "curl -X POST https://api.openhelixai.com/api/v1/chat \\\n  -H \"Authorization: Bearer oh-live-xxxxx\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"message\": \"Hello!\", \"sessionId\": \"sess_abc\"}'",
           response: {
             response: "Hello! How can I help you today?",
             latencyMs: 850,
@@ -81,7 +81,7 @@ export async function GET(_req: NextRequest) {
           sessionId: "string (optional)",
         },
         example: {
-          request: "curl -X POST https://api.synapseforge.ai/api/v1/chat/stream \\\n  -H \"Authorization: Bearer sf-live-xxxxx\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"message\": \"Hello!\"}'",
+          request: "curl -X POST https://api.openhelixai.com/api/v1/chat/stream \\\n  -H \"Authorization: Bearer oh-live-xxxxx\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"message\": \"Hello!\"}'",
           notes: "Returns SSE stream with 'data: {...}' lines",
         },
       },
@@ -95,7 +95,7 @@ export async function GET(_req: NextRequest) {
           sessionId: "string (optional, passed as user id)",
         },
         example: {
-          request: "curl -X POST https://api.synapseforge.ai/api/v1/chat/completions \\\n  -H \"Authorization: Bearer sf-live-xxxxx\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"messages\": [{\"role\": \"user\", \"content\": \"Hello!\"}]}'",
+          request: "curl -X POST https://api.openhelixai.com/api/v1/chat/completions \\\n  -H \"Authorization: Bearer oh-live-xxxxx\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"messages\": [{\"role\": \"user\", \"content\": \"Hello!\"}]}'",
           response: {
             id: "chatcmpl-xxx",
             object: "chat.completion",
@@ -124,12 +124,12 @@ export async function GET(_req: NextRequest) {
       500: "Internal server error",
     },
     sdks: {
-      javascript: "npm install synapseforge-client (coming soon)",
-      python: "pip install synapseforge (coming soon)",
+      javascript: "npm install openhelix-client (coming soon)",
+      python: "pip install openhelix (coming soon)",
     },
     support: {
-      email: "hello@synapseforge.ai",
-      docs: "https://docs.synapseforge.ai",
+      email: "hello@openhelixai.com",
+      docs: "https://docs.openhelixai.com",
     },
   };
 

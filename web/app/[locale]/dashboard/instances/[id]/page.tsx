@@ -135,12 +135,12 @@ export default function InstanceDetailPage() {
 
         {/* Header */}
         <div className="flex items-start gap-4 mb-4">
-          <div className="w-14 h-14 rounded-2xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center shrink-0">
-            <Bot className="w-7 h-7 text-blue-600 dark:text-blue-400" />
+          <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center shrink-0">
+            <Bot className="w-6 h-6 md:w-7 md:h-7 text-blue-600 dark:text-blue-400" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="flex flex-wrap items-center gap-3 mb-1">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white truncate">{instance.name}</h1>
+            <div className="flex flex-wrap items-center gap-2 mb-1">
+              <h1 className="text-lg md:text-2xl font-bold text-gray-900 dark:text-white truncate max-w-[180px] md:max-w-none">{instance.name}</h1>
               <span className={`text-xs px-2.5 py-1 rounded-full font-medium shrink-0 ${STATUS_COLORS[instance.status]}`}>{instance.status}</span>
               {instance.healthStatus && (
                 <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${

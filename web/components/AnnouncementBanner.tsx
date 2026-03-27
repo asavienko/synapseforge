@@ -18,7 +18,7 @@ interface Announcement {
 const DEFAULT_ANNOUNCEMENTS: Announcement[] = [
   {
     id: "launch-promo",
-    message: "🚀 Launch special: Get 50% off your first month! Use code SYNAPSE50",
+    message: "🚀 Launch special: Get 50% off your first month! Use code OPENHELIX50",
     link: "/dashboard/billing",
     linkText: "Upgrade now",
     type: "promo",
@@ -56,9 +56,9 @@ export function AnnouncementBanner() {
   if (!announcement || dismissed) return null;
 
   const bgColors = {
-    info: "bg-blue-600/20 border-blue-500/30 text-blue-200",
-    promo: "bg-violet-600/20 border-violet-500/30 text-violet-200",
-    feature: "bg-emerald-600/20 border-emerald-500/30 text-emerald-200",
+    info: "bg-blue-50 dark:bg-blue-600/20 border-blue-200 dark:border-blue-500/30 text-blue-700 dark:text-blue-200",
+    promo: "bg-violet-50 dark:bg-violet-600/20 border-violet-200 dark:border-violet-500/30 text-violet-700 dark:text-violet-200",
+    feature: "bg-emerald-50 dark:bg-emerald-600/20 border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-200",
   };
 
   const Icon = announcement.type === "feature" ? Sparkles : announcement.type === "promo" ? Megaphone : Megaphone;
@@ -78,7 +78,7 @@ export function AnnouncementBanner() {
         )}
         <button
           onClick={dismiss}
-          className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-white/10 rounded transition-colors"
+          className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-black/10 dark:hover:bg-white/10 rounded transition-colors"
           aria-label="Dismiss announcement"
         >
           <X className="w-4 h-4" />

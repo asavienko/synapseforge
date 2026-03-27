@@ -360,8 +360,8 @@ export function BillingClient({ plan, hasSubscription, periodEnd }: Props) {
                   className={cn(
                     "w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-colors disabled:opacity-50",
                     p.highlight
-                      ? "bg-blue-600 hover:bg-blue-600 text-white"
-                      : "bg-gray-50 dark:bg-white/5 hover:bg-gray-200 dark:bg-white/10 border border-gray-200 dark:border-white/10 text-gray-700 dark:text-zinc-200"
+                      ? "glass-btn-primary text-white"
+                      : "bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 text-gray-700 dark:text-zinc-200"
                   )}
                 >
                   {loading === p.key ? <LoadingIcon className="w-4 h-4" /> : null}

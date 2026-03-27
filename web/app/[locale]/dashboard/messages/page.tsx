@@ -234,7 +234,7 @@ export default function MessagesPage() {
           <button
             type="submit"
             disabled={sending || !body.trim()}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-600 disabled:opacity-40 transition-colors px-4 py-3 rounded-xl text-sm font-semibold text-gray-900 dark:text-white"
+            className="glass-btn-primary flex items-center gap-2 disabled:opacity-40 px-4 py-3 rounded-xl text-sm font-semibold text-white"
           >
             {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
           </button>

@@ -339,7 +339,7 @@ export default function InstancesPage() {
           </button>
           <button
             onClick={() => setShowWizard(true)}
-            className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-600 transition-colors px-3 sm:px-4 py-2.5 rounded-lg text-sm font-semibold text-gray-900 dark:text-white whitespace-nowrap"
+            className="glass-btn-primary flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 rounded-lg text-sm font-semibold text-white whitespace-nowrap"
           >
             <PlusIcon className="w-4 h-4" />
             <span className="hidden sm:inline">{t("newInstance")}</span>
@@ -362,7 +362,7 @@ export default function InstancesPage() {
             <div className="flex items-center justify-center gap-3">
               <button
                 onClick={() => setShowWizard(true)}
-                className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-600 transition-colors px-6 py-3 rounded-lg text-sm font-semibold text-gray-900 dark:text-white"
+                className="glass-btn-primary inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold text-white"
               >
                 <PlusIcon className="w-4 h-4" />
                 {t("createInstance")}
@@ -570,7 +570,7 @@ export default function InstancesPage() {
                 <button
                   type="submit"
                   disabled={creating}
-                  className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-600 disabled:opacity-50 transition-colors py-3 rounded-lg text-sm font-semibold text-gray-900 dark:text-white"
+                  className="glass-btn-primary flex-1 flex items-center justify-center gap-2 disabled:opacity-50 py-3 rounded-lg text-sm font-semibold text-white"
                 >
                   {creating ? <LoadingIcon className="w-4 h-4 animate-spin" /> : null}
                   {t("modal.createBtn")}
